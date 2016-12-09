@@ -163,6 +163,10 @@ library.
 
 \section{Installation}\label{install}
 
+\texttt{convey} is free and open-source software that runs inside the
+\href{https://www.r-project.org/}{R environment for statistical
+computing}.
+
 \begin{itemize}
 \item
   the latest released version from
@@ -601,7 +605,7 @@ and then use the function \texttt{svyarpr}:
 
 \begin{verbatim}
             arpr     SE
-eqIncome 0.14444 0.0034
+eqIncome 0.14444 0.0025
 \end{verbatim}
 
 \begin{Shaded}
@@ -612,15 +616,15 @@ eqIncome 0.14444 0.0034
 
 \begin{verbatim}
                       db040  eqIncome se.eqIncome
-Burgenland       Burgenland 0.1953984 0.017778055
-Carinthia         Carinthia 0.1308627 0.011780255
-Lower Austria Lower Austria 0.1384362 0.006688895
-Salzburg           Salzburg 0.1378734 0.012368957
-Styria               Styria 0.1437464 0.007362257
-Tyrol                 Tyrol 0.1530819 0.010130065
-Upper Austria Upper Austria 0.1088977 0.005223393
-Vienna               Vienna 0.1723468 0.009680345
-Vorarlberg       Vorarlberg 0.1653731 0.012308714
+Burgenland       Burgenland 0.1953984 0.018190284
+Carinthia         Carinthia 0.1308627 0.010957303
+Lower Austria Lower Austria 0.1384362 0.005961997
+Salzburg           Salzburg 0.1378734 0.013242928
+Styria               Styria 0.1437464 0.007059837
+Tyrol                 Tyrol 0.1530819 0.010066477
+Upper Austria Upper Austria 0.1088977 0.005884765
+Vienna               Vienna 0.1723468 0.007122467
+Vorarlberg       Vorarlberg 0.1653731 0.013509364
 \end{verbatim}
 
 The functions of the library convey are called in a similar way to the
@@ -915,25 +919,153 @@ here are the references
 
 \chapter{Multidimensional Indices}\label{multidimensional}
 
-We have finished a nice book.
-
 \section{Alkire-Foster Class and Decomposition (svyafc,
 svyafcdec)}\label{alkire-foster-class-and-decomposition-svyafc-svyafcdec}
 
-here are the references
+In November 2015, Christopher Jindra presented at the Oxford Poverty and
+Human Development Initiative on the Alkire-Foster multidimensional
+poverty measure. His presentation can be viewed
+\href{http://www.ophi.org.uk/wp-content/uploads/Jindra_151109_OPHISeminar.pdf}{here}.
+The example below reproduces those statistics.
+
+Load and prepare the same data set:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# load the convey package}
+\KeywordTok{library}\NormalTok{(convey)}
+
+\CommentTok{# load the survey library}
+\KeywordTok{library}\NormalTok{(survey)}
+
+\CommentTok{# load the stata-style webuse library}
+\KeywordTok{library}\NormalTok{(webuse)}
+
+\CommentTok{# load the same microdata set used by Jindra in his presentation}
+\KeywordTok{webuse}\NormalTok{(}\StringTok{"nlsw88"}\NormalTok{)}
+
+\CommentTok{# coerce that `tbl_df` to a standard R `data.frame`}
+\NormalTok{nlsw88 <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{( nlsw88 )}
+
+\CommentTok{# create a `collgrad` column}
+\NormalTok{nlsw88$collgrad <-}
+\StringTok{    }\KeywordTok{factor}\NormalTok{( }
+        \KeywordTok{as.numeric}\NormalTok{( nlsw88$collgrad ) , }
+        \DataTypeTok{label =} \KeywordTok{c}\NormalTok{( }\StringTok{'not college grad'} \NormalTok{, }\StringTok{'college grad'} \NormalTok{) , }
+        \DataTypeTok{ordered =} \OtherTok{TRUE} 
+      \NormalTok{)}
+
+\CommentTok{# initiate a linearized survey design object}
+\NormalTok{des_nlsw88 <-}\StringTok{ }\KeywordTok{svydesign}\NormalTok{( }\DataTypeTok{ids =} \NormalTok{~}\DecValTok{1} \NormalTok{, }\DataTypeTok{data =} \NormalTok{nlsw88 )}
+
+\CommentTok{# immediately run the `convey_prep` function on the survey design}
+\NormalTok{des_nlsw88 <-}\StringTok{ }\KeywordTok{convey_prep}\NormalTok{(des_nlsw88)}
+\end{Highlighting}
+\end{Shaded}
+
+Replicate PDF page 9
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{page_nine <-}
+\StringTok{  }\KeywordTok{svyafc}\NormalTok{(}
+    \NormalTok{~}\StringTok{ }\NormalTok{wage +}\StringTok{ }\NormalTok{collgrad +}\StringTok{ }\NormalTok{hours , }
+    \DataTypeTok{design =} \NormalTok{des_nlsw88 , }
+    \DataTypeTok{cutoffs =} \KeywordTok{list}\NormalTok{( }\DecValTok{4}\NormalTok{, }\StringTok{'college grad'} \NormalTok{, }\DecValTok{26} \NormalTok{) , }
+    \DataTypeTok{k =} \DecValTok{1}\NormalTok{/}\DecValTok{3} \NormalTok{, }\DataTypeTok{g =} \DecValTok{0} \NormalTok{, }
+    \DataTypeTok{na.rm =} \OtherTok{TRUE}
+  \NormalTok{)}
+
+\CommentTok{# MO and seMO}
+\KeywordTok{print}\NormalTok{( page_nine )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      alkire-foster     SE
+## [1,]       0.36991 0.0053
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# H seH and A seA}
+\KeywordTok{print}\NormalTok{( }\KeywordTok{attr}\NormalTok{( page_nine , }\StringTok{"extra"} \NormalTok{) )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        coef          SE
+## H 0.8082070 0.008316807
+## A 0.4576895 0.004573443
+\end{verbatim}
+
+Replicate PDF page 10
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{page_ten <-}\StringTok{ }\OtherTok{NULL}
+
+\CommentTok{# loop through every poverty cutoff `k`}
+\NormalTok{for( ks in }\KeywordTok{seq}\NormalTok{( }\FloatTok{0.1} \NormalTok{, }\DecValTok{1} \NormalTok{, .}\DecValTok{1} \NormalTok{) )\{}
+    
+    \NormalTok{this_ks <-}
+\StringTok{        }\KeywordTok{svyafc}\NormalTok{(}
+            \NormalTok{~}\StringTok{ }\NormalTok{wage +}\StringTok{ }\NormalTok{collgrad +}\StringTok{ }\NormalTok{hours , }
+            \DataTypeTok{design =} \NormalTok{des_nlsw88 , }
+            \DataTypeTok{cutoffs =} \KeywordTok{list}\NormalTok{( }\DecValTok{4} \NormalTok{, }\StringTok{'college grad'} \NormalTok{, }\DecValTok{26} \NormalTok{) , }
+            \DataTypeTok{k =} \NormalTok{ks , }
+            \DataTypeTok{g =} \DecValTok{0} \NormalTok{, }
+            \DataTypeTok{na.rm =} \OtherTok{TRUE} 
+           \NormalTok{)}
+    
+    \NormalTok{page_ten <-}
+\StringTok{        }\KeywordTok{rbind}\NormalTok{(}
+            \NormalTok{page_ten ,}
+            \KeywordTok{data.frame}\NormalTok{( }
+                \DataTypeTok{k =} \NormalTok{ks , }
+                \DataTypeTok{MO =} \KeywordTok{coef}\NormalTok{( this_ks ) ,}
+                \DataTypeTok{seMO =} \KeywordTok{SE}\NormalTok{( this_ks ) ,}
+                \DataTypeTok{H =} \KeywordTok{attr}\NormalTok{( this_ks , }\StringTok{"extra"} \NormalTok{)[ }\DecValTok{1} \NormalTok{, }\DecValTok{1} \NormalTok{] ,}
+                \DataTypeTok{seH =} \KeywordTok{attr}\NormalTok{( this_ks , }\StringTok{"extra"} \NormalTok{)[ }\DecValTok{1} \NormalTok{, }\DecValTok{2} \NormalTok{] ,}
+                \DataTypeTok{A =} \KeywordTok{attr}\NormalTok{( this_ks , }\StringTok{"extra"} \NormalTok{)[ }\DecValTok{2} \NormalTok{, }\DecValTok{1} \NormalTok{] ,}
+                \DataTypeTok{seA =} \KeywordTok{attr}\NormalTok{( this_ks , }\StringTok{"extra"} \NormalTok{)[ }\DecValTok{2} \NormalTok{, }\DecValTok{2} \NormalTok{]}
+          \NormalTok{)}
+        \NormalTok{)}
+    
+\NormalTok{\}}
+
+\KeywordTok{print}\NormalTok{( page_ten )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      k         MO        seMO          H         seH         A         seA
+## 1  0.1 0.36990782 0.005305855 0.80820696 0.008316807 0.4576895 0.004573443
+## 2  0.2 0.36990782 0.005305855 0.80820696 0.008316807 0.4576895 0.004573443
+## 3  0.3 0.36990782 0.005305855 0.80820696 0.008316807 0.4576895 0.004573443
+## 4  0.4 0.18658935 0.006812294 0.25825156 0.009245464 0.7225101 0.005174483
+## 5  0.5 0.18658935 0.006812294 0.25825156 0.009245464 0.7225101 0.005174483
+## 6  0.6 0.18658935 0.006812294 0.25825156 0.009245464 0.7225101 0.005174483
+## 7  0.7 0.04326494 0.004297766 0.04326494 0.004297766 1.0000000 0.000000000
+## 8  0.8 0.04326494 0.004297766 0.04326494 0.004297766 1.0000000 0.000000000
+## 9  0.9 0.04326494 0.004297766 0.04326494 0.004297766 1.0000000 0.000000000
+## 10 1.0 0.04326494 0.004297766 0.04326494 0.004297766 1.0000000 0.000000000
+\end{verbatim}
+
+still need to replicate PDF page 13
+
+\url{https://github.com/DjalmaPessoa/convey/issues/168}
+
+then keep going replicating this
+
+\url{https://github.com/DjalmaPessoa/convey/issues/154}
+
+\citep{alkire2011} and \citep{alkire2015} and \citep{pacifico2016}
 
 \section{Bourguignon (1999) inequality class
 (svybmi)}\label{bourguignon-1999-inequality-class-svybmi}
 
-\citep{alkire2011} and \citep{alkire2015} and \citep{pacifico2016} and
-\citep{bourguignon1999}
-
-guilherme, please add a bourguignon reference here after you add to
-book.bib \url{https://github.com/guilhermejacob/context/issues}
-
-here are the references
-
-\citep{lugo2007}
+\citep{bourguignon1999} and \citep{lugo2007}
 
 \bibliography{packages,book}
 

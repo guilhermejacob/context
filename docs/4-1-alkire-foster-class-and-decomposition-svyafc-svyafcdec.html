@@ -135,7 +135,104 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="col-sm-12">
 <div id="alkire-foster-class-and-decomposition-svyafc-svyafcdec" class="section level2">
 <h2><span class="header-section-number">4.1</span> Alkire-Foster Class and Decomposition (svyafc, svyafcdec)</h2>
-<p>here are the references</p>
+<p>In November 2015, Christopher Jindra presented at the Oxford Poverty and Human Development Initiative on the Alkire-Foster multidimensional poverty measure. His presentation can be viewed <a href="http://www.ophi.org.uk/wp-content/uploads/Jindra_151109_OPHISeminar.pdf">here</a>. The example below reproduces those statistics.</p>
+<p>Load and prepare the same data set:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the convey package</span>
+<span class="kw">library</span>(convey)
+
+<span class="co"># load the survey library</span>
+<span class="kw">library</span>(survey)
+
+<span class="co"># load the stata-style webuse library</span>
+<span class="kw">library</span>(webuse)
+
+<span class="co"># load the same microdata set used by Jindra in his presentation</span>
+<span class="kw">webuse</span>(<span class="st">&quot;nlsw88&quot;</span>)
+
+<span class="co"># coerce that `tbl_df` to a standard R `data.frame`</span>
+nlsw88 &lt;-<span class="st"> </span><span class="kw">data.frame</span>( nlsw88 )
+
+<span class="co"># create a `collgrad` column</span>
+nlsw88$collgrad &lt;-
+<span class="st">    </span><span class="kw">factor</span>( 
+        <span class="kw">as.numeric</span>( nlsw88$collgrad ) , 
+        <span class="dt">label =</span> <span class="kw">c</span>( <span class="st">&#39;not college grad&#39;</span> , <span class="st">&#39;college grad&#39;</span> ) , 
+        <span class="dt">ordered =</span> <span class="ot">TRUE</span> 
+      )
+
+<span class="co"># initiate a linearized survey design object</span>
+des_nlsw88 &lt;-<span class="st"> </span><span class="kw">svydesign</span>( <span class="dt">ids =</span> ~<span class="dv">1</span> , <span class="dt">data =</span> nlsw88 )
+
+<span class="co"># immediately run the `convey_prep` function on the survey design</span>
+des_nlsw88 &lt;-<span class="st"> </span><span class="kw">convey_prep</span>(des_nlsw88)</code></pre></div>
+<p>Replicate PDF page 9</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">page_nine &lt;-
+<span class="st">  </span><span class="kw">svyafc</span>(
+    ~<span class="st"> </span>wage +<span class="st"> </span>collgrad +<span class="st"> </span>hours , 
+    <span class="dt">design =</span> des_nlsw88 , 
+    <span class="dt">cutoffs =</span> <span class="kw">list</span>( <span class="dv">4</span>, <span class="st">&#39;college grad&#39;</span> , <span class="dv">26</span> ) , 
+    <span class="dt">k =</span> <span class="dv">1</span>/<span class="dv">3</span> , <span class="dt">g =</span> <span class="dv">0</span> , 
+    <span class="dt">na.rm =</span> <span class="ot">TRUE</span>
+  )
+
+<span class="co"># MO and seMO</span>
+<span class="kw">print</span>( page_nine )</code></pre></div>
+<pre><code>##      alkire-foster     SE
+## [1,]       0.36991 0.0053</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># H seH and A seA</span>
+<span class="kw">print</span>( <span class="kw">attr</span>( page_nine , <span class="st">&quot;extra&quot;</span> ) )</code></pre></div>
+<pre><code>##        coef          SE
+## H 0.8082070 0.008316807
+## A 0.4576895 0.004573443</code></pre>
+<p>Replicate PDF page 10</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">page_ten &lt;-<span class="st"> </span><span class="ot">NULL</span>
+
+<span class="co"># loop through every poverty cutoff `k`</span>
+for( ks in <span class="kw">seq</span>( <span class="fl">0.1</span> , <span class="dv">1</span> , .<span class="dv">1</span> ) ){
+    
+    this_ks &lt;-
+<span class="st">        </span><span class="kw">svyafc</span>(
+            ~<span class="st"> </span>wage +<span class="st"> </span>collgrad +<span class="st"> </span>hours , 
+            <span class="dt">design =</span> des_nlsw88 , 
+            <span class="dt">cutoffs =</span> <span class="kw">list</span>( <span class="dv">4</span> , <span class="st">&#39;college grad&#39;</span> , <span class="dv">26</span> ) , 
+            <span class="dt">k =</span> ks , 
+            <span class="dt">g =</span> <span class="dv">0</span> , 
+            <span class="dt">na.rm =</span> <span class="ot">TRUE</span> 
+           )
+    
+    page_ten &lt;-
+<span class="st">        </span><span class="kw">rbind</span>(
+            page_ten ,
+            <span class="kw">data.frame</span>( 
+                <span class="dt">k =</span> ks , 
+                <span class="dt">MO =</span> <span class="kw">coef</span>( this_ks ) ,
+                <span class="dt">seMO =</span> <span class="kw">SE</span>( this_ks ) ,
+                <span class="dt">H =</span> <span class="kw">attr</span>( this_ks , <span class="st">&quot;extra&quot;</span> )[ <span class="dv">1</span> , <span class="dv">1</span> ] ,
+                <span class="dt">seH =</span> <span class="kw">attr</span>( this_ks , <span class="st">&quot;extra&quot;</span> )[ <span class="dv">1</span> , <span class="dv">2</span> ] ,
+                <span class="dt">A =</span> <span class="kw">attr</span>( this_ks , <span class="st">&quot;extra&quot;</span> )[ <span class="dv">2</span> , <span class="dv">1</span> ] ,
+                <span class="dt">seA =</span> <span class="kw">attr</span>( this_ks , <span class="st">&quot;extra&quot;</span> )[ <span class="dv">2</span> , <span class="dv">2</span> ]
+          )
+        )
+    
+}
+
+<span class="kw">print</span>( page_ten )</code></pre></div>
+<pre><code>##      k         MO        seMO          H         seH         A         seA
+## 1  0.1 0.36990782 0.005305855 0.80820696 0.008316807 0.4576895 0.004573443
+## 2  0.2 0.36990782 0.005305855 0.80820696 0.008316807 0.4576895 0.004573443
+## 3  0.3 0.36990782 0.005305855 0.80820696 0.008316807 0.4576895 0.004573443
+## 4  0.4 0.18658935 0.006812294 0.25825156 0.009245464 0.7225101 0.005174483
+## 5  0.5 0.18658935 0.006812294 0.25825156 0.009245464 0.7225101 0.005174483
+## 6  0.6 0.18658935 0.006812294 0.25825156 0.009245464 0.7225101 0.005174483
+## 7  0.7 0.04326494 0.004297766 0.04326494 0.004297766 1.0000000 0.000000000
+## 8  0.8 0.04326494 0.004297766 0.04326494 0.004297766 1.0000000 0.000000000
+## 9  0.9 0.04326494 0.004297766 0.04326494 0.004297766 1.0000000 0.000000000
+## 10 1.0 0.04326494 0.004297766 0.04326494 0.004297766 1.0000000 0.000000000</code></pre>
+<p>still need to replicate PDF page 13</p>
+<p><a href="https://github.com/DjalmaPessoa/convey/issues/168" class="uri">https://github.com/DjalmaPessoa/convey/issues/168</a></p>
+<p>then keep going replicating this</p>
+<p><a href="https://github.com/DjalmaPessoa/convey/issues/154" class="uri">https://github.com/DjalmaPessoa/convey/issues/154</a></p>
+<p><span class="citation">(Alkire and Foster <label for="tufte-mn-46" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-46" class="margin-toggle">2011<span class="marginnote">Alkire, Sabina, and James Foster. 2011. “Counting and Multidimensional Poverty Measurement.” <em>Journal of Public Economics</em> 95 (7-8): 476–87. <a href="https://ideas.repec.org/a/eee/pubeco/v95y2011i7-8p476-487.html" class="uri">https://ideas.repec.org/a/eee/pubeco/v95y2011i7-8p476-487.html</a>.</span>)</span> and <span class="citation">(Sabina Alkire and Ballon <label for="tufte-mn-47" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-47" class="margin-toggle">2015<span class="marginnote">Sabina Alkire, Suman Seth, James Foster, and Paola Ballon. 2015. <em>Multidimensional Poverty Measurement and Analysis</em>. Oxford University Press.</span>)</span> and <span class="citation">(Pacifico and Poge <label for="tufte-mn-48" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-48" class="margin-toggle">2016<span class="marginnote">Pacifico, Daniele, and Felix Poge. 2016. “MPI: Stata Module to Compute the Alkire-Foster Multidimensional Poverty Measures and Their Decomposition by Deprivation Indicators and Population Sub-Groups.” <a href="http://EconPapers.repec.org/RePEc:boc:bocode:s458120" class="uri">http://EconPapers.repec.org/RePEc:boc:bocode:s458120</a>.</span>)</span></p>
 </div>
 <p style="text-align: center;">
 <a href="4-multidimensional.html"><button class="btn btn-default">Previous</button></a>
