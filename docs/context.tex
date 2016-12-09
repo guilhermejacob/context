@@ -124,7 +124,7 @@
   \postauthor{\par}
   \predate{\centering\large\emph}
   \postdate{\par}
-  \date{2016-12-08}
+  \date{2016-12-09}
 
 \usepackage{booktabs}
 
@@ -135,7 +135,7 @@
 \setcounter{tocdepth}{1}
 \tableofcontents
 }
-\chapter{Intro}\label{intro}
+\chapter{Introduction}\label{introduction}
 
 This is a \emph{sample} book written in \textbf{Markdown}. You can use
 anything that Pandoc's Markdown supports, e.g., a math equation
@@ -155,7 +155,33 @@ is defined by the first-level heading \texttt{\#}.
 
 To compile this example to PDF, you need to install XeLaTeX.
 
-\chapter{Installation}\label{install}
+The library convey aims at estimating measures of poverty and income
+concentration. There are already at least two libraries covering this
+subject: vardpoor and Laeken. The main difference between the library
+convey and these two is that the convey strongly hinges on the survey
+library.
+
+\section{Installation}\label{install}
+
+\begin{itemize}
+\item
+  the latest released version from
+  \href{https://CRAN.R-project.org/package=convey}{CRAN} with
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{install.packages}\NormalTok{(}\StringTok{"convey"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+\item
+  the latest development version from github with
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{devtools::}\KeywordTok{install_github}\NormalTok{(}\StringTok{"djalmapessoa/convey"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+\end{itemize}
 
 {[}This may present how to install R, RStudio and required packages.
 Providing brief information about \texttt{survey} and
@@ -164,7 +190,7 @@ Providing brief information about \texttt{survey} and
 You can label chapter and section titles using \texttt{\{\#label\}}
 after them, e.g., we can reference Chapter \ref{install}. If you do not
 manually label them, there will be automatic labels anyway, e.g.,
-Chapter \ref{indices}.
+Chapter \ref{inequality}.
 
 Figures and tables with captions will be placed in \texttt{figure} and
 \texttt{table} environments, respectively.
@@ -238,10 +264,546 @@ You can write citations, too. For example, we are using the
 \textbf{bookdown} package \citep{R-bookdown} in this sample book, which
 was built on top of R Markdown and \textbf{knitr} \citep{xie2015}.
 
-\chapter{Complex surveys and statistical inference}\label{survey}
+\section{Complex surveys and statistical inference}\label{survey}
 
 {[}I think we should have a discussion about what is complex survey, its
 importance and so on. We can use a book Djalma wrote.{]}
+
+\section{Linearization}\label{linearization}
+
+Some measures of poverty and income concentration are defined by
+non-differentiable functions so that it is not possible to use Taylor
+linearization to estimate their variances. An alternative is to use
+\textbf{Influence functions} as described in Deville (1999) and Osier
+(2009). The library convey implements this methodology to work with
+\texttt{survey.design} objects and also with \texttt{svyrep.design}
+objects.
+
+Some examples of these measures are:
+
+\begin{itemize}
+\item
+  At-risk-of-poverty threshold: \(arpt=.60q_{.50}\) where \(q_{.50}\) is
+  the income median;
+\item
+  At-risk-of-poverty rate \(arpr=\frac{\sum_U 1(y_i \leq arpt)}{N}.100\)
+\item
+  Quintile share ratio
+\end{itemize}
+
+\(qsr=\frac{\sum_U 1(y_i>q_{.80})}{\sum_U 1(y_i\leq q_{.20})}\)
+
+\begin{itemize}
+\tightlist
+\item
+  Gini coefficient \(1+G=\frac{2\sum_U (r_i-1)y_i}{N\sum_Uy_i}\) where
+  \(r_i\) is the rank of \(y_i\).
+\end{itemize}
+
+Note that it is not possible to use Taylor linearization for these
+measures because they depend on quantiles and the Gini is defined as a
+function of ranks. This could be done using the approach proposed by
+Deville (1999) based upon influence functions.
+
+\section{Influence function}\label{influence-function}
+
+Let \(U\) be a population of size \(N\) and \(M\) be a measure that
+allocates mass one to the set composed by one unit, that is
+\(M(i)=M_i= 1\) if \(i\in U\) and \(M(i)=0\) if \(i\notin U\)
+
+Now, a population parameter \(\theta\) can be expressed as a functional
+of \(M\) \(\theta=T(M)\)
+
+Examples of such parameters are:
+
+\begin{itemize}
+\item
+  Total: \(Y=\sum_Uy_i=\sum_U y_iM_i=\int ydM=T(M)\)
+\item
+  Ratio of two totals:
+  \(R=\frac{Y}{X}=\frac{\int y dM}{\int x dM}=T(M)\)
+\item
+  Cumulative distribution function:
+  \(F(x)=\frac{\sum_U 1(y_i\leq x)}{N}=\frac{\int 1(y\leq x)dM}{\int{dM}}=T(M)\)
+\end{itemize}
+
+To estimate these parameters from the sample, we replace the measure
+\(M\) by the estimated measure \(\hat{M}\) defined by:
+\(\hat{M}(i)=\hat{M}_i= w_i\) if \(i\in s\) and \(\hat{M}(i)=0\) if
+\(i\notin s\).
+
+The estimators of the population parameters can then be expressed as
+functional of the measure \(\hat{M}\).
+
+\begin{itemize}
+\item
+  Total: \(\hat{Y}=T(\hat{M})=\int yd\hat{M}=\sum_s w_iy_i\)
+\item
+  Ratio of totals:
+  \(\hat{R}=T(\hat{M})=\frac{\int y d\hat{M}}{\int x d\hat{M}}=\frac{\sum_s w_iy_i}{\sum_s w_ix_i}\)
+\item
+  Cumulative distribution function:
+  \(\hat{F}(x)=T(\hat{M})=\frac{\int 1(y\leq x)d\hat{M}}{\int{d\hat{M}}}=\frac{\sum_s w_i 1(y_i\leq x)}{\sum_s w_i}\)
+\end{itemize}
+
+\section{The variance estimator}\label{the-variance-estimator}
+
+The variance of the estimator \(T(\hat{M})\) can approximated by:
+
+\[Var\left[T(\hat{M})\right]\cong var\left[\sum_s w_i z_i\right]\]
+
+The \texttt{linearized} variable \(z\) is given by the derivative of the
+functional:
+
+\[
+z_k=lim_{t\rightarrow0}\frac{T(M+t\delta_k)-T(M)}{t}=IT_k(M)
+\]
+
+where, \(\delta_k\) is the Dirac measure in \(k\): \(\delta_k(i)=1\) if
+and only if \(i=k\).
+
+This \textbf{derivative} is called \textbf{Influence Function} and was
+introduced in the area of \textbf{Robust Statistics}.
+
+\section{Influence functions -
+Examples}\label{influence-functions---examples}
+
+\begin{itemize}
+\item
+  Total: \[
+  \begin{aligned}
+  IT_k(M)&=lim_{t\rightarrow 0}\frac{T(M+t\delta_k)-T(M)}{t}\\
+  &=lim_{t\rightarrow 0}\frac{\int y.d(M+t\delta_k)-\int y.dM}{t}\\
+  &=lim_{t\rightarrow 0}\frac{\int yd(t\delta_k)}{t}=y_k  
+  \end{aligned}
+  \]
+\item
+  Ratio of two totals: \[
+  \begin{aligned}
+  IR_k(M)&=I\left(\frac{U}{V}\right)_k(M)=\frac{V(M)\times IU_k(M)-U(M)\times IV_k(M)}{V(M)^2}\\
+  &=\frac{X y_k-Y x_k}{X^2}=\frac{1}{X}(y_k-Rx_k)
+  \end{aligned}
+  \]
+\end{itemize}
+
+\section{Linearization by influence function -
+Examples}\label{linearization-by-influence-function---examples}
+
+\begin{itemize}
+\tightlist
+\item
+  At-risk-of-poverty threshold: \[
+  arpt = 0.6\times m
+  \] where \(m\) is the median income.
+\end{itemize}
+
+\[
+z_k= -\frac{0.6}{f(m)}\times\frac{1}{N}\times\left[I(y_k\leq m-0.5) \right]
+\]
+
+\begin{itemize}
+\tightlist
+\item
+  At-risk-of-poverty rate:
+\end{itemize}
+
+\[
+ arpr=\frac{\sum_U I(y_i \leq t)}{\sum_U w_i}.100
+\] \[
+z_k=\frac{1}{N}\left[I(y_k\leq t)-t\right]-\frac{0.6}{N}\times\frac{f(t)}{f(m)}\left[I(y_k\leq m)-0.5\right]
+\]
+
+where:
+
+\(N\) - population size;
+
+\(t\) - at-risk-of-poverty threshold;
+
+\(y_k\) - income of person \(k\);
+
+\(m\) - median income;
+
+\(f\) - income density function;
+
+\section{Structure of the library}\label{structure-of-the-library}
+
+In the library convey, there are some basic functions that produces the
+linearized variables of some estimates that often enter in the
+definition of measures of concentration and poverty. For example the
+\texttt{quantile} which is linearized by the function
+\texttt{svyiqalpha}. Other example is the function \texttt{svyisq} that
+linearizes the total below a quantile of the variable.
+
+From the linearized variables of these basic estimates it is possible by
+using rules of composition, valid for influence functions, to derive the
+influence function of more complex estimates. By definition the
+influence function is a Gateaux derivative and the rules rules of
+composition valid for Gateaux derivatives also hold for Influence
+Functions.
+
+The following property of Gateaux derivatives was often used in the
+library convey. Let \(g\) be a differentible function of \(m\)
+variables. Suppose we want to compute the influence function of the
+estimator \(g(T_1, T_2,\ldots, T_m)\), knowing the Influence function of
+the estimators \(T_i, i=1,\ldots, m\). Then the following holds:
+
+\[
+I(g(T_1, T_2,\ldots, T_m)) = \sum_{i=1}^m \frac{\partial g}{\partial T_i}I(T_i)
+\]
+
+In the library convey this rule is implemented by the function
+\texttt{contrastinf} which uses the R function \texttt{deriv} to compute
+the formal partial derivatives \(\frac{\partial g}{\partial T_i}\).
+
+For example, suppose we want to linearize the
+\texttt{Relative\ median\ poverty\ gap}(rmpg), defined as the difference
+between the at-risk-of-poverty threshold (\texttt{arpt}) and the median
+of incomes less than the \texttt{arpt} relative to the \texttt{arprt}:
+
+\[
+rmpg= \frac{arpt-medpoor} {arpt}
+\]
+
+where \texttt{medpoor} is the median of incomes less than \texttt{arpt}.
+
+Suppose we know how to linearize \texttt{arpt} and \texttt{medpoor},
+then by applying the function \texttt{contrastinf} with \[
+g(T_1,T_2)= \frac{(T_1 - T_2)}{T_1}
+\] we linearize the \texttt{rmpg}.
+
+\subsection{Examples of use of the library
+convey}\label{examples-of-use-of-the-library-convey}
+
+In the following examples we will use the data set \texttt{eusilc}
+contained in the libraries \texttt{vardpoor} and \texttt{Laeken}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(vardpoor)}
+\KeywordTok{data}\NormalTok{(eusilc)}
+\end{Highlighting}
+\end{Shaded}
+
+Next, we create an object of class \texttt{survey.design} using the
+function \texttt{svydesign} of the library survey:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(survey)}
+\NormalTok{des_eusilc <-}\StringTok{ }\KeywordTok{svydesign}\NormalTok{(}\DataTypeTok{ids =} \NormalTok{~rb030, }\DataTypeTok{strata =}\NormalTok{~db040,  }\DataTypeTok{weights =} \NormalTok{~rb050, }\DataTypeTok{data =} \NormalTok{eusilc)}
+\end{Highlighting}
+\end{Shaded}
+
+Right after the creation of the design object \texttt{des\_eusilc}, we
+should use the function \texttt{convey\_prep} that adds an attribute to
+the survey design which saves information on the design object based
+upon the whole sample, needed to work with subset designs.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(convey)}
+\NormalTok{des_eusilc <-}\StringTok{ }\KeywordTok{convey_prep}\NormalTok{( des_eusilc )}
+\end{Highlighting}
+\end{Shaded}
+
+To estimate the \texttt{at-risk-of-poverty\ rate} we use the function
+\texttt{svyarpt}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svyarpr}\NormalTok{(~eqIncome, }\DataTypeTok{design=}\NormalTok{des_eusilc)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+            arpr     SE
+eqIncome 0.14444 0.0028
+\end{verbatim}
+
+To estimate the \texttt{at-risk-of-poverty\ rate} for domains defined by
+the variable \texttt{db040} we use
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svyby}\NormalTok{(~eqIncome, }\DataTypeTok{by =} \NormalTok{~db040, }\DataTypeTok{design =} \NormalTok{des_eusilc, }\DataTypeTok{FUN =} \NormalTok{svyarpr, }\DataTypeTok{deff =} \OtherTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+                      db040  eqIncome          se
+Burgenland       Burgenland 0.1953984 0.017202243
+Carinthia         Carinthia 0.1308627 0.010610622
+Lower Austria Lower Austria 0.1384362 0.006517660
+Salzburg           Salzburg 0.1378734 0.011579280
+Styria               Styria 0.1437464 0.007452360
+Tyrol                 Tyrol 0.1530819 0.009880430
+Upper Austria Upper Austria 0.1088977 0.005928336
+Vienna               Vienna 0.1723468 0.007682826
+Vorarlberg       Vorarlberg 0.1653731 0.013754670
+\end{verbatim}
+
+Using the same data set, we estimate the
+\texttt{quintile\ share\ ratio}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# for the whole population}
+\KeywordTok{svyqsr}\NormalTok{(~eqIncome, }\DataTypeTok{design=}\NormalTok{des_eusilc, }\DataTypeTok{alpha=} \NormalTok{.}\DecValTok{20}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+          qsr     SE
+eqIncome 3.97 0.0426
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# for domains}
+\KeywordTok{svyby}\NormalTok{(~eqIncome, }\DataTypeTok{by =} \NormalTok{~db040, }\DataTypeTok{design =} \NormalTok{des_eusilc,}
+  \DataTypeTok{FUN =} \NormalTok{svyqsr, }\DataTypeTok{alpha=} \NormalTok{.}\DecValTok{20}\NormalTok{, }\DataTypeTok{deff =} \OtherTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+                      db040 eqIncome         se
+Burgenland       Burgenland 5.008486 0.32755685
+Carinthia         Carinthia 3.562404 0.10909726
+Lower Austria Lower Austria 3.824539 0.08783599
+Salzburg           Salzburg 3.768393 0.17015086
+Styria               Styria 3.464305 0.09364800
+Tyrol                 Tyrol 3.586046 0.13629739
+Upper Austria Upper Austria 3.668289 0.09310624
+Vienna               Vienna 4.654743 0.13135731
+Vorarlberg       Vorarlberg 4.366511 0.20532075
+\end{verbatim}
+
+These functions can be used as S3 methods for the classes
+\texttt{survey.design} and \texttt{svyrep.design}.
+
+Let's create a design object of class \texttt{svyrep.design} and run the
+function \texttt{convey\_prep} on it:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{des_eusilc_rep <-}\StringTok{ }\KeywordTok{as.svrepdesign}\NormalTok{(des_eusilc, }\DataTypeTok{type =} \StringTok{"bootstrap"}\NormalTok{)}
+\NormalTok{des_eusilc_rep <-}\StringTok{ }\KeywordTok{convey_prep}\NormalTok{(des_eusilc_rep) }
+\end{Highlighting}
+\end{Shaded}
+
+and then use the function \texttt{svyarpr}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svyarpr}\NormalTok{(~eqIncome, }\DataTypeTok{design=}\NormalTok{des_eusilc_rep)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+            arpr     SE
+eqIncome 0.14444 0.0025
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svyby}\NormalTok{(~eqIncome, }\DataTypeTok{by =} \NormalTok{~db040, }\DataTypeTok{design =} \NormalTok{des_eusilc_rep, }\DataTypeTok{FUN =} \NormalTok{svyarpr, }\DataTypeTok{deff =} \OtherTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+                      db040  eqIncome se.eqIncome
+Burgenland       Burgenland 0.1953984 0.018936450
+Carinthia         Carinthia 0.1308627 0.010204232
+Lower Austria Lower Austria 0.1384362 0.006584858
+Salzburg           Salzburg 0.1378734 0.011982337
+Styria               Styria 0.1437464 0.008685317
+Tyrol                 Tyrol 0.1530819 0.008508757
+Upper Austria Upper Austria 0.1088977 0.006040315
+Vienna               Vienna 0.1723468 0.008441681
+Vorarlberg       Vorarlberg 0.1653731 0.013641960
+\end{verbatim}
+
+The functions of the library convey are called in a similar way to the
+functions in library survey.
+
+It is also possible to deal with missing values by using the argument
+\texttt{na.rm}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# survey.design using a variable with missings}
+\KeywordTok{svygini}\NormalTok{( ~}\StringTok{ }\NormalTok{py010n , }\DataTypeTok{design =} \NormalTok{des_eusilc )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+       gini SE
+py010n   NA NA
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svygini}\NormalTok{( ~}\StringTok{ }\NormalTok{py010n , }\DataTypeTok{design =} \NormalTok{des_eusilc , }\DataTypeTok{na.rm =} \OtherTok{TRUE} \NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+          gini     SE
+py010n 0.64606 0.0036
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# svyrep.design using a variable with missings}
+\CommentTok{# svygini( ~ py010n , design = des_eusilc_rep ) get error}
+\KeywordTok{svygini}\NormalTok{( ~}\StringTok{ }\NormalTok{py010n , }\DataTypeTok{design =} \NormalTok{des_eusilc_rep , }\DataTypeTok{na.rm =} \OtherTok{TRUE} \NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+          gini     SE
+py010n 0.64606 0.0035
+\end{verbatim}
+
+\section{FGT indicator}\label{fgt-indicator}
+
+Foster and all(1984) proposed a family of indicators to measure poverty.
+
+The class of \(FGT\) measures, can be defined as
+
+\[
+p=\frac{1}{N}\sum_{k\in U}h(y_{k},\theta ), 
+\]
+
+where
+
+\[
+h(y_{k},\theta )=\left[ \frac{(\theta -y_{k})}{\theta }\right] ^{\gamma
+}\delta \left\{ y_{k}\leq \theta \right\} , 
+\]
+
+where: \(\theta\) is the poverty threshold; \(\delta\) the indicator
+function that assigns value 1 if the condition \(\{y_{k}\leq \theta \}\)
+is satisfied and 0 otherwise, and \(\gamma\) is a non-negative constant.
+
+When \(\gamma =0\), \(p\) can be interpreted as the ratio of poor
+people, and for \(\gamma \geq 1\), the weight of poor people increases
+with the value \(\gamma\), (Foster and all, 1984).
+
+The poverty measure FGT is implemented in the library convey by the
+function \texttt{svyfgt}. The argument \texttt{thresh\_type} of this
+function defines the type of poverty threshold adopted. There are three
+possible choices:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \texttt{abs} -- fixed and given by the argument thresh\_value
+\item
+  \texttt{relq} -- a proportion of a quantile fixed by the argument
+  \texttt{proportion} and the quantile is defined by the argument
+  \texttt{order}.
+\item
+  \texttt{relm} -- a proportion of the mean fixed the argument
+  \texttt{proportion}
+\end{enumerate}
+
+The quantile and the mean involved in the definition of the threshold
+are estimated for the whole population. When \(\gamma=0\) and
+\(\theta= .6*MED\) the measure is equal to the indicator \texttt{arpr}
+computed by the function \texttt{svyarpr}.
+
+Next, we give some examples of the function \texttt{svyfgt} to estimate
+the values of the FGT poverty index.
+
+Consider first the poverty threshold fixed (\(\gamma=0\)) in the value
+\(10000\). The headcount ratio (FGT0) is
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svyfgt}\NormalTok{(~eqIncome, des_eusilc, }\DataTypeTok{g=}\DecValTok{0}\NormalTok{, }\DataTypeTok{abs_thresh=}\DecValTok{10000}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+            fgt0     SE
+eqIncome 0.11444 0.0027
+\end{verbatim}
+
+The poverty gap (FGT1) (\(\gamma=1\)) index for the poverty threshold
+fixed at the same value is
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svyfgt}\NormalTok{(~eqIncome, des_eusilc, }\DataTypeTok{g=}\DecValTok{1}\NormalTok{, }\DataTypeTok{abs_thresh=}\DecValTok{10000}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+             fgt1     SE
+eqIncome 0.032085 0.0011
+\end{verbatim}
+
+To estimate the FGT0 with the poverty threshold fixed at \(0.6* MED\) we
+fix the argument type\_thresh=``relq'' and use the default values for
+\texttt{percent} and \texttt{order}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svyfgt}\NormalTok{(~eqIncome, des_eusilc, }\DataTypeTok{g=}\DecValTok{0}\NormalTok{, }\DataTypeTok{type_thresh=} \StringTok{"relq"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+            fgt0     SE
+eqIncome 0.14444 0.0028
+\end{verbatim}
+
+that matches the estimate obtained by
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svyarpr}\NormalTok{(~eqIncome, }\DataTypeTok{design=}\NormalTok{des_eusilc, .}\DecValTok{5}\NormalTok{, .}\DecValTok{6}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+            arpr     SE
+eqIncome 0.14444 0.0028
+\end{verbatim}
+
+To estimate the poverty gap(FGT1) with the poverty threshold equal to
+\(0.6*MEAN\) we use:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svyfgt}\NormalTok{(~eqIncome, des_eusilc, }\DataTypeTok{g=}\DecValTok{1}\NormalTok{, }\DataTypeTok{type_thresh=} \StringTok{"relm"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+             fgt1     SE
+eqIncome 0.051187 0.0011
+\end{verbatim}
+
+\subsection{References}\label{references}
+
+Berger, Y.G. e C.J. Skinner (to be published) - Variance Estimation for
+a Low-Income Proportion.
+
+Foster, K., J. Greer e E. Thornbecke (1984) - A Class of Decomposable
+Poverty Measure. Econometrica, 52, 761-766.
+
+Guillaume Osier (2009). Variance estimation for complex indicators of
+poverty and inequality. \emph{Journal of the European Survey Research
+Association}, Vol.3, No.3, pp.~167-195, ISSN 1864-3361, URL
+\url{http://ojs.ub.uni-konstanz.de/srm/article/view/369}.
+
+Jean-Claude Deville (1999). Variance estimation for complex statistics
+and estimators: linearization and residual techniques. Survey
+Methodology, 25, 193-203, URL
+\url{http://www5.statcan.gc.ca/bsolc/olc-cel/olc-cel?lang=eng&catno=12-001-X19990024882}.
 
 \chapter{Poverty Indices}\label{poverty}
 
@@ -249,8 +811,8 @@ importance and so on. We can use a book Djalma wrote.{]}
 quantiles and totals are measures of poverty. Consider another chapter
 on other wellbeing measures.{]}
 
-\section{At Risk of Poverty Ratio and Threshold (svyarpr and
-svyarpt)}\label{at-risk-of-poverty-ratio-and-threshold-svyarpr-and-svyarpt}
+\section{At Risk of Poverty Ratio and Threshold (svyarpr,
+svyarpt)}\label{at-risk-of-poverty-ratio-and-threshold-svyarpr-svyarpt}
 
 \section{The Gender Pay Gap (svygpg)}\label{the-gender-pay-gap-svygpg}
 
@@ -266,8 +828,8 @@ svyarpt)}\label{at-risk-of-poverty-ratio-and-threshold-svyarpr-and-svyarpt}
 \section{Median Income Below the At Risk of Poverty Threshold
 (svypoormed)}\label{median-income-below-the-at-risk-of-poverty-threshold-svypoormed}
 
-\section{Foster-Greer-Thorbecke
-class}\label{foster-greer-thorbecke-class}
+\section{Foster-Greer-Thorbecke class
+(svyfgt)}\label{foster-greer-thorbecke-class-svyfgt}
 
 \chapter{Inequality Measurement}\label{inequality}
 
@@ -288,18 +850,18 @@ Curve}\label{measures-derived-from-the-lorenz-curve}
 
 \subsection{Amato index (svyamato)}\label{amato-index-svyamato}
 
-\subsection{Zenga Index and Curve (svyzenga and
-svyzengacurve)}\label{zenga-index-and-curve-svyzenga-and-svyzengacurve}
+\subsection{Zenga Index and Curve (svyzenga,
+svyzengacurve)}\label{zenga-index-and-curve-svyzenga-svyzengacurve}
 
 \section{Entropy-based Measures}\label{entropy-based-measures}
 
 \subsection{Atkinson index (svyatk)}\label{atkinson-index-svyatk}
 
-\subsection{Generalized Entropy and Decomposition (svygei and
-svygeidec)}\label{generalized-entropy-and-decomposition-svygei-and-svygeidec}
+\subsection{Generalized Entropy and Decomposition (svygei,
+svygeidec)}\label{generalized-entropy-and-decomposition-svygei-svygeidec}
 
-\subsection{J-Divergence Entropy and Decomposition (svyjdiv and
-svyjdivdec)}\label{j-divergence-entropy-and-decomposition-svyjdiv-and-svyjdivdec}
+\subsection{J-Divergence Entropy and Decomposition (svyjdiv,
+svyjdivdec)}\label{j-divergence-entropy-and-decomposition-svyjdiv-svyjdivdec}
 
 \subsection{Rényi Divergence
 (svyrenyi)}\label{renyi-divergence-svyrenyi}
@@ -308,8 +870,8 @@ svyjdivdec)}\label{j-divergence-entropy-and-decomposition-svyjdiv-and-svyjdivdec
 
 We have finished a nice book.
 
-\section{Alkire-Foster Class and Decomposition (svyafc and
-svyafcdec)}\label{alkire-foster-class-and-decomposition-svyafc-and-svyafcdec}
+\section{Alkire-Foster Class and Decomposition (svyafc,
+svyafcdec)}\label{alkire-foster-class-and-decomposition-svyafc-svyafcdec}
 
 \section{Bourguignon (1999) inequality class
 (svybmi)}\label{bourguignon-1999-inequality-class-svybmi}

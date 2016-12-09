@@ -137,22 +137,106 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <div class="row">
 <div class="col-sm-12">
-<div id="header">
-<h1 class="title">Poverty and Inequality with Complex Survey Data</h1>
-<h4 class="author"><em>Guilherme Jacob, Anthony Damico, and Djalma Pessoa</em></h4>
-<h4 class="date"><em>2016-12-09</em></h4>
+<div id="structure-of-the-library" class="section level2">
+<h2><span class="header-section-number">1.8</span> Structure of the library</h2>
+<p>In the library convey, there are some basic functions that produces the linearized variables of some estimates that often enter in the definition of measures of concentration and poverty. For example the <code>quantile</code> which is linearized by the function <code>svyiqalpha</code>. Other example is the function <code>svyisq</code> that linearizes the total below a quantile of the variable.</p>
+<p>From the linearized variables of these basic estimates it is possible by using rules of composition, valid for influence functions, to derive the influence function of more complex estimates. By definition the influence function is a Gateaux derivative and the rules rules of composition valid for Gateaux derivatives also hold for Influence Functions.</p>
+<p>The following property of Gateaux derivatives was often used in the library convey. Let <span class="math inline">\(g\)</span> be a differentible function of <span class="math inline">\(m\)</span> variables. Suppose we want to compute the influence function of the estimator <span class="math inline">\(g(T_1, T_2,\ldots, T_m)\)</span>, knowing the Influence function of the estimators <span class="math inline">\(T_i, i=1,\ldots, m\)</span>. Then the following holds:</p>
+<p><span class="math display">\[
+I(g(T_1, T_2,\ldots, T_m)) = \sum_{i=1}^m \frac{\partial g}{\partial T_i}I(T_i)
+\]</span></p>
+<p>In the library convey this rule is implemented by the function <code>contrastinf</code> which uses the R function <code>deriv</code> to compute the formal partial derivatives <span class="math inline">\(\frac{\partial g}{\partial T_i}\)</span>.</p>
+<p>For example, suppose we want to linearize the <code>Relative median poverty gap</code>(rmpg), defined as the difference between the at-risk-of-poverty threshold (<code>arpt</code>) and the median of incomes less than the <code>arpt</code> relative to the <code>arprt</code>:</p>
+<p><span class="math display">\[
+rmpg= \frac{arpt-medpoor} {arpt}
+\]</span></p>
+<p>where <code>medpoor</code> is the median of incomes less than <code>arpt</code>.</p>
+<p>Suppose we know how to linearize <code>arpt</code> and <code>medpoor</code>, then by applying the function <code>contrastinf</code> with <span class="math display">\[
+g(T_1,T_2)= \frac{(T_1 - T_2)}{T_1}
+\]</span> we linearize the <code>rmpg</code>.</p>
+<div id="examples-of-use-of-the-library-convey" class="section level3">
+<h3><span class="header-section-number">1.8.1</span> Examples of use of the library convey</h3>
+<p>In the following examples we will use the data set <code>eusilc</code> contained in the libraries <code>vardpoor</code> and <code>Laeken</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(vardpoor)
+<span class="kw">data</span>(eusilc)</code></pre></div>
+<p>Next, we create an object of class <code>survey.design</code> using the function <code>svydesign</code> of the library survey:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(survey)
+des_eusilc &lt;-<span class="st"> </span><span class="kw">svydesign</span>(<span class="dt">ids =</span> ~rb030, <span class="dt">strata =</span>~db040,  <span class="dt">weights =</span> ~rb050, <span class="dt">data =</span> eusilc)</code></pre></div>
+<p>Right after the creation of the design object <code>des_eusilc</code>, we should use the function <code>convey_prep</code> that adds an attribute to the survey design which saves information on the design object based upon the whole sample, needed to work with subset designs.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(convey)
+des_eusilc &lt;-<span class="st"> </span><span class="kw">convey_prep</span>( des_eusilc )</code></pre></div>
+<p>To estimate the <code>at-risk-of-poverty rate</code> we use the function <code>svyarpt</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svyarpr</span>(~eqIncome, <span class="dt">design=</span>des_eusilc)</code></pre></div>
+<pre><code>            arpr     SE
+eqIncome 0.14444 0.0028</code></pre>
+<p>To estimate the <code>at-risk-of-poverty rate</code> for domains defined by the variable <code>db040</code> we use</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svyby</span>(~eqIncome, <span class="dt">by =</span> ~db040, <span class="dt">design =</span> des_eusilc, <span class="dt">FUN =</span> svyarpr, <span class="dt">deff =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<pre><code>                      db040  eqIncome          se
+Burgenland       Burgenland 0.1953984 0.017202243
+Carinthia         Carinthia 0.1308627 0.010610622
+Lower Austria Lower Austria 0.1384362 0.006517660
+Salzburg           Salzburg 0.1378734 0.011579280
+Styria               Styria 0.1437464 0.007452360
+Tyrol                 Tyrol 0.1530819 0.009880430
+Upper Austria Upper Austria 0.1088977 0.005928336
+Vienna               Vienna 0.1723468 0.007682826
+Vorarlberg       Vorarlberg 0.1653731 0.013754670</code></pre>
+<p>Using the same data set, we estimate the <code>quintile share ratio</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># for the whole population</span>
+<span class="kw">svyqsr</span>(~eqIncome, <span class="dt">design=</span>des_eusilc, <span class="dt">alpha=</span> .<span class="dv">20</span>)</code></pre></div>
+<pre><code>          qsr     SE
+eqIncome 3.97 0.0426</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># for domains</span>
+<span class="kw">svyby</span>(~eqIncome, <span class="dt">by =</span> ~db040, <span class="dt">design =</span> des_eusilc,
+  <span class="dt">FUN =</span> svyqsr, <span class="dt">alpha=</span> .<span class="dv">20</span>, <span class="dt">deff =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<pre><code>                      db040 eqIncome         se
+Burgenland       Burgenland 5.008486 0.32755685
+Carinthia         Carinthia 3.562404 0.10909726
+Lower Austria Lower Austria 3.824539 0.08783599
+Salzburg           Salzburg 3.768393 0.17015086
+Styria               Styria 3.464305 0.09364800
+Tyrol                 Tyrol 3.586046 0.13629739
+Upper Austria Upper Austria 3.668289 0.09310624
+Vienna               Vienna 4.654743 0.13135731
+Vorarlberg       Vorarlberg 4.366511 0.20532075</code></pre>
+<p>These functions can be used as S3 methods for the classes <code>survey.design</code> and <code>svyrep.design</code>.</p>
+<p>Let’s create a design object of class <code>svyrep.design</code> and run the function <code>convey_prep</code> on it:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">des_eusilc_rep &lt;-<span class="st"> </span><span class="kw">as.svrepdesign</span>(des_eusilc, <span class="dt">type =</span> <span class="st">&quot;bootstrap&quot;</span>)
+des_eusilc_rep &lt;-<span class="st"> </span><span class="kw">convey_prep</span>(des_eusilc_rep) </code></pre></div>
+<p>and then use the function <code>svyarpr</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svyarpr</span>(~eqIncome, <span class="dt">design=</span>des_eusilc_rep)</code></pre></div>
+<pre><code>            arpr     SE
+eqIncome 0.14444 0.0028</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svyby</span>(~eqIncome, <span class="dt">by =</span> ~db040, <span class="dt">design =</span> des_eusilc_rep, <span class="dt">FUN =</span> svyarpr, <span class="dt">deff =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<pre><code>                      db040  eqIncome se.eqIncome
+Burgenland       Burgenland 0.1953984 0.019608626
+Carinthia         Carinthia 0.1308627 0.011174396
+Lower Austria Lower Austria 0.1384362 0.006183738
+Salzburg           Salzburg 0.1378734 0.012360099
+Styria               Styria 0.1437464 0.006301315
+Tyrol                 Tyrol 0.1530819 0.009796202
+Upper Austria Upper Austria 0.1088977 0.005391640
+Vienna               Vienna 0.1723468 0.007556823
+Vorarlberg       Vorarlberg 0.1653731 0.013060147</code></pre>
+<p>The functions of the library convey are called in a similar way to the functions in library survey.</p>
+<p>It is also possible to deal with missing values by using the argument <code>na.rm</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># survey.design using a variable with missings</span>
+<span class="kw">svygini</span>( ~<span class="st"> </span>py010n , <span class="dt">design =</span> des_eusilc )</code></pre></div>
+<pre><code>       gini SE
+py010n   NA NA</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svygini</span>( ~<span class="st"> </span>py010n , <span class="dt">design =</span> des_eusilc , <span class="dt">na.rm =</span> <span class="ot">TRUE</span> )</code></pre></div>
+<pre><code>          gini     SE
+py010n 0.64606 0.0036</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># svyrep.design using a variable with missings</span>
+<span class="co"># svygini( ~ py010n , design = des_eusilc_rep ) get error</span>
+<span class="kw">svygini</span>( ~<span class="st"> </span>py010n , <span class="dt">design =</span> des_eusilc_rep , <span class="dt">na.rm =</span> <span class="ot">TRUE</span> )</code></pre></div>
+<pre><code>          gini     SE
+py010n 0.64606 0.0039</code></pre>
 </div>
-<div id="introduction" class="section level1">
-<h1><span class="header-section-number">Chapter 1</span> Introduction</h1>
-<p>This is a <em>sample</em> book written in <strong>Markdown</strong>. You can use anything that Pandoc’s Markdown supports, e.g., a math equation <span class="math inline">\(a^2 + b^2 = c^2\)</span>.</p>
-<p>For now, you have to install the development version of <strong>bookdown</strong> from Github:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools::<span class="kw">install_github</span>(<span class="st">&quot;rstudio/bookdown&quot;</span>)</code></pre></div>
-<p>Remember each Rmd file contains one and only one chapter, and a chapter is defined by the first-level heading <code>#</code>.</p>
-<p>To compile this example to PDF, you need to install XeLaTeX.</p>
-<p>The library convey aims at estimating measures of poverty and income concentration. There are already at least two libraries covering this subject: vardpoor and Laeken. The main difference between the library convey and these two is that the convey strongly hinges on the survey library.</p> 
 </div>
 <p style="text-align: center;">
-<a href="1-1-install.html"><button class="btn btn-default">Next</button></a>
+<a href="1-7-linearization-by-influence-function-examples.html"><button class="btn btn-default">Previous</button></a>
+<a href="1-9-fgt-indicator.html"><button class="btn btn-default">Next</button></a>
 </p>
 </div>
 </div>

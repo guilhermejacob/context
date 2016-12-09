@@ -137,22 +137,61 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <div class="row">
 <div class="col-sm-12">
-<div id="header">
-<h1 class="title">Poverty and Inequality with Complex Survey Data</h1>
-<h4 class="author"><em>Guilherme Jacob, Anthony Damico, and Djalma Pessoa</em></h4>
-<h4 class="date"><em>2016-12-09</em></h4>
+<div id="fgt-indicator" class="section level2">
+<h2><span class="header-section-number">1.9</span> FGT indicator</h2>
+<p>Foster and all(1984) proposed a family of indicators to measure poverty.</p>
+<p>The class of <span class="math inline">\(FGT\)</span> measures, can be defined as</p>
+<p><span class="math display">\[
+p=\frac{1}{N}\sum_{k\in U}h(y_{k},\theta ), 
+\]</span></p>
+<p>where</p>
+<p><span class="math display">\[
+h(y_{k},\theta )=\left[ \frac{(\theta -y_{k})}{\theta }\right] ^{\gamma
+}\delta \left\{ y_{k}\leq \theta \right\} , 
+\]</span></p>
+<p>where: <span class="math inline">\(\theta\)</span> is the poverty threshold; <span class="math inline">\(\delta\)</span> the indicator function that assigns value 1 if the condition <span class="math inline">\(\{y_{k}\leq \theta \}\)</span> is satisfied and 0 otherwise, and <span class="math inline">\(\gamma\)</span> is a non-negative constant.</p>
+<p>When <span class="math inline">\(\gamma =0\)</span>, <span class="math inline">\(p\)</span> can be interpreted as the ratio of poor people, and for <span class="math inline">\(\gamma \geq 1\)</span>, the weight of poor people increases with the value <span class="math inline">\(\gamma\)</span>, (Foster and all, 1984).</p>
+<p>The poverty measure FGT is implemented in the library convey by the function <code>svyfgt</code>. The argument <code>thresh_type</code> of this function defines the type of poverty threshold adopted. There are three possible choices:</p>
+<ol style="list-style-type: decimal">
+<li><code>abs</code> – fixed and given by the argument thresh_value</li>
+<li><code>relq</code> – a proportion of a quantile fixed by the argument <code>proportion</code> and the quantile is defined by the argument <code>order</code>.</li>
+<li><code>relm</code> – a proportion of the mean fixed the argument <code>proportion</code></li>
+</ol>
+<p>The quantile and the mean involved in the definition of the threshold are estimated for the whole population. When <span class="math inline">\(\gamma=0\)</span> and <span class="math inline">\(\theta= .6*MED\)</span> the measure is equal to the indicator <code>arpr</code> computed by the function <code>svyarpr</code>.</p>
+<p>Next, we give some examples of the function <code>svyfgt</code> to estimate the values of the FGT poverty index.</p>
+<p>Consider first the poverty threshold fixed (<span class="math inline">\(\gamma=0\)</span>) in the value <span class="math inline">\(10000\)</span>. The headcount ratio (FGT0) is</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svyfgt</span>(~eqIncome, des_eusilc, <span class="dt">g=</span><span class="dv">0</span>, <span class="dt">abs_thresh=</span><span class="dv">10000</span>)</code></pre></div>
+<pre><code>            fgt0     SE
+eqIncome 0.11444 0.0027</code></pre>
+<p>The poverty gap (FGT1) (<span class="math inline">\(\gamma=1\)</span>) index for the poverty threshold fixed at the same value is</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svyfgt</span>(~eqIncome, des_eusilc, <span class="dt">g=</span><span class="dv">1</span>, <span class="dt">abs_thresh=</span><span class="dv">10000</span>)</code></pre></div>
+<pre><code>             fgt1     SE
+eqIncome 0.032085 0.0011</code></pre>
+<p>To estimate the FGT0 with the poverty threshold fixed at <span class="math inline">\(0.6* MED\)</span> we fix the argument type_thresh=“relq” and use the default values for <code>percent</code> and <code>order</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svyfgt</span>(~eqIncome, des_eusilc, <span class="dt">g=</span><span class="dv">0</span>, <span class="dt">type_thresh=</span> <span class="st">&quot;relq&quot;</span>)</code></pre></div>
+<pre><code>            fgt0     SE
+eqIncome 0.14444 0.0028</code></pre>
+<p>that matches the estimate obtained by</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svyarpr</span>(~eqIncome, <span class="dt">design=</span>des_eusilc, .<span class="dv">5</span>, .<span class="dv">6</span>)</code></pre></div>
+<pre><code>            arpr     SE
+eqIncome 0.14444 0.0028</code></pre>
+<p>To estimate the poverty gap(FGT1) with the poverty threshold equal to <span class="math inline">\(0.6*MEAN\)</span> we use:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svyfgt</span>(~eqIncome, des_eusilc, <span class="dt">g=</span><span class="dv">1</span>, <span class="dt">type_thresh=</span> <span class="st">&quot;relm&quot;</span>)</code></pre></div>
+<pre><code>             fgt1     SE
+eqIncome 0.051187 0.0011</code></pre>
+<div id="references" class="section level3">
+<h3><span class="header-section-number">1.9.1</span> References</h3>
+<p>Berger, Y.G. e C.J. Skinner (to be published) - Variance Estimation for a Low-Income Proportion.</p>
+<p>Foster, K., J. Greer e E. Thornbecke (1984) - A Class of Decomposable Poverty Measure. Econometrica, 52, 761-766.</p>
+<p>Guillaume Osier (2009). Variance estimation for complex indicators of poverty and inequality. , Vol.3, No.3, pp. 167-195, ISSN 1864-3361, URL .</p>
+<p>Jean-Claude Deville (1999). Variance estimation for complex statistics and estimators: linearization and residual techniques. Survey Methodology, 25, 193-203, URL .</p>
+
 </div>
-<div id="introduction" class="section level1">
-<h1><span class="header-section-number">Chapter 1</span> Introduction</h1>
-<p>This is a <em>sample</em> book written in <strong>Markdown</strong>. You can use anything that Pandoc’s Markdown supports, e.g., a math equation <span class="math inline">\(a^2 + b^2 = c^2\)</span>.</p>
-<p>For now, you have to install the development version of <strong>bookdown</strong> from Github:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools::<span class="kw">install_github</span>(<span class="st">&quot;rstudio/bookdown&quot;</span>)</code></pre></div>
-<p>Remember each Rmd file contains one and only one chapter, and a chapter is defined by the first-level heading <code>#</code>.</p>
-<p>To compile this example to PDF, you need to install XeLaTeX.</p>
-<p>The library convey aims at estimating measures of poverty and income concentration. There are already at least two libraries covering this subject: vardpoor and Laeken. The main difference between the library convey and these two is that the convey strongly hinges on the survey library.</p> 
 </div>
+<!-- </div> -->
 <p style="text-align: center;">
-<a href="1-1-install.html"><button class="btn btn-default">Next</button></a>
+<a href="1-8-structure-of-the-library.html"><button class="btn btn-default">Previous</button></a>
+<a href="2-poverty.html"><button class="btn btn-default">Next</button></a>
 </p>
 </div>
 </div>
