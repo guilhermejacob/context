@@ -326,69 +326,6 @@ svygini( ~ py010n , design = des_eusilc , na.rm = TRUE )
 svygini( ~ py010n , design = des_eusilc_rep , na.rm = TRUE )
 ```
 
-## FGT indicator
-
-[@foster1984] proposed a family of indicators to measure poverty.
-
-The class of $FGT$ measures, can be defined as
-
-\[
-p=\frac{1}{N}\sum_{k\in U}h(y_{k},\theta ), 
-\]
-
-where
-
-\[
-h(y_{k},\theta )=\left[ \frac{(\theta -y_{k})}{\theta }\right] ^{\gamma
-}\delta \left\{ y_{k}\leq \theta \right\} , 
-\]
-
-where: $\theta$ is the poverty threshold; $\delta$ the indicator function that assigns value 1 if the condition $\{y_{k}\leq \theta \}$ is satisfied and 0 otherwise, and $\gamma$ is a non-negative constant. 
-
-When $\gamma =0$, $p$ can be interpreted as the ratio of poor people, and for   $\gamma \geq 1$, the weight of poor people increases with the value $\gamma$, (Foster and all, 1984).
-
-The poverty measure FGT is implemented in the library convey by the function `svyfgt`.
-The argument `thresh_type` of this function defines the type of poverty threshold adopted.
-There are three possible choices:
-
-1. `abs` -- fixed and given by the argument thresh_value
-2. `relq` -- a proportion of a quantile fixed by the argument `proportion` and the quantile is defined by the argument `order`.
-3. `relm` -- a proportion of the mean fixed the argument `proportion`
-
-The quantile and the mean involved in the definition of the threshold are estimated for the whole population. When $\gamma=0$ and $\theta= .6*MED$ the measure is equal to the indicator `arpr` computed by
-the function  `svyarpr`. 
-
-Next, we give some examples of the function `svyfgt` to estimate the values of the FGT poverty index.
-
-Consider first the poverty threshold fixed ($\gamma=0$) in the value $10000$. The headcount ratio (FGT0) is
-
-```{r comment=NA}
-svyfgt(~eqIncome, des_eusilc, g=0, abs_thresh=10000)
-```
-
-The poverty gap (FGT1) ($\gamma=1$) index for the poverty threshold fixed at the same value is
-
-```{r comment=NA}
-svyfgt(~eqIncome, des_eusilc, g=1, abs_thresh=10000)
-```
-
-To estimate the FGT0 with the poverty threshold fixed at $0.6* MED$ we fix the argument type_thresh="relq" and use the default values for  `percent`  and   `order`:
-
-```{r comment=NA}
-svyfgt(~eqIncome, des_eusilc, g=0, type_thresh= "relq")
-```
-that matches the estimate obtained by
-
-```{r comment=NA}
-svyarpr(~eqIncome, design=des_eusilc, .5, .6)
-```
-To estimate the poverty gap(FGT1) with the poverty threshold equal to $0.6*MEAN$
-we use:
-
-```{r comment=NA}
-svyfgt(~eqIncome, des_eusilc, g=1, type_thresh= "relm")
-```
-
 
 
 djalma, where do these references go on this page?  [@berger2003] and [@osier2009] and [@deville1999]
