@@ -124,7 +124,7 @@
   \postauthor{\par}
   \predate{\centering\large\emph}
   \postdate{\par}
-  \date{2016-12-11}
+  \date{2016-12-12}
 
 \usepackage{booktabs}
 
@@ -270,8 +270,26 @@ was built on top of R Markdown and \textbf{knitr} \citep{xie2015}.
 
 \section{Complex surveys and statistical inference}\label{survey}
 
-{[}I think we should have a discussion about what is complex survey, its
-importance and so on. We can use a book Djalma wrote.{]}
+In this book we estimate measures of poverty and income concentration in
+a populatiion, generaly of households or people, based on data colected
+from a complex survey sample from the population, involving
+
+1- different units selection probabilities;
+
+2- clustering of units;
+
+3- stratification of clusters, and
+
+4- reweighting to compensate missing values and other adjustments.
+
+Items 1 and 4 imply that we should use different units weights to avoid
+biases when performing statistical analysis. Also, when estimating
+variances, we should consider, not only the design weights but all
+listed design characteristics 1-4.
+
+In order to take into account the sample design characteristics it
+should be used a specialized software like the R library
+\textbf{survey}, adopted in this book.
 
 \section{Linearization}\label{linearization}
 
@@ -605,7 +623,7 @@ and then use the function \texttt{svyarpr}:
 
 \begin{verbatim}
             arpr     SE
-eqIncome 0.14444 0.0027
+eqIncome 0.14444 0.0026
 \end{verbatim}
 
 \begin{Shaded}
@@ -616,15 +634,15 @@ eqIncome 0.14444 0.0027
 
 \begin{verbatim}
                       db040  eqIncome se.eqIncome
-Burgenland       Burgenland 0.1953984 0.014386724
-Carinthia         Carinthia 0.1308627 0.011745104
-Lower Austria Lower Austria 0.1384362 0.005459143
-Salzburg           Salzburg 0.1378734 0.011503734
-Styria               Styria 0.1437464 0.009690370
-Tyrol                 Tyrol 0.1530819 0.008185308
-Upper Austria Upper Austria 0.1088977 0.005211512
-Vienna               Vienna 0.1723468 0.005518113
-Vorarlberg       Vorarlberg 0.1653731 0.014471655
+Burgenland       Burgenland 0.1953984 0.018689203
+Carinthia         Carinthia 0.1308627 0.009553109
+Lower Austria Lower Austria 0.1384362 0.007117437
+Salzburg           Salzburg 0.1378734 0.012108102
+Styria               Styria 0.1437464 0.007934822
+Tyrol                 Tyrol 0.1530819 0.010363268
+Upper Austria Upper Austria 0.1088977 0.006547004
+Vienna               Vienna 0.1723468 0.007168595
+Vorarlberg       Vorarlberg 0.1653731 0.011342068
 \end{verbatim}
 
 The functions of the library convey are called in a similar way to the
@@ -666,7 +684,7 @@ py010n 0.64606 0.0036
 
 \begin{verbatim}
           gini     SE
-py010n 0.64606 0.0045
+py010n 0.64606 0.0039
 \end{verbatim}
 
 djalma, where do these references go on this page? \citep{berger2003}
@@ -743,9 +761,9 @@ where: \(\theta\) is the poverty threshold; \(\delta\) the indicator
 function that assigns value 1 if the condition \(\{y_{k}\leq \theta \}\)
 is satisfied and 0 otherwise, and \(\gamma\) is a non-negative constant.
 
-When \(\gamma =0\), \(p\) can be interpreted as the ratio of poor
-people, and for \(\gamma \geq 1\), the weight of poor people increases
-with the value \(\gamma\), (Foster and all, 1984).
+When \(\gamma =0\), \(p\) can be interpreted as the poverty headcount
+ratio, and for \(\gamma \geq 1\), the weight of the income shortfall of
+the poor to a power \(\gamma\), (Foster and all, 1984).
 
 The poverty measure FGT is implemented in the library convey by the
 function \texttt{svyfgt}. The argument \texttt{thresh\_type} of this
@@ -846,34 +864,114 @@ eqIncome 0.051187 0.0011
 
 \chapter{Inequality Measurement}\label{inequality}
 
-{[}Present an introduction to what is inequality{]}.
-
-\section{Theoretical aspects of
-inequality}\label{theoretical-aspects-of-inequality}
-
-\subsection{Desirable properties of inequality
-measures}\label{desirable-properties-of-inequality-measures}
-
 \section{Lorenz Curve (svylorenz)}\label{lorenz-curve-svylorenz}
 
-here are the references
+Though not an inequality measure in itself, the Lorenz curve is a
+classic instrument of distribution analysis. Basically, it is a function
+that associates a cumulative share of the population and the share of
+the total income it owns. In mathematical terms,
 
-\citep{kovacevic1997} and \citep{lerman1989} and \citep{langel2012}
+\[
+L(p) = \frac{\int_{-\infty}^{Q_p}yf(y)dy}{\int_{-\infty}^{+\infty}yf(y)dy}
+\]
+
+where \(Q_p\) is the quantile \(p\) of the population.
+
+The two extreme distributive cases are
+
+\begin{itemize}
+\tightlist
+\item
+  Perfect equality:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Every individual has the same income;
+  \item
+    Every share of the population has the same share of the income;
+  \item
+    Therefore, the reference curve is
+    \[L(p) = p \text{ } \forall p \in [0,1] \text{.}\].
+  \end{itemize}
+\item
+  Perfect inequality:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    One individual concentrates all of society's income, while the other
+    individuals have zero income;
+  \item
+    Therefore, the reference curve is
+    \[L(p) = 0 \text{ } \forall p < 1\] and
+    \[L(p) = 1 \text{ if } p = 1 \text{.}\]
+  \end{itemize}
+\end{itemize}
+
+In order to evaluate the degree of inequality in a society, the analyst
+looks at the distance between the real curve and those two reference
+curves.
+
+The estimation procedures are based in the equation set out in
+\citep{kovacevic1997}:
+
+\[
+L(p) = \frac{1}{\widehat{Y}} \cdot \sum_{i \in S} y_i \text{ } \delta \{ y_i \le \widehat{ Q_p } \}, \text{ } 0 \le p \le 1.
+\]
+
+Yet, this formula is used to calulate specific points of the curve and
+their respective SEs. The formula to plot an approximation of the
+continous empirical curve comes from \citep{lerman1989}.
 
 \section{Measures derived from the Lorenz
 Curve}\label{measures-derived-from-the-lorenz-curve}
 
 \subsection{Gini index (svygini)}\label{gini-index-svygini}
 
-here are the references
+The Gini index is an attempt to express the inequality presented in the
+Lorenz curve as a single number. In essence, the Gini index is twice the
+area between the equality curve and the real Lorenz curve. Put simply:
 
-\citep{osier2009} and \citep{deville1999}
+\[
+\begin{aligned}
+G &= 2 \bigg( \int_{0}^{1} pdp - \int_{0}^{1} L(p)dp \bigg) \\
+\therefore G &= 1 - 2 \int_{0}^{1} L(p)dp
+\end{aligned}
+\]
+
+where \(G=0\) in case of perfect equality and \(G = 1\) in the case of
+perfect inequality.
+
+The estimator proposed by \citep{osier2009} is defined as:
+
+\[
+\widehat{G} = \frac{ 2 \sum_{i \in S} w_i r_i y_i - \sum_{i \in S} w_i y_i }{ \hat{Y} }
+\]
+
+The linearized formula of \(\widehat{G}\) is used to calculate the SE.
 
 \subsection{Amato index (svyamato)}\label{amato-index-svyamato}
 
-here are the references
+The amato index is also based on the Lorenz curve, but instead of
+focusing on the area of the curve, it focuses on its length.
+\citep{arnold2012} proposes a formula not directly based in the Lorenz
+curve, which \citep{barabesi2016} uses to present the following
+estimator:
 
-\citep{barabesi2016} and \citep{arnold2012}
+\[
+\widehat{A} = \sum_{i \in S} w_i \bigg[ \frac{1}{\widehat{N}^2} + \frac{y_i^2}{\widehat{Y}^2} \bigg]^{\frac{1}{2}} \text{,}
+\]
+
+which also generates the linearized formula for SE estimation.
+
+The minimun value \(A\) assumes is \(\sqrt{2}\) and the maximum is
+\(2\). In order to get a measure in the interval \([0,1]\), the
+standardized Amato index \(\widetilde{A}\) can be defined as:
+
+\[
+\widetilde{A} = \frac{ A - \sqrt{2} }{2 - \sqrt{2} } \text{ .}
+\]
 
 \subsection{Zenga Index and Curve (svyzenga,
 svyzengacurve)}\label{zenga-index-and-curve-svyzenga-svyzengacurve}

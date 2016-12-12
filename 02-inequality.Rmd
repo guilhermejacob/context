@@ -1,32 +1,73 @@
 # Inequality Measurement {#inequality}
 
-[Present an introduction to what is inequality].
-
-## Theoretical aspects of inequality
-
-### Desirable properties of inequality measures
-
 ## Lorenz Curve (svylorenz)
 
-here are the references
+Though not an inequality measure in itself, the Lorenz curve is a classic instrument of distribution analysis. Basically, it is a function that associates a cumulative share of the population and the share of the total income it owns. In mathematical terms, 
 
-[@kovacevic1997] and [@lerman1989] and [@langel2012]
+\[
+L(p) = \frac{\int_{-\infty}^{Q_p}yf(y)dy}{\int_{-\infty}^{+\infty}yf(y)dy}
+\]
+
+where $Q_p$ is the quantile $p$ of the population.
+
+The two extreme distributive cases are 
+
+- Perfect equality:
+    - Every individual has the same income;
+    - Every share of the population has the same share of the income;
+    - Therefore, the reference curve is \[L(p) = p \text{ } \forall p \in [0,1] \text{.}\].
+- Perfect inequality:
+    - One individual concentrates all of society's income, while the other individuals have zero income;
+    - Therefore, the reference curve is \[L(p) = 0 \text{ } \forall p < 1\] and \[L(p) = 1 \text{ if } p = 1 \text{.}\]
+    
+In order to evaluate the degree of inequality in a society, the analyst looks at the distance between the real curve and those two reference curves.
+
+The estimation procedures are based in the equation set out in [@kovacevic1997]:
+
+\[
+L(p) = \frac{1}{\widehat{Y}} \cdot \sum_{i \in S} y_i \text{ } \delta \{ y_i \le \widehat{ Q_p } \}, \text{ } 0 \le p \le 1.
+\]
+
+Yet, this formula is used to calulate specific points of the curve and their respective SEs. The formula to plot an approximation of the continous empirical curve comes from [@lerman1989].
 
 ## Measures derived from the Lorenz Curve
 
 ### Gini index (svygini)
 
-here are the references
+The Gini index is an attempt to express the inequality presented in the Lorenz curve as a single number. In essence, the Gini index is twice the area between the equality curve and the real Lorenz curve. Put simply:
 
-[@osier2009] and [@deville1999]
+\[
+\begin{aligned}
+G &= 2 \bigg( \int_{0}^{1} pdp - \int_{0}^{1} L(p)dp \bigg) \\
+\therefore G &= 1 - 2 \int_{0}^{1} L(p)dp
+\end{aligned}
+\]
+
+where $G=0$ in case of perfect equality and $G = 1$ in the case of perfect inequality.
+
+The estimator proposed by [@osier2009] is defined as:
+
+\[
+\widehat{G} = \frac{ 2 \sum_{i \in S} w_i r_i y_i - \sum_{i \in S} w_i y_i }{ \hat{Y} }
+\]
+
+The linearized formula of $\widehat{G}$ is used to calculate the SE.
 
 ### Amato index (svyamato)
 
-here are the references
+The amato index is also based on the Lorenz curve, but instead of focusing on the area of the curve, it focuses on its length. [@arnold2012] proposes a formula not directly based in the Lorenz curve, which [@barabesi2016] uses to present the following estimator:
 
-[@barabesi2016] and [@arnold2012]
+\[
+\widehat{A} = \sum_{i \in S} w_i \bigg[ \frac{1}{\widehat{N}^2} + \frac{y_i^2}{\widehat{Y}^2} \bigg]^{\frac{1}{2}} \text{,}
+\]
 
+which also generates the linearized formula for SE estimation.
 
+The minimun value $A$ assumes is $\sqrt{2}$ and the maximum is $2$. In order to get a measure in the interval $[0,1]$, the standardized Amato index $\widetilde{A}$ can be defined as:
+
+\[
+\widetilde{A} = \frac{ A - \sqrt{2} }{2 - \sqrt{2} } \text{ .}
+\]
 
 ### Zenga Index and Curve (svyzenga, svyzengacurve)
 
