@@ -623,7 +623,7 @@ and then use the function \texttt{svyarpr}:
 
 \begin{verbatim}
             arpr     SE
-eqIncome 0.14444 0.0029
+eqIncome 0.14444 0.0023
 \end{verbatim}
 
 \begin{Shaded}
@@ -634,15 +634,15 @@ eqIncome 0.14444 0.0029
 
 \begin{verbatim}
                       db040  eqIncome se.eqIncome
-Burgenland       Burgenland 0.1953984 0.018439531
-Carinthia         Carinthia 0.1308627 0.010765589
-Lower Austria Lower Austria 0.1384362 0.006077031
-Salzburg           Salzburg 0.1378734 0.011235819
-Styria               Styria 0.1437464 0.007493394
-Tyrol                 Tyrol 0.1530819 0.009819842
-Upper Austria Upper Austria 0.1088977 0.005622800
-Vienna               Vienna 0.1723468 0.008510874
-Vorarlberg       Vorarlberg 0.1653731 0.012721018
+Burgenland       Burgenland 0.1953984 0.016242308
+Carinthia         Carinthia 0.1308627 0.009783682
+Lower Austria Lower Austria 0.1384362 0.006227296
+Salzburg           Salzburg 0.1378734 0.012267390
+Styria               Styria 0.1437464 0.007895757
+Tyrol                 Tyrol 0.1530819 0.010219927
+Upper Austria Upper Austria 0.1088977 0.005014435
+Vienna               Vienna 0.1723468 0.006520147
+Vorarlberg       Vorarlberg 0.1653731 0.013101525
 \end{verbatim}
 
 The functions of the library convey are called in a similar way to the
@@ -1019,10 +1019,10 @@ equal to \(y_i\).
 \section{Entropy-based Measures}\label{entropy-based-measures}
 
 Entropy is a concept derived from information theory, meaning the
-expected amount of information given the occurence of an event.
+expected amount of information given the occurrence of an event.
 Following \citep{shannon1948}, given an event \(y\) with probability
 density function \(f(\cdot)\), the information content given the
-ocurrence of \(y\) can be defined as \(g(f(y)) \colon= - \log f(y)\).
+occurrence of \(y\) can be defined as \(g(f(y)) \colon= - \log f(y)\).
 Therefore, the expected information or, put simply, the \emph{entropy}
 is
 
@@ -1031,14 +1031,14 @@ H(f) \colon = -E \big[ \log f(y) \big] = - \int_{-\infty}^{\infty} f(y) \log f(y
 \]
 
 Assuming a discrete distribution, with \(p_k\) as the probability of
-ocurring event \(k \in K\), the entropy formula takes the form:
+occurring event \(k \in K\), the entropy formula takes the form:
 
 \[
 H = - \sum_{k \in K} p_k \log p_k \text{.}
 \]
 
 The main idea behind it is that the expected amount of information of an
-event is inversely proportional to the probability of its ocurrence. In
+event is inversely proportional to the probability of its occurrence. In
 other words, the information derived from the observation of a rare
 event is higher than of the information of more probable events.
 
@@ -1058,11 +1058,48 @@ behind entropy-based inequality measures.
 \subsection{Generalized Entropy and Decomposition (svygei,
 svygeidec)}\label{generalized-entropy-and-decomposition-svygei-svygeidec}
 
-guilherme..this has three references? not just two?
+Using a generalization of the information function, now defined as
+\(g(f) = \frac{1}{\alpha-1} [ 1 - f^{\alpha - 1} ]\), the
+\(\alpha\)-class entropy is \[
+H_\alpha(f) = \frac{1}{\alpha - 1} \bigg[ 1 - \int_{-\infty}^{\infty} f(y)^{ \alpha - 1} f(y) dy \bigg] \text{.}
+\]
 
-here are the references
+This relates to a class of inequality measures, the Generalized entropy
+indices, defined as:
 
-\citep{langel2012} and \citep{biewen2003} and \citep{shorrocks1984}
+\[
+GEI_\alpha = \frac{1}{\alpha^2 - \alpha} \int_{0}^\infty \bigg[ \bigg( \frac{y}{\mu} \bigg)^\alpha - 1 \bigg]dF(x) = - \frac{-H_\alpha(s) }{ \alpha } \text{.}
+\]
+
+The parameter \(\alpha\) also has an economic interpretation: as
+\(\alpha\) increases, the influence of top incomes upon the index
+increases. In some cases, this measure takes special forms, such as mean
+log deviation and the aforementioned Theil index.
+
+In order to estimate it, \citep{biewen2003} proposed the following:
+
+\[
+GE_\alpha =
+\begin{cases}
+( \alpha^2 - \alpha)^{-1} \big[ U_0^{\alpha - 1} U_1^{-\alpha} U_\alpha -1 \big], &\alpha \in \mathbb{R} \setminus \{0,1\} \\
+- T_0 U_0^{-1} + \log ( U_1 / U_0 ), &\alpha \rightarrow 0 \\
+- T_1 U_1^{-1} - \log ( U_1 / U_0 ), &\alpha \rightarrow 1
+\end{cases}
+\]
+
+where \(U_\gamma = \sum_{i \in S} w_i \cdot y_i^\gamma\) and
+\(T_\gamma = \sum_{i \in S} w_i \cdot y_i^\gamma \cdot \log y_i\). since
+those are all functions of totals, the linearization of the indices are
+easily achieved using the theorems described in \citep{deville1999}.
+
+This class also has several desirable properties, such as additive
+decomposition. The additive decomposition allows to compare the effects
+of inequality within and between population groups on the population
+inequality. Put simply, an additive decomposable index allows for:
+
+\[
+I_{Total} = I_{Between} + I_{Within} \text{.}
+\]
 
 \subsection{Rényi Divergence
 (svyrenyi)}\label{renyi-divergence-svyrenyi}
@@ -1071,8 +1108,8 @@ here are the references
 
 \citep{langel2012}
 
-\subsection{J-Divergence Entropy and Decomposition (svyjdiv,
-svyjdivdec)}\label{j-divergence-entropy-and-decomposition-svyjdiv-svyjdivdec}
+\subsection{J-Divergence and Decomposition (svyjdiv,
+svyjdivdec)}\label{j-divergence-and-decomposition-svyjdiv-svyjdivdec}
 
 here are the references
 
