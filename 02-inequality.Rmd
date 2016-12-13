@@ -18,7 +18,15 @@ The two extreme distributive cases are
     - Therefore, the reference curve is \[L(p) = p \text{ } \forall p \in [0,1] \text{.}\].
 - Perfect inequality:
     - One individual concentrates all of society's income, while the other individuals have zero income;
-    - Therefore, the reference curve is \[L(p) = 0 \text{ } \forall p < 1\] and \[L(p) = 1 \text{ if } p = 1 \text{.}\]
+    - Therefore, the reference curve is 
+    
+\[
+L(p)=
+\begin{cases}
+0, &\forall p < 1 \\
+1, &\text{if } p = 1 \text{.}
+\end{cases}
+\]
     
 In order to evaluate the degree of inequality in a society, the analyst looks at the distance between the real curve and those two reference curves.
 
@@ -28,7 +36,7 @@ The estimation procedures are based in the equation set out in [@kovacevic1997]:
 L(p) = \frac{1}{\widehat{Y}} \cdot \sum_{i \in S} y_i \text{ } \delta \{ y_i \le \widehat{ Q_p } \}, \text{ } 0 \le p \le 1.
 \]
 
-Yet, this formula is used to calulate specific points of the curve and their respective SEs. The formula to plot an approximation of the continous empirical curve comes from [@lerman1989].
+Yet, this formula is used to calculate specific points of the curve and their respective SEs. The formula to plot an approximation of the continuous empirical curve comes from [@lerman1989].
 
 ## Measures derived from the Lorenz Curve
 
@@ -55,7 +63,7 @@ The linearized formula of $\widehat{G}$ is used to calculate the SE.
 
 ### Amato index (svyamato)
 
-The amato index is also based on the Lorenz curve, but instead of focusing on the area of the curve, it focuses on its length. [@arnold2012] proposes a formula not directly based in the Lorenz curve, which [@barabesi2016] uses to present the following estimator:
+The Amato index is also based on the Lorenz curve, but instead of focusing on the area of the curve, it focuses on its length. [@arnold2012] proposes a formula not directly based in the Lorenz curve, which [@barabesi2016] uses to present the following estimator:
 
 \[
 \widehat{A} = \sum_{i \in S} w_i \bigg[ \frac{1}{\widehat{N}^2} + \frac{y_i^2}{\widehat{Y}^2} \bigg]^{\frac{1}{2}} \text{,}
@@ -63,7 +71,7 @@ The amato index is also based on the Lorenz curve, but instead of focusing on th
 
 which also generates the linearized formula for SE estimation.
 
-The minimun value $A$ assumes is $\sqrt{2}$ and the maximum is $2$. In order to get a measure in the interval $[0,1]$, the standardized Amato index $\widetilde{A}$ can be defined as:
+The minimum value $A$ assumes is $\sqrt{2}$ and the maximum is $2$. In order to get a measure in the interval $[0,1]$, the standardized Amato index $\widetilde{A}$ can be defined as:
 
 \[
 \widetilde{A} = \frac{ A - \sqrt{2} }{2 - \sqrt{2} } \text{ .}
@@ -71,10 +79,32 @@ The minimun value $A$ assumes is $\sqrt{2}$ and the maximum is $2$. In order to 
 
 ### Zenga Index and Curve (svyzenga, svyzengacurve)
 
-svyzenga: [@barabesi2016] and [@langel2012] and [@deville1999]
+The Zenga index and its curve were proposed in [@zenga2007]. As [@polisicchio2011] noticed, this curve derives directly from the Lorenz curve, and can be defined as:
 
-svyzengacurve: [@barabesi2016] and [@langel2012] and [@deville1999] and [@polisicchio2011]
+\[
+Z(p) = 1 - \frac{L(p)}{p} \cdot \frac{1 - p}{1 - L(p)}.
+\]
 
+In the `convey` library, an experimental estimator based on the Lorenz curve is used:
+
+\[
+\widehat{Z(p)} = \frac{ p \widehat{Y} - \widehat{\widetilde{Y}}(p) }{p \big[ \widehat{Y} - \widehat{\widetilde{Y}}(p) \big] }.
+\]
+
+In turn, the Zenga index derives from this curve and is defined as:
+
+\[
+Z = \int_0^1 Z(p)dp.
+\]
+
+However, its estimators were proposed by [@langel2012] and [@barabesi2016]. In this library, latter is used and is defined as:
+
+\[
+\widehat{Z} = 1 - \sum_{i \in S} w_i \bigg[ \frac{ ( \widehat{N} - \widehat{H}_{y_i} ) ( \widehat{Y} -\widehat{K}_{y_i} ) }
+{ \widehat{N} \cdot \widehat{H}_{y_i} \cdot \widehat{K}_{y_i} } \bigg]
+\]
+
+where $\widehat{N}$ is the population total, $\widehat{Y}$ is the total income, $\widehat{H}_{y_i}$ is the sum of incomes below or equal to $y_i$ and $\widehat{N}_{y_i}$ is the sum of incomes greater or equal to $y_i$.
 
 ## Entropy-based Measures
 
