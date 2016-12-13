@@ -124,7 +124,7 @@
   \postauthor{\par}
   \predate{\centering\large\emph}
   \postdate{\par}
-  \date{2016-12-12}
+  \date{2016-12-13}
 
 \usepackage{booktabs}
 
@@ -623,7 +623,7 @@ and then use the function \texttt{svyarpr}:
 
 \begin{verbatim}
             arpr     SE
-eqIncome 0.14444 0.0027
+eqIncome 0.14444 0.0031
 \end{verbatim}
 
 \begin{Shaded}
@@ -634,15 +634,15 @@ eqIncome 0.14444 0.0027
 
 \begin{verbatim}
                       db040  eqIncome se.eqIncome
-Burgenland       Burgenland 0.1953984 0.022949781
-Carinthia         Carinthia 0.1308627 0.010268310
-Lower Austria Lower Austria 0.1384362 0.007412526
-Salzburg           Salzburg 0.1378734 0.011911145
-Styria               Styria 0.1437464 0.006892155
-Tyrol                 Tyrol 0.1530819 0.010561909
-Upper Austria Upper Austria 0.1088977 0.005469263
-Vienna               Vienna 0.1723468 0.007605135
-Vorarlberg       Vorarlberg 0.1653731 0.012655671
+Burgenland       Burgenland 0.1953984 0.021363240
+Carinthia         Carinthia 0.1308627 0.012151770
+Lower Austria Lower Austria 0.1384362 0.006430707
+Salzburg           Salzburg 0.1378734 0.010671215
+Styria               Styria 0.1437464 0.008176740
+Tyrol                 Tyrol 0.1530819 0.010922019
+Upper Austria Upper Austria 0.1088977 0.006256159
+Vienna               Vienna 0.1723468 0.007066296
+Vorarlberg       Vorarlberg 0.1653731 0.014803189
 \end{verbatim}
 
 The functions of the library convey are called in a similar way to the
@@ -684,7 +684,7 @@ py010n 0.64606 0.0036
 
 \begin{verbatim}
           gini     SE
-py010n 0.64606 0.0035
+py010n 0.64606 0.0032
 \end{verbatim}
 
 djalma, where do these references go on this page? \citep{berger2003}
@@ -904,25 +904,32 @@ The two extreme distributive cases are
     individuals have zero income;
   \item
     Therefore, the reference curve is
-    \[L(p) = 0 \text{ } \forall p < 1\] and
-    \[L(p) = 1 \text{ if } p = 1 \text{.}\]
   \end{itemize}
 \end{itemize}
+
+\[
+L(p)=
+\begin{cases}
+0, &\forall p < 1 \\
+1, &\text{if } p = 1 \text{.}
+\end{cases}
+\]
 
 In order to evaluate the degree of inequality in a society, the analyst
 looks at the distance between the real curve and those two reference
 curves.
 
-The estimation procedures are based in the equation set out in
-\citep{kovacevic1997}:
+Although the most common results are based in \citep{kovacevic1997}, the
+estimator adopted here is based in the partial sum \(\widetilde{Y}_p\)
+set out in \citep{langel2012}:
 
 \[
-L(p) = \frac{1}{\widehat{Y}} \cdot \sum_{i \in S} y_i \text{ } \delta \{ y_i \le \widehat{ Q_p } \}, \text{ } 0 \le p \le 1.
+L(p) = \frac{\widehat{\widetilde{Y}}_p}{\widehat{Y}}, \text{ } 0 \le p \le 1.
 \]
 
-Yet, this formula is used to calulate specific points of the curve and
+Yet, this formula is used to calculate specific points of the curve and
 their respective SEs. The formula to plot an approximation of the
-continous empirical curve comes from \citep{lerman1989}.
+continuous empirical curve comes from \citep{lerman1989}.
 
 \section{Measures derived from the Lorenz
 Curve}\label{measures-derived-from-the-lorenz-curve}
@@ -953,7 +960,7 @@ The linearized formula of \(\widehat{G}\) is used to calculate the SE.
 
 \subsection{Amato index (svyamato)}\label{amato-index-svyamato}
 
-The amato index is also based on the Lorenz curve, but instead of
+The Amato index is also based on the Lorenz curve, but instead of
 focusing on the area of the curve, it focuses on its length.
 \citep{arnold2012} proposes a formula not directly based in the Lorenz
 curve, which \citep{barabesi2016} uses to present the following
@@ -965,7 +972,7 @@ estimator:
 
 which also generates the linearized formula for SE estimation.
 
-The minimun value \(A\) assumes is \(\sqrt{2}\) and the maximum is
+The minimum value \(A\) assumes is \(\sqrt{2}\) and the maximum is
 \(2\). In order to get a measure in the interval \([0,1]\), the
 standardized Amato index \(\widetilde{A}\) can be defined as:
 
@@ -976,11 +983,40 @@ standardized Amato index \(\widetilde{A}\) can be defined as:
 \subsection{Zenga Index and Curve (svyzenga,
 svyzengacurve)}\label{zenga-index-and-curve-svyzenga-svyzengacurve}
 
-svyzenga: \citep{barabesi2016} and \citep{langel2012} and
-\citep{deville1999}
+The Zenga index and its curve were proposed in \citep{zenga2007}. As
+\citep{polisicchio2011} noticed, this curve derives directly from the
+Lorenz curve, and can be defined as:
 
-svyzengacurve: \citep{barabesi2016} and \citep{langel2012} and
-\citep{deville1999} and \citep{polisicchio2011}
+\[
+Z(p) = 1 - \frac{L(p)}{p} \cdot \frac{1 - p}{1 - L(p)}.
+\]
+
+In the \texttt{convey} library, an experimental estimator based on the
+Lorenz curve is used:
+
+\[
+\widehat{Z(p)} = \frac{ p \widehat{Y} - \widehat{\widetilde{Y}}(p) }{p \big[ \widehat{Y} - \widehat{\widetilde{Y}}(p) \big] }.
+\]
+
+In turn, the Zenga index derives from this curve and is defined as:
+
+\[
+Z = \int_0^1 Z(p)dp.
+\]
+
+However, its estimators were proposed by \citep{langel2012} and
+\citep{barabesi2016}. In this library, the latter is used and is defined
+as:
+
+\[
+\widehat{Z} = 1 - \sum_{i \in S} w_i \bigg[ \frac{ ( \widehat{N} - \widehat{H}_{y_i} ) ( \widehat{Y} -\widehat{K}_{y_i} ) }
+{ \widehat{N} \cdot \widehat{H}_{y_i} \cdot \widehat{K}_{y_i} } \bigg]
+\]
+
+where \(\widehat{N}\) is the population total, \(\widehat{Y}\) is the
+total income, \(\widehat{H}_{y_i}\) is the sum of incomes below or equal
+to \(y_i\) and \(\widehat{N}_{y_i}\) is the sum of incomes greater or
+equal to \(y_i\).
 
 \section{Entropy-based Measures}\label{entropy-based-measures}
 
