@@ -15,7 +15,7 @@ The two extreme distributive cases are
 - Perfect equality:
     - Every individual has the same income;
     - Every share of the population has the same share of the income;
-    - Therefore, the reference curve is \[L(p) = p \text{ } \forall p \in [0,1] \text{.}\].
+    - Therefore, the reference curve is \[L(p) = p \text{ } \forall p \in [0,1] \text{.}\]
 - Perfect inequality:
     - One individual concentrates all of society's income, while the other individuals have zero income;
     - Therefore, the reference curve is 
@@ -42,7 +42,7 @@ Yet, this formula is used to calculate specific points of the curve and their re
 
 ### Gini index (svygini)
 
-The Gini index is an attempt to express the inequality presented in the Lorenz curve as a single number. In essence, the Gini index is twice the area between the equality curve and the real Lorenz curve. Put simply:
+The Gini index is an attempt to express the inequality presented in the Lorenz curve as a single number. In essence, it is twice the area between the equality curve and the real Lorenz curve. Put simply:
 
 \[
 \begin{aligned}
@@ -140,7 +140,7 @@ H_\alpha(f) = \frac{1}{\alpha - 1} \bigg[ 1 - \int_{-\infty}^{\infty} f(y)^{ \al
 This relates to a class of inequality measures, the Generalized entropy indices, defined as:
 
 \[
-GEI_\alpha = \frac{1}{\alpha^2 - \alpha} \int_{0}^\infty \bigg[ \bigg( \frac{y}{\mu} \bigg)^\alpha - 1 \bigg]dF(x) = - \frac{-H_\alpha(s) }{ \alpha } \text{.}
+GE_\alpha = \frac{1}{\alpha^2 - \alpha} \int_{0}^\infty \bigg[ \bigg( \frac{y}{\mu} \bigg)^\alpha - 1 \bigg]dF(x) = - \frac{-H_\alpha(s) }{ \alpha } \text{.}
 \]
 
 The parameter $\alpha$ also has an economic interpretation: as $\alpha$ increases, the influence of top incomes upon the index increases. In some cases, this measure takes special forms, such as mean log deviation and the aforementioned Theil index.
@@ -150,9 +150,9 @@ In order to estimate it, [@biewen2003] proposed the following:
 \[
 GE_\alpha =
 \begin{cases}
-( \alpha^2 - \alpha)^{-1} \big[ U_0^{\alpha - 1} U_1^{-\alpha} U_\alpha -1 \big], &\alpha \in \mathbb{R} \setminus \{0,1\} \\
-- T_0 U_0^{-1} + \log ( U_1 / U_0 ), &\alpha \rightarrow 0 \\
-- T_1 U_1^{-1} - \log ( U_1 / U_0 ), &\alpha \rightarrow 1
+( \alpha^2 - \alpha)^{-1} \big[ U_0^{\alpha - 1} U_1^{-\alpha} U_\alpha -1 \big], & \text{if } \alpha \in \mathbb{R} \setminus \{0,1\} \\
+- T_0 U_0^{-1} + \log ( U_1 / U_0 ), &\text{if } \alpha \rightarrow 0 \\
+- T_1 U_1^{-1} - \log ( U_1 / U_0 ), & \text{if } \alpha \rightarrow 1
 \end{cases}
 \]
 
@@ -166,19 +166,46 @@ I_{Total} = I_{Between} + I_{Within} \text{.}
 
 ### Rényi Divergence (svyrenyi)
 
-here are the references
+Another measure used in areas like ecology, statistics and information theory is Rényi divergence measure. Using the formula defined in [@langel2012], the estimator can be defined as:
 
-[@langel2012]
+\[
+\widehat{R}_\alpha =
+\begin{cases}
+\frac{1}{\alpha - 1} \log \bigg[ \widehat{N}^{\alpha - 1} \sum_{i \in S} w_i \cdot \bigg( \frac{y_k}{ \widehat{Y} } \bigg) \bigg], &\text{if } \alpha \neq 1, \\
+\sum_{i \in S} \frac{w_i y_i}{ \widehat{Y}} \log \frac{\widehat{N} y_i}{\widehat{Y}}, &\text{if } \alpha = 1,
+\end{cases}
+\]
+
+where $\alpha$ is a parameter with a similar economic interpretation to that of the $GE_\alpha$ index.
 
 ### J-Divergence and Decomposition (svyjdiv, svyjdivdec)
 
-here are the references
+Proposed by [@rohde2016], the J-divergence measure can be seen as the sum of $GE_0$ and $GE_1$, satisfying axioms that, individually, those two indices do not. Using $U_\gamma$ and $T_\gamma$ functions defined in \ref{subsection.3.3.1}, the estimator can be defined as:
 
-[@shorrocks1984] and [@rohde2016] and [@biewen2003]
+\[
+\begin{aligned}
+\widehat{J} &= \frac{1}{\widehat{N}} \sum_{i \in S} w_i \bigg( \frac{ y_i - \widehat{\mu} }{ \widehat{\mu} } \bigg) \log \bigg( \frac{y_i}{\widehat{\mu}} \bigg) \\
+\therefore \widehat{J} &= \frac{\widehat{T}_1}{\widehat{U}_1} - \frac{ \widehat{T}_0 }{ \widehat{U}_0 }
+\end{aligned}
+\]
+
+Since it is a sum of two additive decomposable measures, $J$ itself is decomposable.
 
 ### Atkinson index (svyatk)
 
-here are the references
+Although the original formula was proposed in [@atkinson1970], the estimator used here comes from [@biewen2003]:
 
-[@langel2012] and [@biewen2003]
+\[
+\widehat{A}_\epsilon =
+\begin{cases}
+ 1 - \widehat{U}_0^{ - \epsilon/(1 - \epsilon) } \widehat{U}_1^{ -1 } \widehat{U}_{1 - \epsilon}^{ 1/(1 - \epsilon) } , &\text{if } \epsilon \in \mathbb{R}_+ \setminus\{ 1 \} \\
+1 - \widehat{U}_0 \widehat{U}_0^{-1} exp( \widehat{T}_0 \widehat{U}_0^{-1} ), &\text{if } \epsilon \rightarrow1
+\end{cases}
+\]
+
+The $\epsilon$ is an inequality aversion parameter: as it approaches infinity, more weight is given to incomes in bottom of the distribution.
+
+## Examples
+
+### Replicanting Barabesi et al. (2016)
 

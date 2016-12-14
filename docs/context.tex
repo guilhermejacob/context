@@ -124,7 +124,7 @@
   \postauthor{\par}
   \predate{\centering\large\emph}
   \postdate{\par}
-  \date{2016-12-13}
+  \date{2016-12-14}
 
 \usepackage{booktabs}
 
@@ -623,7 +623,7 @@ and then use the function \texttt{svyarpr}:
 
 \begin{verbatim}
             arpr     SE
-eqIncome 0.14444 0.0023
+eqIncome 0.14444 0.0026
 \end{verbatim}
 
 \begin{Shaded}
@@ -634,15 +634,15 @@ eqIncome 0.14444 0.0023
 
 \begin{verbatim}
                       db040  eqIncome se.eqIncome
-Burgenland       Burgenland 0.1953984 0.016242308
-Carinthia         Carinthia 0.1308627 0.009783682
-Lower Austria Lower Austria 0.1384362 0.006227296
-Salzburg           Salzburg 0.1378734 0.012267390
-Styria               Styria 0.1437464 0.007895757
-Tyrol                 Tyrol 0.1530819 0.010219927
-Upper Austria Upper Austria 0.1088977 0.005014435
-Vienna               Vienna 0.1723468 0.006520147
-Vorarlberg       Vorarlberg 0.1653731 0.013101525
+Burgenland       Burgenland 0.1953984 0.017932600
+Carinthia         Carinthia 0.1308627 0.011208828
+Lower Austria Lower Austria 0.1384362 0.006237351
+Salzburg           Salzburg 0.1378734 0.010438844
+Styria               Styria 0.1437464 0.007190405
+Tyrol                 Tyrol 0.1530819 0.009214989
+Upper Austria Upper Austria 0.1088977 0.005474504
+Vienna               Vienna 0.1723468 0.006993096
+Vorarlberg       Vorarlberg 0.1653731 0.015200126
 \end{verbatim}
 
 The functions of the library convey are called in a similar way to the
@@ -684,7 +684,7 @@ py010n 0.64606 0.0036
 
 \begin{verbatim}
           gini     SE
-py010n 0.64606 0.0036
+py010n 0.64606 0.0028
 \end{verbatim}
 
 djalma, where do these references go on this page? \citep{berger2003}
@@ -892,7 +892,7 @@ The two extreme distributive cases are
     Every share of the population has the same share of the income;
   \item
     Therefore, the reference curve is
-    \[L(p) = p \text{ } \forall p \in [0,1] \text{.}\].
+    \[L(p) = p \text{ } \forall p \in [0,1] \text{.}\]
   \end{itemize}
 \item
   Perfect inequality:
@@ -935,8 +935,8 @@ Curve}\label{measures-derived-from-the-lorenz-curve}
 \subsection{Gini index (svygini)}\label{gini-index-svygini}
 
 The Gini index is an attempt to express the inequality presented in the
-Lorenz curve as a single number. In essence, the Gini index is twice the
-area between the equality curve and the real Lorenz curve. Put simply:
+Lorenz curve as a single number. In essence, it is twice the area
+between the equality curve and the real Lorenz curve. Put simply:
 
 \[
 \begin{aligned}
@@ -1068,7 +1068,7 @@ This relates to a class of inequality measures, the Generalized entropy
 indices, defined as:
 
 \[
-GEI_\alpha = \frac{1}{\alpha^2 - \alpha} \int_{0}^\infty \bigg[ \bigg( \frac{y}{\mu} \bigg)^\alpha - 1 \bigg]dF(x) = - \frac{-H_\alpha(s) }{ \alpha } \text{.}
+GE_\alpha = \frac{1}{\alpha^2 - \alpha} \int_{0}^\infty \bigg[ \bigg( \frac{y}{\mu} \bigg)^\alpha - 1 \bigg]dF(x) = - \frac{-H_\alpha(s) }{ \alpha } \text{.}
 \]
 
 The parameter \(\alpha\) also has an economic interpretation: as
@@ -1081,9 +1081,9 @@ In order to estimate it, \citep{biewen2003} proposed the following:
 \[
 GE_\alpha =
 \begin{cases}
-( \alpha^2 - \alpha)^{-1} \big[ U_0^{\alpha - 1} U_1^{-\alpha} U_\alpha -1 \big], &\alpha \in \mathbb{R} \setminus \{0,1\} \\
-- T_0 U_0^{-1} + \log ( U_1 / U_0 ), &\alpha \rightarrow 0 \\
-- T_1 U_1^{-1} - \log ( U_1 / U_0 ), &\alpha \rightarrow 1
+( \alpha^2 - \alpha)^{-1} \big[ U_0^{\alpha - 1} U_1^{-\alpha} U_\alpha -1 \big], & \text{if } \alpha \in \mathbb{R} \setminus \{0,1\} \\
+- T_0 U_0^{-1} + \log ( U_1 / U_0 ), &\text{if } \alpha \rightarrow 0 \\
+- T_1 U_1^{-1} - \log ( U_1 / U_0 ), & \text{if } \alpha \rightarrow 1
 \end{cases}
 \]
 
@@ -1104,22 +1104,59 @@ I_{Total} = I_{Between} + I_{Within} \text{.}
 \subsection{Rényi Divergence
 (svyrenyi)}\label{renyi-divergence-svyrenyi}
 
-here are the references
+Another measure used in areas like ecology, statistics and information
+theory is Rényi divergence measure. Using the formula defined in
+\citep{langel2012}, the estimator can be defined as:
 
-\citep{langel2012}
+\[
+\widehat{R}_\alpha =
+\begin{cases}
+\frac{1}{\alpha - 1} \log \bigg[ \widehat{N}^{\alpha - 1} \sum_{i \in S} w_i \cdot \bigg( \frac{y_k}{ \widehat{Y} } \bigg) \bigg], &\text{if } \alpha \neq 1, \\
+\sum_{i \in S} \frac{w_i y_i}{ \widehat{Y}} \log \frac{\widehat{N} y_i}{\widehat{Y}}, &\text{if } \alpha = 1,
+\end{cases}
+\]
+
+where \(\alpha\) is a parameter with a similar economic interpretation
+to that of the \(GE_\alpha\) index.
 
 \subsection{J-Divergence and Decomposition (svyjdiv,
 svyjdivdec)}\label{j-divergence-and-decomposition-svyjdiv-svyjdivdec}
 
-here are the references
+Proposed by \citep{rohde2016}, the J-divergence measure can be seen as
+the sum of \(GE_0\) and \(GE_1\), satisfying axioms that, individually,
+those two indices do not. Using \(U_\gamma\) and \(T_\gamma\) functions
+defined in \ref{subsection.3.3.1}, the estimator can be defined as:
 
-\citep{shorrocks1984} and \citep{rohde2016} and \citep{biewen2003}
+\[
+\begin{aligned}
+\widehat{J} &= \frac{1}{\widehat{N}} \sum_{i \in S} w_i \bigg( \frac{ y_i - \widehat{\mu} }{ \widehat{\mu} } \bigg) \log \bigg( \frac{y_i}{\widehat{\mu}} \bigg) \\
+\therefore \widehat{J} &= \frac{\widehat{T}_1}{\widehat{U}_1} - \frac{ \widehat{T}_0 }{ \widehat{U}_0 }
+\end{aligned}
+\]
+
+Since it is a sum of two additive decomposable measures, \(J\) itself is
+decomposable.
 
 \subsection{Atkinson index (svyatk)}\label{atkinson-index-svyatk}
 
-here are the references
+Although the original formula was proposed in \citep{atkinson1970}, the
+estimator used here comes from \citep{biewen2003}:
 
-\citep{langel2012} and \citep{biewen2003}
+\[
+\widehat{A}_\epsilon =
+\begin{cases}
+ 1 - \widehat{U}_0^{ - \epsilon/(1 - \epsilon) } \widehat{U}_1^{ -1 } \widehat{U}_{1 - \epsilon}^{ 1/(1 - \epsilon) } , &\text{if } \epsilon \in \mathbb{R}_+ \setminus\{ 1 \} \\
+1 - \widehat{U}_0 \widehat{U}_0^{-1} exp( \widehat{T}_0 \widehat{U}_0^{-1} ), &\text{if } \epsilon \rightarrow1
+\end{cases}
+\]
+
+The \(\epsilon\) is an inequality aversion parameter: as it approaches
+infinity, more weight is given to incomes in bottom of the distribution.
+
+\section{Examples}\label{examples}
+
+\subsection{Replicanting Barabesi et al.
+(2016)}\label{replicanting-barabesi-et-al.-2016}
 
 \chapter{Multidimensional Indices}\label{multidimensional}
 
