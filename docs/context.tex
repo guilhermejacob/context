@@ -634,15 +634,15 @@ eqIncome 0.14444 0.0026
 
 \begin{verbatim}
                       db040  eqIncome se.eqIncome
-Burgenland       Burgenland 0.1953984 0.015169170
-Carinthia         Carinthia 0.1308627 0.011524873
-Lower Austria Lower Austria 0.1384362 0.006574264
-Salzburg           Salzburg 0.1378734 0.012206087
-Styria               Styria 0.1437464 0.007362737
-Tyrol                 Tyrol 0.1530819 0.009876583
-Upper Austria Upper Austria 0.1088977 0.006449967
-Vienna               Vienna 0.1723468 0.007140846
-Vorarlberg       Vorarlberg 0.1653731 0.012192981
+Burgenland       Burgenland 0.1953984 0.017199857
+Carinthia         Carinthia 0.1308627 0.009553071
+Lower Austria Lower Austria 0.1384362 0.007236863
+Salzburg           Salzburg 0.1378734 0.010801577
+Styria               Styria 0.1437464 0.006719266
+Tyrol                 Tyrol 0.1530819 0.008963341
+Upper Austria Upper Austria 0.1088977 0.006200385
+Vienna               Vienna 0.1723468 0.006882799
+Vorarlberg       Vorarlberg 0.1653731 0.013071151
 \end{verbatim}
 
 The functions of the library convey are called in a similar way to the
@@ -1101,6 +1101,225 @@ inequality. Put simply, an additive decomposable index allows for:
 I_{Total} = I_{Between} + I_{Within} \text{.}
 \]
 
+In July 2006, \citep{jenkins2006} presented at the North American Stata
+Users' Group Meetings on the stata Generalized Entropy Index command.
+The example below reproduces those statistics.
+
+Load and prepare the same data set:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# load the convey package}
+\KeywordTok{library}\NormalTok{(convey)}
+
+\CommentTok{# load the survey library}
+\KeywordTok{library}\NormalTok{(survey)}
+
+\CommentTok{# load the foreign library}
+\KeywordTok{library}\NormalTok{(foreign)}
+
+\CommentTok{# create a temporary file on the local disk}
+\NormalTok{tf <-}\StringTok{ }\KeywordTok{tempfile}\NormalTok{()}
+
+\CommentTok{# store the location of the presentation file}
+\NormalTok{presentation_zip <-}\StringTok{ "http://repec.org/nasug2006/nasug2006_jenkins.zip"}
+
+\CommentTok{# download jenkins' presentation to the temporary file}
+\KeywordTok{download.file}\NormalTok{( presentation_zip , tf , }\DataTypeTok{mode =} \StringTok{'wb'} \NormalTok{)}
+
+\CommentTok{# unzip the contents of the archive}
+\NormalTok{presentation_files <-}\StringTok{ }\KeywordTok{unzip}\NormalTok{( tf , }\DataTypeTok{exdir =} \KeywordTok{tempdir}\NormalTok{() )}
+
+\CommentTok{# load the institute for fiscal studies' 1981, 1985, and 1991 data.frame objects}
+\NormalTok{x81 <-}\StringTok{ }\KeywordTok{read.dta}\NormalTok{( }\KeywordTok{grep}\NormalTok{( }\StringTok{"ifs81"} \NormalTok{, presentation_files , }\DataTypeTok{value =} \OtherTok{TRUE} \NormalTok{) )}
+\NormalTok{x85 <-}\StringTok{ }\KeywordTok{read.dta}\NormalTok{( }\KeywordTok{grep}\NormalTok{( }\StringTok{"ifs85"} \NormalTok{, presentation_files , }\DataTypeTok{value =} \OtherTok{TRUE} \NormalTok{) )}
+\NormalTok{x91 <-}\StringTok{ }\KeywordTok{read.dta}\NormalTok{( }\KeywordTok{grep}\NormalTok{( }\StringTok{"ifs91"} \NormalTok{, presentation_files , }\DataTypeTok{value =} \OtherTok{TRUE} \NormalTok{) )}
+
+\CommentTok{# stack each of these three years of data into a single data.frame}
+\NormalTok{x <-}\StringTok{ }\KeywordTok{rbind}\NormalTok{( x81 , x85 , x91 )}
+\end{Highlighting}
+\end{Shaded}
+
+Replicate the author's survey design statement from stata code..
+
+\begin{verbatim}
+. * account for clustering within HHs 
+. version 8: svyset [pweight = wgt], psu(hrn)
+pweight is wgt
+psu is hrn
+construct an
+\end{verbatim}
+
+.. into R code:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# initiate a linearized survey design object}
+\NormalTok{y <-}\StringTok{ }\KeywordTok{svydesign}\NormalTok{( ~}\StringTok{ }\NormalTok{hrn , }\DataTypeTok{data =} \NormalTok{x , }\DataTypeTok{weights =} \NormalTok{~}\StringTok{ }\NormalTok{wgt )}
+
+\CommentTok{# immediately run the `convey_prep` function on the survey design}
+\NormalTok{z <-}\StringTok{ }\KeywordTok{convey_prep}\NormalTok{( y )}
+\end{Highlighting}
+\end{Shaded}
+
+Replicate the author's subset statement and each of his svyatk results:
+
+\begin{verbatim}
+. svygei x if year == 1981
+ 
+Warning: x has 20 values = 0. Not used in calculations
+
+Complex survey estimates of Generalized Entropy inequality indices
+ 
+pweight: wgt                                   Number of obs    = 9752
+Strata: <one>                                  Number of strata = 1
+PSU: hrn                                       Number of PSUs   = 7459
+                                               Population size  = 54766261
+---------------------------------------------------------------------------
+Index    |  Estimate   Std. Err.      z      P>|z|     [95% Conf. Interval]
+---------+-----------------------------------------------------------------
+GE(-1)   |  .1902062   .02474921     7.69    0.000      .1416987   .2387138
+MLD      |  .1142851   .00275138    41.54    0.000      .1088925   .1196777
+Theil    |  .1116923   .00226489    49.31    0.000      .1072532   .1161314
+GE(2)    |   .128793   .00330774    38.94    0.000      .1223099    .135276
+GE(3)    |  .1739994   .00662015    26.28    0.000      .1610242   .1869747
+---------------------------------------------------------------------------
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{z81 <-}\StringTok{ }\KeywordTok{subset}\NormalTok{( z , year ==}\StringTok{ }\DecValTok{1981} \NormalTok{)}
+
+\KeywordTok{svygei}\NormalTok{( ~}\StringTok{ }\NormalTok{eybhc0 , }\KeywordTok{subset}\NormalTok{( z81 , eybhc0 >}\StringTok{ }\DecValTok{0} \NormalTok{) , }\DataTypeTok{epsilon =} \NormalTok{-}\DecValTok{1} \NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            gei     SE
+## eybhc0 0.19021 0.0247
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svygei}\NormalTok{( ~}\StringTok{ }\NormalTok{eybhc0 , }\KeywordTok{subset}\NormalTok{( z81 , eybhc0 >}\StringTok{ }\DecValTok{0} \NormalTok{) , }\DataTypeTok{epsilon =} \DecValTok{0} \NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            gei     SE
+## eybhc0 0.11429 0.0028
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svygei}\NormalTok{( ~}\StringTok{ }\NormalTok{eybhc0 , }\KeywordTok{subset}\NormalTok{( z81 , eybhc0 >}\StringTok{ }\DecValTok{0} \NormalTok{) )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            gei     SE
+## eybhc0 0.11169 0.0023
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svygei}\NormalTok{( ~}\StringTok{ }\NormalTok{eybhc0 , }\KeywordTok{subset}\NormalTok{( z81 , eybhc0 >}\StringTok{ }\DecValTok{0} \NormalTok{) , }\DataTypeTok{epsilon =} \DecValTok{2} \NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            gei     SE
+## eybhc0 0.12879 0.0033
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svygei}\NormalTok{( ~}\StringTok{ }\NormalTok{eybhc0 , }\KeywordTok{subset}\NormalTok{( z81 , eybhc0 >}\StringTok{ }\DecValTok{0} \NormalTok{) , }\DataTypeTok{epsilon =} \DecValTok{3} \NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##          gei     SE
+## eybhc0 0.174 0.0066
+\end{verbatim}
+
+Confirm this replication applies for subsetted objects as well:
+
+\begin{verbatim}
+. svygei x if year == 1985 & x >= 1
+
+Complex survey estimates of Generalized Entropy inequality indices
+ 
+pweight: wgt                                   Number of obs    = 8969
+Strata: <one>                                  Number of strata = 1
+PSU: hrn                                       Number of PSUs   = 6950
+                                               Population size  = 55042871
+---------------------------------------------------------------------------
+Index    |  Estimate   Std. Err.      z      P>|z|     [95% Conf. Interval]
+---------+-----------------------------------------------------------------
+GE(-1)   |  .1602358   .00936931    17.10    0.000      .1418723   .1785993
+MLD      |   .127616   .00332187    38.42    0.000      .1211052   .1341267
+Theil    |  .1337177   .00406302    32.91    0.000      .1257543    .141681
+GE(2)    |  .1676393   .00730057    22.96    0.000      .1533304   .1819481
+GE(3)    |  .2609507   .01850689    14.10    0.000      .2246779   .2972235
+---------------------------------------------------------------------------
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svygei}\NormalTok{( ~}\StringTok{ }\NormalTok{eybhc0 , }\KeywordTok{subset}\NormalTok{( z81 , eybhc0 >}\StringTok{ }\DecValTok{1} \NormalTok{) , }\DataTypeTok{epsilon =} \NormalTok{-}\DecValTok{1} \NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            gei     SE
+## eybhc0 0.16166 0.0125
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svygei}\NormalTok{( ~}\StringTok{ }\NormalTok{eybhc0 , }\KeywordTok{subset}\NormalTok{( z81 , eybhc0 >}\StringTok{ }\DecValTok{1} \NormalTok{) , }\DataTypeTok{epsilon =} \DecValTok{0} \NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            gei     SE
+## eybhc0 0.11273 0.0025
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svygei}\NormalTok{( ~}\StringTok{ }\NormalTok{eybhc0 , }\KeywordTok{subset}\NormalTok{( z81 , eybhc0 >}\StringTok{ }\DecValTok{1} \NormalTok{) )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            gei     SE
+## eybhc0 0.11131 0.0022
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svygei}\NormalTok{( ~}\StringTok{ }\NormalTok{eybhc0 , }\KeywordTok{subset}\NormalTok{( z81 , eybhc0 >}\StringTok{ }\DecValTok{1} \NormalTok{) , }\DataTypeTok{epsilon =} \DecValTok{2} \NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            gei     SE
+## eybhc0 0.12854 0.0033
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svygei}\NormalTok{( ~}\StringTok{ }\NormalTok{eybhc0 , }\KeywordTok{subset}\NormalTok{( z81 , eybhc0 >}\StringTok{ }\DecValTok{1} \NormalTok{) , }\DataTypeTok{epsilon =} \DecValTok{3} \NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            gei     SE
+## eybhc0 0.17373 0.0066
+\end{verbatim}
+
 \subsection{Rényi Divergence
 (svyrenyi)}\label{renyi-divergence-svyrenyi}
 
@@ -1503,7 +1722,7 @@ Replicate PDF page 10
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-26}Here is a nice table!}
+\caption{\label{tab:unnamed-chunk-33}Here is a nice table!}
 \centering
 \begin{tabular}[t]{rrrrrrr}
 \toprule

@@ -164,6 +164,128 @@ This class also has several desirable properties, such as additive decomposition
 I_{Total} = I_{Between} + I_{Within} \text{.}
 \]
 
+
+In July 2006, [@jenkins2006] presented at the North American Stata Users' Group Meetings on the stata Generalized Entropy Index command.  The example below reproduces those statistics.
+
+Load and prepare the same data set:
+```{r}
+# load the convey package
+library(convey)
+
+# load the survey library
+library(survey)
+
+# load the foreign library
+library(foreign)
+
+# create a temporary file on the local disk
+tf <- tempfile()
+
+# store the location of the presentation file
+presentation_zip <- "http://repec.org/nasug2006/nasug2006_jenkins.zip"
+
+# download jenkins' presentation to the temporary file
+download.file( presentation_zip , tf , mode = 'wb' )
+
+# unzip the contents of the archive
+presentation_files <- unzip( tf , exdir = tempdir() )
+
+# load the institute for fiscal studies' 1981, 1985, and 1991 data.frame objects
+x81 <- read.dta( grep( "ifs81" , presentation_files , value = TRUE ) )
+x85 <- read.dta( grep( "ifs85" , presentation_files , value = TRUE ) )
+x91 <- read.dta( grep( "ifs91" , presentation_files , value = TRUE ) )
+
+# stack each of these three years of data into a single data.frame
+x <- rbind( x81 , x85 , x91 )
+```
+
+Replicate the author's survey design statement from stata code..
+```{code}
+. * account for clustering within HHs 
+. version 8: svyset [pweight = wgt], psu(hrn)
+pweight is wgt
+psu is hrn
+construct an
+```
+
+.. into R code:
+
+
+```{r}
+# initiate a linearized survey design object
+y <- svydesign( ~ hrn , data = x , weights = ~ wgt )
+
+# immediately run the `convey_prep` function on the survey design
+z <- convey_prep( y )
+```
+
+Replicate the author's subset statement and each of his svyatk results:
+```{code}
+. svygei x if year == 1981
+ 
+Warning: x has 20 values = 0. Not used in calculations
+
+Complex survey estimates of Generalized Entropy inequality indices
+ 
+pweight: wgt                                   Number of obs    = 9752
+Strata: <one>                                  Number of strata = 1
+PSU: hrn                                       Number of PSUs   = 7459
+											   Population size  = 54766261
+---------------------------------------------------------------------------
+Index    |  Estimate   Std. Err.      z      P>|z|     [95% Conf. Interval]
+---------+-----------------------------------------------------------------
+GE(-1)   |  .1902062   .02474921     7.69    0.000      .1416987   .2387138
+MLD      |  .1142851   .00275138    41.54    0.000      .1088925   .1196777
+Theil    |  .1116923   .00226489    49.31    0.000      .1072532   .1161314
+GE(2)    |   .128793   .00330774    38.94    0.000      .1223099    .135276
+GE(3)    |  .1739994   .00662015    26.28    0.000      .1610242   .1869747
+---------------------------------------------------------------------------
+```
+
+```{r}
+z81 <- subset( z , year == 1981 )
+
+svygei( ~ eybhc0 , subset( z81 , eybhc0 > 0 ) , epsilon = -1 )
+svygei( ~ eybhc0 , subset( z81 , eybhc0 > 0 ) , epsilon = 0 )
+svygei( ~ eybhc0 , subset( z81 , eybhc0 > 0 ) )
+svygei( ~ eybhc0 , subset( z81 , eybhc0 > 0 ) , epsilon = 2 )
+svygei( ~ eybhc0 , subset( z81 , eybhc0 > 0 ) , epsilon = 3 )
+```	
+
+
+
+Confirm this replication applies for subsetted objects as well:
+
+```{code}
+. svygei x if year == 1985 & x >= 1
+
+Complex survey estimates of Generalized Entropy inequality indices
+ 
+pweight: wgt                                   Number of obs    = 8969
+Strata: <one>                                  Number of strata = 1
+PSU: hrn                                       Number of PSUs   = 6950
+											   Population size  = 55042871
+---------------------------------------------------------------------------
+Index    |  Estimate   Std. Err.      z      P>|z|     [95% Conf. Interval]
+---------+-----------------------------------------------------------------
+GE(-1)   |  .1602358   .00936931    17.10    0.000      .1418723   .1785993
+MLD      |   .127616   .00332187    38.42    0.000      .1211052   .1341267
+Theil    |  .1337177   .00406302    32.91    0.000      .1257543    .141681
+GE(2)    |  .1676393   .00730057    22.96    0.000      .1533304   .1819481
+GE(3)    |  .2609507   .01850689    14.10    0.000      .2246779   .2972235
+---------------------------------------------------------------------------
+```
+
+```{r}
+svygei( ~ eybhc0 , subset( z81 , eybhc0 > 1 ) , epsilon = -1 )
+svygei( ~ eybhc0 , subset( z81 , eybhc0 > 1 ) , epsilon = 0 )
+svygei( ~ eybhc0 , subset( z81 , eybhc0 > 1 ) )
+svygei( ~ eybhc0 , subset( z81 , eybhc0 > 1 ) , epsilon = 2 )
+svygei( ~ eybhc0 , subset( z81 , eybhc0 > 1 ) , epsilon = 3 )
+```
+
+
+
 ### Rényi Divergence (svyrenyi)
 
 Another measure used in areas like ecology, statistics and information theory is Rényi divergence measure. Using the formula defined in [@langel2012], the estimator can be defined as:
