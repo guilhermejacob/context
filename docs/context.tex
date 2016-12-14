@@ -634,15 +634,15 @@ eqIncome 0.14444 0.0026
 
 \begin{verbatim}
                       db040  eqIncome se.eqIncome
-Burgenland       Burgenland 0.1953984 0.019252919
-Carinthia         Carinthia 0.1308627 0.010762156
-Lower Austria Lower Austria 0.1384362 0.007972204
-Salzburg           Salzburg 0.1378734 0.010873162
-Styria               Styria 0.1437464 0.007235468
-Tyrol                 Tyrol 0.1530819 0.010404029
-Upper Austria Upper Austria 0.1088977 0.005976799
-Vienna               Vienna 0.1723468 0.008501900
-Vorarlberg       Vorarlberg 0.1653731 0.014752209
+Burgenland       Burgenland 0.1953984 0.016696900
+Carinthia         Carinthia 0.1308627 0.009577444
+Lower Austria Lower Austria 0.1384362 0.007151558
+Salzburg           Salzburg 0.1378734 0.012455853
+Styria               Styria 0.1437464 0.009257178
+Tyrol                 Tyrol 0.1530819 0.010143937
+Upper Austria Upper Austria 0.1088977 0.005953052
+Vienna               Vienna 0.1723468 0.007791721
+Vorarlberg       Vorarlberg 0.1653731 0.015177523
 \end{verbatim}
 
 The functions of the library convey are called in a similar way to the
@@ -683,8 +683,8 @@ py010n 0.64606 0.0036
 \end{Shaded}
 
 \begin{verbatim}
-          gini     SE
-py010n 0.64606 0.0038
+          gini    SE
+py010n 0.64606 0.004
 \end{verbatim}
 
 djalma, where do these references go on this page? \citep{berger2003}
@@ -929,7 +929,7 @@ Yet, this formula is used to calculate specific points of the curve and
 their respective SEs. The formula to plot an approximation of the
 continuous empirical curve comes from \citep{lerman1989}.
 
-\subsubsection{replication example}\label{replication-example}
+\subsection{replication example}\label{replication-example}
 
 In October 2016, \citep{jann2016} released a pre-publication working
 paper to estimate lorenz and concentration curves using stata. The
@@ -976,12 +976,22 @@ example below reproduces the statistics presented in his section 4.1.
 
 \begin{Shaded}
 \begin{Highlighting}[]
+\CommentTok{# note: most survey commands in R use Inf degrees of freedom by default}
+\CommentTok{# stata generally uses the degrees of freedom of the survey design.}
+\CommentTok{# therefore, while this extended syntax serves to prove a precise replication of stata}
+\CommentTok{# it is generally not necessary.}
 \NormalTok{section_four_one <-}
 \StringTok{    }\KeywordTok{data.frame}\NormalTok{( }
         \DataTypeTok{estimate =} \KeywordTok{coef}\NormalTok{( result.lin ) , }
         \DataTypeTok{standard_error =} \KeywordTok{SE}\NormalTok{( result.lin ) , }
-        \DataTypeTok{ci_lower_bound =} \KeywordTok{coef}\NormalTok{( result.lin ) +}\StringTok{ }\KeywordTok{SE}\NormalTok{( result.lin ) *}\StringTok{ }\KeywordTok{qt}\NormalTok{(}\FloatTok{0.025}\NormalTok{,}\KeywordTok{degf}\NormalTok{(}\KeywordTok{subset}\NormalTok{(des_nlsw88,!}\KeywordTok{is.na}\NormalTok{(wage)))) ,}
-        \DataTypeTok{ci_upper_bound =} \KeywordTok{coef}\NormalTok{( result.lin ) +}\StringTok{ }\KeywordTok{SE}\NormalTok{( result.lin ) *}\StringTok{ }\KeywordTok{qt}\NormalTok{(}\FloatTok{0.975}\NormalTok{,}\KeywordTok{degf}\NormalTok{(}\KeywordTok{subset}\NormalTok{(des_nlsw88,!}\KeywordTok{is.na}\NormalTok{(wage))))}
+        \DataTypeTok{ci_lower_bound =} 
+            \KeywordTok{coef}\NormalTok{( result.lin ) +}\StringTok{ }
+\StringTok{            }\KeywordTok{SE}\NormalTok{( result.lin ) *}\StringTok{ }
+\StringTok{            }\KeywordTok{qt}\NormalTok{( }\FloatTok{0.025} \NormalTok{, }\KeywordTok{degf}\NormalTok{( }\KeywordTok{subset}\NormalTok{( des_nlsw88 , !}\KeywordTok{is.na}\NormalTok{( wage ) ) ) ) ,}
+        \DataTypeTok{ci_upper_bound =} 
+            \KeywordTok{coef}\NormalTok{( result.lin ) +}\StringTok{ }
+\StringTok{            }\KeywordTok{SE}\NormalTok{( result.lin ) *}\StringTok{ }
+\StringTok{            }\KeywordTok{qt}\NormalTok{( }\FloatTok{0.975} \NormalTok{, }\KeywordTok{degf}\NormalTok{( }\KeywordTok{subset}\NormalTok{( des_nlsw88 , !}\KeywordTok{is.na}\NormalTok{( wage ) ) ) )}
     \NormalTok{)}
     
 

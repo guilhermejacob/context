@@ -106,7 +106,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="2-6-foster-greer-thorbecke-class-svyfgt.html#foster-greer-thorbecke-class-svyfgt"><span class="toc-section-number">2.6</span> Foster-Greer-Thorbecke class (svyfgt)</a></li>
 </ul></li>
 <li class="has-sub"><a href="3-inequality.html#inequality"><span class="toc-section-number">3</span> Inequality Measurement</a><ul>
-<li><a href="3-1-lorenz-curve-svylorenz.html#lorenz-curve-svylorenz"><span class="toc-section-number">3.1</span> Lorenz Curve (svylorenz)</a></li>
+<li class="has-sub"><a href="3-1-lorenz-curve-svylorenz.html#lorenz-curve-svylorenz"><span class="toc-section-number">3.1</span> Lorenz Curve (svylorenz)</a><ul>
+<li><a href="3-1-lorenz-curve-svylorenz.html#replication-example"><span class="toc-section-number">3.1.1</span> replication example</a></li>
+</ul></li>
 <li class="has-sub"><a href="3-2-measures-derived-from-the-lorenz-curve.html#measures-derived-from-the-lorenz-curve"><span class="toc-section-number">3.2</span> Measures derived from the Lorenz Curve</a><ul>
 <li><a href="3-2-measures-derived-from-the-lorenz-curve.html#gini-index-svygini"><span class="toc-section-number">3.2.1</span> Gini index (svygini)</a></li>
 <li><a href="3-2-measures-derived-from-the-lorenz-curve.html#amato-index-svyamato"><span class="toc-section-number">3.2.2</span> Amato index (svyamato)</a></li>
@@ -164,8 +166,8 @@ L(p)=
 L(p) = \frac{ \sum_{i \in S} w_i \cdot y_i \cdot \delta \{ y_i \le \widehat{Q}_p \}}{\widehat{Y}}, \text{ } 0 \le p \le 1.
 \]</span></p>
 <p>Yet, this formula is used to calculate specific points of the curve and their respective SEs. The formula to plot an approximation of the continuous empirical curve comes from <span class="citation">(Lerman and Yitzhaki <label for="tufte-mn-24" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-24" class="margin-toggle">1989<span class="marginnote">Lerman, Robert, and Shlomo Yitzhaki. 1989. “Improving the Accuracy of Estimates of Gini Coefficients.” <em>Journal of Econometrics</em> 42 (1): 43–47. <a href="http://EconPapers.repec.org/RePEc:eee:econom:v:42:y:1989:i:1:p:43-47" class="uri">http://EconPapers.repec.org/RePEc:eee:econom:v:42:y:1989:i:1:p:43-47</a>.</span>)</span>.</p>
-<div id="replication-example" class="section level4">
-<h4><span class="header-section-number">3.1.0.1</span> replication example</h4>
+<div id="replication-example" class="section level3">
+<h3><span class="header-section-number">3.1.1</span> replication example</h3>
 <p>In October 2016, <span class="citation">(Jann <label for="tufte-mn-25" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-25" class="margin-toggle">2016<span class="marginnote">Jann, Ben. 2016. “Estimating Lorenz and concentration curves in Stata.” University of Bern Social Sciences Working Papers 15. University of Bern, Department of Social Sciences. <a href="https://ideas.repec.org/p/bss/wpaper/15.html" class="uri">https://ideas.repec.org/p/bss/wpaper/15.html</a>.</span>)</span> released a pre-publication working paper to estimate lorenz and concentration curves using stata. The example below reproduces the statistics presented in his section 4.1.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the convey package</span>
 <span class="kw">library</span>(convey)
@@ -192,12 +194,22 @@ des_nlsw88 &lt;-<span class="st"> </span><span class="kw">convey_prep</span>(des
 <span class="co"># estimates lorenz curve</span>
 result.lin &lt;-<span class="st"> </span><span class="kw">svylorenz</span>( ~wage, des_nlsw88, <span class="dt">quantiles =</span> <span class="kw">seq</span>( <span class="dv">0</span>, <span class="dv">1</span>, .<span class="dv">05</span> ), <span class="dt">na.rm =</span> T )</code></pre></div>
 <p><img src="context_files/figure-html/unnamed-chunk-17-1.png" width="672"  /></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">section_four_one &lt;-
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># note: most survey commands in R use Inf degrees of freedom by default</span>
+<span class="co"># stata generally uses the degrees of freedom of the survey design.</span>
+<span class="co"># therefore, while this extended syntax serves to prove a precise replication of stata</span>
+<span class="co"># it is generally not necessary.</span>
+section_four_one &lt;-
 <span class="st">    </span><span class="kw">data.frame</span>( 
         <span class="dt">estimate =</span> <span class="kw">coef</span>( result.lin ) , 
         <span class="dt">standard_error =</span> <span class="kw">SE</span>( result.lin ) , 
-        <span class="dt">ci_lower_bound =</span> <span class="kw">coef</span>( result.lin ) +<span class="st"> </span><span class="kw">SE</span>( result.lin ) *<span class="st"> </span><span class="kw">qt</span>(<span class="fl">0.025</span>,<span class="kw">degf</span>(<span class="kw">subset</span>(des_nlsw88,!<span class="kw">is.na</span>(wage)))) ,
-        <span class="dt">ci_upper_bound =</span> <span class="kw">coef</span>( result.lin ) +<span class="st"> </span><span class="kw">SE</span>( result.lin ) *<span class="st"> </span><span class="kw">qt</span>(<span class="fl">0.975</span>,<span class="kw">degf</span>(<span class="kw">subset</span>(des_nlsw88,!<span class="kw">is.na</span>(wage))))
+        <span class="dt">ci_lower_bound =</span> 
+            <span class="kw">coef</span>( result.lin ) +<span class="st"> </span>
+<span class="st">            </span><span class="kw">SE</span>( result.lin ) *<span class="st"> </span>
+<span class="st">            </span><span class="kw">qt</span>( <span class="fl">0.025</span> , <span class="kw">degf</span>( <span class="kw">subset</span>( des_nlsw88 , !<span class="kw">is.na</span>( wage ) ) ) ) ,
+        <span class="dt">ci_upper_bound =</span> 
+            <span class="kw">coef</span>( result.lin ) +<span class="st"> </span>
+<span class="st">            </span><span class="kw">SE</span>( result.lin ) *<span class="st"> </span>
+<span class="st">            </span><span class="kw">qt</span>( <span class="fl">0.975</span> , <span class="kw">degf</span>( <span class="kw">subset</span>( des_nlsw88 , !<span class="kw">is.na</span>( wage ) ) ) )
     )
     
 
