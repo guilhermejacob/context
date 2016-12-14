@@ -623,7 +623,7 @@ and then use the function \texttt{svyarpr}:
 
 \begin{verbatim}
             arpr     SE
-eqIncome 0.14444 0.0026
+eqIncome 0.14444 0.0024
 \end{verbatim}
 
 \begin{Shaded}
@@ -634,15 +634,15 @@ eqIncome 0.14444 0.0026
 
 \begin{verbatim}
                       db040  eqIncome se.eqIncome
-Burgenland       Burgenland 0.1953984 0.017932600
-Carinthia         Carinthia 0.1308627 0.011208828
-Lower Austria Lower Austria 0.1384362 0.006237351
-Salzburg           Salzburg 0.1378734 0.010438844
-Styria               Styria 0.1437464 0.007190405
-Tyrol                 Tyrol 0.1530819 0.009214989
-Upper Austria Upper Austria 0.1088977 0.005474504
-Vienna               Vienna 0.1723468 0.006993096
-Vorarlberg       Vorarlberg 0.1653731 0.015200126
+Burgenland       Burgenland 0.1953984 0.017786939
+Carinthia         Carinthia 0.1308627 0.012043787
+Lower Austria Lower Austria 0.1384362 0.006363799
+Salzburg           Salzburg 0.1378734 0.010838535
+Styria               Styria 0.1437464 0.007283161
+Tyrol                 Tyrol 0.1530819 0.010588028
+Upper Austria Upper Austria 0.1088977 0.005331438
+Vienna               Vienna 0.1723468 0.007705631
+Vorarlberg       Vorarlberg 0.1653731 0.011342607
 \end{verbatim}
 
 The functions of the library convey are called in a similar way to the
@@ -684,7 +684,7 @@ py010n 0.64606 0.0036
 
 \begin{verbatim}
           gini     SE
-py010n 0.64606 0.0028
+py010n 0.64606 0.0034
 \end{verbatim}
 
 djalma, where do these references go on this page? \citep{berger2003}
@@ -1155,8 +1155,229 @@ infinity, more weight is given to incomes in bottom of the distribution.
 
 \section{Examples}\label{examples}
 
-\subsection{Replicanting Barabesi et al.
-(2016)}\label{replicanting-barabesi-et-al.-2016}
+In July 2006, Stephen Jenkins presented at the North American Stata
+Users' Group Meetings on the Atkinson Index. His presentation can be
+viewed
+\href{http://econpapers.repec.org/scripts/redir.pf?u=http\%3A\%2F\%2Frepec.org\%2Fnasug2006\%2Fnasug2006_jenkins.zip;h=repec:boc:asug06:16}{here}.
+The example below reproduces those statistics.
+
+Load and prepare the same data set:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# load the convey package}
+\KeywordTok{library}\NormalTok{(convey)}
+
+\CommentTok{# load the survey library}
+\KeywordTok{library}\NormalTok{(survey)}
+
+\CommentTok{# load the foreign library}
+\KeywordTok{library}\NormalTok{(foreign)}
+
+\CommentTok{# create a temporary file on the local disk}
+\NormalTok{tf <-}\StringTok{ }\KeywordTok{tempfile}\NormalTok{()}
+
+\CommentTok{# download jenkins' presentation to the temporary file}
+\KeywordTok{download.file}\NormalTok{( }\StringTok{"http://econpapers.repec.org/scripts/redir.pf?u=http%3A%2F%2Frepec.org%2Fnasug2006%2Fnasug2006_jenkins.zip;h=repec:boc:asug06:16"} \NormalTok{, tf , }\DataTypeTok{mode =} \StringTok{'wb'} \NormalTok{)}
+
+\CommentTok{# unzip the contents of the archive}
+\NormalTok{presentation_files <-}\StringTok{ }\KeywordTok{unzip}\NormalTok{( tf , }\DataTypeTok{exdir =} \KeywordTok{tempdir}\NormalTok{() )}
+
+\CommentTok{# load the institute for fiscal studies' 1981, 1985, and 1991 data.frame objects}
+\NormalTok{x81 <-}\StringTok{ }\KeywordTok{read.dta}\NormalTok{( }\KeywordTok{grep}\NormalTok{( }\StringTok{"ifs81"} \NormalTok{, presentation_files , }\DataTypeTok{value =} \OtherTok{TRUE} \NormalTok{) )}
+\NormalTok{x85 <-}\StringTok{ }\KeywordTok{read.dta}\NormalTok{( }\KeywordTok{grep}\NormalTok{( }\StringTok{"ifs85"} \NormalTok{, presentation_files , }\DataTypeTok{value =} \OtherTok{TRUE} \NormalTok{) )}
+\NormalTok{x91 <-}\StringTok{ }\KeywordTok{read.dta}\NormalTok{( }\KeywordTok{grep}\NormalTok{( }\StringTok{"ifs91"} \NormalTok{, presentation_files , }\DataTypeTok{value =} \OtherTok{TRUE} \NormalTok{) )}
+
+\CommentTok{# stack each of these three years of data into a single data.frame}
+\NormalTok{x <-}\StringTok{ }\KeywordTok{rbind}\NormalTok{( x81 , x85 , x91 )}
+\end{Highlighting}
+\end{Shaded}
+
+Replicate the author's survey design statement from stata code into R
+code:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# stata code}
+
+\CommentTok{# . * account for clustering within HHs }
+\CommentTok{# . version 8: svyset [pweight = wgt], psu(hrn)}
+\CommentTok{# pweight is wgt}
+\CommentTok{# psu is hrn}
+\CommentTok{# construct an}
+
+\CommentTok{# initiate a linearized survey design object}
+\NormalTok{y <-}\StringTok{ }\KeywordTok{svydesign}\NormalTok{( ~}\StringTok{ }\NormalTok{hrn , }\DataTypeTok{data =} \NormalTok{x , }\DataTypeTok{weights =} \NormalTok{~}\StringTok{ }\NormalTok{wgt )}
+
+\CommentTok{# immediately run the `convey_prep` function on the survey design}
+\NormalTok{z <-}\StringTok{ }\KeywordTok{convey_prep}\NormalTok{( y )}
+\end{Highlighting}
+\end{Shaded}
+
+Replicate the author's subset statement and each of his svyatk results:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# stata code}
+
+\CommentTok{# . svyatk x if year == 1981}
+ 
+\CommentTok{# Warning: x has 20 values = 0. Not used in calculations}
+
+
+\CommentTok{# Complex survey estimates of Atkinson inequality indices}
+ 
+\CommentTok{# pweight: wgt                                   Number of obs    = 9752}
+\CommentTok{# Strata: <one>                                  Number of strata = 1}
+\CommentTok{# PSU: hrn                                       Number of PSUs   = 7459}
+                                               \CommentTok{# Population size  = 54766261}
+\CommentTok{# ---------------------------------------------------------------------------}
+\CommentTok{# Index    |  Estimate   Std. Err.      z      P>|z|     [95% Conf. Interval]}
+\CommentTok{# ---------+-----------------------------------------------------------------}
+\CommentTok{# A(0.5)   |  .0543239   .00107583    50.49    0.000      .0522153   .0564324}
+\CommentTok{# A(1)     |  .1079964   .00245424    44.00    0.000      .1031862   .1128066}
+\CommentTok{# A(1.5)   |  .1701794   .0066943    25.42    0.000       .1570588      .1833}
+\CommentTok{# A(2)     |  .2755788   .02597608    10.61    0.000      .2246666    .326491}
+\CommentTok{# A(2.5)   |  .4992701   .06754311     7.39    0.000       .366888   .6316522}
+\CommentTok{# ---------------------------------------------------------------------------}
+
+
+\NormalTok{z81 <-}\StringTok{ }\KeywordTok{subset}\NormalTok{( z , year ==}\StringTok{ }\DecValTok{1981} \NormalTok{)}
+
+\KeywordTok{svyatk}\NormalTok{( ~}\StringTok{ }\NormalTok{eybhc0 , }\KeywordTok{subset}\NormalTok{( z81 , eybhc0 >}\StringTok{ }\DecValTok{0} \NormalTok{) , }\DataTypeTok{epsilon =} \FloatTok{0.5} \NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        atkinson     SE
+## eybhc0 0.054324 0.0011
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svyatk}\NormalTok{( ~}\StringTok{ }\NormalTok{eybhc0 , }\KeywordTok{subset}\NormalTok{( z81 , eybhc0 >}\StringTok{ }\DecValTok{0} \NormalTok{) )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        atkinson     SE
+## eybhc0    0.108 0.0025
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svyatk}\NormalTok{( ~}\StringTok{ }\NormalTok{eybhc0 , }\KeywordTok{subset}\NormalTok{( z81 , eybhc0 >}\StringTok{ }\DecValTok{0} \NormalTok{) , }\DataTypeTok{epsilon =} \FloatTok{1.5} \NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        atkinson     SE
+## eybhc0  0.17018 0.0067
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svyatk}\NormalTok{( ~}\StringTok{ }\NormalTok{eybhc0 , }\KeywordTok{subset}\NormalTok{( z81 , eybhc0 >}\StringTok{ }\DecValTok{0} \NormalTok{) , }\DataTypeTok{epsilon =} \DecValTok{2} \NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        atkinson    SE
+## eybhc0  0.27558 0.026
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svyatk}\NormalTok{( ~}\StringTok{ }\NormalTok{eybhc0 , }\KeywordTok{subset}\NormalTok{( z81 , eybhc0 >}\StringTok{ }\DecValTok{0} \NormalTok{) , }\DataTypeTok{epsilon =} \FloatTok{2.5} \NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        atkinson     SE
+## eybhc0  0.49927 0.0675
+\end{verbatim}
+
+Confirm this replication applies for subsetted objects as well:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# stata code}
+
+\CommentTok{# . svyatk x if year == 1981 & x >= 1}
+
+\CommentTok{# Complex survey estimates of Atkinson inequality indices}
+ 
+\CommentTok{# pweight: wgt                                   Number of obs    = 9748}
+\CommentTok{# Strata: <one>                                  Number of strata = 1}
+\CommentTok{# PSU: hrn                                       Number of PSUs   = 7457}
+                                               \CommentTok{# Population size  = 54744234}
+\CommentTok{# ---------------------------------------------------------------------------}
+\CommentTok{# Index    |  Estimate   Std. Err.      z      P>|z|     [95% Conf. Interval]}
+\CommentTok{# ---------+-----------------------------------------------------------------}
+\CommentTok{# A(0.5)   |  .0540059   .00105011    51.43    0.000      .0519477   .0560641}
+\CommentTok{# A(1)     |  .1066082   .00223318    47.74    0.000      .1022313   .1109852}
+\CommentTok{# A(1.5)   |  .1638299   .00483069    33.91    0.000       .154362   .1732979}
+\CommentTok{# A(2)     |  .2443206   .01425258    17.14    0.000      .2163861   .2722552}
+\CommentTok{# A(2.5)   |   .394787   .04155221     9.50    0.000      .3133461   .4762278}
+\CommentTok{# ---------------------------------------------------------------------------}
+
+\NormalTok{z81_two <-}\StringTok{ }\KeywordTok{subset}\NormalTok{( z , year ==}\StringTok{ }\DecValTok{1981} \NormalTok{&}\StringTok{ }\NormalTok{eybhc0 >}\StringTok{ }\DecValTok{1} \NormalTok{)}
+
+\KeywordTok{svyatk}\NormalTok{( ~}\StringTok{ }\NormalTok{eybhc0 , z81_two , }\DataTypeTok{epsilon =} \FloatTok{0.5} \NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        atkinson     SE
+## eybhc0 0.054006 0.0011
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svyatk}\NormalTok{( ~}\StringTok{ }\NormalTok{eybhc0 , z81_two )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        atkinson     SE
+## eybhc0  0.10661 0.0022
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svyatk}\NormalTok{( ~}\StringTok{ }\NormalTok{eybhc0 , z81_two , }\DataTypeTok{epsilon =} \FloatTok{1.5} \NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        atkinson     SE
+## eybhc0  0.16383 0.0048
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svyatk}\NormalTok{( ~}\StringTok{ }\NormalTok{eybhc0 , z81_two , }\DataTypeTok{epsilon =} \DecValTok{2} \NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        atkinson     SE
+## eybhc0  0.24432 0.0143
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svyatk}\NormalTok{( ~}\StringTok{ }\NormalTok{eybhc0 , z81_two , }\DataTypeTok{epsilon =} \FloatTok{2.5} \NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        atkinson     SE
+## eybhc0  0.39479 0.0416
+\end{verbatim}
+
+\subsection{Replicating Barabesi et al.
+(2016)}\label{replicating-barabesi-et-al.-2016}
 
 \chapter{Multidimensional Indices}\label{multidimensional}
 
@@ -1284,7 +1505,7 @@ Replicate PDF page 10
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-19}Here is a nice table!}
+\caption{\label{tab:unnamed-chunk-23}Here is a nice table!}
 \centering
 \begin{tabular}[t]{rrrrrrr}
 \toprule
