@@ -623,7 +623,7 @@ and then use the function \texttt{svyarpr}:
 
 \begin{verbatim}
             arpr     SE
-eqIncome 0.14444 0.0028
+eqIncome 0.14444 0.0026
 \end{verbatim}
 
 \begin{Shaded}
@@ -634,15 +634,15 @@ eqIncome 0.14444 0.0028
 
 \begin{verbatim}
                       db040  eqIncome se.eqIncome
-Burgenland       Burgenland 0.1953984 0.020620190
-Carinthia         Carinthia 0.1308627 0.008914381
-Lower Austria Lower Austria 0.1384362 0.005830323
-Salzburg           Salzburg 0.1378734 0.010782552
-Styria               Styria 0.1437464 0.007022814
-Tyrol                 Tyrol 0.1530819 0.009810394
-Upper Austria Upper Austria 0.1088977 0.005803866
-Vienna               Vienna 0.1723468 0.006949773
-Vorarlberg       Vorarlberg 0.1653731 0.015448582
+Burgenland       Burgenland 0.1953984 0.019252919
+Carinthia         Carinthia 0.1308627 0.010762156
+Lower Austria Lower Austria 0.1384362 0.007972204
+Salzburg           Salzburg 0.1378734 0.010873162
+Styria               Styria 0.1437464 0.007235468
+Tyrol                 Tyrol 0.1530819 0.010404029
+Upper Austria Upper Austria 0.1088977 0.005976799
+Vienna               Vienna 0.1723468 0.008501900
+Vorarlberg       Vorarlberg 0.1653731 0.014752209
 \end{verbatim}
 
 The functions of the library convey are called in a similar way to the
@@ -684,7 +684,7 @@ py010n 0.64606 0.0036
 
 \begin{verbatim}
           gini     SE
-py010n 0.64606 0.0029
+py010n 0.64606 0.0038
 \end{verbatim}
 
 djalma, where do these references go on this page? \citep{berger2003}
@@ -929,6 +929,105 @@ Yet, this formula is used to calculate specific points of the curve and
 their respective SEs. The formula to plot an approximation of the
 continuous empirical curve comes from \citep{lerman1989}.
 
+\subsubsection{replication example}\label{replication-example}
+
+In October 2016, \citep{jann2016} released a pre-publication working
+paper to estimate lorenz and concentration curves using stata. The
+example below reproduces the statistics presented in his section 4.1.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# load the convey package}
+\KeywordTok{library}\NormalTok{(convey)}
+
+\CommentTok{# load the survey library}
+\KeywordTok{library}\NormalTok{(survey)}
+
+\CommentTok{# load the stata-style webuse library}
+\KeywordTok{library}\NormalTok{(webuse)}
+
+\CommentTok{# load the NLSW 1988 data}
+\KeywordTok{webuse}\NormalTok{(}\StringTok{"nlsw88"}\NormalTok{)}
+
+\CommentTok{# coerce that `tbl_df` to a standard R `data.frame`}
+\NormalTok{nlsw88 <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{( nlsw88 )}
+
+\CommentTok{# initiate a linearized survey design object}
+\NormalTok{des_nlsw88 <-}\StringTok{ }\KeywordTok{svydesign}\NormalTok{( }\DataTypeTok{ids =} \NormalTok{~}\DecValTok{1} \NormalTok{, }\DataTypeTok{data =} \NormalTok{nlsw88 )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in svydesign.default(ids = ~1, data = nlsw88): No weights or
+## probabilities supplied, assuming equal probability
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# immediately run the `convey_prep` function on the survey design}
+\NormalTok{des_nlsw88 <-}\StringTok{ }\KeywordTok{convey_prep}\NormalTok{(des_nlsw88)}
+
+\CommentTok{# estimates lorenz curve}
+\NormalTok{result.lin <-}\StringTok{ }\KeywordTok{svylorenz}\NormalTok{( ~wage, des_nlsw88, }\DataTypeTok{quantiles =} \KeywordTok{seq}\NormalTok{( }\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, .}\DecValTok{05} \NormalTok{), }\DataTypeTok{na.rm =} \NormalTok{T )}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{context_files/figure-latex/unnamed-chunk-17-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{section_four_one <-}
+\StringTok{    }\KeywordTok{data.frame}\NormalTok{( }
+        \DataTypeTok{estimate =} \KeywordTok{coef}\NormalTok{( result.lin ) , }
+        \DataTypeTok{standard_error =} \KeywordTok{SE}\NormalTok{( result.lin ) , }
+        \DataTypeTok{ci_lower_bound =} \KeywordTok{coef}\NormalTok{( result.lin ) +}\StringTok{ }\KeywordTok{SE}\NormalTok{( result.lin ) *}\StringTok{ }\KeywordTok{qt}\NormalTok{(}\FloatTok{0.025}\NormalTok{,}\KeywordTok{degf}\NormalTok{(}\KeywordTok{subset}\NormalTok{(des_nlsw88,!}\KeywordTok{is.na}\NormalTok{(wage)))) ,}
+        \DataTypeTok{ci_upper_bound =} \KeywordTok{coef}\NormalTok{( result.lin ) +}\StringTok{ }\KeywordTok{SE}\NormalTok{( result.lin ) *}\StringTok{ }\KeywordTok{qt}\NormalTok{(}\FloatTok{0.975}\NormalTok{,}\KeywordTok{degf}\NormalTok{(}\KeywordTok{subset}\NormalTok{(des_nlsw88,!}\KeywordTok{is.na}\NormalTok{(wage))))}
+    \NormalTok{)}
+    
+
+\NormalTok{knitr::}\KeywordTok{kable}\NormalTok{(}
+  \NormalTok{section_four_one , }\DataTypeTok{caption =} \StringTok{'Here is a nice table!'}\NormalTok{,}
+  \DataTypeTok{booktabs =} \OtherTok{TRUE}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{table}
+
+\caption{\label{tab:unnamed-chunk-17}Here is a nice table!}
+\centering
+\begin{tabular}[t]{lrrrr}
+\toprule
+  & estimate & standard\_error & ci\_lower\_bound & ci\_upper\_bound\\
+\midrule
+0 & 0.0000000 & 0.0000000 & 0.0000000 & 0.0000000\\
+0.05 & 0.0151060 & 0.0004159 & 0.0142904 & 0.0159216\\
+0.1 & 0.0342651 & 0.0007021 & 0.0328882 & 0.0356420\\
+0.15 & 0.0558635 & 0.0010096 & 0.0538836 & 0.0578434\\
+0.2 & 0.0801846 & 0.0014032 & 0.0774329 & 0.0829363\\
+\addlinespace
+0.25 & 0.1067687 & 0.0017315 & 0.1033732 & 0.1101642\\
+0.3 & 0.1356307 & 0.0021301 & 0.1314535 & 0.1398078\\
+0.35 & 0.1670287 & 0.0025182 & 0.1620903 & 0.1719670\\
+0.4 & 0.2005501 & 0.0029161 & 0.1948315 & 0.2062687\\
+0.45 & 0.2369209 & 0.0033267 & 0.2303971 & 0.2434447\\
+\addlinespace
+0.5 & 0.2759734 & 0.0037423 & 0.2686347 & 0.2833121\\
+0.55 & 0.3180215 & 0.0041626 & 0.3098585 & 0.3261844\\
+0.6 & 0.3633071 & 0.0045833 & 0.3543192 & 0.3722950\\
+0.65 & 0.4125183 & 0.0050056 & 0.4027021 & 0.4223345\\
+0.7 & 0.4657641 & 0.0054137 & 0.4551478 & 0.4763804\\
+\addlinespace
+0.75 & 0.5241784 & 0.0058003 & 0.5128039 & 0.5355529\\
+0.8 & 0.5880894 & 0.0062464 & 0.5758401 & 0.6003388\\
+0.85 & 0.6577051 & 0.0066148 & 0.6447333 & 0.6706769\\
+0.9 & 0.7346412 & 0.0068289 & 0.7212497 & 0.7480328\\
+0.95 & 0.8265786 & 0.0062686 & 0.8142857 & 0.8388715\\
+1 & 1.0000000 & 0.0000000 & 1.0000000 & 1.0000000\\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \section{Measures derived from the Lorenz
 Curve}\label{measures-derived-from-the-lorenz-curve}
 
@@ -1101,7 +1200,7 @@ inequality. Put simply, an additive decomposable index allows for:
 I_{Total} = I_{Between} + I_{Within} \text{.}
 \]
 
-\subsubsection{replication example}\label{replication-example}
+\subsubsection{replication example}\label{replication-example-1}
 
 In July 2006, \citep{jenkins2006} presented at the North American Stata
 Users' Group Meetings on the stata Generalized Entropy Index command.
@@ -1379,7 +1478,7 @@ estimator used here comes from \citep{biewen2003}:
 The \(\epsilon\) is an inequality aversion parameter: as it approaches
 infinity, more weight is given to incomes in bottom of the distribution.
 
-\subsubsection{replication example}\label{replication-example-1}
+\subsubsection{replication example}\label{replication-example-2}
 
 In July 2006, \citep{jenkins2006} presented at the North American Stata
 Users' Group Meetings on the stata Atkinson Index command. The example
@@ -1616,7 +1715,7 @@ A(2.5)   |   .394787   .04155221     9.50    0.000      .3133461   .4762278
 \section{Alkire-Foster Class and Decomposition (svyafc,
 svyafcdec)}\label{alkire-foster-class-and-decomposition-svyafc-svyafcdec}
 
-\subsubsection{replication example}\label{replication-example-2}
+\subsubsection{replication example}\label{replication-example-3}
 
 In November 2015, Christopher Jindra presented at the Oxford Poverty and
 Human Development Initiative on the Alkire-Foster multidimensional
@@ -1739,7 +1838,7 @@ Replicate PDF page 10
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-33}Here is a nice table!}
+\caption{\label{tab:unnamed-chunk-34}Here is a nice table!}
 \centering
 \begin{tabular}[t]{rrrrrrr}
 \toprule
