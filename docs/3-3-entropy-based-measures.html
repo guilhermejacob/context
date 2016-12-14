@@ -117,9 +117,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="3-3-entropy-based-measures.html#renyi-divergence-svyrenyi"><span class="toc-section-number">3.3.2</span> Rényi Divergence (svyrenyi)</a></li>
 <li><a href="3-3-entropy-based-measures.html#j-divergence-and-decomposition-svyjdiv-svyjdivdec"><span class="toc-section-number">3.3.3</span> J-Divergence and Decomposition (svyjdiv, svyjdivdec)</a></li>
 <li><a href="3-3-entropy-based-measures.html#atkinson-index-svyatk"><span class="toc-section-number">3.3.4</span> Atkinson index (svyatk)</a></li>
-</ul></li>
-<li class="has-sub"><a href="3-4-examples.html#examples"><span class="toc-section-number">3.4</span> Examples</a><ul>
-<li><a href="3-4-examples.html#replicating-barabesi-et-al.-2016"><span class="toc-section-number">3.4.1</span> Replicating Barabesi et al. (2016)</a></li>
+<li><a href="3-3-entropy-based-measures.html#replicating-barabesi-et-al.-2016"><span class="toc-section-number">3.3.5</span> Replicating Barabesi et al. (2016)</a></li>
 </ul></li>
 </ul></li>
 <li class="has-sub"><a href="4-multidimensional.html#multidimensional"><span class="toc-section-number">4</span> Multidimensional Indices</a><ul>
@@ -207,11 +205,131 @@ I_{Total} = I_{Between} + I_{Within} \text{.}
 \end{cases}
 \]</span></p>
 <p>The <span class="math inline">\(\epsilon\)</span> is an inequality aversion parameter: as it approaches infinity, more weight is given to incomes in bottom of the distribution.</p>
+<p>In July 2006, <span class="citation">(Jenkins <label for="tufte-mn-40" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-40" class="margin-toggle">2008<span class="marginnote">Jenkins, Stephen. 2008. “Estimation and Interpretation of Measures of Inequality, Poverty, and Social Welfare Using Stata.” North American Stata Users’ Group Meetings 2006. Stata Users Group. <a href="http://EconPapers.repec.org/RePEc:boc:asug06:16" class="uri">http://EconPapers.repec.org/RePEc:boc:asug06:16</a>.</span>)</span> presented at the North American Stata Users’ Group Meetings on the stata Atkinson Index command. The example below reproduces those statistics.</p>
+<p>Load and prepare the same data set:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the convey package</span>
+<span class="kw">library</span>(convey)
+
+<span class="co"># load the survey library</span>
+<span class="kw">library</span>(survey)
+
+<span class="co"># load the foreign library</span>
+<span class="kw">library</span>(foreign)
+
+<span class="co"># create a temporary file on the local disk</span>
+tf &lt;-<span class="st"> </span><span class="kw">tempfile</span>()
+
+<span class="co"># download jenkins&#39; presentation to the temporary file</span>
+<span class="kw">download.file</span>( <span class="st">&quot;http://econpapers.repec.org/scripts/redir.pf?u=http%3A%2F%2Frepec.org%2Fnasug2006%2Fnasug2006_jenkins.zip;h=repec:boc:asug06:16&quot;</span> , tf , <span class="dt">mode =</span> <span class="st">&#39;wb&#39;</span> )
+
+<span class="co"># unzip the contents of the archive</span>
+presentation_files &lt;-<span class="st"> </span><span class="kw">unzip</span>( tf , <span class="dt">exdir =</span> <span class="kw">tempdir</span>() )
+
+<span class="co"># load the institute for fiscal studies&#39; 1981, 1985, and 1991 data.frame objects</span>
+x81 &lt;-<span class="st"> </span><span class="kw">read.dta</span>( <span class="kw">grep</span>( <span class="st">&quot;ifs81&quot;</span> , presentation_files , <span class="dt">value =</span> <span class="ot">TRUE</span> ) )
+x85 &lt;-<span class="st"> </span><span class="kw">read.dta</span>( <span class="kw">grep</span>( <span class="st">&quot;ifs85&quot;</span> , presentation_files , <span class="dt">value =</span> <span class="ot">TRUE</span> ) )
+x91 &lt;-<span class="st"> </span><span class="kw">read.dta</span>( <span class="kw">grep</span>( <span class="st">&quot;ifs91&quot;</span> , presentation_files , <span class="dt">value =</span> <span class="ot">TRUE</span> ) )
+
+<span class="co"># stack each of these three years of data into a single data.frame</span>
+x &lt;-<span class="st"> </span><span class="kw">rbind</span>( x81 , x85 , x91 )</code></pre></div>
+<p>Replicate the author’s survey design statement from stata code..</p>
+<pre class="code"><code>
+stata code
+
+. * account for clustering within HHs 
+. version 8: svyset [pweight = wgt], psu(hrn)
+pweight is wgt
+psu is hrn
+construct an</code></pre>
+<p>.. into R code:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># initiate a linearized survey design object</span>
+y &lt;-<span class="st"> </span><span class="kw">svydesign</span>( ~<span class="st"> </span>hrn , <span class="dt">data =</span> x , <span class="dt">weights =</span> ~<span class="st"> </span>wgt )
+
+<span class="co"># immediately run the `convey_prep` function on the survey design</span>
+z &lt;-<span class="st"> </span><span class="kw">convey_prep</span>( y )</code></pre></div>
+<p>Replicate the author’s subset statement and each of his svyatk results:</p>
+<pre class="code"><code>. svyatk x if year == 1981
+ 
+Warning: x has 20 values = 0. Not used in calculations
+
+
+Complex survey estimates of Atkinson inequality indices
+ 
+pweight: wgt                                   Number of obs    = 9752
+Strata: &lt;one&gt;                                  Number of strata = 1
+PSU: hrn                                       Number of PSUs   = 7459
+                                                                 Population size  = 54766261
+---------------------------------------------------------------------------
+Index    |  Estimate   Std. Err.      z      P&gt;|z|     [95% Conf. Interval]
+---------+-----------------------------------------------------------------
+A(0.5)   |  .0543239   .00107583    50.49    0.000      .0522153   .0564324
+A(1)     |  .1079964   .00245424    44.00    0.000      .1031862   .1128066
+A(1.5)   |  .1701794   .0066943    25.42    0.000       .1570588      .1833
+A(2)     |  .2755788   .02597608    10.61    0.000      .2246666    .326491
+A(2.5)   |  .4992701   .06754311     7.39    0.000       .366888   .6316522
+---------------------------------------------------------------------------</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">z81 &lt;-<span class="st"> </span><span class="kw">subset</span>( z , year ==<span class="st"> </span><span class="dv">1981</span> )
+
+<span class="kw">svyatk</span>( ~<span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z81 , eybhc0 &gt;<span class="st"> </span><span class="dv">0</span> ) , <span class="dt">epsilon =</span> <span class="fl">0.5</span> )</code></pre></div>
+<pre><code>##        atkinson     SE
+## eybhc0 0.054324 0.0011</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svyatk</span>( ~<span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z81 , eybhc0 &gt;<span class="st"> </span><span class="dv">0</span> ) )</code></pre></div>
+<pre><code>##        atkinson     SE
+## eybhc0    0.108 0.0025</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svyatk</span>( ~<span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z81 , eybhc0 &gt;<span class="st"> </span><span class="dv">0</span> ) , <span class="dt">epsilon =</span> <span class="fl">1.5</span> )</code></pre></div>
+<pre><code>##        atkinson     SE
+## eybhc0  0.17018 0.0067</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svyatk</span>( ~<span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z81 , eybhc0 &gt;<span class="st"> </span><span class="dv">0</span> ) , <span class="dt">epsilon =</span> <span class="dv">2</span> )</code></pre></div>
+<pre><code>##        atkinson    SE
+## eybhc0  0.27558 0.026</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svyatk</span>( ~<span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z81 , eybhc0 &gt;<span class="st"> </span><span class="dv">0</span> ) , <span class="dt">epsilon =</span> <span class="fl">2.5</span> )</code></pre></div>
+<pre><code>##        atkinson     SE
+## eybhc0  0.49927 0.0675</code></pre>
+<p>Confirm this replication applies for subsetted objects as well:</p>
+<pre class="code"><code>. svyatk x if year == 1981 &amp; x &gt;= 1
+
+Complex survey estimates of Atkinson inequality indices
+ 
+pweight: wgt                                   Number of obs    = 9748
+Strata: &lt;one&gt;                                  Number of strata = 1
+PSU: hrn                                       Number of PSUs   = 7457
+                                                                     Population size  = 54744234
+---------------------------------------------------------------------------
+Index    |  Estimate   Std. Err.      z      P&gt;|z|     [95% Conf. Interval]
+---------+-----------------------------------------------------------------
+A(0.5)   |  .0540059   .00105011    51.43    0.000      .0519477   .0560641
+A(1)     |  .1066082   .00223318    47.74    0.000      .1022313   .1109852
+A(1.5)   |  .1638299   .00483069    33.91    0.000       .154362   .1732979
+A(2)     |  .2443206   .01425258    17.14    0.000      .2163861   .2722552
+A(2.5)   |   .394787   .04155221     9.50    0.000      .3133461   .4762278
+---------------------------------------------------------------------------</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">z81_two &lt;-<span class="st"> </span><span class="kw">subset</span>( z , year ==<span class="st"> </span><span class="dv">1981</span> &amp;<span class="st"> </span>eybhc0 &gt;<span class="st"> </span><span class="dv">1</span> )
+
+<span class="kw">svyatk</span>( ~<span class="st"> </span>eybhc0 , z81_two , <span class="dt">epsilon =</span> <span class="fl">0.5</span> )</code></pre></div>
+<pre><code>##        atkinson     SE
+## eybhc0 0.054006 0.0011</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svyatk</span>( ~<span class="st"> </span>eybhc0 , z81_two )</code></pre></div>
+<pre><code>##        atkinson     SE
+## eybhc0  0.10661 0.0022</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svyatk</span>( ~<span class="st"> </span>eybhc0 , z81_two , <span class="dt">epsilon =</span> <span class="fl">1.5</span> )</code></pre></div>
+<pre><code>##        atkinson     SE
+## eybhc0  0.16383 0.0048</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svyatk</span>( ~<span class="st"> </span>eybhc0 , z81_two , <span class="dt">epsilon =</span> <span class="dv">2</span> )</code></pre></div>
+<pre><code>##        atkinson     SE
+## eybhc0  0.24432 0.0143</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svyatk</span>( ~<span class="st"> </span>eybhc0 , z81_two , <span class="dt">epsilon =</span> <span class="fl">2.5</span> )</code></pre></div>
+<pre><code>##        atkinson     SE
+## eybhc0  0.39479 0.0416</code></pre>
+</div>
+<div id="replicating-barabesi-et-al.-2016" class="section level3">
+<h3><span class="header-section-number">3.3.5</span> Replicating Barabesi et al. (2016)</h3>
+
 </div>
 </div>
+<!-- </div> -->
 <p style="text-align: center;">
 <a href="3-2-measures-derived-from-the-lorenz-curve.html"><button class="btn btn-default">Previous</button></a>
-<a href="3-4-examples.html"><button class="btn btn-default">Next</button></a>
+<a href="4-multidimensional.html"><button class="btn btn-default">Next</button></a>
 </p>
 </div>
 </div>
