@@ -623,7 +623,7 @@ and then use the function \texttt{svyarpr}:
 
 \begin{verbatim}
             arpr     SE
-eqIncome 0.14444 0.0026
+eqIncome 0.14444 0.0028
 \end{verbatim}
 
 \begin{Shaded}
@@ -634,15 +634,15 @@ eqIncome 0.14444 0.0026
 
 \begin{verbatim}
                       db040  eqIncome se.eqIncome
-Burgenland       Burgenland 0.1953984 0.017199857
-Carinthia         Carinthia 0.1308627 0.009553071
-Lower Austria Lower Austria 0.1384362 0.007236863
-Salzburg           Salzburg 0.1378734 0.010801577
-Styria               Styria 0.1437464 0.006719266
-Tyrol                 Tyrol 0.1530819 0.008963341
-Upper Austria Upper Austria 0.1088977 0.006200385
-Vienna               Vienna 0.1723468 0.006882799
-Vorarlberg       Vorarlberg 0.1653731 0.013071151
+Burgenland       Burgenland 0.1953984 0.020620190
+Carinthia         Carinthia 0.1308627 0.008914381
+Lower Austria Lower Austria 0.1384362 0.005830323
+Salzburg           Salzburg 0.1378734 0.010782552
+Styria               Styria 0.1437464 0.007022814
+Tyrol                 Tyrol 0.1530819 0.009810394
+Upper Austria Upper Austria 0.1088977 0.005803866
+Vienna               Vienna 0.1723468 0.006949773
+Vorarlberg       Vorarlberg 0.1653731 0.015448582
 \end{verbatim}
 
 The functions of the library convey are called in a similar way to the
@@ -684,7 +684,7 @@ py010n 0.64606 0.0036
 
 \begin{verbatim}
           gini     SE
-py010n 0.64606 0.0034
+py010n 0.64606 0.0029
 \end{verbatim}
 
 djalma, where do these references go on this page? \citep{berger2003}
@@ -1101,6 +1101,8 @@ inequality. Put simply, an additive decomposable index allows for:
 I_{Total} = I_{Between} + I_{Within} \text{.}
 \]
 
+\subsubsection{replication example}\label{replication-example}
+
 In July 2006, \citep{jenkins2006} presented at the North American Stata
 Users' Group Meetings on the stata Generalized Entropy Index command.
 The example below reproduces those statistics.
@@ -1162,7 +1164,7 @@ construct an
 \end{Highlighting}
 \end{Shaded}
 
-Replicate the author's subset statement and each of his svyatk results:
+Replicate the author's subset statement and each of his svygei results..
 
 \begin{verbatim}
 . svygei x if year == 1981
@@ -1185,6 +1187,8 @@ GE(2)    |   .128793   .00330774    38.94    0.000      .1223099    .135276
 GE(3)    |  .1739994   .00662015    26.28    0.000      .1610242   .1869747
 ---------------------------------------------------------------------------
 \end{verbatim}
+
+..using R code:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1243,7 +1247,8 @@ GE(3)    |  .1739994   .00662015    26.28    0.000      .1610242   .1869747
 ## eybhc0 0.174 0.0066
 \end{verbatim}
 
-Confirm this replication applies for subsetted objects as well:
+Confirm this replication applies for subsetted objects as well. Compare
+stata output..
 
 \begin{verbatim}
 . svygei x if year == 1985 & x >= 1
@@ -1264,6 +1269,8 @@ GE(2)    |  .1676393   .00730057    22.96    0.000      .1533304   .1819481
 GE(3)    |  .2609507   .01850689    14.10    0.000      .2246779   .2972235
 ---------------------------------------------------------------------------
 \end{verbatim}
+
+..to R code:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1372,6 +1379,8 @@ estimator used here comes from \citep{biewen2003}:
 The \(\epsilon\) is an inequality aversion parameter: as it approaches
 infinity, more weight is given to incomes in bottom of the distribution.
 
+\subsubsection{replication example}\label{replication-example-1}
+
 In July 2006, \citep{jenkins2006} presented at the North American Stata
 Users' Group Meetings on the stata Atkinson Index command. The example
 below reproduces those statistics.
@@ -1433,7 +1442,8 @@ construct an
 \end{Highlighting}
 \end{Shaded}
 
-Replicate the author's subset statement and each of his svyatk results:
+Replicate the author's subset statement and each of his svyatk results
+with stata..
 
 \begin{verbatim}
 . svyatk x if year == 1981
@@ -1456,6 +1466,8 @@ A(2)     |  .2755788   .02597608    10.61    0.000      .2246666    .326491
 A(2.5)   |  .4992701   .06754311     7.39    0.000       .366888   .6316522
 ---------------------------------------------------------------------------
 \end{verbatim}
+
+..using R code:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1514,7 +1526,8 @@ A(2.5)   |  .4992701   .06754311     7.39    0.000       .366888   .6316522
 ## eybhc0  0.49927 0.0675
 \end{verbatim}
 
-Confirm this replication applies for subsetted objects as well:
+Confirm this replication applies for subsetted objects as well,
+comparing stata code..
 
 \begin{verbatim}
 . svyatk x if year == 1981 & x >= 1
@@ -1535,6 +1548,8 @@ A(2)     |  .2443206   .01425258    17.14    0.000      .2163861   .2722552
 A(2.5)   |   .394787   .04155221     9.50    0.000      .3133461   .4762278
 ---------------------------------------------------------------------------
 \end{verbatim}
+
+..to R code:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1600,6 +1615,8 @@ A(2.5)   |   .394787   .04155221     9.50    0.000      .3133461   .4762278
 
 \section{Alkire-Foster Class and Decomposition (svyafc,
 svyafcdec)}\label{alkire-foster-class-and-decomposition-svyafc-svyafcdec}
+
+\subsubsection{replication example}\label{replication-example-2}
 
 In November 2015, Christopher Jindra presented at the Oxford Poverty and
 Human Development Initiative on the Alkire-Foster multidimensional

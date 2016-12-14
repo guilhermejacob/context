@@ -165,6 +165,8 @@ I_{Total} = I_{Between} + I_{Within} \text{.}
 \]
 
 
+#### replication example
+
 In July 2006, [@jenkins2006] presented at the North American Stata Users' Group Meetings on the stata Generalized Entropy Index command.  The example below reproduces those statistics.
 
 Load and prepare the same data set:
@@ -219,7 +221,7 @@ y <- svydesign( ~ hrn , data = x , weights = ~ wgt )
 z <- convey_prep( y )
 ```
 
-Replicate the author's subset statement and each of his svyatk results:
+Replicate the author's subset statement and each of his svygei results..
 ```{code}
 . svygei x if year == 1981
  
@@ -242,6 +244,8 @@ GE(3)    |  .1739994   .00662015    26.28    0.000      .1610242   .1869747
 ---------------------------------------------------------------------------
 ```
 
+..using R code:
+
 ```{r}
 z81 <- subset( z , year == 1981 )
 
@@ -254,7 +258,7 @@ svygei( ~ eybhc0 , subset( z81 , eybhc0 > 0 ) , epsilon = 3 )
 
 
 
-Confirm this replication applies for subsetted objects as well:
+Confirm this replication applies for subsetted objects as well.  Compare stata output..
 
 ```{code}
 . svygei x if year == 1985 & x >= 1
@@ -275,6 +279,8 @@ GE(2)    |  .1676393   .00730057    22.96    0.000      .1533304   .1819481
 GE(3)    |  .2609507   .01850689    14.10    0.000      .2246779   .2972235
 ---------------------------------------------------------------------------
 ```
+
+..to R code:
 
 ```{r}
 svygei( ~ eybhc0 , subset( z81 , eybhc0 > 1 ) , epsilon = -1 )
@@ -327,6 +333,7 @@ Although the original formula was proposed in [@atkinson1970], the estimator use
 
 The $\epsilon$ is an inequality aversion parameter: as it approaches infinity, more weight is given to incomes in bottom of the distribution.
 
+#### replication example
 
 In July 2006, [@jenkins2006] presented at the North American Stata Users' Group Meetings on the stata Atkinson Index command.  The example below reproduces those statistics.
 
@@ -382,7 +389,7 @@ y <- svydesign( ~ hrn , data = x , weights = ~ wgt )
 z <- convey_prep( y )
 ```
 
-Replicate the author's subset statement and each of his svyatk results:
+Replicate the author's subset statement and each of his svyatk results with stata..
 ```{code}
 . svyatk x if year == 1981
  
@@ -405,6 +412,8 @@ A(2.5)   |  .4992701   .06754311     7.39    0.000       .366888   .6316522
 ---------------------------------------------------------------------------
 ```
 
+..using R code:
+
 ```{r}
 z81 <- subset( z , year == 1981 )
 
@@ -417,7 +426,7 @@ svyatk( ~ eybhc0 , subset( z81 , eybhc0 > 0 ) , epsilon = 2.5 )
 
 
 
-Confirm this replication applies for subsetted objects as well:
+Confirm this replication applies for subsetted objects as well, comparing stata code..
 ```{code}
 . svyatk x if year == 1981 & x >= 1
 
@@ -438,6 +447,7 @@ A(2.5)   |   .394787   .04155221     9.50    0.000      .3133461   .4762278
 ---------------------------------------------------------------------------
 ```
 
+..to R code:
 
 ```{r}
 z81_two <- subset( z , year == 1981 & eybhc0 > 1 )

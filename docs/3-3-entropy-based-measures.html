@@ -170,6 +170,8 @@ GE_\alpha =
 <p><span class="math display">\[
 I_{Total} = I_{Between} + I_{Within} \text{.}
 \]</span></p>
+<div id="replication-example" class="section level4">
+<h4><span class="header-section-number">3.3.1.1</span> replication example</h4>
 <p>In July 2006, <span class="citation">(Jenkins <label for="tufte-mn-36" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-36" class="margin-toggle">2008<span class="marginnote">Jenkins, Stephen. 2008. “Estimation and Interpretation of Measures of Inequality, Poverty, and Social Welfare Using Stata.” North American Stata Users’ Group Meetings 2006. Stata Users Group. <a href="http://EconPapers.repec.org/RePEc:boc:asug06:16" class="uri">http://EconPapers.repec.org/RePEc:boc:asug06:16</a>.</span>)</span> presented at the North American Stata Users’ Group Meetings on the stata Generalized Entropy Index command. The example below reproduces those statistics.</p>
 <p>Load and prepare the same data set:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the convey package</span>
@@ -212,7 +214,7 @@ y &lt;-<span class="st"> </span><span class="kw">svydesign</span>( ~<span class=
 
 <span class="co"># immediately run the `convey_prep` function on the survey design</span>
 z &lt;-<span class="st"> </span><span class="kw">convey_prep</span>( y )</code></pre></div>
-<p>Replicate the author’s subset statement and each of his svyatk results:</p>
+<p>Replicate the author’s subset statement and each of his svygei results..</p>
 <pre class="code"><code>. svygei x if year == 1981
  
 Warning: x has 20 values = 0. Not used in calculations
@@ -232,6 +234,7 @@ Theil    |  .1116923   .00226489    49.31    0.000      .1072532   .1161314
 GE(2)    |   .128793   .00330774    38.94    0.000      .1223099    .135276
 GE(3)    |  .1739994   .00662015    26.28    0.000      .1610242   .1869747
 ---------------------------------------------------------------------------</code></pre>
+<p>..using R code:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">z81 &lt;-<span class="st"> </span><span class="kw">subset</span>( z , year ==<span class="st"> </span><span class="dv">1981</span> )
 
 <span class="kw">svygei</span>( ~<span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z81 , eybhc0 &gt;<span class="st"> </span><span class="dv">0</span> ) , <span class="dt">epsilon =</span> -<span class="dv">1</span> )</code></pre></div>
@@ -249,7 +252,7 @@ GE(3)    |  .1739994   .00662015    26.28    0.000      .1610242   .1869747
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svygei</span>( ~<span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z81 , eybhc0 &gt;<span class="st"> </span><span class="dv">0</span> ) , <span class="dt">epsilon =</span> <span class="dv">3</span> )</code></pre></div>
 <pre><code>##          gei     SE
 ## eybhc0 0.174 0.0066</code></pre>
-<p>Confirm this replication applies for subsetted objects as well:</p>
+<p>Confirm this replication applies for subsetted objects as well. Compare stata output..</p>
 <pre class="code"><code>. svygei x if year == 1985 &amp; x &gt;= 1
 
 Complex survey estimates of Generalized Entropy inequality indices
@@ -267,6 +270,7 @@ Theil    |  .1337177   .00406302    32.91    0.000      .1257543    .141681
 GE(2)    |  .1676393   .00730057    22.96    0.000      .1533304   .1819481
 GE(3)    |  .2609507   .01850689    14.10    0.000      .2246779   .2972235
 ---------------------------------------------------------------------------</code></pre>
+<p>..to R code:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svygei</span>( ~<span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z81 , eybhc0 &gt;<span class="st"> </span><span class="dv">1</span> ) , <span class="dt">epsilon =</span> -<span class="dv">1</span> )</code></pre></div>
 <pre><code>##            gei     SE
 ## eybhc0 0.16166 0.0125</code></pre>
@@ -282,6 +286,7 @@ GE(3)    |  .2609507   .01850689    14.10    0.000      .2246779   .2972235
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svygei</span>( ~<span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z81 , eybhc0 &gt;<span class="st"> </span><span class="dv">1</span> ) , <span class="dt">epsilon =</span> <span class="dv">3</span> )</code></pre></div>
 <pre><code>##            gei     SE
 ## eybhc0 0.17373 0.0066</code></pre>
+</div>
 </div>
 <div id="renyi-divergence-svyrenyi" class="section level3">
 <h3><span class="header-section-number">3.3.2</span> Rényi Divergence (svyrenyi)</h3>
@@ -317,6 +322,8 @@ GE(3)    |  .2609507   .01850689    14.10    0.000      .2246779   .2972235
 \end{cases}
 \]</span></p>
 <p>The <span class="math inline">\(\epsilon\)</span> is an inequality aversion parameter: as it approaches infinity, more weight is given to incomes in bottom of the distribution.</p>
+<div id="replication-example-1" class="section level4">
+<h4><span class="header-section-number">3.3.4.1</span> replication example</h4>
 <p>In July 2006, <span class="citation">(Jenkins <label for="tufte-mn-41" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-41" class="margin-toggle">2008<span class="marginnote">Jenkins, Stephen. 2008. “Estimation and Interpretation of Measures of Inequality, Poverty, and Social Welfare Using Stata.” North American Stata Users’ Group Meetings 2006. Stata Users Group. <a href="http://EconPapers.repec.org/RePEc:boc:asug06:16" class="uri">http://EconPapers.repec.org/RePEc:boc:asug06:16</a>.</span>)</span> presented at the North American Stata Users’ Group Meetings on the stata Atkinson Index command. The example below reproduces those statistics.</p>
 <p>Load and prepare the same data set:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the convey package</span>
@@ -359,7 +366,7 @@ y &lt;-<span class="st"> </span><span class="kw">svydesign</span>( ~<span class=
 
 <span class="co"># immediately run the `convey_prep` function on the survey design</span>
 z &lt;-<span class="st"> </span><span class="kw">convey_prep</span>( y )</code></pre></div>
-<p>Replicate the author’s subset statement and each of his svyatk results:</p>
+<p>Replicate the author’s subset statement and each of his svyatk results with stata..</p>
 <pre class="code"><code>. svyatk x if year == 1981
  
 Warning: x has 20 values = 0. Not used in calculations
@@ -379,6 +386,7 @@ A(1.5)   |  .1701794   .0066943    25.42    0.000       .1570588      .1833
 A(2)     |  .2755788   .02597608    10.61    0.000      .2246666    .326491
 A(2.5)   |  .4992701   .06754311     7.39    0.000       .366888   .6316522
 ---------------------------------------------------------------------------</code></pre>
+<p>..using R code:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">z81 &lt;-<span class="st"> </span><span class="kw">subset</span>( z , year ==<span class="st"> </span><span class="dv">1981</span> )
 
 <span class="kw">svyatk</span>( ~<span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z81 , eybhc0 &gt;<span class="st"> </span><span class="dv">0</span> ) , <span class="dt">epsilon =</span> <span class="fl">0.5</span> )</code></pre></div>
@@ -396,7 +404,7 @@ A(2.5)   |  .4992701   .06754311     7.39    0.000       .366888   .6316522
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svyatk</span>( ~<span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z81 , eybhc0 &gt;<span class="st"> </span><span class="dv">0</span> ) , <span class="dt">epsilon =</span> <span class="fl">2.5</span> )</code></pre></div>
 <pre><code>##        atkinson     SE
 ## eybhc0  0.49927 0.0675</code></pre>
-<p>Confirm this replication applies for subsetted objects as well:</p>
+<p>Confirm this replication applies for subsetted objects as well, comparing stata code..</p>
 <pre class="code"><code>. svyatk x if year == 1981 &amp; x &gt;= 1
 
 Complex survey estimates of Atkinson inequality indices
@@ -414,6 +422,7 @@ A(1.5)   |  .1638299   .00483069    33.91    0.000       .154362   .1732979
 A(2)     |  .2443206   .01425258    17.14    0.000      .2163861   .2722552
 A(2.5)   |   .394787   .04155221     9.50    0.000      .3133461   .4762278
 ---------------------------------------------------------------------------</code></pre>
+<p>..to R code:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">z81_two &lt;-<span class="st"> </span><span class="kw">subset</span>( z , year ==<span class="st"> </span><span class="dv">1981</span> &amp;<span class="st"> </span>eybhc0 &gt;<span class="st"> </span><span class="dv">1</span> )
 
 <span class="kw">svyatk</span>( ~<span class="st"> </span>eybhc0 , z81_two , <span class="dt">epsilon =</span> <span class="fl">0.5</span> )</code></pre></div>
@@ -431,6 +440,7 @@ A(2.5)   |   .394787   .04155221     9.50    0.000      .3133461   .4762278
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svyatk</span>( ~<span class="st"> </span>eybhc0 , z81_two , <span class="dt">epsilon =</span> <span class="fl">2.5</span> )</code></pre></div>
 <pre><code>##        atkinson     SE
 ## eybhc0  0.39479 0.0416</code></pre>
+</div>
 </div>
 <div id="replicating-barabesi-et-al.-2016" class="section level3">
 <h3><span class="header-section-number">3.3.5</span> Replicating Barabesi et al. (2016)</h3>
