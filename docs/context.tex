@@ -623,7 +623,7 @@ and then use the function \texttt{svyarpr}:
 
 \begin{verbatim}
             arpr     SE
-eqIncome 0.14444 0.0029
+eqIncome 0.14444 0.0026
 \end{verbatim}
 
 \begin{Shaded}
@@ -634,15 +634,15 @@ eqIncome 0.14444 0.0029
 
 \begin{verbatim}
                       db040  eqIncome se.eqIncome
-Burgenland       Burgenland 0.1953984 0.018533255
-Carinthia         Carinthia 0.1308627 0.007831390
-Lower Austria Lower Austria 0.1384362 0.008035556
-Salzburg           Salzburg 0.1378734 0.010329425
-Styria               Styria 0.1437464 0.007328260
-Tyrol                 Tyrol 0.1530819 0.009177525
-Upper Austria Upper Austria 0.1088977 0.005370884
-Vienna               Vienna 0.1723468 0.005871547
-Vorarlberg       Vorarlberg 0.1653731 0.014674816
+Burgenland       Burgenland 0.1953984 0.016276159
+Carinthia         Carinthia 0.1308627 0.011126581
+Lower Austria Lower Austria 0.1384362 0.006532443
+Salzburg           Salzburg 0.1378734 0.013184110
+Styria               Styria 0.1437464 0.006221954
+Tyrol                 Tyrol 0.1530819 0.009918988
+Upper Austria Upper Austria 0.1088977 0.006258673
+Vienna               Vienna 0.1723468 0.007432092
+Vorarlberg       Vorarlberg 0.1653731 0.013565070
 \end{verbatim}
 
 The functions of the library convey are called in a similar way to the
@@ -864,6 +864,48 @@ eqIncome 0.051187 0.0011
 
 \chapter{Inequality Measurement}\label{inequality}
 
+{[}add brief explanation on concentration, Lorenz curve and the
+beggining of inequality measurement{]}
+
+\subsection{Entropy-based Measures}\label{entropy-based-measures}
+
+Entropy is a concept derived from information theory, meaning the
+expected amount of information given the occurrence of an event.
+Following \citep{shannon1948}, given an event \(y\) with probability
+density function \(f(\cdot)\), the information content given the
+occurrence of \(y\) can be defined as \(g(f(y)) \colon= - \log f(y)\).
+Therefore, the expected information or, put simply, the \emph{entropy}
+is
+
+\[
+H(f) \colon = -E \big[ \log f(y) \big] = - \int_{-\infty}^{\infty} f(y) \log f(y) dy
+\]
+
+Assuming a discrete distribution, with \(p_k\) as the probability of
+occurring event \(k \in K\), the entropy formula takes the form:
+
+\[
+H = - \sum_{k \in K} p_k \log p_k \text{.}
+\]
+
+The main idea behind it is that the expected amount of information of an
+event is inversely proportional to the probability of its occurrence. In
+other words, the information derived from the observation of a rare
+event is higher than of the information of more probable events.
+
+Using the intuition presented in \citep{cowell2009}, substituting the
+density function by the income share of an individual
+\(s(q) = {F}^{-1}(q) / \int_{0}^{1} F^{-1}(t)dt = y/\mu\), the entropy
+function becomes the Theil inequality index
+
+\[
+I_{Theil} = \int_{0}^{\infty} \frac{y}{\mu} \log \bigg( \frac{y}{\mu} \bigg) dF(y) = -H(s)
+\]
+
+Therefore, the entropy-based inequality measure increases as a person's
+income \(y\) deviates from the mean \(\mu\). This is the basic idea
+behind entropy-based inequality measures.
+
 \section{Lorenz Curve (svylorenz)}\label{lorenz-curve-svylorenz}
 
 Though not an inequality measure in itself, the Lorenz curve is a
@@ -1038,10 +1080,7 @@ example below reproduces the statistics presented in his section 4.1.
 \end{tabular}
 \end{table}
 
-\section{Measures derived from the Lorenz
-Curve}\label{measures-derived-from-the-lorenz-curve}
-
-\subsection{Gini index (svygini)}\label{gini-index-svygini}
+\section{Gini index (svygini)}\label{gini-index-svygini}
 
 The Gini index is an attempt to express the inequality presented in the
 Lorenz curve as a single number. In essence, it is twice the area
@@ -1065,7 +1104,7 @@ The estimator proposed by \citep{osier2009} is defined as:
 
 The linearized formula of \(\widehat{G}\) is used to calculate the SE.
 
-\subsection{Amato index (svyamato)}\label{amato-index-svyamato}
+\section{Amato index (svyamato)}\label{amato-index-svyamato}
 
 The Amato index is also based on the Lorenz curve, but instead of
 focusing on the area of the curve, it focuses on its length.
@@ -1087,7 +1126,7 @@ standardized Amato index \(\widetilde{A}\) can be defined as:
 \widetilde{A} = \frac{ A - \sqrt{2} }{2 - \sqrt{2} } \text{ .}
 \]
 
-\subsection{Zenga Index and Curve (svyzenga,
+\section{Zenga Index and Curve (svyzenga,
 svyzengacurve)}\label{zenga-index-and-curve-svyzenga-svyzengacurve}
 
 The Zenga index and its curve were proposed in \citep{zenga2007}. As
@@ -1125,46 +1164,7 @@ total income, \(\widehat{H}_{y_i}\) is the sum of incomes below or equal
 to \(y_i\) and \(\widehat{N}_{y_i}\) is the sum of incomes greater or
 equal to \(y_i\).
 
-\section{Entropy-based Measures}\label{entropy-based-measures}
-
-Entropy is a concept derived from information theory, meaning the
-expected amount of information given the occurrence of an event.
-Following \citep{shannon1948}, given an event \(y\) with probability
-density function \(f(\cdot)\), the information content given the
-occurrence of \(y\) can be defined as \(g(f(y)) \colon= - \log f(y)\).
-Therefore, the expected information or, put simply, the \emph{entropy}
-is
-
-\[
-H(f) \colon = -E \big[ \log f(y) \big] = - \int_{-\infty}^{\infty} f(y) \log f(y) dy
-\]
-
-Assuming a discrete distribution, with \(p_k\) as the probability of
-occurring event \(k \in K\), the entropy formula takes the form:
-
-\[
-H = - \sum_{k \in K} p_k \log p_k \text{.}
-\]
-
-The main idea behind it is that the expected amount of information of an
-event is inversely proportional to the probability of its occurrence. In
-other words, the information derived from the observation of a rare
-event is higher than of the information of more probable events.
-
-Using the intuition presented in \citep{cowell2009}, substituting the
-density function by the income share of an individual
-\(s(q) = {F}^{-1}(q) / \int_{0}^{1} F^{-1}(t)dt = y/\mu\), the entropy
-function becomes the Theil inequality index
-
-\[
-I_{Theil} = \int_{0}^{\infty} \frac{y}{\mu} \log \bigg( \frac{y}{\mu} \bigg) dF(y) = -H(s)
-\]
-
-Therefore, the entropy-based inequality measure increases as a person's
-income \(y\) deviates from the mean \(\mu\). This is the basic idea
-behind entropy-based inequality measures.
-
-\subsection{Generalized Entropy and Decomposition (svygei,
+\section{Generalized Entropy and Decomposition (svygei,
 svygeidec)}\label{generalized-entropy-and-decomposition-svygei-svygeidec}
 
 Using a generalization of the information function, now defined as
@@ -1210,7 +1210,7 @@ inequality. Put simply, an additive decomposable index allows for:
 I_{Total} = I_{Between} + I_{Within} \text{.}
 \]
 
-\subsubsection{replication example}\label{replication-example-1}
+\subsection{Replication example}\label{replication-example-1}
 
 In July 2006, \citep{jenkins2006} presented at the North American Stata
 Users' Group Meetings on the stata Generalized Entropy Index command.
@@ -1438,8 +1438,7 @@ GE(3)    |  .2609507   .01850689    14.10    0.000      .2246779   .2972235
 ## eybhc0 0.26095 0.0185
 \end{verbatim}
 
-\subsection{Rényi Divergence
-(svyrenyi)}\label{renyi-divergence-svyrenyi}
+\section{Rényi Divergence (svyrenyi)}\label{renyi-divergence-svyrenyi}
 
 Another measure used in areas like ecology, statistics and information
 theory is Rényi divergence measure. Using the formula defined in
@@ -1456,7 +1455,7 @@ theory is Rényi divergence measure. Using the formula defined in
 where \(\alpha\) is a parameter with a similar economic interpretation
 to that of the \(GE_\alpha\) index.
 
-\subsection{J-Divergence and Decomposition (svyjdiv,
+\section{J-Divergence and Decomposition (svyjdiv,
 svyjdivdec)}\label{j-divergence-and-decomposition-svyjdiv-svyjdivdec}
 
 Proposed by \citep{rohde2016}, the J-divergence measure can be seen as
@@ -1474,7 +1473,7 @@ defined in \ref{subsection.3.3.1}, the estimator can be defined as:
 Since it is a sum of two additive decomposable measures, \(J\) itself is
 decomposable.
 
-\subsection{Atkinson index (svyatk)}\label{atkinson-index-svyatk}
+\section{Atkinson index (svyatk)}\label{atkinson-index-svyatk}
 
 Although the original formula was proposed in \citep{atkinson1970}, the
 estimator used here comes from \citep{biewen2003}:
@@ -1490,7 +1489,7 @@ estimator used here comes from \citep{biewen2003}:
 The \(\epsilon\) is an inequality aversion parameter: as it approaches
 infinity, more weight is given to incomes in bottom of the distribution.
 
-\subsubsection{replication example}\label{replication-example-2}
+\subsection{replication example}\label{replication-example-2}
 
 In July 2006, \citep{jenkins2006} presented at the North American Stata
 Users' Group Meetings on the stata Atkinson Index command. The example
