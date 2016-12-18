@@ -72,7 +72,7 @@ Unlike other software, the R `convey` package does not require that the user spe
 ## Usage Examples
 
 
-In the following examples, we will use the data set `eusilc` contained in the libraries `vardpoor` and `laeken`.
+In the following example, we've loaded the data set `eusilc` from the R libraries [vardpoor](https://CRAN.R-project.org/package=vardpoor) and [laeken](https://CRAN.R-project.org/package=laeken).
 
 ```{r results='hide', message=FALSE, warning=FALSE}
 library(vardpoor)
@@ -90,18 +90,18 @@ Right after the creation of the design object `des_eusilc`, we should use the fu
 library(convey)
 des_eusilc <- convey_prep( des_eusilc )
 ```
-To estimate the `at-risk-of-poverty rate` we use the function `svyarpt`:
+To estimate the at-risk-of-poverty rate, we use the function `svyarpt`:
 
 ```{r comment=NA}
 svyarpr(~eqIncome, design=des_eusilc)
 ```
-To estimate the `at-risk-of-poverty rate` for domains defined by the variable `db040` we use
+To estimate the at-risk-of-poverty rate across domains defined by the variable `db040` we use:
 
 ```{r comment=NA}
 svyby(~eqIncome, by = ~db040, design = des_eusilc, FUN = svyarpr, deff = FALSE)
 ```
 
-Using the same data set, we estimate the `quintile share ratio`: 
+Using the same data set, we estimate the quintile share ratio: 
 
 ```{r comment=NA}
 # for the whole population
@@ -145,14 +145,14 @@ svygini( ~ py010n , design = des_eusilc_rep , na.rm = TRUE )
 
 
 
-djalma, where do these references go on this page?  [@berger2003] and [@osier2009] and [@deville1999]
+djalmapessoa_look, where do these references go on this page?  [@berger2003] and [@osier2009] and [@deville1999]
 
 
 
 ## Underlying Calculations
 
 
-djalma, please describe the general purpose of linearization
+djalmapessoa_look, please describe the general purpose of linearization
 
 
 In the `convey` library, there are some basic functions that produce the linearized variables needed to measure income concentration and poverty.  For example, looking at the income variable in some complex survey dataset, the `quantile` of that income variable can be linearized by the function `convey::svyiqalpha` and the sum total below any quantile of the variable is linearized by the function `convey::svyisq`.
@@ -183,9 +183,31 @@ we linearize the `rmpg`.
 
 
 
+## The Variance Estimator
+
+
+djalmapessoa_look please add references to this section
+
+
+The variance of the estimator $T(\hat{M})$ can approximated by:
+
+$$Var\left[T(\hat{M})\right]\cong var\left[\sum_s w_i z_i\right]$$
+
+The  `linearized` variable $z$  is given by the derivative of the functional:
+
+$$
+z_k=lim_{t\rightarrow0}\frac{T(M+t\delta_k)-T(M)}{t}=IT_k(M)
+$$
+
+where, $\delta_k$ is the Dirac measure in $k$: $\delta_k(i)=1$ if and only if $i=k$.
+
+This **derivative** is called  **Influence Function** and was introduced in the area of **Robust Statistics**.
+
+
+
 ## Influence Functions
 
-Some measures of poverty and income concentration are defined by non-differentiable functions so that it is not possible to use Taylor linearization to estimate their variances. An alternative is to use **Influence functions** as described in [@deville1999] and [@osier2009]. The library convey implements this methodology to work with `survey.design` objects and also with `svyrep.design` objects.
+Some measures of poverty and income concentration are defined by non-differentiable functions so that it is not possible to use Taylor linearization to estimate their variances. An alternative is to use **Influence functions** as described in [@deville1999] and [@osier2009]. The convey library implements this methodology to work with `survey.design` objects and also with `svyrep.design` objects.
 
 Some examples of these measures are:
 
@@ -238,26 +260,6 @@ $\hat{R}=T(\hat{M})=\frac{\int y d\hat{M}}{\int x d\hat{M}}=\frac{\sum_s w_iy_i}
 $\hat{F}(x)=T(\hat{M})=\frac{\int 1(y\leq x)d\hat{M}}{\int{d\hat{M}}}=\frac{\sum_s w_i 1(y_i\leq x)}{\sum_s w_i}$
 
 
-
-## The Variance Estimator
-
-
-@djalma please add references to this section
-
-
-The variance of the estimator $T(\hat{M})$ can approximated by:
-
-$$Var\left[T(\hat{M})\right]\cong var\left[\sum_s w_i z_i\right]$$
-
-The  `linearized` variable $z$  is given by the derivative of the functional:
-
-$$
-z_k=lim_{t\rightarrow0}\frac{T(M+t\delta_k)-T(M)}{t}=IT_k(M)
-$$
-
-where, $\delta_k$ is the Dirac measure in $k$: $\delta_k(i)=1$ if and only if $i=k$.
-
-This **derivative** is called  **Influence Function** and was introduced in the area of **Robust Statistics**.
 
 ## Influence Function Examples
 
@@ -315,10 +317,16 @@ $m$ - median income;
 $f$ - income density function;
 
 
+## Replication Designs
+
+
+djalmapessoa_look, please describe how the software works differently on svrepdesign objects -- as compared to svydesign objects
+
+
 
 
 ## Decomposition
 
 
-@guilherme please describe what a decomposition is and why users might want it?
+guilherme_look please describe what a decomposition is and why users might want to use it?
 
