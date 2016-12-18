@@ -137,9 +137,9 @@
 }
 \chapter{Introduction}\label{introduction}
 
-The \texttt{convey} library estimates measures of poverty, income
-concentration, and wellbeing. There are two other \{R\} libraries
-covering this subject,
+The R \texttt{convey} library estimates measures of poverty, income
+concentration, and wellbeing. There are two other R libraries covering
+this subject,
 \href{https://CRAN.R-project.org/package=vardpoor}{vardpoor} and
 \href{https://CRAN.R-project.org/package=laeken}{laeken}, however, only
 \texttt{convey} integrates seamlessly with the
@@ -186,9 +186,9 @@ on your machine, you can install..
 \section{Complex surveys and statistical inference}\label{survey}
 
 In this book, we demonstrate how to measure poverty and income
-concentration in a population based on data collected from a complex
-survey sample. Most surveys administered by government agencies or
-larger research organizations utilize a sampling design that prevents
+concentration in a population based on microdata collected from a
+complex survey sample. Most surveys administered by government agencies
+or larger research organizations utilize a sampling design that violates
 the assumption of simple random sampling (SRS), including:
 
 \begin{verbatim}
@@ -203,66 +203,25 @@ the assumption of simple random sampling (SRS), including:
 
 Therefore, basic unweighted R commands such as \texttt{mean()} or
 \texttt{glm()} will not properly account for the weighting nor the
-uncertainty in the dataset. For some examples of publicly-available
-complex survey data sets, see \href{}{http://asdfree.com}.
+measures of uncertainty (such as the confidence intervals) present in
+the dataset. For some examples of publicly-available complex survey data
+sets, see \href{}{http://asdfree.com}.
 
 Unlike other software, the R \texttt{convey} package does not require
 that the user specify these parameters throughout the analysis. So long
 as the
 \href{http://r-survey.r-forge.r-project.org/survey/html/svydesign.html}{svydesign
+object} or
+\href{http://r-survey.r-forge.r-project.org/survey/html/svrepdesign.html}{svrepdesign
 object} has been constructed properly at the outset of the analysis, the
-\texttt{convey} package will incorporate sample design automatically.
-
-\section{Structure of the library}\label{structure-of-the-library}
-
-In the \texttt{convey} library, there are some basic functions that
-produce the linearized variables of some estimates that often enter in
-the definition of measures of concentration and poverty. For example,
-the \texttt{quantile} which is linearized by the function
-\texttt{svyiqalpha}. Other example is the function \texttt{svyisq} that
-linearizes the total below a quantile of the variable.
-
-From the linearized variables of these basic estimates it is possible by
-using rules of composition, valid for influence functions, to derive the
-influence function of more complex estimates. By definition the
-influence function is a Gateaux derivative and the rules rules of
-composition valid for Gateaux derivatives also hold for Influence
-Functions.
-
-The following property of Gateaux derivatives was often used in the
-library convey. Let \(g\) be a differentible function of \(m\)
-variables. Suppose we want to compute the influence function of the
-estimator \(g(T_1, T_2,\ldots, T_m)\), knowing the Influence function of
-the estimators \(T_i, i=1,\ldots, m\). Then the following holds:
-
-\[
-I(g(T_1, T_2,\ldots, T_m)) = \sum_{i=1}^m \frac{\partial g}{\partial T_i}I(T_i)
-\]
-
-In the library convey this rule is implemented by the function
-\texttt{contrastinf} which uses the R function \texttt{deriv} to compute
-the formal partial derivatives \(\frac{\partial g}{\partial T_i}\).
-
-For example, suppose we want to linearize the
-\texttt{Relative\ median\ poverty\ gap}(rmpg), defined as the difference
-between the at-risk-of-poverty threshold (\texttt{arpt}) and the median
-of incomes less than the \texttt{arpt} relative to the \texttt{arprt}:
-
-\[
-rmpg= \frac{arpt-medpoor} {arpt}
-\]
-
-where \texttt{medpoor} is the median of incomes less than \texttt{arpt}.
-
-Suppose we know how to linearize \texttt{arpt} and \texttt{medpoor},
-then by applying the function \texttt{contrastinf} with \[
-g(T_1,T_2)= \frac{(T_1 - T_2)}{T_1}
-\] we linearize the \texttt{rmpg}.
+\texttt{convey} package will incorporate the survey design automatically
+and produce statistics and variances that take the complex sample into
+account.
 
 \section{Usage Examples}\label{usage-examples}
 
-In the following examples we will use the data set \texttt{eusilc}
-contained in the libraries \texttt{vardpoor} and \texttt{Laeken}.
+In the following examples, we will use the data set \texttt{eusilc}
+contained in the libraries \texttt{vardpoor} and \texttt{laeken}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -387,8 +346,8 @@ and then use the function \texttt{svyarpr}:
 \end{Shaded}
 
 \begin{verbatim}
-            arpr    SE
-eqIncome 0.14444 0.003
+            arpr     SE
+eqIncome 0.14444 0.0028
 \end{verbatim}
 
 \begin{Shaded}
@@ -399,15 +358,15 @@ eqIncome 0.14444 0.003
 
 \begin{verbatim}
                       db040  eqIncome se.eqIncome
-Burgenland       Burgenland 0.1953984 0.017852756
-Carinthia         Carinthia 0.1308627 0.010798080
-Lower Austria Lower Austria 0.1384362 0.006263179
-Salzburg           Salzburg 0.1378734 0.013277095
-Styria               Styria 0.1437464 0.009228283
-Tyrol                 Tyrol 0.1530819 0.010271417
-Upper Austria Upper Austria 0.1088977 0.005374284
-Vienna               Vienna 0.1723468 0.007352952
-Vorarlberg       Vorarlberg 0.1653731 0.012949035
+Burgenland       Burgenland 0.1953984 0.019520728
+Carinthia         Carinthia 0.1308627 0.010645362
+Lower Austria Lower Austria 0.1384362 0.006278044
+Salzburg           Salzburg 0.1378734 0.012397671
+Styria               Styria 0.1437464 0.007912585
+Tyrol                 Tyrol 0.1530819 0.009562265
+Upper Austria Upper Austria 0.1088977 0.006104960
+Vienna               Vienna 0.1723468 0.007489825
+Vorarlberg       Vorarlberg 0.1653731 0.014214344
 \end{verbatim}
 
 The functions of the library convey are called in a similar way to the
@@ -459,13 +418,62 @@ py010n   NA NA
 
 \begin{verbatim}
           gini     SE
-py010n 0.64606 0.0041
+py010n 0.64606 0.0038
 \end{verbatim}
 
 djalma, where do these references go on this page? \citep{berger2003}
 and \citep{osier2009} and \citep{deville1999}
 
-\section{Linearization}\label{linearization}
+\section{Underlying Calculations}\label{underlying-calculations}
+
+djalma, please describe the general purpose of linearization
+
+In the \texttt{convey} library, there are some basic functions that
+produce the linearized variables needed to measure income concentration
+and poverty. For example, looking at the income variable in some complex
+survey dataset, the \texttt{quantile} of that income variable can be
+linearized by the function \texttt{convey::svyiqalpha} and the sum total
+below any quantile of the variable is linearized by the function
+\texttt{convey::svyisq}.
+
+From the linearized variables of these basic estimates, it is possible
+by using rules of composition, valid for influence functions, to derive
+the influence function of more complex estimates. By definition the
+influence function is a Gateaux derivative and the rules rules of
+composition valid for Gateaux derivatives also hold for Influence
+Functions.
+
+The following property of Gateaux derivatives was often used in the
+library convey. Let \(g\) be a differentible function of \(m\)
+variables. Suppose we want to compute the influence function of the
+estimator \(g(T_1, T_2,\ldots, T_m)\), knowing the Influence function of
+the estimators \(T_i, i=1,\ldots, m\). Then the following holds:
+
+\[
+I(g(T_1, T_2,\ldots, T_m)) = \sum_{i=1}^m \frac{\partial g}{\partial T_i}I(T_i)
+\]
+
+In the library convey this rule is implemented by the function
+\texttt{contrastinf} which uses the R function \texttt{deriv} to compute
+the formal partial derivatives \(\frac{\partial g}{\partial T_i}\).
+
+For example, suppose we want to linearize the
+\texttt{Relative\ median\ poverty\ gap}(rmpg), defined as the difference
+between the at-risk-of-poverty threshold (\texttt{arpt}) and the median
+of incomes less than the \texttt{arpt} relative to the \texttt{arprt}:
+
+\[
+rmpg= \frac{arpt-medpoor} {arpt}
+\]
+
+where \texttt{medpoor} is the median of incomes less than \texttt{arpt}.
+
+Suppose we know how to linearize \texttt{arpt} and \texttt{medpoor},
+then by applying the function \texttt{contrastinf} with \[
+g(T_1,T_2)= \frac{(T_1 - T_2)}{T_1}
+\] we linearize the \texttt{rmpg}.
+
+\section{Influence Functions}\label{influence-functions}
 
 Some measures of poverty and income concentration are defined by
 non-differentiable functions so that it is not possible to use Taylor
@@ -500,8 +508,6 @@ Note that it is not possible to use Taylor linearization for these
 measures because they depend on quantiles and the Gini is defined as a
 function of ranks. This could be done using the approach proposed by
 Deville (1999) based upon influence functions.
-
-\section{The Influence Function}\label{the-influence-function}
 
 Let \(U\) be a population of size \(N\) and \(M\) be a measure that
 allocates mass one to the set composed by one unit, that is
@@ -543,6 +549,8 @@ functional of the measure \(\hat{M}\).
 \end{itemize}
 
 \section{The Variance Estimator}\label{the-variance-estimator}
+
+\citet{djalma} please add references to this section
 
 The variance of the estimator \(T(\hat{M})\) can approximated by:
 
@@ -620,10 +628,28 @@ where:
 
 \(f\) - income density function;
 
+\section{Decomposition}\label{decomposition}
+
+\citet{guilherme} please describe what a decomposition is and why users
+might want it?
+
 \chapter{Poverty Indices}\label{poverty}
 
-\section{At Risk of Poverty Ratio and Threshold (svyarpr,
-svyarpt)}\label{at-risk-of-poverty-ratio-and-threshold-svyarpr-svyarpt}
+\section{At Risk of Poverty Ratio
+(svyarpr)}\label{at-risk-of-poverty-ratio-svyarpr}
+
+For additional usage examples of \texttt{svyarpr}, type
+\texttt{?convey::svyarpr} in the R console.
+
+here are the references
+
+\citep{osier2009} and \citep{deville1999}
+
+\section{At Risk of Poverty Threshold
+(svyarpt)}\label{at-risk-of-poverty-threshold-svyarpt}
+
+For additional usage examples of \texttt{svylorenz}, type
+\texttt{?convey::svylorenz} in the R console.
 
 here are the references
 
@@ -632,12 +658,18 @@ here are the references
 \section{Relative Median Income Ratio
 (svyrmir)}\label{relative-median-income-ratio-svyrmir}
 
+For additional usage examples of \texttt{svyrmir}, type
+\texttt{?convey::svyrmir} in the R console.
+
 here are the references
 
 \citep{osier2009} and \citep{deville1999}
 
 \section{Relative Median Poverty Gap
 (svyrmpg)}\label{relative-median-poverty-gap-svyrmpg}
+
+For additional usage examples of \texttt{svyrmpg}, type
+\texttt{?convey::svyrmpg} in the R console.
 
 here are the references
 
@@ -646,16 +678,15 @@ here are the references
 \section{Median Income Below the At Risk of Poverty Threshold
 (svypoormed)}\label{median-income-below-the-at-risk-of-poverty-threshold-svypoormed}
 
+For additional usage examples of \texttt{svypoormed}, type
+\texttt{?convey::svypoormed} in the R console.
+
 here are the references
 
 \citep{osier2009} and \citep{deville1999}
 
 \section{Foster-Greer-Thorbecke class
 (svyfgt)}\label{foster-greer-thorbecke-class-svyfgt}
-
-here are the references
-
-\citep{foster1984} and \citep{berger2003}
 
 \citep{foster1984} proposed a family of indicators to measure poverty.
 
@@ -777,6 +808,13 @@ To estimate the poverty gap(FGT1) with the poverty threshold equal to
 eqIncome 0.051187 0.0011
 \end{verbatim}
 
+For additional usage examples of \texttt{svyfgt}, type
+\texttt{?convey::svyfgt} in the R console.
+
+here are the references
+
+\citep{foster1984} and \citep{berger2003}
+
 \chapter{Inequality Measurement}\label{inequality}
 
 {[}add brief explanation on concentration, Lorenz curve and the
@@ -886,7 +924,9 @@ Yet, this formula is used to calculate specific points of the curve and
 their respective SEs. The formula to plot an approximation of the
 continuous empirical curve comes from \citep{lerman1989}.
 
-\subsection{replication example}\label{replication-example}
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{A replication example}
 
 In October 2016, \citep{jann2016} released a pre-publication working
 paper to estimate lorenz and concentration curves using stata. The
@@ -994,6 +1034,9 @@ example below reproduces the statistics presented in his section 4.1.
 \bottomrule
 \end{tabular}
 \end{table}
+
+For additional usage examples of \texttt{svylorenz}, type
+\texttt{?convey::svylorenz} in the R console.
 
 \section{Gini index (svygini)}\label{gini-index-svygini}
 
@@ -1125,7 +1168,9 @@ inequality. Put simply, an additive decomposable index allows for:
 I_{Total} = I_{Between} + I_{Within} \text{.}
 \]
 
-\subsection{Replication example}\label{replication-example-1}
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{A replication example}
 
 In July 2006, \citep{jenkins2006} presented at the North American Stata
 Users' Group Meetings on the stata Generalized Entropy Index command.
@@ -1353,6 +1398,9 @@ GE(3)    |  .2609507   .01850689    14.10    0.000      .2246779   .2972235
 ## eybhc0 0.26095 0.0185
 \end{verbatim}
 
+For additional usage examples of \texttt{svygei}, type
+\texttt{?convey::svygei} in the R console.
+
 \section{Rényi Divergence (svyrenyi)}\label{renyi-divergence-svyrenyi}
 
 Another measure used in areas like ecology, statistics and information
@@ -1388,6 +1436,9 @@ defined in \ref{subsection.3.3.1}, the estimator can be defined as:
 Since it is a sum of two additive decomposable measures, \(J\) itself is
 decomposable.
 
+For additional usage examples of \texttt{svyrenyi}, type
+\texttt{?convey::svyrenyi} in the R console.
+
 \section{Atkinson index (svyatk)}\label{atkinson-index-svyatk}
 
 Although the original formula was proposed in \citep{atkinson1970}, the
@@ -1404,7 +1455,9 @@ estimator used here comes from \citep{biewen2003}:
 The \(\epsilon\) is an inequality aversion parameter: as it approaches
 infinity, more weight is given to incomes in bottom of the distribution.
 
-\subsection{replication example}\label{replication-example-2}
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{A replication example}
 
 In July 2006, \citep{jenkins2006} presented at the North American Stata
 Users' Group Meetings on the stata Atkinson Index command. The example
@@ -1633,9 +1686,15 @@ A(2.5)   |   .394787   .04155221     9.50    0.000      .3133461   .4762278
 ## eybhc0  0.39479 0.0416
 \end{verbatim}
 
+For additional usage examples of \texttt{svyatk}, type
+\texttt{?convey::svyatk} in the R console.
+
 \chapter{Wellbeing Measures}\label{wellbeing}
 
 \section{The Gender Pay Gap (svygpg)}\label{the-gender-pay-gap-svygpg}
+
+For additional usage examples of \texttt{svygpg}, type
+\texttt{?convey::svygpg} in the R console.
 
 here are the references
 
@@ -1643,6 +1702,9 @@ here are the references
 
 \section{Quintile Share Ratio
 (svyqsr)}\label{quintile-share-ratio-svyqsr}
+
+For additional usage examples of \texttt{svyqsr}, type
+\texttt{?convey::svyqsr} in the R console.
 
 here are the references
 
@@ -1653,7 +1715,9 @@ here are the references
 \section{Alkire-Foster Class and Decomposition (svyafc,
 svyafcdec)}\label{alkire-foster-class-and-decomposition-svyafc-svyafcdec}
 
-\subsubsection{replication example}\label{replication-example-3}
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{A replication example}
 
 In November 2015, Christopher Jindra presented at the Oxford Poverty and
 Human Development Initiative on the Alkire-Foster multidimensional
@@ -1805,10 +1869,17 @@ then keep going replicating this
 
 \url{https://github.com/DjalmaPessoa/convey/issues/154}
 
+For additional usage examples of \texttt{svyafc} or \texttt{svyafcdec},
+type \texttt{?convey::svyafc} or \texttt{?convey::svyafcdec} in the R
+console.
+
 \citep{alkire2011} and \citep{alkire2015} and \citep{pacifico2016}
 
 \section{Bourguignon (1999) inequality class
 (svybmi)}\label{bourguignon-1999-inequality-class-svybmi}
+
+For additional usage examples of \texttt{svybmi}, type
+\texttt{?convey::svybmi} in the R console.
 
 \citep{bourguignon1999} and \citep{lugo2007}
 
