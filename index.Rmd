@@ -22,38 +22,21 @@ bibliography: [book.bib, packages.bib]
 biblio-style: apalike
 link-citations: yes
 github-repo: gilhermejacob/context
-description: "This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook."
+description: "A book about the R convey package"
 ---
 
 # Introduction
 
-This is a _sample_ book written in **Markdown**. You can use anything that Pandoc's Markdown supports, e.g., a math equation $a^2 + b^2 = c^2$.
+The `convey` library estimates measures of poverty, income concentration, and wellbeing.  There are two other {R} libraries covering this subject, [vardpoor](https://CRAN.R-project.org/package=vardpoor) and [laeken](https://CRAN.R-project.org/package=laeken), however, only `convey` integrates seamlessly with the [R survey package](https://CRAN.R-project.org/package=survey).
 
-For now, you have to install the development version of **bookdown** from Github:
-```{r eval=FALSE}
-devtools::install_github("rstudio/bookdown")
-```
+`convey` is free and open-source software that runs inside the [R environment for statistical computing](https://www.r-project.org/).  Anyone can review and propose changes to [the source code](https://github.com/DjalmaPessoa/convey) for this software.  Readers are welcome to [propose changes to this book](https://github.com/guilhermejacob/context/) as well.
 
-Remember each Rmd file contains one and only one chapter, and a chapter is defined by the first-level heading `#`.
-
-To compile this example to PDF, you need to install XeLaTeX.
-
-```{r include=FALSE}
-# automatically create a bib database for R packages
-knitr::write_bib(c(
-  .packages(), 'bookdown', 'knitr', 'rmarkdown'
-), 'packages.bib')
-```
-
-
-
-The library convey aims at estimating measures of poverty and income concentration. There are already at least two libraries covering this subject: vardpoor and Laeken.
-The main difference between the library convey and these two is that the convey strongly hinges on the survey library.
 
 
 ## Installation {#install}
 
-`convey` is free and open-source software that runs inside the [R environment for statistical computing](https://www.r-project.org/).
+In order to work with the `convey` library, you will need to have R running on your machine.  If you have never used R before, you will need to [install that software](https://www.r-project.org/) before `convey` can be accessed.  Check out [FlowingData](http://flowingdata.com/2012/06/04/resources-for-getting-started-with-r/) for a concise list of resources for new R users.  Once you have R loaded on your machine, you can install..
+
 
 * the latest released version from [CRAN](https://CRAN.R-project.org/package=convey) with
 
@@ -68,179 +51,28 @@ The main difference between the library convey and these two is that the convey 
     ```
 
 
-[This may present how to install R, RStudio and required packages. Providing brief information about `survey` and `MonetDBLite` may also be recommended.]
-
-You can label chapter and section titles using `{#label}` after them, e.g., we can reference Chapter \@ref(install). If you do not manually label them, there will be automatic labels anyway, e.g., Chapter \@ref(inequality).
-
-Figures and tables with captions will be placed in `figure` and `table` environments, respectively.
-
-```{r nice-fig, fig.cap='Here is a nice figure!', out.width='80%', fig.asp=.75, fig.align='center'}
-par(mar = c(4, 4, .1, .1))
-plot(pressure, type = 'b', pch = 19)
-```
-
-Reference a figure by its code chunk label with the `fig:` prefix, e.g., see Figure \@ref(fig:nice-fig). Similarly, you can reference tables generated from `knitr::kable()`, e.g., see Table \@ref(tab:nice-tab).
-
-```{r nice-tab, tidy=FALSE}
-knitr::kable(
-  head(iris, 20), caption = 'Here is a nice table!',
-  booktabs = TRUE
-)
-```
-
-You can write citations, too. For example, we are using the **bookdown** package [@R-bookdown] in this sample book, which was built on top of R Markdown and **knitr** [@xie2015].
 
 ## Complex surveys and statistical inference {#survey}
 
-In this book we estimate measures of poverty and income concentration in a populatiion, generaly of households or people, based on data colected from a complex survey sample from the population, involving
+In this book, we demonstrate how to measure poverty and income concentration in a population based on data collected from a complex survey sample.  Most surveys administered by government agencies or larger research organizations utilize a sampling design that prevents the assumption of simple random sampling (SRS), including:
 
-1- different units selection probabilities;
+    1. different units selection probabilities.
 
-2- clustering of units;
+    2. clustering of units.
 
-3- stratification of clusters, and
+    3. stratification of clusters.
 
-4- reweighting to compensate missing values and other adjustments.
+    4. reweighting to compensate for missing values and other adjustments.
 
-Items 1 and 4 imply that we should use different units weights to avoid biases when performing statistical analysis. Also, when estimating variances, we should consider, not only the design weights but all listed design characteristics 1-4.
-
-In order to take into account the sample design characteristics it should be used a specialized software like the R library **survey**, adopted in this book.
+Therefore, basic unweighted R commands such as `mean()` or `glm()` will not properly account for the weighting nor the uncertainty in the dataset.  For some examples of publicly-available complex survey data sets, see [http://asdfree.com]().
 
 
+Unlike other software, the R `convey` package does not require that the user specify these parameters throughout the analysis.  So long as the [svydesign object](http://r-survey.r-forge.r-project.org/survey/html/svydesign.html) has been constructed properly at the outset of the analysis, the `convey` package will incorporate sample design automatically.
 
-## Linearization
-
-Some measures of poverty and income concentration are defined by non-differentiable functions so that it is not possible to use Taylor linearization to estimate their variances. An alternative is to use **Influence functions** as described in [@deville1999] and [@osier2009]. The library convey implements this methodology to work with `survey.design` objects and also with `svyrep.design` objects.
-
-Some examples of these measures are:
-
-- At-risk-of-poverty threshold:
-$arpt=.60q_{.50}$ where $q_{.50}$ is the income median;
-
-- At-risk-of-poverty rate
-$arpr=\frac{\sum_U 1(y_i \leq arpt)}{N}.100$
-
-- Quintile share ratio
-     
-$qsr=\frac{\sum_U 1(y_i>q_{.80})}{\sum_U 1(y_i\leq q_{.20})}$
-
-- Gini coefficient
-$1+G=\frac{2\sum_U (r_i-1)y_i}{N\sum_Uy_i}$
-where $r_i$ is the rank of $y_i$.
-
-Note that it is not possible to use Taylor linearization for these measures because they depend on quantiles and the Gini is defined as a function of ranks. This could be done using the approach proposed by Deville (1999) based upon influence functions. 
-
-
-
-## Influence function
-
-
-Let $U$ be a population of size $N$ and $M$ be a measure that allocates mass one to the set composed by one unit, that is $M(i)=M_i= 1$ if $i\in U$ and $M(i)=0$ if $i\notin U$ 
-
-Now, a population parameter $\theta$ can be expressed as a functional of $M$
-$\theta=T(M)$
-
-Examples of such parameters are:
-
-- Total: 
-$Y=\sum_Uy_i=\sum_U y_iM_i=\int ydM=T(M)$
-
-- Ratio of two totals:
-$R=\frac{Y}{X}=\frac{\int y dM}{\int x dM}=T(M)$
-
-- Cumulative distribution function:
-$F(x)=\frac{\sum_U 1(y_i\leq x)}{N}=\frac{\int 1(y\leq x)dM}{\int{dM}}=T(M)$
-
-
-To estimate these parameters from the sample, we replace the measure $M$ by the estimated measure $\hat{M}$ defined by: $\hat{M}(i)=\hat{M}_i= w_i$ if $i\in s$ and $\hat{M}(i)=0$ if $i\notin s$. 
-
-The estimators of the population parameters can then be expressed as functional of the measure  $\hat{M}$. 
-
--  Total:
-$\hat{Y}=T(\hat{M})=\int yd\hat{M}=\sum_s w_iy_i$
-
-- Ratio of totals:
-$\hat{R}=T(\hat{M})=\frac{\int y d\hat{M}}{\int x d\hat{M}}=\frac{\sum_s w_iy_i}{\sum_s w_ix_i}$
-
-- Cumulative distribution function:
-$\hat{F}(x)=T(\hat{M})=\frac{\int 1(y\leq x)d\hat{M}}{\int{d\hat{M}}}=\frac{\sum_s w_i 1(y_i\leq x)}{\sum_s w_i}$
-
-
-
-## The variance estimator
-
-The variance of the estimator $T(\hat{M})$ can approximated by:
-
-$$Var\left[T(\hat{M})\right]\cong var\left[\sum_s w_i z_i\right]$$
-
-The  `linearized` variable $z$  is given by the derivative of the functional:
-
-$$
-z_k=lim_{t\rightarrow0}\frac{T(M+t\delta_k)-T(M)}{t}=IT_k(M)
-$$
-
-where, $\delta_k$ is the Dirac measure in $k$: $\delta_k(i)=1$ if and only if $i=k$.
-
-This **derivative** is called  **Influence Function** and was introduced in the area of **Robust Statistics**.
-
-## Influence functions - Examples
-
-
-- Total:
-$$
-\begin{aligned}
-IT_k(M)&=lim_{t\rightarrow 0}\frac{T(M+t\delta_k)-T(M)}{t}\\
-&=lim_{t\rightarrow 0}\frac{\int y.d(M+t\delta_k)-\int y.dM}{t}\\
-&=lim_{t\rightarrow 0}\frac{\int yd(t\delta_k)}{t}=y_k	
-\end{aligned}
-$$
-
-
-- Ratio of two totals:
-$$
-\begin{aligned}
-IR_k(M)&=I\left(\frac{U}{V}\right)_k(M)=\frac{V(M)\times IU_k(M)-U(M)\times IV_k(M)}{V(M)^2}\\
-&=\frac{X y_k-Y x_k}{X^2}=\frac{1}{X}(y_k-Rx_k)
-\end{aligned}
-$$
-
-## Linearization by influence function - Examples
-
-- At-risk-of-poverty threshold:
-$$
-arpt = 0.6\times m
-$$
-where $m$ is the median income.
-
-$$
-z_k= -\frac{0.6}{f(m)}\times\frac{1}{N}\times\left[I(y_k\leq m-0.5) \right]
-$$
-
-
-- At-risk-of-poverty rate:
-
-\[
- arpr=\frac{\sum_U I(y_i \leq t)}{\sum_U w_i}.100
-\]
-\[
-z_k=\frac{1}{N}\left[I(y_k\leq t)-t\right]-\frac{0.6}{N}\times\frac{f(t)}{f(m)}\left[I(y_k\leq m)-0.5\right]
-\]
-
-where:
-
-$N$ - population size; 
-
-$t$ - at-risk-of-poverty threshold;
-
-$y_k$ - income of person $k$;
-
-$m$ - median income;
-
-$f$ - income density function;
 
 ## Structure of the library
 
-In the library convey, there are some basic functions that produces the linearized variables of some estimates that often enter in the definition of measures of concentration and poverty. For example the `quantile` which is linearized by the function `svyiqalpha`. Other example is the function `svyisq` that linearizes the total below a quantile of the variable.
+In the `convey` library, there are some basic functions that produce the linearized variables of some estimates that often enter in the definition of measures of concentration and poverty. For example, the `quantile` which is linearized by the function `svyiqalpha`. Other example is the function `svyisq` that linearizes the total below a quantile of the variable.
 
 From the linearized variables of these basic estimates it is possible by using rules of composition, valid for influence functions, to derive the influence function of more complex estimates. By definition the influence function is a Gateaux derivative and the rules rules of composition valid for Gateaux derivatives also hold for Influence Functions.
 
@@ -267,7 +99,7 @@ $$
 we linearize the `rmpg`.
 
 
-## Examples of use of the library convey
+## Usage Examples
 
 
 In the following examples we will use the data set `eusilc` contained in the libraries `vardpoor` and `Laeken`.
@@ -324,6 +156,7 @@ and then use the function `svyarpr`:
 
 ```{r comment=NA}
 svyarpr(~eqIncome, design=des_eusilc_rep)
+
 svyby(~eqIncome, by = ~db040, design = des_eusilc_rep, FUN = svyarpr, deff = FALSE)
 ```
 The functions of the library convey are called in a similar way  to the functions in library survey.
@@ -334,8 +167,9 @@ It is also possible to deal with missing values by using the argument `na.rm`.
 # survey.design using a variable with missings
 svygini( ~ py010n , design = des_eusilc )
 svygini( ~ py010n , design = des_eusilc , na.rm = TRUE )
+
 # svyrep.design using a variable with missings
-# svygini( ~ py010n , design = des_eusilc_rep ) get error
+svygini( ~ py010n , design = des_eusilc_rep )
 svygini( ~ py010n , design = des_eusilc_rep , na.rm = TRUE )
 ```
 
@@ -344,3 +178,134 @@ svygini( ~ py010n , design = des_eusilc_rep , na.rm = TRUE )
 djalma, where do these references go on this page?  [@berger2003] and [@osier2009] and [@deville1999]
 
 
+
+
+## Linearization
+
+Some measures of poverty and income concentration are defined by non-differentiable functions so that it is not possible to use Taylor linearization to estimate their variances. An alternative is to use **Influence functions** as described in [@deville1999] and [@osier2009]. The library convey implements this methodology to work with `survey.design` objects and also with `svyrep.design` objects.
+
+Some examples of these measures are:
+
+- At-risk-of-poverty threshold:
+$arpt=.60q_{.50}$ where $q_{.50}$ is the income median;
+
+- At-risk-of-poverty rate
+$arpr=\frac{\sum_U 1(y_i \leq arpt)}{N}.100$
+
+- Quintile share ratio
+     
+$qsr=\frac{\sum_U 1(y_i>q_{.80})}{\sum_U 1(y_i\leq q_{.20})}$
+
+- Gini coefficient
+$1+G=\frac{2\sum_U (r_i-1)y_i}{N\sum_Uy_i}$
+where $r_i$ is the rank of $y_i$.
+
+Note that it is not possible to use Taylor linearization for these measures because they depend on quantiles and the Gini is defined as a function of ranks. This could be done using the approach proposed by Deville (1999) based upon influence functions. 
+
+
+
+## The Influence Function
+
+
+Let $U$ be a population of size $N$ and $M$ be a measure that allocates mass one to the set composed by one unit, that is $M(i)=M_i= 1$ if $i\in U$ and $M(i)=0$ if $i\notin U$ 
+
+Now, a population parameter $\theta$ can be expressed as a functional of $M$
+$\theta=T(M)$
+
+Examples of such parameters are:
+
+- Total: 
+$Y=\sum_Uy_i=\sum_U y_iM_i=\int ydM=T(M)$
+
+- Ratio of two totals:
+$R=\frac{Y}{X}=\frac{\int y dM}{\int x dM}=T(M)$
+
+- Cumulative distribution function:
+$F(x)=\frac{\sum_U 1(y_i\leq x)}{N}=\frac{\int 1(y\leq x)dM}{\int{dM}}=T(M)$
+
+
+To estimate these parameters from the sample, we replace the measure $M$ by the estimated measure $\hat{M}$ defined by: $\hat{M}(i)=\hat{M}_i= w_i$ if $i\in s$ and $\hat{M}(i)=0$ if $i\notin s$. 
+
+The estimators of the population parameters can then be expressed as functional of the measure  $\hat{M}$. 
+
+-  Total:
+$\hat{Y}=T(\hat{M})=\int yd\hat{M}=\sum_s w_iy_i$
+
+- Ratio of totals:
+$\hat{R}=T(\hat{M})=\frac{\int y d\hat{M}}{\int x d\hat{M}}=\frac{\sum_s w_iy_i}{\sum_s w_ix_i}$
+
+- Cumulative distribution function:
+$\hat{F}(x)=T(\hat{M})=\frac{\int 1(y\leq x)d\hat{M}}{\int{d\hat{M}}}=\frac{\sum_s w_i 1(y_i\leq x)}{\sum_s w_i}$
+
+
+
+## The Variance Estimator
+
+The variance of the estimator $T(\hat{M})$ can approximated by:
+
+$$Var\left[T(\hat{M})\right]\cong var\left[\sum_s w_i z_i\right]$$
+
+The  `linearized` variable $z$  is given by the derivative of the functional:
+
+$$
+z_k=lim_{t\rightarrow0}\frac{T(M+t\delta_k)-T(M)}{t}=IT_k(M)
+$$
+
+where, $\delta_k$ is the Dirac measure in $k$: $\delta_k(i)=1$ if and only if $i=k$.
+
+This **derivative** is called  **Influence Function** and was introduced in the area of **Robust Statistics**.
+
+## Influence Function Examples
+
+
+- Total:
+$$
+\begin{aligned}
+IT_k(M)&=lim_{t\rightarrow 0}\frac{T(M+t\delta_k)-T(M)}{t}\\
+&=lim_{t\rightarrow 0}\frac{\int y.d(M+t\delta_k)-\int y.dM}{t}\\
+&=lim_{t\rightarrow 0}\frac{\int yd(t\delta_k)}{t}=y_k	
+\end{aligned}
+$$
+
+
+- Ratio of two totals:
+$$
+\begin{aligned}
+IR_k(M)&=I\left(\frac{U}{V}\right)_k(M)=\frac{V(M)\times IU_k(M)-U(M)\times IV_k(M)}{V(M)^2}\\
+&=\frac{X y_k-Y x_k}{X^2}=\frac{1}{X}(y_k-Rx_k)
+\end{aligned}
+$$
+
+## Examples of Linearization Using the Influence Function
+
+- At-risk-of-poverty threshold:
+$$
+arpt = 0.6\times m
+$$
+where $m$ is the median income.
+
+$$
+z_k= -\frac{0.6}{f(m)}\times\frac{1}{N}\times\left[I(y_k\leq m-0.5) \right]
+$$
+
+
+- At-risk-of-poverty rate:
+
+\[
+ arpr=\frac{\sum_U I(y_i \leq t)}{\sum_U w_i}.100
+\]
+\[
+z_k=\frac{1}{N}\left[I(y_k\leq t)-t\right]-\frac{0.6}{N}\times\frac{f(t)}{f(m)}\left[I(y_k\leq m)-0.5\right]
+\]
+
+where:
+
+$N$ - population size; 
+
+$t$ - at-risk-of-poverty threshold;
+
+$y_k$ - income of person $k$;
+
+$m$ - median income;
+
+$f$ - income density function;
