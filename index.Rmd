@@ -27,7 +27,7 @@ description: "A book about the R convey package"
 
 # Introduction
 
-The `convey` library estimates measures of poverty, income concentration, and wellbeing.  There are two other {R} libraries covering this subject, [vardpoor](https://CRAN.R-project.org/package=vardpoor) and [laeken](https://CRAN.R-project.org/package=laeken), however, only `convey` integrates seamlessly with the [R survey package](https://CRAN.R-project.org/package=survey).
+The R `convey` library estimates measures of poverty, income concentration, and wellbeing.  There are two other R libraries covering this subject, [vardpoor](https://CRAN.R-project.org/package=vardpoor) and [laeken](https://CRAN.R-project.org/package=laeken), however, only `convey` integrates seamlessly with the [R survey package](https://CRAN.R-project.org/package=survey).
 
 `convey` is free and open-source software that runs inside the [R environment for statistical computing](https://www.r-project.org/).  Anyone can review and propose changes to [the source code](https://github.com/DjalmaPessoa/convey) for this software.  Readers are welcome to [propose changes to this book](https://github.com/guilhermejacob/context/) as well.
 
@@ -54,7 +54,7 @@ In order to work with the `convey` library, you will need to have R running on y
 
 ## Complex surveys and statistical inference {#survey}
 
-In this book, we demonstrate how to measure poverty and income concentration in a population based on data collected from a complex survey sample.  Most surveys administered by government agencies or larger research organizations utilize a sampling design that prevents the assumption of simple random sampling (SRS), including:
+In this book, we demonstrate how to measure poverty and income concentration in a population based on microdata collected from a complex survey sample.  Most surveys administered by government agencies or larger research organizations utilize a sampling design that violates the assumption of simple random sampling (SRS), including:
 
     1. different units selection probabilities.
 
@@ -64,45 +64,15 @@ In this book, we demonstrate how to measure poverty and income concentration in 
 
     4. reweighting to compensate for missing values and other adjustments.
 
-Therefore, basic unweighted R commands such as `mean()` or `glm()` will not properly account for the weighting nor the uncertainty in the dataset.  For some examples of publicly-available complex survey data sets, see [http://asdfree.com]().
+Therefore, basic unweighted R commands such as `mean()` or `glm()` will not properly account for the weighting nor the measures of uncertainty (such as the confidence intervals) present in the dataset.  For some examples of publicly-available complex survey data sets, see [http://asdfree.com]().  
 
-
-Unlike other software, the R `convey` package does not require that the user specify these parameters throughout the analysis.  So long as the [svydesign object](http://r-survey.r-forge.r-project.org/survey/html/svydesign.html) has been constructed properly at the outset of the analysis, the `convey` package will incorporate sample design automatically.
-
-
-## Structure of the library
-
-In the `convey` library, there are some basic functions that produce the linearized variables of some estimates that often enter in the definition of measures of concentration and poverty. For example, the `quantile` which is linearized by the function `svyiqalpha`. Other example is the function `svyisq` that linearizes the total below a quantile of the variable.
-
-From the linearized variables of these basic estimates it is possible by using rules of composition, valid for influence functions, to derive the influence function of more complex estimates. By definition the influence function is a Gateaux derivative and the rules rules of composition valid for Gateaux derivatives also hold for Influence Functions.
-
-The following property of Gateaux derivatives was often used in the library convey. Let $g$ be a differentible function of $m$ variables. Suppose we want to compute the influence function of the estimator $g(T_1, T_2,\ldots, T_m)$, knowing the Influence function of the estimators $T_i, i=1,\ldots, m$. Then the following holds:
-
-$$
-I(g(T_1, T_2,\ldots, T_m)) = \sum_{i=1}^m \frac{\partial g}{\partial T_i}I(T_i)
-$$
-
-In the library convey this rule is implemented by the function `contrastinf` which uses the R function `deriv` to compute the formal partial derivatives $\frac{\partial g}{\partial T_i}$. 
-
-For example, suppose we want to linearize the `Relative median poverty gap`(rmpg), defined as the difference between the at-risk-of-poverty threshold (`arpt`) and the median of incomes less than the `arpt` relative to the `arprt`: 
-
-$$
-rmpg= \frac{arpt-medpoor} {arpt}
-$$
-
-where `medpoor` is the median of incomes less than `arpt`.
-
-Suppose we know how to linearize `arpt` and `medpoor`, then by applying the function `contrastinf` with 
-$$
-g(T_1,T_2)= \frac{(T_1 - T_2)}{T_1}
-$$
-we linearize the `rmpg`.
+Unlike other software, the R `convey` package does not require that the user specify these parameters throughout the analysis.  So long as the [svydesign object](http://r-survey.r-forge.r-project.org/survey/html/svydesign.html) or [svrepdesign object](http://r-survey.r-forge.r-project.org/survey/html/svrepdesign.html) has been constructed properly at the outset of the analysis, the `convey` package will incorporate the survey design automatically and produce statistics and variances that take the complex sample into account.
 
 
 ## Usage Examples
 
 
-In the following examples we will use the data set `eusilc` contained in the libraries `vardpoor` and `Laeken`.
+In the following examples, we will use the data set `eusilc` contained in the libraries `vardpoor` and `laeken`.
 
 ```{r results='hide', message=FALSE, warning=FALSE}
 library(vardpoor)
@@ -179,8 +149,41 @@ djalma, where do these references go on this page?  [@berger2003] and [@osier200
 
 
 
+## Underlying Calculations
 
-## Linearization
+
+djalma, please describe the general purpose of linearization
+
+
+In the `convey` library, there are some basic functions that produce the linearized variables needed to measure income concentration and poverty.  For example, looking at the income variable in some complex survey dataset, the `quantile` of that income variable can be linearized by the function `convey::svyiqalpha` and the sum total below any quantile of the variable is linearized by the function `convey::svyisq`.
+
+From the linearized variables of these basic estimates, it is possible by using rules of composition, valid for influence functions, to derive the influence function of more complex estimates. By definition the influence function is a Gateaux derivative and the rules rules of composition valid for Gateaux derivatives also hold for Influence Functions.
+
+The following property of Gateaux derivatives was often used in the library convey. Let $g$ be a differentible function of $m$ variables. Suppose we want to compute the influence function of the estimator $g(T_1, T_2,\ldots, T_m)$, knowing the Influence function of the estimators $T_i, i=1,\ldots, m$. Then the following holds:
+
+$$
+I(g(T_1, T_2,\ldots, T_m)) = \sum_{i=1}^m \frac{\partial g}{\partial T_i}I(T_i)
+$$
+
+In the library convey this rule is implemented by the function `contrastinf` which uses the R function `deriv` to compute the formal partial derivatives $\frac{\partial g}{\partial T_i}$. 
+
+For example, suppose we want to linearize the `Relative median poverty gap`(rmpg), defined as the difference between the at-risk-of-poverty threshold (`arpt`) and the median of incomes less than the `arpt` relative to the `arprt`: 
+
+$$
+rmpg= \frac{arpt-medpoor} {arpt}
+$$
+
+where `medpoor` is the median of incomes less than `arpt`.
+
+Suppose we know how to linearize `arpt` and `medpoor`, then by applying the function `contrastinf` with 
+$$
+g(T_1,T_2)= \frac{(T_1 - T_2)}{T_1}
+$$
+we linearize the `rmpg`.
+
+
+
+## Influence Functions
 
 Some measures of poverty and income concentration are defined by non-differentiable functions so that it is not possible to use Taylor linearization to estimate their variances. An alternative is to use **Influence functions** as described in [@deville1999] and [@osier2009]. The library convey implements this methodology to work with `survey.design` objects and also with `svyrep.design` objects.
 
@@ -202,9 +205,6 @@ where $r_i$ is the rank of $y_i$.
 
 Note that it is not possible to use Taylor linearization for these measures because they depend on quantiles and the Gini is defined as a function of ranks. This could be done using the approach proposed by Deville (1999) based upon influence functions. 
 
-
-
-## The Influence Function
 
 
 Let $U$ be a population of size $N$ and $M$ be a measure that allocates mass one to the set composed by one unit, that is $M(i)=M_i= 1$ if $i\in U$ and $M(i)=0$ if $i\notin U$ 
@@ -240,6 +240,10 @@ $\hat{F}(x)=T(\hat{M})=\frac{\int 1(y\leq x)d\hat{M}}{\int{d\hat{M}}}=\frac{\sum
 
 
 ## The Variance Estimator
+
+
+@djalma please add references to this section
+
 
 The variance of the estimator $T(\hat{M})$ can approximated by:
 
@@ -309,3 +313,12 @@ $y_k$ - income of person $k$;
 $m$ - median income;
 
 $f$ - income density function;
+
+
+
+
+## Decomposition
+
+
+@guilherme please describe what a decomposition is and why users might want it?
+
