@@ -171,9 +171,154 @@ eqIncome 0.14444 0.0028</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svyfgt</span>(~eqIncome, des_eusilc, <span class="dt">g=</span><span class="dv">1</span>, <span class="dt">type_thresh=</span> <span class="st">&quot;relm&quot;</span>)</code></pre></div>
 <pre><code>             fgt1     SE
 eqIncome 0.051187 0.0011</code></pre>
+<hr />
+<p><strong>A replication example</strong></p>
+<p>In July 2006, <span class="citation">(Jenkins <label for="tufte-mn-18" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-18" class="margin-toggle">2008<span class="marginnote">Jenkins, Stephen. 2008. “Estimation and Interpretation of Measures of Inequality, Poverty, and Social Welfare Using Stata.” North American Stata Users’ Group Meetings 2006. Stata Users Group. <a href="http://EconPapers.repec.org/RePEc:boc:asug06:16" class="uri">http://EconPapers.repec.org/RePEc:boc:asug06:16</a>.</span>)</span> presented at the North American Stata Users’ Group Meetings on the stata Atkinson Index command. The example below reproduces those statistics.</p>
+<p>Load and prepare the same data set:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the convey package</span>
+<span class="kw">library</span>(convey)
+
+<span class="co"># load the survey library</span>
+<span class="kw">library</span>(survey)
+
+<span class="co"># load the foreign library</span>
+<span class="kw">library</span>(foreign)
+
+<span class="co"># create a temporary file on the local disk</span>
+tf &lt;-<span class="st"> </span><span class="kw">tempfile</span>()
+
+<span class="co"># store the location of the presentation file</span>
+presentation_zip &lt;-<span class="st"> &quot;http://repec.org/nasug2006/nasug2006_jenkins.zip&quot;</span>
+
+<span class="co"># download jenkins&#39; presentation to the temporary file</span>
+<span class="kw">download.file</span>( presentation_zip , tf , <span class="dt">mode =</span> <span class="st">&#39;wb&#39;</span> )
+
+<span class="co"># unzip the contents of the archive</span>
+presentation_files &lt;-<span class="st"> </span><span class="kw">unzip</span>( tf , <span class="dt">exdir =</span> <span class="kw">tempdir</span>() )
+
+<span class="co"># load the institute for fiscal studies&#39; 1981, 1985, and 1991 data.frame objects</span>
+x81 &lt;-<span class="st"> </span><span class="kw">read.dta</span>( <span class="kw">grep</span>( <span class="st">&quot;ifs81&quot;</span> , presentation_files , <span class="dt">value =</span> <span class="ot">TRUE</span> ) )
+x85 &lt;-<span class="st"> </span><span class="kw">read.dta</span>( <span class="kw">grep</span>( <span class="st">&quot;ifs85&quot;</span> , presentation_files , <span class="dt">value =</span> <span class="ot">TRUE</span> ) )
+x91 &lt;-<span class="st"> </span><span class="kw">read.dta</span>( <span class="kw">grep</span>( <span class="st">&quot;ifs91&quot;</span> , presentation_files , <span class="dt">value =</span> <span class="ot">TRUE</span> ) )
+
+<span class="co"># NOTE: we recommend using ?convey::svyarpt rather than this unweighted calculation #</span>
+
+<span class="co"># calculate 60% of the unweighted median income in 1981</span>
+unwtd_arpt81 &lt;-<span class="st"> </span><span class="kw">quantile</span>( x81$eybhc0 , <span class="fl">0.5</span> ) *<span class="st"> </span>.<span class="dv">6</span>
+
+<span class="co"># calculate 60% of the unweighted median income in 1985</span>
+unwtd_arpt85 &lt;-<span class="st"> </span><span class="kw">quantile</span>( x85$eybhc0 , <span class="fl">0.5</span> ) *<span class="st"> </span>.<span class="dv">6</span>
+
+<span class="co"># calculate 60% of the unweighted median income in 1991</span>
+unwtd_arpt91 &lt;-<span class="st"> </span><span class="kw">quantile</span>( x91$eybhc0 , <span class="fl">0.5</span> ) *<span class="st"> </span>.<span class="dv">6</span>
+
+<span class="co"># stack each of these three years of data into a single data.frame</span>
+x &lt;-<span class="st"> </span><span class="kw">rbind</span>( x81 , x85 , x91 )</code></pre></div>
+<p>Replicate the author’s survey design statement from stata code..</p>
+<pre class="code"><code>. ge poor = (year==1981)*(x &lt; $z_81) + (year==1985)*(x &lt; $z_85) +  (year==1991)*(x &lt; $z_91)
+. * account for clustering within HHs 
+. svyset hrn [pweight = wgt]</code></pre>
+<p>.. into R code:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># initiate a linearized survey design object</span>
+y &lt;-<span class="st"> </span><span class="kw">svydesign</span>( ~<span class="st"> </span>hrn , <span class="dt">data =</span> x , <span class="dt">weights =</span> ~<span class="st"> </span>wgt )
+
+<span class="co"># immediately run the `convey_prep` function on the survey design</span>
+z &lt;-<span class="st"> </span><span class="kw">convey_prep</span>( y )</code></pre></div>
+<p>Replicate the author’s headcount ratio results with stata..</p>
+<pre class="code"><code>. svy: mean poor if year == 1981
+(running mean on estimation sample)
+
+Survey: Mean estimation
+
+Number of strata =       1          Number of obs    =    9772
+Number of PSUs   =    7476          Population size  = 5.5e+07
+                                    Design df        =    7475
+
+--------------------------------------------------------------
+             |             Linearized
+             |       Mean   Std. Err.     [95% Conf. Interval]
+-------------+------------------------------------------------
+        poor |   .1410125   .0044859       .132219     .149806
+--------------------------------------------------------------
+
+. svy: mean poor if year == 1985
+(running mean on estimation sample)
+
+Survey: Mean estimation
+
+Number of strata =       1          Number of obs    =    8991
+Number of PSUs   =    6972          Population size  = 5.5e+07
+                                    Design df        =    6971
+
+--------------------------------------------------------------
+             |             Linearized
+             |       Mean   Std. Err.     [95% Conf. Interval]
+-------------+------------------------------------------------
+        poor |    .137645   .0046531      .1285235    .1467665
+--------------------------------------------------------------
+
+. svy: mean poor if year == 1991
+(running mean on estimation sample)
+
+Survey: Mean estimation
+
+Number of strata =       1          Number of obs    =    6468
+Number of PSUs   =    5254          Population size  = 5.6e+07
+                                    Design df        =    5253
+
+--------------------------------------------------------------
+             |             Linearized
+             |       Mean   Std. Err.     [95% Conf. Interval]
+-------------+------------------------------------------------
+        poor |   .2021312   .0062077      .1899615    .2143009
+--------------------------------------------------------------</code></pre>
+<p>..using R code:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">( headcount_81 &lt;-<span class="st"> </span><span class="kw">svyfgt</span>( ~<span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z , year ==<span class="st"> </span><span class="dv">1981</span> ) , <span class="dt">g =</span> <span class="dv">0</span> , <span class="dt">abs_thresh =</span> unwtd_arpt81 ) )</code></pre></div>
+<pre><code>##           fgt0     SE
+## eybhc0 0.14101 0.0045</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">confint</span>( headcount_81 , <span class="dt">df =</span> <span class="kw">degf</span>( <span class="kw">subset</span>( z , year ==<span class="st"> </span><span class="dv">1981</span> ) ) )</code></pre></div>
+<pre><code>##            2.5 %    97.5 %
+## eybhc0 0.1322193 0.1498057</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">( headcount_85 &lt;-<span class="st"> </span><span class="kw">svyfgt</span>( ~<span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z , year ==<span class="st"> </span><span class="dv">1985</span> ) , <span class="dt">g =</span> <span class="dv">0</span> , <span class="dt">abs_thresh =</span> unwtd_arpt85 ) )</code></pre></div>
+<pre><code>##           fgt0     SE
+## eybhc0 0.13764 0.0047</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">confint</span>( headcount_85 , <span class="dt">df =</span> <span class="kw">degf</span>( <span class="kw">subset</span>( z , year ==<span class="st"> </span><span class="dv">1985</span> ) ) )</code></pre></div>
+<pre><code>##            2.5 %    97.5 %
+## eybhc0 0.1285239 0.1467661</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">( headcount_91 &lt;-<span class="st"> </span><span class="kw">svyfgt</span>( ~<span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z , year ==<span class="st"> </span><span class="dv">1991</span> ) , <span class="dt">g =</span> <span class="dv">0</span> , <span class="dt">abs_thresh =</span> unwtd_arpt91 ) )</code></pre></div>
+<pre><code>##           fgt0     SE
+## eybhc0 0.20213 0.0062</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">confint</span>( headcount_91 , <span class="dt">df =</span> <span class="kw">degf</span>( <span class="kw">subset</span>( z , year ==<span class="st"> </span><span class="dv">1991</span> ) ) )</code></pre></div>
+<pre><code>##            2.5 % 97.5 %
+## eybhc0 0.1899624 0.2143</code></pre>
+<p>Confirm this replication applies for the normalized poverty gap as well, comparing stata code..</p>
+<pre class="code"><code>. ge ngap = poor*($z_81- x)/$z_81 if year == 1981
+
+. svy: mean ngap if year == 1981
+(running mean on estimation sample)
+
+Survey: Mean estimation
+
+Number of strata =       1          Number of obs    =    9772
+Number of PSUs   =    7476          Population size  = 5.5e+07
+                                    Design df        =    7475
+
+--------------------------------------------------------------
+             |             Linearized
+             |       Mean   Std. Err.     [95% Conf. Interval]
+-------------+------------------------------------------------
+        ngap |   .0271577   .0013502      .0245109    .0298044
+--------------------------------------------------------------</code></pre>
+<p>..to R code:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">( norm_pov_81 &lt;-<span class="st"> </span><span class="kw">svyfgt</span>( ~<span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z , year ==<span class="st"> </span><span class="dv">1981</span> ) , <span class="dt">g =</span> <span class="dv">1</span> , <span class="dt">abs_thresh =</span> unwtd_arpt81 ) )</code></pre></div>
+<pre><code>##            fgt1     SE
+## eybhc0 0.027158 0.0014</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">confint</span>( norm_pov_81 , <span class="dt">df =</span> <span class="kw">degf</span>( <span class="kw">subset</span>( z , year ==<span class="st"> </span><span class="dv">1981</span> ) ) )</code></pre></div>
+<pre><code>##             2.5 %     97.5 %
+## eybhc0 0.02451106 0.02980428</code></pre>
 <p>For additional usage examples of <code>svyfgt</code>, type <code>?convey::svyfgt</code> in the R console.</p>
 <p>here are the references</p>
-<p><span class="citation">(Foster, Greer, and Thorbecke <label for="tufte-mn-18" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-18" class="margin-toggle">1984<span class="marginnote">Foster, James, Joel Greer, and Erik Thorbecke. 1984. “A Class of Decomposable Poverty Measures.” <em>Econometrica</em> 52 (3). Wiley, Econometric Society: 761–66. <a href="http://www.jstor.org/stable/1913475" class="uri">http://www.jstor.org/stable/1913475</a>.</span>)</span> and <span class="citation">(Berger and Skinner <label for="tufte-mn-19" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-19" class="margin-toggle">2003<span class="marginnote">Berger, Yves G., and Chris J. Skinner. 2003. “Variance Estimation for a Low Income Proportion.” <em>Journal of the Royal Statistical Society: Series C (Applied Statistics)</em> 52 (4). Blackwell Publishing: 457–68. doi:<a href="https://doi.org/10.1111/1467-9876.00417">10.1111/1467-9876.00417</a>.</span>)</span></p>
+<p><span class="citation">(Foster, Greer, and Thorbecke <label for="tufte-mn-19" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-19" class="margin-toggle">1984<span class="marginnote">Foster, James, Joel Greer, and Erik Thorbecke. 1984. “A Class of Decomposable Poverty Measures.” <em>Econometrica</em> 52 (3). Wiley, Econometric Society: 761–66. <a href="http://www.jstor.org/stable/1913475" class="uri">http://www.jstor.org/stable/1913475</a>.</span>)</span> and <span class="citation">(Berger and Skinner <label for="tufte-mn-20" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-20" class="margin-toggle">2003<span class="marginnote">Berger, Yves G., and Chris J. Skinner. 2003. “Variance Estimation for a Low Income Proportion.” <em>Journal of the Royal Statistical Society: Series C (Applied Statistics)</em> 52 (4). Blackwell Publishing: 457–68. doi:<a href="https://doi.org/10.1111/1467-9876.00417">10.1111/1467-9876.00417</a>.</span>)</span></p>
 
 </div>
 <!-- </div> -->

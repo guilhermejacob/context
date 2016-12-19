@@ -125,6 +125,172 @@ svyfgt(~eqIncome, des_eusilc, g=1, type_thresh= "relm")
 ```
 
 
+---
+
+**A replication example**
+
+In July 2006, [@jenkins2006] presented at the North American Stata Users' Group Meetings on the stata Atkinson Index command.  The example below reproduces those statistics.
+
+Load and prepare the same data set:
+```{r}
+# load the convey package
+library(convey)
+
+# load the survey library
+library(survey)
+
+# load the foreign library
+library(foreign)
+
+# create a temporary file on the local disk
+tf <- tempfile()
+
+# store the location of the presentation file
+presentation_zip <- "http://repec.org/nasug2006/nasug2006_jenkins.zip"
+
+# download jenkins' presentation to the temporary file
+download.file( presentation_zip , tf , mode = 'wb' )
+
+# unzip the contents of the archive
+presentation_files <- unzip( tf , exdir = tempdir() )
+
+# load the institute for fiscal studies' 1981, 1985, and 1991 data.frame objects
+x81 <- read.dta( grep( "ifs81" , presentation_files , value = TRUE ) )
+x85 <- read.dta( grep( "ifs85" , presentation_files , value = TRUE ) )
+x91 <- read.dta( grep( "ifs91" , presentation_files , value = TRUE ) )
+
+# NOTE: we recommend using ?convey::svyarpt rather than this unweighted calculation #
+
+# calculate 60% of the unweighted median income in 1981
+unwtd_arpt81 <- quantile( x81$eybhc0 , 0.5 ) * .6
+
+# calculate 60% of the unweighted median income in 1985
+unwtd_arpt85 <- quantile( x85$eybhc0 , 0.5 ) * .6
+
+# calculate 60% of the unweighted median income in 1991
+unwtd_arpt91 <- quantile( x91$eybhc0 , 0.5 ) * .6
+
+# stack each of these three years of data into a single data.frame
+x <- rbind( x81 , x85 , x91 )
+```
+
+Replicate the author's survey design statement from stata code..
+```{code}
+. ge poor = (year==1981)*(x < $z_81) + (year==1985)*(x < $z_85) +  (year==1991)*(x < $z_91)
+. * account for clustering within HHs 
+. svyset hrn [pweight = wgt]
+```
+
+.. into R code:
+
+
+```{r}
+# initiate a linearized survey design object
+y <- svydesign( ~ hrn , data = x , weights = ~ wgt )
+
+# immediately run the `convey_prep` function on the survey design
+z <- convey_prep( y )
+```
+
+Replicate the author's headcount ratio results with stata..
+```{code}
+. svy: mean poor if year == 1981
+(running mean on estimation sample)
+
+Survey: Mean estimation
+
+Number of strata =       1          Number of obs    =    9772
+Number of PSUs   =    7476          Population size  = 5.5e+07
+                                    Design df        =    7475
+
+--------------------------------------------------------------
+             |             Linearized
+             |       Mean   Std. Err.     [95% Conf. Interval]
+-------------+------------------------------------------------
+        poor |   .1410125   .0044859       .132219     .149806
+--------------------------------------------------------------
+
+. svy: mean poor if year == 1985
+(running mean on estimation sample)
+
+Survey: Mean estimation
+
+Number of strata =       1          Number of obs    =    8991
+Number of PSUs   =    6972          Population size  = 5.5e+07
+                                    Design df        =    6971
+
+--------------------------------------------------------------
+             |             Linearized
+             |       Mean   Std. Err.     [95% Conf. Interval]
+-------------+------------------------------------------------
+        poor |    .137645   .0046531      .1285235    .1467665
+--------------------------------------------------------------
+
+. svy: mean poor if year == 1991
+(running mean on estimation sample)
+
+Survey: Mean estimation
+
+Number of strata =       1          Number of obs    =    6468
+Number of PSUs   =    5254          Population size  = 5.6e+07
+                                    Design df        =    5253
+
+--------------------------------------------------------------
+             |             Linearized
+             |       Mean   Std. Err.     [95% Conf. Interval]
+-------------+------------------------------------------------
+        poor |   .2021312   .0062077      .1899615    .2143009
+--------------------------------------------------------------
+```
+
+..using R code:
+
+```{r}
+( headcount_81 <- svyfgt( ~ eybhc0 , subset( z , year == 1981 ) , g = 0 , abs_thresh = unwtd_arpt81 ) )
+
+confint( headcount_81 , df = degf( subset( z , year == 1981 ) ) )
+
+( headcount_85 <- svyfgt( ~ eybhc0 , subset( z , year == 1985 ) , g = 0 , abs_thresh = unwtd_arpt85 ) )
+
+confint( headcount_85 , df = degf( subset( z , year == 1985 ) ) )
+
+( headcount_91 <- svyfgt( ~ eybhc0 , subset( z , year == 1991 ) , g = 0 , abs_thresh = unwtd_arpt91 ) )
+
+confint( headcount_91 , df = degf( subset( z , year == 1991 ) ) )
+```
+
+
+
+Confirm this replication applies for the normalized poverty gap as well, comparing stata code..
+```{code}
+. ge ngap = poor*($z_81- x)/$z_81 if year == 1981
+
+. svy: mean ngap if year == 1981
+(running mean on estimation sample)
+
+Survey: Mean estimation
+
+Number of strata =       1          Number of obs    =    9772
+Number of PSUs   =    7476          Population size  = 5.5e+07
+                                    Design df        =    7475
+
+--------------------------------------------------------------
+             |             Linearized
+             |       Mean   Std. Err.     [95% Conf. Interval]
+-------------+------------------------------------------------
+        ngap |   .0271577   .0013502      .0245109    .0298044
+--------------------------------------------------------------
+```
+
+..to R code:
+
+```{r}
+( norm_pov_81 <- svyfgt( ~ eybhc0 , subset( z , year == 1981 ) , g = 1 , abs_thresh = unwtd_arpt81 ) )
+
+confint( norm_pov_81 , df = degf( subset( z , year == 1981 ) ) )
+```
+
+
 
 
 

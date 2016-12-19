@@ -350,7 +350,7 @@ and then use the function \texttt{svyarpr}:
 
 \begin{verbatim}
             arpr     SE
-eqIncome 0.14444 0.0029
+eqIncome 0.14444 0.0022
 \end{verbatim}
 
 \begin{Shaded}
@@ -361,15 +361,15 @@ eqIncome 0.14444 0.0029
 
 \begin{verbatim}
                       db040  eqIncome se.eqIncome
-Burgenland       Burgenland 0.1953984 0.015987600
-Carinthia         Carinthia 0.1308627 0.011126970
-Lower Austria Lower Austria 0.1384362 0.007290723
-Salzburg           Salzburg 0.1378734 0.010020766
-Styria               Styria 0.1437464 0.007723098
-Tyrol                 Tyrol 0.1530819 0.009889007
-Upper Austria Upper Austria 0.1088977 0.005427058
-Vienna               Vienna 0.1723468 0.007039306
-Vorarlberg       Vorarlberg 0.1653731 0.012653146
+Burgenland       Burgenland 0.1953984 0.017377608
+Carinthia         Carinthia 0.1308627 0.013690891
+Lower Austria Lower Austria 0.1384362 0.005548198
+Salzburg           Salzburg 0.1378734 0.010603019
+Styria               Styria 0.1437464 0.007791588
+Tyrol                 Tyrol 0.1530819 0.009438864
+Upper Austria Upper Austria 0.1088977 0.005519586
+Vienna               Vienna 0.1723468 0.008816556
+Vorarlberg       Vorarlberg 0.1653731 0.011700717
 \end{verbatim}
 
 The functions of the library convey are called in a similar way to the
@@ -833,6 +833,247 @@ To estimate the poverty gap(FGT1) with the poverty threshold equal to
 eqIncome 0.051187 0.0011
 \end{verbatim}
 
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{A replication example}
+
+In July 2006, \citep{jenkins2006} presented at the North American Stata
+Users' Group Meetings on the stata Atkinson Index command. The example
+below reproduces those statistics.
+
+Load and prepare the same data set:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# load the convey package}
+\KeywordTok{library}\NormalTok{(convey)}
+
+\CommentTok{# load the survey library}
+\KeywordTok{library}\NormalTok{(survey)}
+
+\CommentTok{# load the foreign library}
+\KeywordTok{library}\NormalTok{(foreign)}
+
+\CommentTok{# create a temporary file on the local disk}
+\NormalTok{tf <-}\StringTok{ }\KeywordTok{tempfile}\NormalTok{()}
+
+\CommentTok{# store the location of the presentation file}
+\NormalTok{presentation_zip <-}\StringTok{ "http://repec.org/nasug2006/nasug2006_jenkins.zip"}
+
+\CommentTok{# download jenkins' presentation to the temporary file}
+\KeywordTok{download.file}\NormalTok{( presentation_zip , tf , }\DataTypeTok{mode =} \StringTok{'wb'} \NormalTok{)}
+
+\CommentTok{# unzip the contents of the archive}
+\NormalTok{presentation_files <-}\StringTok{ }\KeywordTok{unzip}\NormalTok{( tf , }\DataTypeTok{exdir =} \KeywordTok{tempdir}\NormalTok{() )}
+
+\CommentTok{# load the institute for fiscal studies' 1981, 1985, and 1991 data.frame objects}
+\NormalTok{x81 <-}\StringTok{ }\KeywordTok{read.dta}\NormalTok{( }\KeywordTok{grep}\NormalTok{( }\StringTok{"ifs81"} \NormalTok{, presentation_files , }\DataTypeTok{value =} \OtherTok{TRUE} \NormalTok{) )}
+\NormalTok{x85 <-}\StringTok{ }\KeywordTok{read.dta}\NormalTok{( }\KeywordTok{grep}\NormalTok{( }\StringTok{"ifs85"} \NormalTok{, presentation_files , }\DataTypeTok{value =} \OtherTok{TRUE} \NormalTok{) )}
+\NormalTok{x91 <-}\StringTok{ }\KeywordTok{read.dta}\NormalTok{( }\KeywordTok{grep}\NormalTok{( }\StringTok{"ifs91"} \NormalTok{, presentation_files , }\DataTypeTok{value =} \OtherTok{TRUE} \NormalTok{) )}
+
+\CommentTok{# NOTE: we recommend using ?convey::svyarpt rather than this unweighted calculation #}
+
+\CommentTok{# calculate 60% of the unweighted median income in 1981}
+\NormalTok{unwtd_arpt81 <-}\StringTok{ }\KeywordTok{quantile}\NormalTok{( x81$eybhc0 , }\FloatTok{0.5} \NormalTok{) *}\StringTok{ }\NormalTok{.}\DecValTok{6}
+
+\CommentTok{# calculate 60% of the unweighted median income in 1985}
+\NormalTok{unwtd_arpt85 <-}\StringTok{ }\KeywordTok{quantile}\NormalTok{( x85$eybhc0 , }\FloatTok{0.5} \NormalTok{) *}\StringTok{ }\NormalTok{.}\DecValTok{6}
+
+\CommentTok{# calculate 60% of the unweighted median income in 1991}
+\NormalTok{unwtd_arpt91 <-}\StringTok{ }\KeywordTok{quantile}\NormalTok{( x91$eybhc0 , }\FloatTok{0.5} \NormalTok{) *}\StringTok{ }\NormalTok{.}\DecValTok{6}
+
+\CommentTok{# stack each of these three years of data into a single data.frame}
+\NormalTok{x <-}\StringTok{ }\KeywordTok{rbind}\NormalTok{( x81 , x85 , x91 )}
+\end{Highlighting}
+\end{Shaded}
+
+Replicate the author's survey design statement from stata code..
+
+\begin{verbatim}
+. ge poor = (year==1981)*(x < $z_81) + (year==1985)*(x < $z_85) +  (year==1991)*(x < $z_91)
+. * account for clustering within HHs 
+. svyset hrn [pweight = wgt]
+\end{verbatim}
+
+.. into R code:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# initiate a linearized survey design object}
+\NormalTok{y <-}\StringTok{ }\KeywordTok{svydesign}\NormalTok{( ~}\StringTok{ }\NormalTok{hrn , }\DataTypeTok{data =} \NormalTok{x , }\DataTypeTok{weights =} \NormalTok{~}\StringTok{ }\NormalTok{wgt )}
+
+\CommentTok{# immediately run the `convey_prep` function on the survey design}
+\NormalTok{z <-}\StringTok{ }\KeywordTok{convey_prep}\NormalTok{( y )}
+\end{Highlighting}
+\end{Shaded}
+
+Replicate the author's headcount ratio results with stata..
+
+\begin{verbatim}
+. svy: mean poor if year == 1981
+(running mean on estimation sample)
+
+Survey: Mean estimation
+
+Number of strata =       1          Number of obs    =    9772
+Number of PSUs   =    7476          Population size  = 5.5e+07
+                                    Design df        =    7475
+
+--------------------------------------------------------------
+             |             Linearized
+             |       Mean   Std. Err.     [95% Conf. Interval]
+-------------+------------------------------------------------
+        poor |   .1410125   .0044859       .132219     .149806
+--------------------------------------------------------------
+
+. svy: mean poor if year == 1985
+(running mean on estimation sample)
+
+Survey: Mean estimation
+
+Number of strata =       1          Number of obs    =    8991
+Number of PSUs   =    6972          Population size  = 5.5e+07
+                                    Design df        =    6971
+
+--------------------------------------------------------------
+             |             Linearized
+             |       Mean   Std. Err.     [95% Conf. Interval]
+-------------+------------------------------------------------
+        poor |    .137645   .0046531      .1285235    .1467665
+--------------------------------------------------------------
+
+. svy: mean poor if year == 1991
+(running mean on estimation sample)
+
+Survey: Mean estimation
+
+Number of strata =       1          Number of obs    =    6468
+Number of PSUs   =    5254          Population size  = 5.6e+07
+                                    Design df        =    5253
+
+--------------------------------------------------------------
+             |             Linearized
+             |       Mean   Std. Err.     [95% Conf. Interval]
+-------------+------------------------------------------------
+        poor |   .2021312   .0062077      .1899615    .2143009
+--------------------------------------------------------------
+\end{verbatim}
+
+..using R code:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{( headcount_81 <-}\StringTok{ }\KeywordTok{svyfgt}\NormalTok{( ~}\StringTok{ }\NormalTok{eybhc0 , }\KeywordTok{subset}\NormalTok{( z , year ==}\StringTok{ }\DecValTok{1981} \NormalTok{) , }\DataTypeTok{g =} \DecValTok{0} \NormalTok{, }\DataTypeTok{abs_thresh =} \NormalTok{unwtd_arpt81 ) )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##           fgt0     SE
+## eybhc0 0.14101 0.0045
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{confint}\NormalTok{( headcount_81 , }\DataTypeTok{df =} \KeywordTok{degf}\NormalTok{( }\KeywordTok{subset}\NormalTok{( z , year ==}\StringTok{ }\DecValTok{1981} \NormalTok{) ) )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            2.5 %    97.5 %
+## eybhc0 0.1322193 0.1498057
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{( headcount_85 <-}\StringTok{ }\KeywordTok{svyfgt}\NormalTok{( ~}\StringTok{ }\NormalTok{eybhc0 , }\KeywordTok{subset}\NormalTok{( z , year ==}\StringTok{ }\DecValTok{1985} \NormalTok{) , }\DataTypeTok{g =} \DecValTok{0} \NormalTok{, }\DataTypeTok{abs_thresh =} \NormalTok{unwtd_arpt85 ) )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##           fgt0     SE
+## eybhc0 0.13764 0.0047
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{confint}\NormalTok{( headcount_85 , }\DataTypeTok{df =} \KeywordTok{degf}\NormalTok{( }\KeywordTok{subset}\NormalTok{( z , year ==}\StringTok{ }\DecValTok{1985} \NormalTok{) ) )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            2.5 %    97.5 %
+## eybhc0 0.1285239 0.1467661
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{( headcount_91 <-}\StringTok{ }\KeywordTok{svyfgt}\NormalTok{( ~}\StringTok{ }\NormalTok{eybhc0 , }\KeywordTok{subset}\NormalTok{( z , year ==}\StringTok{ }\DecValTok{1991} \NormalTok{) , }\DataTypeTok{g =} \DecValTok{0} \NormalTok{, }\DataTypeTok{abs_thresh =} \NormalTok{unwtd_arpt91 ) )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##           fgt0     SE
+## eybhc0 0.20213 0.0062
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{confint}\NormalTok{( headcount_91 , }\DataTypeTok{df =} \KeywordTok{degf}\NormalTok{( }\KeywordTok{subset}\NormalTok{( z , year ==}\StringTok{ }\DecValTok{1991} \NormalTok{) ) )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            2.5 % 97.5 %
+## eybhc0 0.1899624 0.2143
+\end{verbatim}
+
+Confirm this replication applies for the normalized poverty gap as well,
+comparing stata code..
+
+\begin{verbatim}
+. ge ngap = poor*($z_81- x)/$z_81 if year == 1981
+
+. svy: mean ngap if year == 1981
+(running mean on estimation sample)
+
+Survey: Mean estimation
+
+Number of strata =       1          Number of obs    =    9772
+Number of PSUs   =    7476          Population size  = 5.5e+07
+                                    Design df        =    7475
+
+--------------------------------------------------------------
+             |             Linearized
+             |       Mean   Std. Err.     [95% Conf. Interval]
+-------------+------------------------------------------------
+        ngap |   .0271577   .0013502      .0245109    .0298044
+--------------------------------------------------------------
+\end{verbatim}
+
+..to R code:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{( norm_pov_81 <-}\StringTok{ }\KeywordTok{svyfgt}\NormalTok{( ~}\StringTok{ }\NormalTok{eybhc0 , }\KeywordTok{subset}\NormalTok{( z , year ==}\StringTok{ }\DecValTok{1981} \NormalTok{) , }\DataTypeTok{g =} \DecValTok{1} \NormalTok{, }\DataTypeTok{abs_thresh =} \NormalTok{unwtd_arpt81 ) )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            fgt1     SE
+## eybhc0 0.027158 0.0014
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{confint}\NormalTok{( norm_pov_81 , }\DataTypeTok{df =} \KeywordTok{degf}\NormalTok{( }\KeywordTok{subset}\NormalTok{( z , year ==}\StringTok{ }\DecValTok{1981} \NormalTok{) ) )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##             2.5 %     97.5 %
+## eybhc0 0.02451106 0.02980428
+\end{verbatim}
+
 For additional usage examples of \texttt{svyfgt}, type
 \texttt{?convey::svyfgt} in the R console.
 
@@ -966,7 +1207,7 @@ example below reproduces the statistics presented in his section 4.1.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{context_files/figure-latex/unnamed-chunk-15-1.pdf}
+\includegraphics{context_files/figure-latex/unnamed-chunk-22-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -998,7 +1239,7 @@ example below reproduces the statistics presented in his section 4.1.
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-15}Here is a nice table!}
+\caption{\label{tab:unnamed-chunk-22}Here is a nice table!}
 \centering
 \begin{tabular}[t]{lrrrr}
 \toprule
@@ -1917,7 +2158,7 @@ Replicate PDF page 10
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-32}Here is a nice table!}
+\caption{\label{tab:unnamed-chunk-39}Here is a nice table!}
 \centering
 \begin{tabular}[t]{rrrrrrr}
 \toprule
