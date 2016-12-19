@@ -136,12 +136,43 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <div class="row">
 <div class="col-sm-12">
-<div id="alkire-foster-class-and-decomposition-svyafc-svyafcdec" class="section level2">
-<h2><span class="header-section-number">5.1</span> Alkire-Foster Class and Decomposition (svyafc, svyafcdec)</h2>
-<hr />
-<p><strong>A replication example</strong></p>
-<p>In November 2015, Christopher Jindra presented at the Oxford Poverty and Human Development Initiative on the Alkire-Foster multidimensional poverty measure. His presentation can be viewed <a href="http://www.ophi.org.uk/wp-content/uploads/Jindra_151109_OPHISeminar.pdf">here</a>. The example below reproduces those statistics.</p>
-<p>Load and prepare the same data set:</p>
+<div id="lorenz-curve-svylorenz" class="section level2">
+<h2><span class="header-section-number">3.1</span> Lorenz Curve (svylorenz)</h2>
+<p>Though not an inequality measure in itself, the Lorenz curve is a classic instrument of distribution analysis. Basically, it is a function that associates a cumulative share of the population to the share of the total income it owns. In mathematical terms,</p>
+<p><span class="math display">\[
+L(p) = \frac{\int_{-\infty}^{Q_p}yf(y)dy}{\int_{-\infty}^{+\infty}yf(y)dy}
+\]</span></p>
+<p>where <span class="math inline">\(Q_p\)</span> is the quantile <span class="math inline">\(p\)</span> of the population.</p>
+<p>The two extreme distributive cases are</p>
+<ul>
+<li>Perfect equality:
+<ul>
+<li>Every individual has the same income;</li>
+<li>Every share of the population has the same share of the income;</li>
+<li>Therefore, the reference curve is <span class="math display">\[L(p) = p \text{ } \forall p \in [0,1] \text{.}\]</span></li>
+</ul></li>
+<li>Perfect inequality:
+<ul>
+<li>One individual concentrates all of society’s income, while the other individuals have zero income;</li>
+<li>Therefore, the reference curve is</li>
+</ul></li>
+</ul>
+<p><span class="math display">\[
+L(p)=
+\begin{cases}
+0, &amp;\forall p &lt; 1 \\
+1, &amp;\text{if } p = 1 \text{.}
+\end{cases}
+\]</span></p>
+<p>In order to evaluate the degree of inequality in a society, the analyst looks at the distance between the real curve and those two reference curves.</p>
+<p>The estimator of this function was derived by <span class="citation">(Kovacevic and Binder <label for="tufte-mn-19" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-19" class="margin-toggle">1997<span class="marginnote">Kovacevic, Milorad, and David Binder. 1997. “Variance Estimation for Measures of Income Inequality and Polarization - the Estimating Equations Approach.” <em>Journal of Official Statistics</em> 13 (1): 41–58. <a href="http://www.jos.nu/Articles/abstract.asp?article=13141" class="uri">http://www.jos.nu/Articles/abstract.asp?article=13141</a>.</span>)</span>:</p>
+<p><span class="math display">\[
+L(p) = \frac{ \sum_{i \in S} w_i \cdot y_i \cdot \delta \{ y_i \le \widehat{Q}_p \}}{\widehat{Y}}, \text{ } 0 \le p \le 1.
+\]</span></p>
+<p>Yet, this formula is used to calculate specific points of the curve and their respective SEs. The formula to plot an approximation of the continuous empirical curve comes from <span class="citation">(Lerman and Yitzhaki <label for="tufte-mn-20" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-20" class="margin-toggle">1989<span class="marginnote">Lerman, Robert, and Shlomo Yitzhaki. 1989. “Improving the Accuracy of Estimates of Gini Coefficients.” <em>Journal of Econometrics</em> 42 (1): 43–47. <a href="http://EconPapers.repec.org/RePEc:eee:econom:v:42:y:1989:i:1:p:43-47" class="uri">http://EconPapers.repec.org/RePEc:eee:econom:v:42:y:1989:i:1:p:43-47</a>.</span>)</span>.</p>
+<div id="replication-example" class="section level3">
+<h3><span class="header-section-number">3.1.1</span> replication example</h3>
+<p>In October 2016, <span class="citation">(Jann <label for="tufte-mn-21" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-21" class="margin-toggle">2016<span class="marginnote">Jann, Ben. 2016. “Estimating Lorenz and concentration curves in Stata.” University of Bern Social Sciences Working Papers 15. University of Bern, Department of Social Sciences. <a href="https://ideas.repec.org/p/bss/wpaper/15.html" class="uri">https://ideas.repec.org/p/bss/wpaper/15.html</a>.</span>)</span> released a pre-publication working paper to estimate lorenz and concentration curves using stata. The example below reproduces the statistics presented in his section 4.1.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the convey package</span>
 <span class="kw">library</span>(convey)
 
@@ -151,197 +182,212 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="co"># load the stata-style webuse library</span>
 <span class="kw">library</span>(webuse)
 
-<span class="co"># load the same microdata set used by Jindra in his presentation</span>
+<span class="co"># load the NLSW 1988 data</span>
 <span class="kw">webuse</span>(<span class="st">&quot;nlsw88&quot;</span>)
 
 <span class="co"># coerce that `tbl_df` to a standard R `data.frame`</span>
 nlsw88 &lt;-<span class="st"> </span><span class="kw">data.frame</span>( nlsw88 )
 
-<span class="co"># create a `collgrad` column</span>
-nlsw88$collgrad &lt;-
-<span class="st">    </span><span class="kw">factor</span>( 
-        <span class="kw">as.numeric</span>( nlsw88$collgrad ) , 
-        <span class="dt">label =</span> <span class="kw">c</span>( <span class="st">&#39;not college grad&#39;</span> , <span class="st">&#39;college grad&#39;</span> ) , 
-        <span class="dt">ordered =</span> <span class="ot">TRUE</span> 
-      )
-
 <span class="co"># initiate a linearized survey design object</span>
-des_nlsw88 &lt;-<span class="st"> </span><span class="kw">svydesign</span>( <span class="dt">ids =</span> ~<span class="dv">1</span> , <span class="dt">data =</span> nlsw88 )
+des_nlsw88 &lt;-<span class="st"> </span><span class="kw">svydesign</span>( <span class="dt">ids =</span> ~<span class="dv">1</span> , <span class="dt">data =</span> nlsw88 )</code></pre></div>
+<pre><code>## Warning in svydesign.default(ids = ~1, data = nlsw88): No weights or
+## probabilities supplied, assuming equal probability</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># immediately run the `convey_prep` function on the survey design</span>
+des_nlsw88 &lt;-<span class="st"> </span><span class="kw">convey_prep</span>(des_nlsw88)
 
-<span class="co"># immediately run the `convey_prep` function on the survey design</span>
-des_nlsw88 &lt;-<span class="st"> </span><span class="kw">convey_prep</span>(des_nlsw88)</code></pre></div>
-<p>Replicate PDF page 9</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">page_nine &lt;-
-<span class="st">  </span><span class="kw">svyafc</span>(
-    ~<span class="st"> </span>wage +<span class="st"> </span>collgrad +<span class="st"> </span>hours , 
-    <span class="dt">design =</span> des_nlsw88 , 
-    <span class="dt">cutoffs =</span> <span class="kw">list</span>( <span class="dv">4</span>, <span class="st">&#39;college grad&#39;</span> , <span class="dv">26</span> ) , 
-    <span class="dt">k =</span> <span class="dv">1</span>/<span class="dv">3</span> , <span class="dt">g =</span> <span class="dv">0</span> , 
-    <span class="dt">na.rm =</span> <span class="ot">TRUE</span>
-  )
-
-<span class="co"># MO and seMO</span>
-<span class="kw">print</span>( page_nine )</code></pre></div>
-<pre><code>##      alkire-foster     SE
-## [1,]       0.36991 0.0053</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># H seH and A seA</span>
-<span class="kw">print</span>( <span class="kw">attr</span>( page_nine , <span class="st">&quot;extra&quot;</span> ) )</code></pre></div>
-<pre><code>##        coef          SE
-## H 0.8082070 0.008316807
-## A 0.4576895 0.004573443</code></pre>
-<p>Replicate PDF page 10</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">page_ten &lt;-<span class="st"> </span><span class="ot">NULL</span>
-
-<span class="co"># loop through every poverty cutoff `k`</span>
-for( ks in <span class="kw">seq</span>( <span class="fl">0.1</span> , <span class="dv">1</span> , .<span class="dv">1</span> ) ){
+<span class="co"># estimates lorenz curve</span>
+result.lin &lt;-<span class="st"> </span><span class="kw">svylorenz</span>( ~wage, des_nlsw88, <span class="dt">quantiles =</span> <span class="kw">seq</span>( <span class="dv">0</span>, <span class="dv">1</span>, .<span class="dv">05</span> ), <span class="dt">na.rm =</span> T )</code></pre></div>
+<p><img src="context_files/figure-html/unnamed-chunk-15-1.png" width="672"  /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># note: most survey commands in R use Inf degrees of freedom by default</span>
+<span class="co"># stata generally uses the degrees of freedom of the survey design.</span>
+<span class="co"># therefore, while this extended syntax serves to prove a precise replication of stata</span>
+<span class="co"># it is generally not necessary.</span>
+section_four_one &lt;-
+<span class="st">    </span><span class="kw">data.frame</span>( 
+        <span class="dt">estimate =</span> <span class="kw">coef</span>( result.lin ) , 
+        <span class="dt">standard_error =</span> <span class="kw">SE</span>( result.lin ) , 
+        <span class="dt">ci_lower_bound =</span> 
+            <span class="kw">coef</span>( result.lin ) +<span class="st"> </span>
+<span class="st">            </span><span class="kw">SE</span>( result.lin ) *<span class="st"> </span>
+<span class="st">            </span><span class="kw">qt</span>( <span class="fl">0.025</span> , <span class="kw">degf</span>( <span class="kw">subset</span>( des_nlsw88 , !<span class="kw">is.na</span>( wage ) ) ) ) ,
+        <span class="dt">ci_upper_bound =</span> 
+            <span class="kw">coef</span>( result.lin ) +<span class="st"> </span>
+<span class="st">            </span><span class="kw">SE</span>( result.lin ) *<span class="st"> </span>
+<span class="st">            </span><span class="kw">qt</span>( <span class="fl">0.975</span> , <span class="kw">degf</span>( <span class="kw">subset</span>( des_nlsw88 , !<span class="kw">is.na</span>( wage ) ) ) )
+    )
     
-    this_ks &lt;-
-<span class="st">        </span><span class="kw">svyafc</span>(
-            ~<span class="st"> </span>wage +<span class="st"> </span>collgrad +<span class="st"> </span>hours , 
-            <span class="dt">design =</span> des_nlsw88 , 
-            <span class="dt">cutoffs =</span> <span class="kw">list</span>( <span class="dv">4</span> , <span class="st">&#39;college grad&#39;</span> , <span class="dv">26</span> ) , 
-            <span class="dt">k =</span> ks , 
-            <span class="dt">g =</span> <span class="dv">0</span> , 
-            <span class="dt">na.rm =</span> <span class="ot">TRUE</span> 
-           )
-    
-    page_ten &lt;-
-<span class="st">        </span><span class="kw">rbind</span>(
-            page_ten ,
-            <span class="kw">data.frame</span>( 
-                <span class="dt">k =</span> ks , 
-                <span class="dt">MO =</span> <span class="kw">coef</span>( this_ks ) ,
-                <span class="dt">seMO =</span> <span class="kw">SE</span>( this_ks ) ,
-                <span class="dt">H =</span> <span class="kw">attr</span>( this_ks , <span class="st">&quot;extra&quot;</span> )[ <span class="dv">1</span> , <span class="dv">1</span> ] ,
-                <span class="dt">seH =</span> <span class="kw">attr</span>( this_ks , <span class="st">&quot;extra&quot;</span> )[ <span class="dv">1</span> , <span class="dv">2</span> ] ,
-                <span class="dt">A =</span> <span class="kw">attr</span>( this_ks , <span class="st">&quot;extra&quot;</span> )[ <span class="dv">2</span> , <span class="dv">1</span> ] ,
-                <span class="dt">seA =</span> <span class="kw">attr</span>( this_ks , <span class="st">&quot;extra&quot;</span> )[ <span class="dv">2</span> , <span class="dv">2</span> ]
-          )
-        )
-    
-}
 
 knitr::<span class="kw">kable</span>(
-  page_ten , <span class="dt">caption =</span> <span class="st">&#39;Here is a nice table!&#39;</span>,
+  section_four_one , <span class="dt">caption =</span> <span class="st">&#39;Here is a nice table!&#39;</span>,
   <span class="dt">booktabs =</span> <span class="ot">TRUE</span>
 )</code></pre></div>
 <p><!--
-<caption>--><span class="marginnote shownote"><span id="tab:unnamed-chunk-32">Table 5.1: </span>Here is a nice table!</span><!--</caption>--></p>
+<caption>--><span class="marginnote shownote"><span id="tab:unnamed-chunk-15">Table 3.1: </span>Here is a nice table!</span><!--</caption>--></p>
 <table>
 <thead>
 <tr class="header">
-<th align="right">k</th>
-<th align="right">MO</th>
-<th align="right">seMO</th>
-<th align="right">H</th>
-<th align="right">seH</th>
-<th align="right">A</th>
-<th align="right">seA</th>
+<th></th>
+<th align="right">estimate</th>
+<th align="right">standard_error</th>
+<th align="right">ci_lower_bound</th>
+<th align="right">ci_upper_bound</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">0.1</td>
-<td align="right">0.3699078</td>
-<td align="right">0.0053059</td>
-<td align="right">0.8082070</td>
-<td align="right">0.0083168</td>
-<td align="right">0.4576895</td>
-<td align="right">0.0045734</td>
-</tr>
-<tr class="even">
-<td align="right">0.2</td>
-<td align="right">0.3699078</td>
-<td align="right">0.0053059</td>
-<td align="right">0.8082070</td>
-<td align="right">0.0083168</td>
-<td align="right">0.4576895</td>
-<td align="right">0.0045734</td>
-</tr>
-<tr class="odd">
-<td align="right">0.3</td>
-<td align="right">0.3699078</td>
-<td align="right">0.0053059</td>
-<td align="right">0.8082070</td>
-<td align="right">0.0083168</td>
-<td align="right">0.4576895</td>
-<td align="right">0.0045734</td>
-</tr>
-<tr class="even">
-<td align="right">0.4</td>
-<td align="right">0.1865894</td>
-<td align="right">0.0068123</td>
-<td align="right">0.2582516</td>
-<td align="right">0.0092455</td>
-<td align="right">0.7225101</td>
-<td align="right">0.0051745</td>
-</tr>
-<tr class="odd">
-<td align="right">0.5</td>
-<td align="right">0.1865894</td>
-<td align="right">0.0068123</td>
-<td align="right">0.2582516</td>
-<td align="right">0.0092455</td>
-<td align="right">0.7225101</td>
-<td align="right">0.0051745</td>
-</tr>
-<tr class="even">
-<td align="right">0.6</td>
-<td align="right">0.1865894</td>
-<td align="right">0.0068123</td>
-<td align="right">0.2582516</td>
-<td align="right">0.0092455</td>
-<td align="right">0.7225101</td>
-<td align="right">0.0051745</td>
-</tr>
-<tr class="odd">
-<td align="right">0.7</td>
-<td align="right">0.0432649</td>
-<td align="right">0.0042978</td>
-<td align="right">0.0432649</td>
-<td align="right">0.0042978</td>
-<td align="right">1.0000000</td>
+<td>0</td>
+<td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
 <td align="right">0.0000000</td>
 </tr>
 <tr class="even">
-<td align="right">0.8</td>
-<td align="right">0.0432649</td>
-<td align="right">0.0042978</td>
-<td align="right">0.0432649</td>
-<td align="right">0.0042978</td>
-<td align="right">1.0000000</td>
-<td align="right">0.0000000</td>
+<td>0.05</td>
+<td align="right">0.0151060</td>
+<td align="right">0.0004159</td>
+<td align="right">0.0142904</td>
+<td align="right">0.0159216</td>
 </tr>
 <tr class="odd">
-<td align="right">0.9</td>
-<td align="right">0.0432649</td>
-<td align="right">0.0042978</td>
-<td align="right">0.0432649</td>
-<td align="right">0.0042978</td>
-<td align="right">1.0000000</td>
-<td align="right">0.0000000</td>
+<td>0.1</td>
+<td align="right">0.0342651</td>
+<td align="right">0.0007021</td>
+<td align="right">0.0328882</td>
+<td align="right">0.0356420</td>
 </tr>
 <tr class="even">
-<td align="right">1.0</td>
-<td align="right">0.0432649</td>
-<td align="right">0.0042978</td>
-<td align="right">0.0432649</td>
-<td align="right">0.0042978</td>
+<td>0.15</td>
+<td align="right">0.0558635</td>
+<td align="right">0.0010096</td>
+<td align="right">0.0538836</td>
+<td align="right">0.0578434</td>
+</tr>
+<tr class="odd">
+<td>0.2</td>
+<td align="right">0.0801846</td>
+<td align="right">0.0014032</td>
+<td align="right">0.0774329</td>
+<td align="right">0.0829363</td>
+</tr>
+<tr class="even">
+<td>0.25</td>
+<td align="right">0.1067687</td>
+<td align="right">0.0017315</td>
+<td align="right">0.1033732</td>
+<td align="right">0.1101642</td>
+</tr>
+<tr class="odd">
+<td>0.3</td>
+<td align="right">0.1356307</td>
+<td align="right">0.0021301</td>
+<td align="right">0.1314535</td>
+<td align="right">0.1398078</td>
+</tr>
+<tr class="even">
+<td>0.35</td>
+<td align="right">0.1670287</td>
+<td align="right">0.0025182</td>
+<td align="right">0.1620903</td>
+<td align="right">0.1719670</td>
+</tr>
+<tr class="odd">
+<td>0.4</td>
+<td align="right">0.2005501</td>
+<td align="right">0.0029161</td>
+<td align="right">0.1948315</td>
+<td align="right">0.2062687</td>
+</tr>
+<tr class="even">
+<td>0.45</td>
+<td align="right">0.2369209</td>
+<td align="right">0.0033267</td>
+<td align="right">0.2303971</td>
+<td align="right">0.2434447</td>
+</tr>
+<tr class="odd">
+<td>0.5</td>
+<td align="right">0.2759734</td>
+<td align="right">0.0037423</td>
+<td align="right">0.2686347</td>
+<td align="right">0.2833121</td>
+</tr>
+<tr class="even">
+<td>0.55</td>
+<td align="right">0.3180215</td>
+<td align="right">0.0041626</td>
+<td align="right">0.3098585</td>
+<td align="right">0.3261844</td>
+</tr>
+<tr class="odd">
+<td>0.6</td>
+<td align="right">0.3633071</td>
+<td align="right">0.0045833</td>
+<td align="right">0.3543192</td>
+<td align="right">0.3722950</td>
+</tr>
+<tr class="even">
+<td>0.65</td>
+<td align="right">0.4125183</td>
+<td align="right">0.0050056</td>
+<td align="right">0.4027021</td>
+<td align="right">0.4223345</td>
+</tr>
+<tr class="odd">
+<td>0.7</td>
+<td align="right">0.4657641</td>
+<td align="right">0.0054137</td>
+<td align="right">0.4551478</td>
+<td align="right">0.4763804</td>
+</tr>
+<tr class="even">
+<td>0.75</td>
+<td align="right">0.5241784</td>
+<td align="right">0.0058003</td>
+<td align="right">0.5128039</td>
+<td align="right">0.5355529</td>
+</tr>
+<tr class="odd">
+<td>0.8</td>
+<td align="right">0.5880894</td>
+<td align="right">0.0062464</td>
+<td align="right">0.5758401</td>
+<td align="right">0.6003388</td>
+</tr>
+<tr class="even">
+<td>0.85</td>
+<td align="right">0.6577051</td>
+<td align="right">0.0066148</td>
+<td align="right">0.6447333</td>
+<td align="right">0.6706769</td>
+</tr>
+<tr class="odd">
+<td>0.9</td>
+<td align="right">0.7346412</td>
+<td align="right">0.0068289</td>
+<td align="right">0.7212497</td>
+<td align="right">0.7480328</td>
+</tr>
+<tr class="even">
+<td>0.95</td>
+<td align="right">0.8265786</td>
+<td align="right">0.0062686</td>
+<td align="right">0.8142857</td>
+<td align="right">0.8388715</td>
+</tr>
+<tr class="odd">
+<td>1</td>
 <td align="right">1.0000000</td>
 <td align="right">0.0000000</td>
+<td align="right">1.0000000</td>
+<td align="right">1.0000000</td>
 </tr>
 </tbody>
 </table>
-<p>still need to replicate PDF page 13</p>
-<p><a href="https://github.com/DjalmaPessoa/convey/issues/168" class="uri">https://github.com/DjalmaPessoa/convey/issues/168</a></p>
-<p>then keep going replicating this</p>
-<p><a href="https://github.com/DjalmaPessoa/convey/issues/154" class="uri">https://github.com/DjalmaPessoa/convey/issues/154</a></p>
-<p>For additional usage examples of <code>svyafc</code> or <code>svyafcdec</code>, type <code>?convey::svyafc</code> or <code>?convey::svyafcdec</code> in the R console.</p>
-<p><span class="citation">(Alkire and Foster <label for="tufte-mn-43" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-43" class="margin-toggle">2011<span class="marginnote">Alkire, Sabina, and James Foster. 2011. “Counting and Multidimensional Poverty Measurement.” <em>Journal of Public Economics</em> 95 (7-8): 476–87. <a href="https://ideas.repec.org/a/eee/pubeco/v95y2011i7-8p476-487.html" class="uri">https://ideas.repec.org/a/eee/pubeco/v95y2011i7-8p476-487.html</a>.</span>)</span> and <span class="citation">(Sabina Alkire and Ballon <label for="tufte-mn-44" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-44" class="margin-toggle">2015<span class="marginnote">Sabina Alkire, Suman Seth, James Foster, and Paola Ballon. 2015. <em>Multidimensional Poverty Measurement and Analysis</em>. Oxford University Press.</span>)</span> and <span class="citation">(Pacifico and Poge <label for="tufte-mn-45" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-45" class="margin-toggle">2016<span class="marginnote">Pacifico, Daniele, and Felix Poge. 2016. “MPI: Stata Module to Compute the Alkire-Foster Multidimensional Poverty Measures and Their Decomposition by Deprivation Indicators and Population Sub-Groups.” <a href="http://EconPapers.repec.org/RePEc:boc:bocode:s458120" class="uri">http://EconPapers.repec.org/RePEc:boc:bocode:s458120</a>.</span>)</span></p>
+</div>
 </div>
 <p style="text-align: center;">
-<a href="5-multidimensional.html"><button class="btn btn-default">Previous</button></a>
-<a href="5-2-bourguignon-1999-inequality-class-svybmi.html"><button class="btn btn-default">Next</button></a>
+<a href="3-inequality.html"><button class="btn btn-default">Previous</button></a>
+<a href="3-2-gini-index-svygini.html"><button class="btn btn-default">Next</button></a>
 </p>
 </div>
 </div>
