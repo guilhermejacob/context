@@ -124,7 +124,7 @@
   \postauthor{\par}
   \predate{\centering\large\emph}
   \postdate{\par}
-  \date{2016-12-19}
+  \date{2016-12-20}
 
 \usepackage{booktabs}
 
@@ -349,8 +349,8 @@ and then use the function \texttt{svyarpr}:
 \end{Shaded}
 
 \begin{verbatim}
-            arpr     SE
-eqIncome 0.14444 0.0032
+            arpr    SE
+eqIncome 0.14444 0.003
 \end{verbatim}
 
 \begin{Shaded}
@@ -361,15 +361,15 @@ eqIncome 0.14444 0.0032
 
 \begin{verbatim}
                       db040  eqIncome se.eqIncome
-Burgenland       Burgenland 0.1953984 0.017422272
-Carinthia         Carinthia 0.1308627 0.011794104
-Lower Austria Lower Austria 0.1384362 0.007538602
-Salzburg           Salzburg 0.1378734 0.012091282
-Styria               Styria 0.1437464 0.007186635
-Tyrol                 Tyrol 0.1530819 0.010639032
-Upper Austria Upper Austria 0.1088977 0.005540272
-Vienna               Vienna 0.1723468 0.007947397
-Vorarlberg       Vorarlberg 0.1653731 0.013177513
+Burgenland       Burgenland 0.1953984 0.016403458
+Carinthia         Carinthia 0.1308627 0.010115762
+Lower Austria Lower Austria 0.1384362 0.006681361
+Salzburg           Salzburg 0.1378734 0.012686728
+Styria               Styria 0.1437464 0.006831084
+Tyrol                 Tyrol 0.1530819 0.009250335
+Upper Austria Upper Austria 0.1088977 0.005833156
+Vienna               Vienna 0.1723468 0.008048306
+Vorarlberg       Vorarlberg 0.1653731 0.014714395
 \end{verbatim}
 
 The functions of the library convey are called in a similar way to the
@@ -421,7 +421,7 @@ py010n   NA NA
 
 \begin{verbatim}
           gini     SE
-py010n 0.64606 0.0036
+py010n 0.64606 0.0034
 \end{verbatim}
 
 djalmapessoa\_look, where do these references go on this page?
@@ -2064,6 +2064,70 @@ aspects of the theory and estimation procedures of each.
 
 \section{Alkire-Foster Class and Decomposition (svyafc,
 svyafcdec)}\label{alkire-foster-class-and-decomposition-svyafc-svyafcdec}
+
+This class of measures are defined in \citep{alkire2011}, using what is
+called the ``dual cutoff'' approach. This method applies a cutoffs to
+define dimensional deprivations and another cutoff for multidimensional
+deprivation.
+
+To analyze a population of \(n\) individuals across \(d\) achievement
+dimensions, the first step of the method is applying a FGT-like
+transformation to each dimension, defined as
+
+\[
+g_{ij}^\alpha = \bigg( \frac{ z_j - x_{ij} }{ z_j } \bigg)^{\alpha}
+\]
+
+where \(i\) is an observation index, \(j\) is a dimension index and
+\(\alpha\) is an exponent weighting the deprivation intensity. If
+\(\alpha=0\), then \(g_{ij}^0\) becomes a binary variable, assuming
+value \(1\) if person \(i\) is deprived in dimension \(j\) and \(0\)
+otherwise. The \(n \times d\) matrix \(G^0\) will be referred to as
+\emph{deprivation matrix}.
+
+Each dimension receives a weight \(w_j\), so that the weighted sum of
+multidimensional deprivation is the matrix multiplication of \(G^0\) by
+the \(j \times 1\) vector \(W = [w_j]\). The \(n \times 1\) vector
+\(C^\alpha = [c^\alpha_i]\) is the weighted sum of dimensional
+deprivation scores, i.e.,
+
+\[
+c^\alpha_{i} = \sum_{j \in d} w_j g_{ij}^\alpha
+\]
+
+The second cutoff is defining those considered to be multidimensionally
+poor. Assuming that \(\sum_{j \in d} w_j = 1\), the multidimensional
+cutoff \(k\) belongs to the interval \((0,1]\). If
+\(c^0_{i} \geqslant k\), then this person is considered
+multidimensionally poor. The \emph{censored vector of deprivation sums}
+\(C^\alpha(k)\) is defined as
+
+\[
+C^\alpha (k) = \bigg[ c_{ij}^\alpha \cdot \delta \big( c_{ij}^0 \geqslant k \big) \bigg] \text{,}
+\]
+
+where \(\delta(A)\) is an indicator function, taking value \(1\) if
+condition \(A\) is true and \(0\) otherwise. If
+\(k \geqslant \min{ w_j }\), this is called the ``union approach'',
+where a person is considered poor if she is poor in at least one
+dimension. On the other extreme, the ``intersection approach'' happens
+when \(k = 1\), meaning that a person is considered poor if she is poor
+in all dimensions.
+
+The average of vector \(C^0 (k)\) returns the multidimensional headcount
+ratio. For the multidimensional FGT class, a general measure can be
+defined as
+
+\[
+M^\alpha = \frac{1}{n} \sum_{i \in n} \sum_{j \in d} w_j g_{ij}^{\alpha}(k) \text{, } \alpha \geq 0 \text{,}
+\]
+
+where
+\(g_{ij}^{\alpha}(k) = g_{ij}^\alpha \cdot \delta \big( c^0_i \geqslant k \big)\).
+
+For inferential purposes, since this variable is actually the average of
+scores \(\sum_{j \in d} w_j g_{ij}^{\alpha}(k)\), the linearization is
+straightforward.
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 

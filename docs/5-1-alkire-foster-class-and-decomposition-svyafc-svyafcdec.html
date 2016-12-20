@@ -17,7 +17,7 @@
 
 <meta name="author" content="Guilherme Jacob, Anthony Damico, and Djalma Pessoa" />
 
-<meta name="date" content="2016-12-19" />
+<meta name="date" content="2016-12-20" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -132,6 +132,27 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="col-sm-12">
 <div id="alkire-foster-class-and-decomposition-svyafc-svyafcdec" class="section level2">
 <h2><span class="header-section-number">5.1</span> Alkire-Foster Class and Decomposition (svyafc, svyafcdec)</h2>
+<p>This class of measures are defined in <span class="citation">(Alkire and Foster <label for="tufte-mn-45" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-45" class="margin-toggle">2011<span class="marginnote">Alkire, Sabina, and James Foster. 2011. “Counting and Multidimensional Poverty Measurement.” <em>Journal of Public Economics</em> 95 (7-8): 476–87. <a href="https://ideas.repec.org/a/eee/pubeco/v95y2011i7-8p476-487.html" class="uri">https://ideas.repec.org/a/eee/pubeco/v95y2011i7-8p476-487.html</a>.</span>)</span>, using what is called the “dual cutoff” approach. This method applies a cutoffs to define dimensional deprivations and another cutoff for multidimensional deprivation.</p>
+<p>To analyze a population of <span class="math inline">\(n\)</span> individuals across <span class="math inline">\(d\)</span> achievement dimensions, the first step of the method is applying a FGT-like transformation to each dimension, defined as</p>
+<p><span class="math display">\[
+g_{ij}^\alpha = \bigg( \frac{ z_j - x_{ij} }{ z_j } \bigg)^{\alpha}
+\]</span></p>
+<p>where <span class="math inline">\(i\)</span> is an observation index, <span class="math inline">\(j\)</span> is a dimension index and <span class="math inline">\(\alpha\)</span> is an exponent weighting the deprivation intensity. If <span class="math inline">\(\alpha=0\)</span>, then <span class="math inline">\(g_{ij}^0\)</span> becomes a binary variable, assuming value <span class="math inline">\(1\)</span> if person <span class="math inline">\(i\)</span> is deprived in dimension <span class="math inline">\(j\)</span> and <span class="math inline">\(0\)</span> otherwise. The <span class="math inline">\(n \times d\)</span> matrix <span class="math inline">\(G^0\)</span> will be referred to as <em>deprivation matrix</em>.</p>
+<p>Each dimension receives a weight <span class="math inline">\(w_j\)</span>, so that the weighted sum of multidimensional deprivation is the matrix multiplication of <span class="math inline">\(G^0\)</span> by the <span class="math inline">\(j \times 1\)</span> vector <span class="math inline">\(W = [w_j]\)</span>. The <span class="math inline">\(n \times 1\)</span> vector <span class="math inline">\(C^\alpha = [c^\alpha_i]\)</span> is the weighted sum of dimensional deprivation scores, i.e.,</p>
+<p><span class="math display">\[
+c^\alpha_{i} = \sum_{j \in d} w_j g_{ij}^\alpha
+\]</span></p>
+<p>The second cutoff is defining those considered to be multidimensionally poor. Assuming that <span class="math inline">\(\sum_{j \in d} w_j = 1\)</span>, the multidimensional cutoff <span class="math inline">\(k\)</span> belongs to the interval <span class="math inline">\((0,1]\)</span>. If <span class="math inline">\(c^0_{i} \geqslant k\)</span>, then this person is considered multidimensionally poor. The <em>censored vector of deprivation sums</em> <span class="math inline">\(C^\alpha(k)\)</span> is defined as</p>
+<p><span class="math display">\[
+C^\alpha (k) = \bigg[ c_{ij}^\alpha \cdot \delta \big( c_{ij}^0 \geqslant k \big) \bigg] \text{,}
+\]</span></p>
+<p>where <span class="math inline">\(\delta(A)\)</span> is an indicator function, taking value <span class="math inline">\(1\)</span> if condition <span class="math inline">\(A\)</span> is true and <span class="math inline">\(0\)</span> otherwise. If <span class="math inline">\(k \geqslant \min{ w_j }\)</span>, this is called the “union approach”, where a person is considered poor if she is poor in at least one dimension. On the other extreme, the “intersection approach” happens when <span class="math inline">\(k = 1\)</span>, meaning that a person is considered poor if she is poor in all dimensions.</p>
+<p>The average of vector <span class="math inline">\(C^0 (k)\)</span> returns the multidimensional headcount ratio. For the multidimensional FGT class, a general measure can be defined as</p>
+<p><span class="math display">\[
+M^\alpha = \frac{1}{n} \sum_{i \in n} \sum_{j \in d} w_j g_{ij}^{\alpha}(k) \text{, } \alpha \geq 0 \text{,}
+\]</span></p>
+<p>where <span class="math inline">\(g_{ij}^{\alpha}(k) = g_{ij}^\alpha \cdot \delta \big( c^0_i \geqslant k \big)\)</span>.</p>
+<p>For inferential purposes, since this variable is actually the average of scores <span class="math inline">\(\sum_{j \in d} w_j g_{ij}^{\alpha}(k)\)</span>, the linearization is straightforward.</p>
 <hr />
 <p><strong>A replication example</strong></p>
 <p>In November 2015, Christopher Jindra presented at the Oxford Poverty and Human Development Initiative on the Alkire-Foster multidimensional poverty measure. His presentation can be viewed <a href="http://www.ophi.org.uk/wp-content/uploads/Jindra_151109_OPHISeminar.pdf">here</a>. The example below reproduces those statistics.</p>
@@ -331,7 +352,7 @@ knitr::<span class="kw">kable</span>(
 <p>then keep going replicating this</p>
 <p><a href="https://github.com/DjalmaPessoa/convey/issues/154" class="uri">https://github.com/DjalmaPessoa/convey/issues/154</a></p>
 <p>For additional usage examples of <code>svyafc</code> or <code>svyafcdec</code>, type <code>?convey::svyafc</code> or <code>?convey::svyafcdec</code> in the R console.</p>
-<p><span class="citation">(Alkire and Foster <label for="tufte-mn-45" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-45" class="margin-toggle">2011<span class="marginnote">Alkire, Sabina, and James Foster. 2011. “Counting and Multidimensional Poverty Measurement.” <em>Journal of Public Economics</em> 95 (7-8): 476–87. <a href="https://ideas.repec.org/a/eee/pubeco/v95y2011i7-8p476-487.html" class="uri">https://ideas.repec.org/a/eee/pubeco/v95y2011i7-8p476-487.html</a>.</span>)</span> and <span class="citation">(Sabina Alkire and Ballon <label for="tufte-mn-46" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-46" class="margin-toggle">2015<span class="marginnote">Sabina Alkire, Suman Seth, James Foster, and Paola Ballon. 2015. <em>Multidimensional Poverty Measurement and Analysis</em>. Oxford University Press.</span>)</span> and <span class="citation">(Pacifico and Poge <label for="tufte-mn-47" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-47" class="margin-toggle">2016<span class="marginnote">Pacifico, Daniele, and Felix Poge. 2016. “MPI: Stata Module to Compute the Alkire-Foster Multidimensional Poverty Measures and Their Decomposition by Deprivation Indicators and Population Sub-Groups.” <a href="http://EconPapers.repec.org/RePEc:boc:bocode:s458120" class="uri">http://EconPapers.repec.org/RePEc:boc:bocode:s458120</a>.</span>)</span></p>
+<p><span class="citation">(Alkire and Foster <label for="tufte-mn-46" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-46" class="margin-toggle">2011<span class="marginnote">Alkire, Sabina, and James Foster. 2011. “Counting and Multidimensional Poverty Measurement.” <em>Journal of Public Economics</em> 95 (7-8): 476–87. <a href="https://ideas.repec.org/a/eee/pubeco/v95y2011i7-8p476-487.html" class="uri">https://ideas.repec.org/a/eee/pubeco/v95y2011i7-8p476-487.html</a>.</span>)</span> and <span class="citation">(Sabina Alkire and Ballon <label for="tufte-mn-47" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-47" class="margin-toggle">2015<span class="marginnote">Sabina Alkire, Suman Seth, James Foster, and Paola Ballon. 2015. <em>Multidimensional Poverty Measurement and Analysis</em>. Oxford University Press.</span>)</span> and <span class="citation">(Pacifico and Poge <label for="tufte-mn-48" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-48" class="margin-toggle">2016<span class="marginnote">Pacifico, Daniele, and Felix Poge. 2016. “MPI: Stata Module to Compute the Alkire-Foster Multidimensional Poverty Measures and Their Decomposition by Deprivation Indicators and Population Sub-Groups.” <a href="http://EconPapers.repec.org/RePEc:boc:bocode:s458120" class="uri">http://EconPapers.repec.org/RePEc:boc:bocode:s458120</a>.</span>)</span></p>
 </div>
 <p style="text-align: center;">
 <a href="5-multidimensional.html"><button class="btn btn-default">Previous</button></a>
