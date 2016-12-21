@@ -127,6 +127,129 @@ The estimator proposed by [@osier2009] is defined as:
 The linearized formula of $\widehat{G}$ is used to calculate the SE.
 
 
+
+---
+
+**A replication example**
+
+The R [@vardpoor] package, created by researchers at the Central Statistical Bureau of Latvia, includes a gini coefficient calculation using the ultimate cluster method.  The example below reproduces those statistics.
+
+Load and prepare the same data set:
+
+```{r}
+# load the convey package
+library(convey)
+
+# load the survey library
+library(survey)
+
+# load the vardpoor library
+library(vardpoor)
+
+# load the synthetic european union statistics on income & living conditions
+data(eusilc)
+
+# make all column names lowercase
+names( eusilc ) <- tolower( names( eusilc ) )
+
+# add a column with the row number
+dati <- data.table(IDd = 1 : nrow(eusilc), eusilc)
+
+# calculate the gini coefficient
+# using the R vardpoor library
+varpoord_gini_calculation <-
+	varpoord(
+	
+		# analysis variable
+		Y = "eqincome", 
+		
+		# weights variable
+		w_final = "rb050",
+		
+		# row number variable
+		ID_level1 = "IDd",
+		
+		# strata variable
+		H = "db040", 
+		
+		N_h = NULL ,
+		
+		# clustering variable
+		PSU = "rb030", 
+		
+		# data.table
+		dataset = dati, 
+		
+		# gini coefficient function
+		type = "lingini"
+		
+	)
+
+# all calculations produced by vardpoor::lingini
+aa$all_result
+
+# construct a survey.design
+# using our recommended setup
+des_eusilc <- 
+	svydesign( 
+		ids = ~ rb030 , 
+		strata = ~ db040 ,  
+		weights = ~ rb050 , 
+		data = eusilc
+	)
+
+# immediately run the convey_prep function on it
+des_eusilc <- convey_prep( des_eusilc )
+
+# coefficients do match
+aa$all_result$value
+coef( svygini( ~ eqincome , des_eusilc ) ) * 100
+
+# variances do not match exactly
+attr( svygini( ~ eqincome , des_eusilc ) , 'var' ) * 10000
+aa$all_result$var
+
+# standard errors do not match exactly
+aa$all_result$se
+SE( svygini( ~ eqincome , des_eusilc ) ) * 100
+```
+
+By default, the `convey::svygini` function comes close to the results of `vardpoor::lingini`.  However, the measures of uncertainty do not line up, because `library(vardpoor)` defaults to the ultimate cluster method.  This can be replicated with an alternative setup of the `survey.design` object.  The ultimate cluster method is marginally less conservative, therefore, we do not recommend using it as the default.
+
+```{r}
+# within each strata, sum up the weights
+cluster_sums <- aggregate( eusilc$rb050 , list( eusilc$db040 ) , sum )
+
+# name the within-strata sums of weights the `cluster_sum`
+names( cluster_sums ) <- c( "db040" , "cluster_sum" )
+
+# merge this column back onto the data.frame
+eusilc <- merge( eusilc , cluster_sums )
+
+# construct a survey.design
+# with the fpc using the cluster sum
+des_eusilc_ultimate_cluster <- 
+	svydesign( 
+		ids = ~ rb030 , 
+		strata = ~ db040 ,  
+		weights = ~ rb050 , 
+		data = eusilc , 
+		fpc = ~ cluster_sum 
+	)
+
+# again, immediately run the convey_prep function on the `survey.design`
+des_eusilc_ultimate_cluster <- convey_prep( des_eusilc_ultimate_cluster )
+
+# matches
+attr( svygini( ~ eqincome , des_eusilc_ultimate_cluster ) , 'var' ) * 10000
+aa$all_result$var
+
+# matches
+aa$all_result$se
+SE( svygini( ~ eqincome , des_eusilc_ultimate_cluster ) ) * 100
+```
+
+
 For additional usage examples of `svygini`, type `?convey::svygini` in the R console.
 
 
