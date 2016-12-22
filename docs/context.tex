@@ -350,7 +350,7 @@ and then use the function \texttt{svyarpr}:
 
 \begin{verbatim}
             arpr     SE
-eqIncome 0.14444 0.0025
+eqIncome 0.14444 0.0023
 \end{verbatim}
 
 \begin{Shaded}
@@ -361,15 +361,15 @@ eqIncome 0.14444 0.0025
 
 \begin{verbatim}
                       db040  eqIncome se.eqIncome
-Burgenland       Burgenland 0.1953984 0.015386182
-Carinthia         Carinthia 0.1308627 0.010044644
-Lower Austria Lower Austria 0.1384362 0.006369217
-Salzburg           Salzburg 0.1378734 0.008994597
-Styria               Styria 0.1437464 0.006937213
-Tyrol                 Tyrol 0.1530819 0.010544599
-Upper Austria Upper Austria 0.1088977 0.005516321
-Vienna               Vienna 0.1723468 0.007313002
-Vorarlberg       Vorarlberg 0.1653731 0.013851611
+Burgenland       Burgenland 0.1953984 0.018829502
+Carinthia         Carinthia 0.1308627 0.011831400
+Lower Austria Lower Austria 0.1384362 0.005907144
+Salzburg           Salzburg 0.1378734 0.011065672
+Styria               Styria 0.1437464 0.006619334
+Tyrol                 Tyrol 0.1530819 0.010115588
+Upper Austria Upper Austria 0.1088977 0.005683240
+Vienna               Vienna 0.1723468 0.008623811
+Vorarlberg       Vorarlberg 0.1653731 0.012174503
 \end{verbatim}
 
 The functions of the library convey are called in a similar way to the
@@ -421,7 +421,7 @@ py010n   NA NA
 
 \begin{verbatim}
           gini     SE
-py010n 0.64606 0.0035
+py010n 0.64606 0.0034
 \end{verbatim}
 
 djalmapessoa\_look, where do these references go on this page?
@@ -2420,6 +2420,14 @@ Load and prepare the same data set:
         \DataTypeTok{ordered =} \OtherTok{TRUE} 
       \NormalTok{)}
 
+\CommentTok{# coerce `married` column to factor}
+\NormalTok{nlsw88$married <-}\StringTok{ }
+\StringTok{    }\KeywordTok{factor}\NormalTok{( }
+        \NormalTok{nlsw88$married , }
+        \DataTypeTok{levels =} \DecValTok{0}\NormalTok{:}\DecValTok{1} \NormalTok{, }
+        \DataTypeTok{labels =} \KeywordTok{c}\NormalTok{( }\StringTok{"single"} \NormalTok{, }\StringTok{"married"} \NormalTok{) }
+    \NormalTok{)}
+
 \CommentTok{# initiate a linearized survey design object}
 \NormalTok{des_nlsw88 <-}\StringTok{ }\KeywordTok{svydesign}\NormalTok{( }\DataTypeTok{ids =} \NormalTok{~}\DecValTok{1} \NormalTok{, }\DataTypeTok{data =} \NormalTok{nlsw88 )}
 
@@ -2663,13 +2671,13 @@ Replicate k=1/3 rows of PDF page 17 and 19
 ## hours                0.13666 0.0059
 \end{verbatim}
 
-Replicate PDF page 21
+Replicate PDF pages 21 and 22
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{svyafcdec}\NormalTok{(}
     \NormalTok{~}\StringTok{ }\NormalTok{wage +}\StringTok{ }\NormalTok{collgrad +}\StringTok{ }\NormalTok{hours , }
-    \DataTypeTok{by =} \NormalTok{~married , }
+    \DataTypeTok{subgroup =} \NormalTok{~married , }
     \DataTypeTok{design =} \NormalTok{des_nlsw88 , }
     \DataTypeTok{cutoffs =} \KeywordTok{list}\NormalTok{( }\DecValTok{4} \NormalTok{, }\StringTok{'college grad'} \NormalTok{, }\DecValTok{26} \NormalTok{) , }
     \DataTypeTok{k =} \DecValTok{1}\NormalTok{/}\DecValTok{3} \NormalTok{, }
@@ -2701,6 +2709,16 @@ Replicate PDF page 21
 ## wage                 0.17564 0.0061
 ## collgrad             0.68770 0.0077
 ## hours                0.13666 0.0059
+## 
+## $`subgroup alkire-foster estimates`
+##         alkire-foster     SE
+## single        0.35414 0.0088
+## married       0.37867 0.0066
+## 
+## $`percentual contribution per subgroup`
+##         grp. % contribution    SE
+## single              0.34204 0.012
+## married             0.65796 0.012
 \end{verbatim}
 
 For additional usage examples of \texttt{svyafc} or \texttt{svyafcdec},

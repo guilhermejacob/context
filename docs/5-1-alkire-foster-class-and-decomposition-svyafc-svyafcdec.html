@@ -194,6 +194,14 @@ nlsw88$collgrad &lt;-
         <span class="dt">ordered =</span> <span class="ot">TRUE</span> 
       )
 
+<span class="co"># coerce `married` column to factor</span>
+nlsw88$married &lt;-<span class="st"> </span>
+<span class="st">    </span><span class="kw">factor</span>( 
+        nlsw88$married , 
+        <span class="dt">levels =</span> <span class="dv">0</span>:<span class="dv">1</span> , 
+        <span class="dt">labels =</span> <span class="kw">c</span>( <span class="st">&quot;single&quot;</span> , <span class="st">&quot;married&quot;</span> ) 
+    )
+
 <span class="co"># initiate a linearized survey design object</span>
 des_nlsw88 &lt;-<span class="st"> </span><span class="kw">svydesign</span>( <span class="dt">ids =</span> ~<span class="dv">1</span> , <span class="dt">data =</span> nlsw88 )
 
@@ -540,10 +548,10 @@ for( gs in <span class="dv">0</span>:<span class="dv">3</span> ){
 ## wage                 0.17564 0.0061
 ## collgrad             0.68770 0.0077
 ## hours                0.13666 0.0059</code></pre>
-<p>Replicate PDF page 21</p>
+<p>Replicate PDF pages 21 and 22</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svyafcdec</span>(
     ~<span class="st"> </span>wage +<span class="st"> </span>collgrad +<span class="st"> </span>hours , 
-    <span class="dt">by =</span> ~married , 
+    <span class="dt">subgroup =</span> ~married , 
     <span class="dt">design =</span> des_nlsw88 , 
     <span class="dt">cutoffs =</span> <span class="kw">list</span>( <span class="dv">4</span> , <span class="st">&#39;college grad&#39;</span> , <span class="dv">26</span> ) , 
     <span class="dt">k =</span> <span class="dv">1</span>/<span class="dv">3</span> , 
@@ -570,7 +578,17 @@ for( gs in <span class="dv">0</span>:<span class="dv">3</span> ){
 ##          dim. % contribution     SE
 ## wage                 0.17564 0.0061
 ## collgrad             0.68770 0.0077
-## hours                0.13666 0.0059</code></pre>
+## hours                0.13666 0.0059
+## 
+## $`subgroup alkire-foster estimates`
+##         alkire-foster     SE
+## single        0.35414 0.0088
+## married       0.37867 0.0066
+## 
+## $`percentual contribution per subgroup`
+##         grp. % contribution    SE
+## single              0.34204 0.012
+## married             0.65796 0.012</code></pre>
 <p>For additional usage examples of <code>svyafc</code> or <code>svyafcdec</code>, type <code>?convey::svyafc</code> or <code>?convey::svyafcdec</code> in the R console.</p>
 <p><span class="citation">(Alkire and Foster <label for="tufte-mn-47" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-47" class="margin-toggle">2011<span class="marginnote">Alkire, Sabina, and James Foster. 2011. “Counting and Multidimensional Poverty Measurement.” <em>Journal of Public Economics</em> 95 (7-8): 476–87. <a href="https://ideas.repec.org/a/eee/pubeco/v95y2011i7-8p476-487.html" class="uri">https://ideas.repec.org/a/eee/pubeco/v95y2011i7-8p476-487.html</a>.</span>)</span> and <span class="citation">(Sabina Alkire and Ballon <label for="tufte-mn-48" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-48" class="margin-toggle">2015<span class="marginnote">Sabina Alkire, Suman Seth, James Foster, and Paola Ballon. 2015. <em>Multidimensional Poverty Measurement and Analysis</em>. Oxford University Press.</span>)</span> and <span class="citation">(Pacifico and Poge <label for="tufte-mn-49" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-49" class="margin-toggle">2016<span class="marginnote">Pacifico, Daniele, and Felix Poge. 2016. “MPI: Stata Module to Compute the Alkire-Foster Multidimensional Poverty Measures and Their Decomposition by Deprivation Indicators and Population Sub-Groups.” <a href="http://EconPapers.repec.org/RePEc:boc:bocode:s458120" class="uri">http://EconPapers.repec.org/RePEc:boc:bocode:s458120</a>.</span>)</span></p>
 </div>

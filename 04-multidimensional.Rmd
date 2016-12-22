@@ -100,6 +100,14 @@ nlsw88$collgrad <-
         ordered = TRUE 
       )
 
+# coerce `married` column to factor
+nlsw88$married <- 
+    factor( 
+        nlsw88$married , 
+        levels = 0:1 , 
+        labels = c( "single" , "married" ) 
+    )
+
 # initiate a linearized survey design object
 des_nlsw88 <- svydesign( ids = ~1 , data = nlsw88 )
 
@@ -265,11 +273,11 @@ svyafcdec(
 
 
 
-Replicate PDF page 21
+Replicate PDF pages 21 and 22
 ```{r}
 svyafcdec(
     ~ wage + collgrad + hours , 
-    by = ~married , 
+    subgroup = ~married , 
     design = des_nlsw88 , 
     cutoffs = list( 4 , 'college grad' , 26 ) , 
     k = 1/3 , 
