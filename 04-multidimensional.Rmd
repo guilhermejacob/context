@@ -159,9 +159,11 @@ for( ks in seq( 0.1 , 1 , .1 ) ){
 	    )
 	
 }
+```
 
+```{r echo = FALSE}
 knitr::kable(
-  page_ten , caption = 'Here is a nice table!',
+  page_ten , caption = 'PDF Page 10 Replication',
   booktabs = TRUE
 )
 ```
@@ -169,44 +171,123 @@ knitr::kable(
 
 Replicate PDF page 13
 ```{r}
-# these calculations match pdf page 13
-# http://www.ophi.org.uk/wp-content/uploads/Jindra_151109_OPHISeminar.pdf#page=13
-svyafc(
-  ~ wage + collgrad + hours , 
-  design = des_nlsw88 , 
-  cutoffs = list( 4, 'college grad' , 26 ) , 
-  k = 0.5 , 
-  g = 0 , 
-  dimw = c( 0.5 , 0.25 , 0.25 ) ,
-  na.rm = TRUE
-)
+page_thirteen <- NULL
 
-svyafc(
-  ~ wage + collgrad + hours , 
-  design = des_nlsw88 , 
-  cutoffs = list( 4, 'college grad' , 26 ) , 
-  k = 0.75 , 
-  g = 0 , 
-  dimw = c( 0.5 , 0.25 , 0.25 ) ,
-  na.rm = TRUE
-)
+# loop through every poverty cutoff `k`
+for( ks in c( 0.5 , 0.75 , 1 ) ){
+	
+	this_ks <-
+	    svyafc(
+        ~ wage + collgrad + hours , 
+        design = des_nlsw88 , 
+        cutoffs = list( 4, 'college grad' , 26 ) , 
+        k = ks , 
+        g = 0 , 
+        dimw = c( 0.5 , 0.25 , 0.25 ) ,
+        na.rm = TRUE
+      )
+	
+	page_thirteen <-
+	    rbind(
+	        page_thirteen ,
+	        data.frame( 
+	            k = ks , 
+	            MO = coef( this_ks ) ,
+	            seMO = SE( this_ks ) ,
+	            H = attr( this_ks , "extra" )[ 1 , 1 ] ,
+	            seH = attr( this_ks , "extra" )[ 1 , 2 ] ,
+	            A = attr( this_ks , "extra" )[ 2 , 1 ] ,
+	            seA = attr( this_ks , "extra" )[ 2 , 2 ]
+          )
+	    )
+}
+```
 
-svyafc(
-  ~ wage + collgrad + hours , 
-  design = des_nlsw88 , 
-  cutoffs = list( 4, 'college grad' , 26 ) , 
-  k = 1 , 
-  g = 0 , 
-  dimw = c( 0.5 , 0.25 , 0.25 ) ,
-  na.rm = TRUE
+```{r echo = FALSE}
+knitr::kable(
+  page_thirteen , caption = 'PDF Page 13 Replication',
+  booktabs = TRUE
 )
 ```
 
-then keep going replicating this
+Replicate PDF page 16
+```{r}
+page_sixteen <- NULL
 
-https://github.com/DjalmaPessoa/convey/issues/154
+# loop through every alpha value `g`
+for( gs in 0:3 ){
+	
+	this_gs <-
+	    svyafc(
+        ~ wage + collgrad + hours , 
+        design = des_nlsw88 , 
+        cutoffs = list( 4, 'college grad' , 26 ) , 
+        k = 1/3 , 
+        g = gs , 
+        na.rm = TRUE
+      )
+	
+	page_sixteen <-
+	    rbind(
+	        page_sixteen ,
+	        data.frame( 
+	            g = gs , 
+	            MO = coef( this_gs ) ,
+	            seMO = SE( this_gs ) 
+          )
+	    )
+}
+```
 
 
+```{r echo = FALSE}
+knitr::kable(
+  page_sixteen , caption = 'PDF Page 16 Replication',
+  booktabs = TRUE
+)
+```
+
+
+
+
+
+Replicate k=1/3 rows of PDF page 17 and 19
+```{r}
+svyafcdec(
+    ~ wage + collgrad + hours , 
+    by = ~1 , 
+    design = des_nlsw88 , 
+    cutoffs = list( 4 , 'college grad' , 26 ) , 
+    k = 1/3 , 
+    g = 0 ,
+    na.rm = TRUE
+)
+```
+
+
+
+Replicate PDF page 21
+```{r}
+svyby(
+	~ wage + collgrad + hours , 
+	~ married , 
+	design = des_nlsw88 , 
+	svyafc , 
+	cutoffs = list( 4, 'college grad' , 26 ) , 
+	k = 1/3 , g = 0 ,
+	na.rm = TRUE 
+)
+
+svyafcdec(
+    ~ wage + collgrad + hours , 
+    by = ~married , 
+    design = des_nlsw88 , 
+    cutoffs = list( 4 , 'college grad' , 26 ) , 
+    k = 1/3 , 
+    g = 0 ,
+    na.rm = TRUE
+)
+```
 
 
 

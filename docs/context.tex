@@ -350,7 +350,7 @@ and then use the function \texttt{svyarpr}:
 
 \begin{verbatim}
             arpr     SE
-eqIncome 0.14444 0.0027
+eqIncome 0.14444 0.0029
 \end{verbatim}
 
 \begin{Shaded}
@@ -361,15 +361,15 @@ eqIncome 0.14444 0.0027
 
 \begin{verbatim}
                       db040  eqIncome se.eqIncome
-Burgenland       Burgenland 0.1953984 0.020104154
-Carinthia         Carinthia 0.1308627 0.009047799
-Lower Austria Lower Austria 0.1384362 0.007680314
-Salzburg           Salzburg 0.1378734 0.011539540
-Styria               Styria 0.1437464 0.008280764
-Tyrol                 Tyrol 0.1530819 0.010041454
-Upper Austria Upper Austria 0.1088977 0.005309028
-Vienna               Vienna 0.1723468 0.008063456
-Vorarlberg       Vorarlberg 0.1653731 0.012002837
+Burgenland       Burgenland 0.1953984 0.017229282
+Carinthia         Carinthia 0.1308627 0.011018319
+Lower Austria Lower Austria 0.1384362 0.008170439
+Salzburg           Salzburg 0.1378734 0.010367539
+Styria               Styria 0.1437464 0.007484813
+Tyrol                 Tyrol 0.1530819 0.009775361
+Upper Austria Upper Austria 0.1088977 0.006278053
+Vienna               Vienna 0.1723468 0.007363970
+Vorarlberg       Vorarlberg 0.1653731 0.010067298
 \end{verbatim}
 
 The functions of the library convey are called in a similar way to the
@@ -420,8 +420,8 @@ py010n   NA NA
 \end{Shaded}
 
 \begin{verbatim}
-          gini    SE
-py010n 0.64606 0.003
+          gini     SE
+py010n 0.64606 0.0034
 \end{verbatim}
 
 djalmapessoa\_look, where do these references go on this page?
@@ -2498,17 +2498,12 @@ Replicate PDF page 10
         \NormalTok{)}
     
 \NormalTok{\}}
-
-\NormalTok{knitr::}\KeywordTok{kable}\NormalTok{(}
-  \NormalTok{page_ten , }\DataTypeTok{caption =} \StringTok{'Here is a nice table!'}\NormalTok{,}
-  \DataTypeTok{booktabs =} \OtherTok{TRUE}
-\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-41}Here is a nice table!}
+\caption{\label{tab:unnamed-chunk-42}PDF Page 10 Replication}
 \centering
 \begin{tabular}[t]{lrrrrrrr}
 \toprule
@@ -2533,66 +2528,201 @@ Replicate PDF page 13
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# these calculations match pdf page 13}
-\CommentTok{# http://www.ophi.org.uk/wp-content/uploads/Jindra_151109_OPHISeminar.pdf#page=13}
-\KeywordTok{svyafc}\NormalTok{(}
-  \NormalTok{~}\StringTok{ }\NormalTok{wage +}\StringTok{ }\NormalTok{collgrad +}\StringTok{ }\NormalTok{hours , }
-  \DataTypeTok{design =} \NormalTok{des_nlsw88 , }
-  \DataTypeTok{cutoffs =} \KeywordTok{list}\NormalTok{( }\DecValTok{4}\NormalTok{, }\StringTok{'college grad'} \NormalTok{, }\DecValTok{26} \NormalTok{) , }
-  \DataTypeTok{k =} \FloatTok{0.5} \NormalTok{, }
-  \DataTypeTok{g =} \DecValTok{0} \NormalTok{, }
-  \DataTypeTok{dimw =} \KeywordTok{c}\NormalTok{( }\FloatTok{0.5} \NormalTok{, }\FloatTok{0.25} \NormalTok{, }\FloatTok{0.25} \NormalTok{) ,}
-  \DataTypeTok{na.rm =} \OtherTok{TRUE}
+\NormalTok{page_thirteen <-}\StringTok{ }\OtherTok{NULL}
+
+\CommentTok{# loop through every poverty cutoff `k`}
+\NormalTok{for( ks in }\KeywordTok{c}\NormalTok{( }\FloatTok{0.5} \NormalTok{, }\FloatTok{0.75} \NormalTok{, }\DecValTok{1} \NormalTok{) )\{}
+    
+    \NormalTok{this_ks <-}
+\StringTok{        }\KeywordTok{svyafc}\NormalTok{(}
+        \NormalTok{~}\StringTok{ }\NormalTok{wage +}\StringTok{ }\NormalTok{collgrad +}\StringTok{ }\NormalTok{hours , }
+        \DataTypeTok{design =} \NormalTok{des_nlsw88 , }
+        \DataTypeTok{cutoffs =} \KeywordTok{list}\NormalTok{( }\DecValTok{4}\NormalTok{, }\StringTok{'college grad'} \NormalTok{, }\DecValTok{26} \NormalTok{) , }
+        \DataTypeTok{k =} \NormalTok{ks , }
+        \DataTypeTok{g =} \DecValTok{0} \NormalTok{, }
+        \DataTypeTok{dimw =} \KeywordTok{c}\NormalTok{( }\FloatTok{0.5} \NormalTok{, }\FloatTok{0.25} \NormalTok{, }\FloatTok{0.25} \NormalTok{) ,}
+        \DataTypeTok{na.rm =} \OtherTok{TRUE}
+      \NormalTok{)}
+    
+    \NormalTok{page_thirteen <-}
+\StringTok{        }\KeywordTok{rbind}\NormalTok{(}
+            \NormalTok{page_thirteen ,}
+            \KeywordTok{data.frame}\NormalTok{( }
+                \DataTypeTok{k =} \NormalTok{ks , }
+                \DataTypeTok{MO =} \KeywordTok{coef}\NormalTok{( this_ks ) ,}
+                \DataTypeTok{seMO =} \KeywordTok{SE}\NormalTok{( this_ks ) ,}
+                \DataTypeTok{H =} \KeywordTok{attr}\NormalTok{( this_ks , }\StringTok{"extra"} \NormalTok{)[ }\DecValTok{1} \NormalTok{, }\DecValTok{1} \NormalTok{] ,}
+                \DataTypeTok{seH =} \KeywordTok{attr}\NormalTok{( this_ks , }\StringTok{"extra"} \NormalTok{)[ }\DecValTok{1} \NormalTok{, }\DecValTok{2} \NormalTok{] ,}
+                \DataTypeTok{A =} \KeywordTok{attr}\NormalTok{( this_ks , }\StringTok{"extra"} \NormalTok{)[ }\DecValTok{2} \NormalTok{, }\DecValTok{1} \NormalTok{] ,}
+                \DataTypeTok{seA =} \KeywordTok{attr}\NormalTok{( this_ks , }\StringTok{"extra"} \NormalTok{)[ }\DecValTok{2} \NormalTok{, }\DecValTok{2} \NormalTok{]}
+          \NormalTok{)}
+        \NormalTok{)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{table}
+
+\caption{\label{tab:unnamed-chunk-44}PDF Page 13 Replication}
+\centering
+\begin{tabular}[t]{lrrrrrrr}
+\toprule
+  & k & MO & seMO & H & seH & A & seA\\
+\midrule
+alkire-foster & 0.50 & 0.1913470 & 0.0069137 & 0.2689563 & 0.0093668 & 0.7114428 & 0.0068474\\
+alkire-foster1 & 0.75 & 0.1489741 & 0.0066918 & 0.1842105 & 0.0081889 & 0.8087167 & 0.0052160\\
+alkire-foster2 & 1.00 & 0.0432649 & 0.0042978 & 0.0432649 & 0.0042978 & 1.0000000 & 0.0000000\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Replicate PDF page 16
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{page_sixteen <-}\StringTok{ }\OtherTok{NULL}
+
+\CommentTok{# loop through every alpha value `g`}
+\NormalTok{for( gs in }\DecValTok{0}\NormalTok{:}\DecValTok{3} \NormalTok{)\{}
+    
+    \NormalTok{this_gs <-}
+\StringTok{        }\KeywordTok{svyafc}\NormalTok{(}
+        \NormalTok{~}\StringTok{ }\NormalTok{wage +}\StringTok{ }\NormalTok{collgrad +}\StringTok{ }\NormalTok{hours , }
+        \DataTypeTok{design =} \NormalTok{des_nlsw88 , }
+        \DataTypeTok{cutoffs =} \KeywordTok{list}\NormalTok{( }\DecValTok{4}\NormalTok{, }\StringTok{'college grad'} \NormalTok{, }\DecValTok{26} \NormalTok{) , }
+        \DataTypeTok{k =} \DecValTok{1}\NormalTok{/}\DecValTok{3} \NormalTok{, }
+        \DataTypeTok{g =} \NormalTok{gs , }
+        \DataTypeTok{na.rm =} \OtherTok{TRUE}
+      \NormalTok{)}
+    
+    \NormalTok{page_sixteen <-}
+\StringTok{        }\KeywordTok{rbind}\NormalTok{(}
+            \NormalTok{page_sixteen ,}
+            \KeywordTok{data.frame}\NormalTok{( }
+                \DataTypeTok{g =} \NormalTok{gs , }
+                \DataTypeTok{MO =} \KeywordTok{coef}\NormalTok{( this_gs ) ,}
+                \DataTypeTok{seMO =} \KeywordTok{SE}\NormalTok{( this_gs ) }
+          \NormalTok{)}
+        \NormalTok{)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{table}
+
+\caption{\label{tab:unnamed-chunk-46}PDF Page 16 Replication}
+\centering
+\begin{tabular}[t]{lrrr}
+\toprule
+  & g & MO & seMO\\
+\midrule
+alkire-foster & 0 & 0.3699078 & 0.0053059\\
+alkire-foster1 & 1 & 0.2859332 & 0.0033708\\
+alkire-foster2 & 2 & 0.2676266 & 0.0031164\\
+alkire-foster3 & 3 & 0.2616335 & 0.0030531\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Replicate k=1/3 rows of PDF page 17 and 19
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svyafcdec}\NormalTok{(}
+    \NormalTok{~}\StringTok{ }\NormalTok{wage +}\StringTok{ }\NormalTok{collgrad +}\StringTok{ }\NormalTok{hours , }
+    \DataTypeTok{by =} \NormalTok{~}\DecValTok{1} \NormalTok{, }
+    \DataTypeTok{design =} \NormalTok{des_nlsw88 , }
+    \DataTypeTok{cutoffs =} \KeywordTok{list}\NormalTok{( }\DecValTok{4} \NormalTok{, }\StringTok{'college grad'} \NormalTok{, }\DecValTok{26} \NormalTok{) , }
+    \DataTypeTok{k =} \DecValTok{1}\NormalTok{/}\DecValTok{3} \NormalTok{, }
+    \DataTypeTok{g =} \DecValTok{0} \NormalTok{,}
+    \DataTypeTok{na.rm =} \OtherTok{TRUE}
 \NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
+## $overall
 ##      alkire-foster     SE
-## [1,]       0.19135 0.0069
+## [1,]       0.36991 0.0053
+## 
+## $`raw headcount ratio`
+##          raw headcount     SE
+## wage           0.19492 0.0084
+## collgrad       0.76316 0.0090
+## hours          0.15165 0.0076
+## 
+## $`censored headcount ratio`
+##          cens. headcount     SE
+## wage             0.19492 0.0084
+## collgrad         0.76316 0.0090
+## hours            0.15165 0.0076
+## 
+## $`percentual contribution per dimension`
+##          dim. % contribution     SE
+## wage                 0.17564 0.0061
+## collgrad             0.68770 0.0077
+## hours                0.13666 0.0059
+\end{verbatim}
+
+Replicate PDF page 21
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{svyby}\NormalTok{(}
+    \NormalTok{~}\StringTok{ }\NormalTok{wage +}\StringTok{ }\NormalTok{collgrad +}\StringTok{ }\NormalTok{hours , }
+    \NormalTok{~}\StringTok{ }\NormalTok{married , }
+    \DataTypeTok{design =} \NormalTok{des_nlsw88 , }
+    \NormalTok{svyafc , }
+    \DataTypeTok{cutoffs =} \KeywordTok{list}\NormalTok{( }\DecValTok{4}\NormalTok{, }\StringTok{'college grad'} \NormalTok{, }\DecValTok{26} \NormalTok{) , }
+    \DataTypeTok{k =} \DecValTok{1}\NormalTok{/}\DecValTok{3} \NormalTok{, }\DataTypeTok{g =} \DecValTok{0} \NormalTok{,}
+    \DataTypeTok{na.rm =} \OtherTok{TRUE} 
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   married alkire-foster          se
+## 0       0     0.3541407 0.008779380
+## 1       1     0.3786722 0.006647037
 \end{verbatim}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{svyafc}\NormalTok{(}
-  \NormalTok{~}\StringTok{ }\NormalTok{wage +}\StringTok{ }\NormalTok{collgrad +}\StringTok{ }\NormalTok{hours , }
-  \DataTypeTok{design =} \NormalTok{des_nlsw88 , }
-  \DataTypeTok{cutoffs =} \KeywordTok{list}\NormalTok{( }\DecValTok{4}\NormalTok{, }\StringTok{'college grad'} \NormalTok{, }\DecValTok{26} \NormalTok{) , }
-  \DataTypeTok{k =} \FloatTok{0.75} \NormalTok{, }
-  \DataTypeTok{g =} \DecValTok{0} \NormalTok{, }
-  \DataTypeTok{dimw =} \KeywordTok{c}\NormalTok{( }\FloatTok{0.5} \NormalTok{, }\FloatTok{0.25} \NormalTok{, }\FloatTok{0.25} \NormalTok{) ,}
-  \DataTypeTok{na.rm =} \OtherTok{TRUE}
+\KeywordTok{svyafcdec}\NormalTok{(}
+    \NormalTok{~}\StringTok{ }\NormalTok{wage +}\StringTok{ }\NormalTok{collgrad +}\StringTok{ }\NormalTok{hours , }
+    \DataTypeTok{by =} \NormalTok{~married , }
+    \DataTypeTok{design =} \NormalTok{des_nlsw88 , }
+    \DataTypeTok{cutoffs =} \KeywordTok{list}\NormalTok{( }\DecValTok{4} \NormalTok{, }\StringTok{'college grad'} \NormalTok{, }\DecValTok{26} \NormalTok{) , }
+    \DataTypeTok{k =} \DecValTok{1}\NormalTok{/}\DecValTok{3} \NormalTok{, }
+    \DataTypeTok{g =} \DecValTok{0} \NormalTok{,}
+    \DataTypeTok{na.rm =} \OtherTok{TRUE}
 \NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
+## $overall
 ##      alkire-foster     SE
-## [1,]       0.14897 0.0067
+## [1,]       0.36991 0.0053
+## 
+## $`raw headcount ratio`
+##          raw headcount     SE
+## wage           0.19492 0.0084
+## collgrad       0.76316 0.0090
+## hours          0.15165 0.0076
+## 
+## $`censored headcount ratio`
+##          cens. headcount     SE
+## wage             0.19492 0.0084
+## collgrad         0.76316 0.0090
+## hours            0.15165 0.0076
+## 
+## $`percentual contribution per dimension`
+##          dim. % contribution     SE
+## wage                 0.17564 0.0061
+## collgrad             0.68770 0.0077
+## hours                0.13666 0.0059
 \end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{svyafc}\NormalTok{(}
-  \NormalTok{~}\StringTok{ }\NormalTok{wage +}\StringTok{ }\NormalTok{collgrad +}\StringTok{ }\NormalTok{hours , }
-  \DataTypeTok{design =} \NormalTok{des_nlsw88 , }
-  \DataTypeTok{cutoffs =} \KeywordTok{list}\NormalTok{( }\DecValTok{4}\NormalTok{, }\StringTok{'college grad'} \NormalTok{, }\DecValTok{26} \NormalTok{) , }
-  \DataTypeTok{k =} \DecValTok{1} \NormalTok{, }
-  \DataTypeTok{g =} \DecValTok{0} \NormalTok{, }
-  \DataTypeTok{dimw =} \KeywordTok{c}\NormalTok{( }\FloatTok{0.5} \NormalTok{, }\FloatTok{0.25} \NormalTok{, }\FloatTok{0.25} \NormalTok{) ,}
-  \DataTypeTok{na.rm =} \OtherTok{TRUE}
-\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##      alkire-foster     SE
-## [1,]      0.043265 0.0043
-\end{verbatim}
-
-then keep going replicating this
-
-\url{https://github.com/DjalmaPessoa/convey/issues/154}
 
 For additional usage examples of \texttt{svyafc} or \texttt{svyafcdec},
 type \texttt{?convey::svyafc} or \texttt{?convey::svyafcdec} in the R
