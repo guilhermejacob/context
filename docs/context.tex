@@ -124,7 +124,7 @@
   \postauthor{\par}
   \predate{\centering\large\emph}
   \postdate{\par}
-  \date{2017-01-02}
+  \date{2017-02-04}
 
 \usepackage{booktabs}
 
@@ -350,7 +350,7 @@ and then use the function \texttt{svyarpr}:
 
 \begin{verbatim}
             arpr     SE
-eqIncome 0.14444 0.0025
+eqIncome 0.14444 0.0032
 \end{verbatim}
 
 \begin{Shaded}
@@ -361,15 +361,15 @@ eqIncome 0.14444 0.0025
 
 \begin{verbatim}
                       db040  eqIncome se.eqIncome
-Burgenland       Burgenland 0.1953984 0.015735278
-Carinthia         Carinthia 0.1308627 0.010231328
-Lower Austria Lower Austria 0.1384362 0.007183777
-Salzburg           Salzburg 0.1378734 0.011472874
-Styria               Styria 0.1437464 0.008039402
-Tyrol                 Tyrol 0.1530819 0.008598652
-Upper Austria Upper Austria 0.1088977 0.007030134
-Vienna               Vienna 0.1723468 0.008266835
-Vorarlberg       Vorarlberg 0.1653731 0.013377719
+Burgenland       Burgenland 0.1953984 0.015777643
+Carinthia         Carinthia 0.1308627 0.012351547
+Lower Austria Lower Austria 0.1384362 0.006019075
+Salzburg           Salzburg 0.1378734 0.011623439
+Styria               Styria 0.1437464 0.007087152
+Tyrol                 Tyrol 0.1530819 0.010324524
+Upper Austria Upper Austria 0.1088977 0.006295876
+Vienna               Vienna 0.1723468 0.008176806
+Vorarlberg       Vorarlberg 0.1653731 0.013708770
 \end{verbatim}
 
 The functions of the library convey are called in a similar way to the
@@ -421,7 +421,7 @@ py010n   NA NA
 
 \begin{verbatim}
           gini     SE
-py010n 0.64606 0.0032
+py010n 0.64606 0.0034
 \end{verbatim}
 
 djalmapessoa\_look, where do these references go on this page?
@@ -663,12 +663,243 @@ economic analysis.
 \section{At Risk of Poverty Ratio
 (svyarpr)}\label{at-risk-of-poverty-ratio-svyarpr}
 
-For additional usage examples of \texttt{svyarpr}, type
-\texttt{?convey::svyarpr} in the R console.
-
 here are the references
 
 \citep{osier2009} and \citep{deville1999}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{A replication example}
+
+The R \texttt{vardpoor} package \citep{vardpoor}, created by researchers
+at the Central Statistical Bureau of Latvia, includes a arpr coefficient
+calculation using the ultimate cluster method. The example below
+reproduces those statistics.
+
+Load and prepare the same data set:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# load the convey package}
+\KeywordTok{library}\NormalTok{(convey)}
+
+\CommentTok{# load the survey library}
+\KeywordTok{library}\NormalTok{(survey)}
+
+\CommentTok{# load the vardpoor library}
+\KeywordTok{library}\NormalTok{(vardpoor)}
+
+\CommentTok{# load the synthetic european union statistics on income & living conditions}
+\KeywordTok{data}\NormalTok{(eusilc)}
+
+\CommentTok{# make all column names lowercase}
+\KeywordTok{names}\NormalTok{( eusilc ) <-}\StringTok{ }\KeywordTok{tolower}\NormalTok{( }\KeywordTok{names}\NormalTok{( eusilc ) )}
+
+\CommentTok{# add a column with the row number}
+\NormalTok{dati <-}\StringTok{ }\KeywordTok{data.table}\NormalTok{(}\DataTypeTok{IDd =} \DecValTok{1} \NormalTok{:}\StringTok{ }\KeywordTok{nrow}\NormalTok{(eusilc), eusilc)}
+
+\CommentTok{# calculate the arpr coefficient}
+\CommentTok{# using the R vardpoor library}
+\NormalTok{varpoord_arpr_calculation <-}
+\StringTok{    }\KeywordTok{varpoord}\NormalTok{(}
+    
+        \CommentTok{# analysis variable}
+        \DataTypeTok{Y =} \StringTok{"eqincome"}\NormalTok{, }
+        
+        \CommentTok{# weights variable}
+        \DataTypeTok{w_final =} \StringTok{"rb050"}\NormalTok{,}
+        
+        \CommentTok{# row number variable}
+        \DataTypeTok{ID_level1 =} \StringTok{"IDd"}\NormalTok{,}
+        
+        \CommentTok{# strata variable}
+        \DataTypeTok{H =} \StringTok{"db040"}\NormalTok{, }
+        
+        \DataTypeTok{N_h =} \OtherTok{NULL} \NormalTok{,}
+        
+        \CommentTok{# clustering variable}
+        \DataTypeTok{PSU =} \StringTok{"rb030"}\NormalTok{, }
+        
+        \CommentTok{# data.table}
+        \DataTypeTok{dataset =} \NormalTok{dati, }
+        
+        \CommentTok{# arpr coefficient function}
+        \DataTypeTok{type =} \StringTok{"linarpr"}
+        
+    \NormalTok{)}
+
+\CommentTok{# all calculations produced by vardpoor::linarpr}
+\NormalTok{varpoord_arpr_calculation$all_result}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    type respondent_count n_nonzero pop_size    value value_eu        var
+## 1: ARPR            14827     14824  8182222 14.44422       NA 0.07586194
+##           se        rse       cv absolute_margin_of_error
+## 1: 0.2754305 0.01906856 1.906856                0.5398338
+##    relative_margin_of_error CI_lower CI_upper var_srs_HT var_cur_HT
+## 1:                 3.737369 13.90438 14.98405 0.07391608 0.07586194
+##    var_srs_ca deff_sam deff_est     deff
+## 1: 0.07391608 1.026325        1 1.026325
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# construct a survey.design}
+\CommentTok{# using our recommended setup}
+\NormalTok{des_eusilc <-}\StringTok{ }
+\StringTok{    }\KeywordTok{svydesign}\NormalTok{( }
+        \DataTypeTok{ids =} \NormalTok{~}\StringTok{ }\NormalTok{rb030 , }
+        \DataTypeTok{strata =} \NormalTok{~}\StringTok{ }\NormalTok{db040 ,  }
+        \DataTypeTok{weights =} \NormalTok{~}\StringTok{ }\NormalTok{rb050 , }
+        \DataTypeTok{data =} \NormalTok{eusilc}
+    \NormalTok{)}
+
+\CommentTok{# immediately run the convey_prep function on it}
+\NormalTok{des_eusilc <-}\StringTok{ }\KeywordTok{convey_prep}\NormalTok{( des_eusilc )}
+
+\CommentTok{# coefficients do match}
+\NormalTok{varpoord_arpr_calculation$all_result$value}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 14.44422
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{coef}\NormalTok{( }\KeywordTok{svyarpr}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc ) ) *}\StringTok{ }\DecValTok{100}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## eqincome 
+## 14.44422
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# variances do not match exactly}
+\KeywordTok{attr}\NormalTok{( }\KeywordTok{svyarpr}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc ) , }\StringTok{'var'} \NormalTok{) *}\StringTok{ }\DecValTok{10000}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            eqincome
+## eqincome 0.07599778
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{varpoord_arpr_calculation$all_result$var}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.07586194
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# standard errors do not match exactly}
+\NormalTok{varpoord_arpr_calculation$all_result$se}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.2754305
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{SE}\NormalTok{( }\KeywordTok{svyarpr}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc ) ) *}\StringTok{ }\DecValTok{100}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##           eqincome
+## eqincome 0.2756769
+\end{verbatim}
+
+By default, the \texttt{convey::svyarpr} function comes close to the
+results of \texttt{vardpoor::linarpr}. However, the measures of
+uncertainty do not line up, because \texttt{library(vardpoor)} defaults
+to the ultimate cluster method. This can be replicated with an
+alternative setup of the \texttt{survey.design} object. The ultimate
+cluster method is marginally less conservative, therefore, we do not
+recommend using it as the default.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# within each strata, sum up the weights}
+\NormalTok{cluster_sums <-}\StringTok{ }\KeywordTok{aggregate}\NormalTok{( eusilc$rb050 , }\KeywordTok{list}\NormalTok{( eusilc$db040 ) , sum )}
+
+\CommentTok{# name the within-strata sums of weights the `cluster_sum`}
+\KeywordTok{names}\NormalTok{( cluster_sums ) <-}\StringTok{ }\KeywordTok{c}\NormalTok{( }\StringTok{"db040"} \NormalTok{, }\StringTok{"cluster_sum"} \NormalTok{)}
+
+\CommentTok{# merge this column back onto the data.frame}
+\NormalTok{eusilc <-}\StringTok{ }\KeywordTok{merge}\NormalTok{( eusilc , cluster_sums )}
+
+\CommentTok{# construct a survey.design}
+\CommentTok{# with the fpc using the cluster sum}
+\NormalTok{des_eusilc_ultimate_cluster <-}\StringTok{ }
+\StringTok{    }\KeywordTok{svydesign}\NormalTok{( }
+        \DataTypeTok{ids =} \NormalTok{~}\StringTok{ }\NormalTok{rb030 , }
+        \DataTypeTok{strata =} \NormalTok{~}\StringTok{ }\NormalTok{db040 ,  }
+        \DataTypeTok{weights =} \NormalTok{~}\StringTok{ }\NormalTok{rb050 , }
+        \DataTypeTok{data =} \NormalTok{eusilc , }
+        \DataTypeTok{fpc =} \NormalTok{~}\StringTok{ }\NormalTok{cluster_sum }
+    \NormalTok{)}
+
+\CommentTok{# again, immediately run the convey_prep function on the `survey.design`}
+\NormalTok{des_eusilc_ultimate_cluster <-}\StringTok{ }\KeywordTok{convey_prep}\NormalTok{( des_eusilc_ultimate_cluster )}
+
+\CommentTok{# matches}
+\KeywordTok{attr}\NormalTok{( }\KeywordTok{svyarpr}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc_ultimate_cluster ) , }\StringTok{'var'} \NormalTok{) *}\StringTok{ }\DecValTok{10000}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            eqincome
+## eqincome 0.07586194
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{varpoord_arpr_calculation$all_result$var}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.07586194
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# matches}
+\NormalTok{varpoord_arpr_calculation$all_result$se}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.2754305
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{SE}\NormalTok{( }\KeywordTok{svyarpr}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc_ultimate_cluster ) ) *}\StringTok{ }\DecValTok{100}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##           eqincome
+## eqincome 0.2754305
+\end{verbatim}
+
+For additional usage examples of \texttt{svyarpr}, type
+\texttt{?convey::svyarpr} in the R console.
 
 \section{At Risk of Poverty Threshold
 (svyarpt)}\label{at-risk-of-poverty-threshold-svyarpt}
@@ -768,13 +999,13 @@ Consider first the poverty threshold fixed (\(\gamma=0\)) in the value
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{svyfgt}\NormalTok{(~eqIncome, des_eusilc, }\DataTypeTok{g=}\DecValTok{0}\NormalTok{, }\DataTypeTok{abs_thresh=}\DecValTok{10000}\NormalTok{)}
+\KeywordTok{svyfgt}\NormalTok{(~eqincome, des_eusilc, }\DataTypeTok{g=}\DecValTok{0}\NormalTok{, }\DataTypeTok{abs_thresh=}\DecValTok{10000}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
             fgt0     SE
-eqIncome 0.11444 0.0027
+eqincome 0.11444 0.0027
 \end{verbatim}
 
 The poverty gap (FGT1) (\(\gamma=1\)) index for the poverty threshold
@@ -782,13 +1013,13 @@ fixed at the same value is
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{svyfgt}\NormalTok{(~eqIncome, des_eusilc, }\DataTypeTok{g=}\DecValTok{1}\NormalTok{, }\DataTypeTok{abs_thresh=}\DecValTok{10000}\NormalTok{)}
+\KeywordTok{svyfgt}\NormalTok{(~eqincome, des_eusilc, }\DataTypeTok{g=}\DecValTok{1}\NormalTok{, }\DataTypeTok{abs_thresh=}\DecValTok{10000}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
              fgt1     SE
-eqIncome 0.032085 0.0011
+eqincome 0.032085 0.0011
 \end{verbatim}
 
 To estimate the FGT0 with the poverty threshold fixed at \(0.6* MED\) we
@@ -797,26 +1028,26 @@ fix the argument type\_thresh=``relq'' and use the default values for
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{svyfgt}\NormalTok{(~eqIncome, des_eusilc, }\DataTypeTok{g=}\DecValTok{0}\NormalTok{, }\DataTypeTok{type_thresh=} \StringTok{"relq"}\NormalTok{)}
+\KeywordTok{svyfgt}\NormalTok{(~eqincome, des_eusilc, }\DataTypeTok{g=}\DecValTok{0}\NormalTok{, }\DataTypeTok{type_thresh=} \StringTok{"relq"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
             fgt0     SE
-eqIncome 0.14444 0.0028
+eqincome 0.14444 0.0028
 \end{verbatim}
 
 that matches the estimate obtained by
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{svyarpr}\NormalTok{(~eqIncome, }\DataTypeTok{design=}\NormalTok{des_eusilc, .}\DecValTok{5}\NormalTok{, .}\DecValTok{6}\NormalTok{)}
+\KeywordTok{svyarpr}\NormalTok{(~eqincome, }\DataTypeTok{design=}\NormalTok{des_eusilc, .}\DecValTok{5}\NormalTok{, .}\DecValTok{6}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
             arpr     SE
-eqIncome 0.14444 0.0028
+eqincome 0.14444 0.0028
 \end{verbatim}
 
 To estimate the poverty gap(FGT1) with the poverty threshold equal to
@@ -824,13 +1055,13 @@ To estimate the poverty gap(FGT1) with the poverty threshold equal to
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{svyfgt}\NormalTok{(~eqIncome, des_eusilc, }\DataTypeTok{g=}\DecValTok{1}\NormalTok{, }\DataTypeTok{type_thresh=} \StringTok{"relm"}\NormalTok{)}
+\KeywordTok{svyfgt}\NormalTok{(~eqincome, des_eusilc, }\DataTypeTok{g=}\DecValTok{1}\NormalTok{, }\DataTypeTok{type_thresh=} \StringTok{"relm"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
              fgt1     SE
-eqIncome 0.051187 0.0011
+eqincome 0.051187 0.0011
 \end{verbatim}
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
@@ -1252,7 +1483,7 @@ example below reproduces the statistics presented in his section 4.1.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{context_files/figure-latex/unnamed-chunk-22-1.pdf}
+\includegraphics{context_files/figure-latex/unnamed-chunk-24-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1284,7 +1515,7 @@ example below reproduces the statistics presented in his section 4.1.
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-22}Here is a nice table!}
+\caption{\label{tab:unnamed-chunk-24}Here is a nice table!}
 \centering
 \begin{tabular}[t]{lrrrr}
 \toprule
@@ -2520,7 +2751,7 @@ Replicate PDF page 10
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-42}PDF Page 10 Replication}
+\caption{\label{tab:unnamed-chunk-44}PDF Page 10 Replication}
 \centering
 \begin{tabular}[t]{lrrrrrrr}
 \toprule
@@ -2580,7 +2811,7 @@ Replicate PDF page 13
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-44}PDF Page 13 Replication}
+\caption{\label{tab:unnamed-chunk-46}PDF Page 13 Replication}
 \centering
 \begin{tabular}[t]{lrrrrrrr}
 \toprule
@@ -2627,7 +2858,7 @@ Replicate PDF page 16
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-46}PDF Page 16 Replication}
+\caption{\label{tab:unnamed-chunk-48}PDF Page 16 Replication}
 \centering
 \begin{tabular}[t]{lrrr}
 \toprule
