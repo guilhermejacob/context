@@ -361,15 +361,15 @@ eqIncome 0.14444 0.003
 
 \begin{verbatim}
                       db040  eqIncome se.eqIncome
-Burgenland       Burgenland 0.1953984 0.018027383
-Carinthia         Carinthia 0.1308627 0.011620897
-Lower Austria Lower Austria 0.1384362 0.006987509
-Salzburg           Salzburg 0.1378734 0.013586759
-Styria               Styria 0.1437464 0.008303094
-Tyrol                 Tyrol 0.1530819 0.009656159
-Upper Austria Upper Austria 0.1088977 0.005997522
-Vienna               Vienna 0.1723468 0.008096318
-Vorarlberg       Vorarlberg 0.1653731 0.015270835
+Burgenland       Burgenland 0.1953984 0.017584201
+Carinthia         Carinthia 0.1308627 0.010268500
+Lower Austria Lower Austria 0.1384362 0.006469449
+Salzburg           Salzburg 0.1378734 0.010295902
+Styria               Styria 0.1437464 0.008243255
+Tyrol                 Tyrol 0.1530819 0.010240236
+Upper Austria Upper Austria 0.1088977 0.005660615
+Vienna               Vienna 0.1723468 0.008440007
+Vorarlberg       Vorarlberg 0.1653731 0.011972791
 \end{verbatim}
 
 The functions of the library convey are called in a similar way to the
@@ -421,7 +421,7 @@ py010n   NA NA
 
 \begin{verbatim}
           gini     SE
-py010n 0.64606 0.0033
+py010n 0.64606 0.0039
 \end{verbatim}
 
 djalmapessoa\_look, where do these references go on this page?
@@ -1151,12 +1151,241 @@ here are the references
 \section{Relative Median Poverty Gap
 (svyrmpg)}\label{relative-median-poverty-gap-svyrmpg}
 
-For additional usage examples of \texttt{svyrmpg}, type
-\texttt{?convey::svyrmpg} in the R console.
-
 here are the references
 
 \citep{osier2009} and \citep{deville1999}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{A replication example}
+
+The R \texttt{vardpoor} package \citep{vardpoor}, created by researchers
+at the Central Statistical Bureau of Latvia, includes a rmpg coefficient
+calculation using the ultimate cluster method. The example below
+reproduces those statistics.
+
+Load and prepare the same data set:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# load the convey package}
+\KeywordTok{library}\NormalTok{(convey)}
+
+\CommentTok{# load the survey library}
+\KeywordTok{library}\NormalTok{(survey)}
+
+\CommentTok{# load the vardpoor library}
+\KeywordTok{library}\NormalTok{(vardpoor)}
+
+\CommentTok{# load the synthetic european union statistics on income & living conditions}
+\KeywordTok{data}\NormalTok{(eusilc)}
+
+\CommentTok{# make all column names lowercase}
+\KeywordTok{names}\NormalTok{( eusilc ) <-}\StringTok{ }\KeywordTok{tolower}\NormalTok{( }\KeywordTok{names}\NormalTok{( eusilc ) )}
+
+\CommentTok{# add a column with the row number}
+\NormalTok{dati <-}\StringTok{ }\KeywordTok{data.table}\NormalTok{(}\DataTypeTok{IDd =} \DecValTok{1} \NormalTok{:}\StringTok{ }\KeywordTok{nrow}\NormalTok{(eusilc), eusilc)}
+
+\CommentTok{# calculate the rmpg coefficient}
+\CommentTok{# using the R vardpoor library}
+\NormalTok{varpoord_rmpg_calculation <-}
+\StringTok{    }\KeywordTok{varpoord}\NormalTok{(}
+    
+        \CommentTok{# analysis variable}
+        \DataTypeTok{Y =} \StringTok{"eqincome"}\NormalTok{, }
+        
+        \CommentTok{# weights variable}
+        \DataTypeTok{w_final =} \StringTok{"rb050"}\NormalTok{,}
+        
+        \CommentTok{# row number variable}
+        \DataTypeTok{ID_level1 =} \StringTok{"IDd"}\NormalTok{,}
+        
+        \CommentTok{# strata variable}
+        \DataTypeTok{H =} \StringTok{"db040"}\NormalTok{, }
+        
+        \DataTypeTok{N_h =} \OtherTok{NULL} \NormalTok{,}
+        
+        \CommentTok{# clustering variable}
+        \DataTypeTok{PSU =} \StringTok{"rb030"}\NormalTok{, }
+        
+        \CommentTok{# data.table}
+        \DataTypeTok{dataset =} \NormalTok{dati, }
+        
+        \CommentTok{# rmpg coefficient function}
+        \DataTypeTok{type =} \StringTok{"linrmpg"}
+        
+    \NormalTok{)}
+
+\CommentTok{# all calculations produced by vardpoor::linrmpg}
+\NormalTok{varpoord_rmpg_calculation$all_result}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    type respondent_count n_nonzero pop_size   value value_eu       var
+## 1: RMPG            14827     14824  8182222 18.9286       NA 0.3316454
+##           se        rse       cv absolute_margin_of_error
+## 1: 0.5758866 0.03042416 3.042416                 1.128717
+##    relative_margin_of_error CI_lower CI_upper var_srs_HT var_cur_HT
+## 1:                 5.963025 17.79988 20.05731  0.3166433  0.3316454
+##    var_srs_ca deff_sam deff_est     deff
+## 1:  0.3166433 1.047378        1 1.047378
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# construct a survey.design}
+\CommentTok{# using our recommended setup}
+\NormalTok{des_eusilc <-}\StringTok{ }
+\StringTok{    }\KeywordTok{svydesign}\NormalTok{( }
+        \DataTypeTok{ids =} \NormalTok{~}\StringTok{ }\NormalTok{rb030 , }
+        \DataTypeTok{strata =} \NormalTok{~}\StringTok{ }\NormalTok{db040 ,  }
+        \DataTypeTok{weights =} \NormalTok{~}\StringTok{ }\NormalTok{rb050 , }
+        \DataTypeTok{data =} \NormalTok{eusilc}
+    \NormalTok{)}
+
+\CommentTok{# immediately run the convey_prep function on it}
+\NormalTok{des_eusilc <-}\StringTok{ }\KeywordTok{convey_prep}\NormalTok{( des_eusilc )}
+
+\CommentTok{# coefficients do match}
+\NormalTok{varpoord_rmpg_calculation$all_result$value}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 18.9286
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{coef}\NormalTok{( }\KeywordTok{svyrmpg}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc ) ) *}\StringTok{ }\DecValTok{100}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## eqincome 
+##  18.9286
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# variances do not match exactly}
+\KeywordTok{attr}\NormalTok{( }\KeywordTok{svyrmpg}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc ) , }\StringTok{'var'} \NormalTok{) *}\StringTok{ }\DecValTok{10000}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##          eqincome
+## eqincome 0.332234
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{varpoord_rmpg_calculation$all_result$var}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.3316454
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# standard errors do not match exactly}
+\NormalTok{varpoord_rmpg_calculation$all_result$se}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.5758866
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{SE}\NormalTok{( }\KeywordTok{svyrmpg}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc ) ) *}\StringTok{ }\DecValTok{100}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##           eqincome
+## eqincome 0.5763974
+\end{verbatim}
+
+By default, the \texttt{convey::svyrmpg} function comes close to the
+results of \texttt{vardpoor::linrmpg}. However, the measures of
+uncertainty do not line up, because \texttt{library(vardpoor)} defaults
+to the ultimate cluster method. This can be replicated with an
+alternative setup of the \texttt{survey.design} object.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# within each strata, sum up the weights}
+\NormalTok{cluster_sums <-}\StringTok{ }\KeywordTok{aggregate}\NormalTok{( eusilc$rb050 , }\KeywordTok{list}\NormalTok{( eusilc$db040 ) , sum )}
+
+\CommentTok{# name the within-strata sums of weights the `cluster_sum`}
+\KeywordTok{names}\NormalTok{( cluster_sums ) <-}\StringTok{ }\KeywordTok{c}\NormalTok{( }\StringTok{"db040"} \NormalTok{, }\StringTok{"cluster_sum"} \NormalTok{)}
+
+\CommentTok{# merge this column back onto the data.frame}
+\NormalTok{eusilc <-}\StringTok{ }\KeywordTok{merge}\NormalTok{( eusilc , cluster_sums )}
+
+\CommentTok{# construct a survey.design}
+\CommentTok{# with the fpc using the cluster sum}
+\NormalTok{des_eusilc_ultimate_cluster <-}\StringTok{ }
+\StringTok{    }\KeywordTok{svydesign}\NormalTok{( }
+        \DataTypeTok{ids =} \NormalTok{~}\StringTok{ }\NormalTok{rb030 , }
+        \DataTypeTok{strata =} \NormalTok{~}\StringTok{ }\NormalTok{db040 ,  }
+        \DataTypeTok{weights =} \NormalTok{~}\StringTok{ }\NormalTok{rb050 , }
+        \DataTypeTok{data =} \NormalTok{eusilc , }
+        \DataTypeTok{fpc =} \NormalTok{~}\StringTok{ }\NormalTok{cluster_sum }
+    \NormalTok{)}
+
+\CommentTok{# again, immediately run the convey_prep function on the `survey.design`}
+\NormalTok{des_eusilc_ultimate_cluster <-}\StringTok{ }\KeywordTok{convey_prep}\NormalTok{( des_eusilc_ultimate_cluster )}
+
+\CommentTok{# matches}
+\KeywordTok{attr}\NormalTok{( }\KeywordTok{svyrmpg}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc_ultimate_cluster ) , }\StringTok{'var'} \NormalTok{) *}\StringTok{ }\DecValTok{10000}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##           eqincome
+## eqincome 0.3316454
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{varpoord_rmpg_calculation$all_result$var}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.3316454
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# matches}
+\NormalTok{varpoord_rmpg_calculation$all_result$se}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.5758866
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{SE}\NormalTok{( }\KeywordTok{svyrmpg}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc_ultimate_cluster ) ) *}\StringTok{ }\DecValTok{100}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##           eqincome
+## eqincome 0.5758866
+\end{verbatim}
+
+For additional usage examples of \texttt{svyrmpg}, type
+\texttt{?convey::svyrmpg} in the R console.
 
 \section{Median Income Below the At Risk of Poverty Threshold
 (svypoormed)}\label{median-income-below-the-at-risk-of-poverty-threshold-svypoormed}
@@ -1939,7 +2168,7 @@ example below reproduces the statistics presented in his section 4.1.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{context_files/figure-latex/unnamed-chunk-28-1.pdf}
+\includegraphics{context_files/figure-latex/unnamed-chunk-30-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1971,7 +2200,7 @@ example below reproduces the statistics presented in his section 4.1.
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-28}Here is a nice table!}
+\caption{\label{tab:unnamed-chunk-30}Here is a nice table!}
 \centering
 \begin{tabular}[t]{lrrrr}
 \toprule
@@ -3434,7 +3663,7 @@ Replicate PDF page 10
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-50}PDF Page 10 Replication}
+\caption{\label{tab:unnamed-chunk-52}PDF Page 10 Replication}
 \centering
 \begin{tabular}[t]{lrrrrrrr}
 \toprule
@@ -3494,7 +3723,7 @@ Replicate PDF page 13
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-52}PDF Page 13 Replication}
+\caption{\label{tab:unnamed-chunk-54}PDF Page 13 Replication}
 \centering
 \begin{tabular}[t]{lrrrrrrr}
 \toprule
@@ -3541,7 +3770,7 @@ Replicate PDF page 16
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-54}PDF Page 16 Replication}
+\caption{\label{tab:unnamed-chunk-56}PDF Page 16 Replication}
 \centering
 \begin{tabular}[t]{lrrr}
 \toprule
