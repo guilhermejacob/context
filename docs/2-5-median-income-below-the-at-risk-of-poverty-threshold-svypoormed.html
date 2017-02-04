@@ -133,9 +133,138 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="col-sm-12">
 <div id="median-income-below-the-at-risk-of-poverty-threshold-svypoormed" class="section level2">
 <h2><span class="header-section-number">2.5</span> Median Income Below the At Risk of Poverty Threshold (svypoormed)</h2>
-<p>For additional usage examples of <code>svypoormed</code>, type <code>?convey::svypoormed</code> in the R console.</p>
 <p>here are the references</p>
 <p><span class="citation">(Osier <label for="tufte-mn-17" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-17" class="margin-toggle">2009<span class="marginnote">Osier, Guillaume. 2009. “Variance Estimation for Complex Indicators of Poverty and Inequality.” <em>Journal of the European Survey Research Association</em> 3 (3): 167–95. <a href="http://ojs.ub.uni-konstanz.de/srm/article/view/369" class="uri">http://ojs.ub.uni-konstanz.de/srm/article/view/369</a>.</span>)</span> and <span class="citation">(Deville <label for="tufte-mn-18" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-18" class="margin-toggle">1999<span class="marginnote">Deville, Jean-Claude. 1999. “Variance Estimation for Complex Statistics and Estimators: Linearization and Residual Techniques.” <em>Survey Methodology</em> 25 (2): 193–203. <a href="http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf" class="uri">http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf</a>.</span>)</span></p>
+<hr />
+<p><strong>A replication example</strong></p>
+<p>The R <code>vardpoor</code> package <span class="citation">(Breidaks, Liberts, and Ivanova <label for="tufte-mn-19" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-19" class="margin-toggle">2016<span class="marginnote">Breidaks, Juris, Martins Liberts, and Santa Ivanova. 2016. “Vardpoor: Estimation of Indicators on Social Exclusion and Poverty and Its Linearization, Variance Estimation.” Riga, Latvia: CSB.</span>)</span>, created by researchers at the Central Statistical Bureau of Latvia, includes a poormed coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.</p>
+<p>Load and prepare the same data set:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the convey package</span>
+<span class="kw">library</span>(convey)
+
+<span class="co"># load the survey library</span>
+<span class="kw">library</span>(survey)
+
+<span class="co"># load the vardpoor library</span>
+<span class="kw">library</span>(vardpoor)
+
+<span class="co"># load the synthetic european union statistics on income &amp; living conditions</span>
+<span class="kw">data</span>(eusilc)
+
+<span class="co"># make all column names lowercase</span>
+<span class="kw">names</span>( eusilc ) &lt;-<span class="st"> </span><span class="kw">tolower</span>( <span class="kw">names</span>( eusilc ) )
+
+<span class="co"># add a column with the row number</span>
+dati &lt;-<span class="st"> </span><span class="kw">data.table</span>(<span class="dt">IDd =</span> <span class="dv">1</span> :<span class="st"> </span><span class="kw">nrow</span>(eusilc), eusilc)
+
+<span class="co"># calculate the poormed coefficient</span>
+<span class="co"># using the R vardpoor library</span>
+varpoord_poormed_calculation &lt;-
+<span class="st">    </span><span class="kw">varpoord</span>(
+    
+        <span class="co"># analysis variable</span>
+        <span class="dt">Y =</span> <span class="st">&quot;eqincome&quot;</span>, 
+        
+        <span class="co"># weights variable</span>
+        <span class="dt">w_final =</span> <span class="st">&quot;rb050&quot;</span>,
+        
+        <span class="co"># row number variable</span>
+        <span class="dt">ID_level1 =</span> <span class="st">&quot;IDd&quot;</span>,
+        
+        <span class="co"># strata variable</span>
+        <span class="dt">H =</span> <span class="st">&quot;db040&quot;</span>, 
+        
+        <span class="dt">N_h =</span> <span class="ot">NULL</span> ,
+        
+        <span class="co"># clustering variable</span>
+        <span class="dt">PSU =</span> <span class="st">&quot;rb030&quot;</span>, 
+        
+        <span class="co"># data.table</span>
+        <span class="dt">dataset =</span> dati, 
+        
+        <span class="co"># poormed coefficient function</span>
+        <span class="dt">type =</span> <span class="st">&quot;linpoormed&quot;</span>
+        
+    )
+
+<span class="co"># all calculations produced by vardpoor::linpoormed</span>
+varpoord_poormed_calculation$all_result</code></pre></div>
+<pre><code>##       type respondent_count n_nonzero pop_size    value value_eu      var
+## 1: POORMED            14827     14824  8182222 8803.735       NA 5302.086
+##          se         rse        cv absolute_margin_of_error
+## 1: 72.81542 0.008270969 0.8270969                 142.7156
+##    relative_margin_of_error CI_lower CI_upper var_srs_HT var_cur_HT
+## 1:                  1.62108 8661.019 8946.451   5064.071   5302.086
+##    var_srs_ca deff_sam deff_est     deff
+## 1:   5064.071 1.047001        1 1.047001</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># construct a survey.design</span>
+<span class="co"># using our recommended setup</span>
+des_eusilc &lt;-<span class="st"> </span>
+<span class="st">    </span><span class="kw">svydesign</span>( 
+        <span class="dt">ids =</span> ~<span class="st"> </span>rb030 , 
+        <span class="dt">strata =</span> ~<span class="st"> </span>db040 ,  
+        <span class="dt">weights =</span> ~<span class="st"> </span>rb050 , 
+        <span class="dt">data =</span> eusilc
+    )
+
+<span class="co"># immediately run the convey_prep function on it</span>
+des_eusilc &lt;-<span class="st"> </span><span class="kw">convey_prep</span>( des_eusilc )
+
+<span class="co"># coefficients do match</span>
+varpoord_poormed_calculation$all_result$value</code></pre></div>
+<pre><code>## [1] 8803.735</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>( <span class="kw">svypoormed</span>( ~<span class="st"> </span>eqincome , des_eusilc ) )</code></pre></div>
+<pre><code>## eqincome 
+## 8803.735</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># variances do not match exactly</span>
+<span class="kw">attr</span>( <span class="kw">svypoormed</span>( ~<span class="st"> </span>eqincome , des_eusilc ) , <span class="st">&#39;var&#39;</span> )</code></pre></div>
+<pre><code>##          eqincome
+## eqincome  5311.47</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">varpoord_poormed_calculation$all_result$var</code></pre></div>
+<pre><code>## [1] 5302.086</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># standard errors do not match exactly</span>
+varpoord_poormed_calculation$all_result$se</code></pre></div>
+<pre><code>## [1] 72.81542</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SE</span>( <span class="kw">svypoormed</span>( ~<span class="st"> </span>eqincome , des_eusilc ) )</code></pre></div>
+<pre><code>##          eqincome
+## eqincome 72.87983</code></pre>
+<p>By default, the <code>convey::svypoormed</code> function comes close to the results of <code>vardpoor::linpoormed</code>. However, the measures of uncertainty do not line up, because <code>library(vardpoor)</code> defaults to the ultimate cluster method. This can be replicated with an alternative setup of the <code>survey.design</code> object.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># within each strata, sum up the weights</span>
+cluster_sums &lt;-<span class="st"> </span><span class="kw">aggregate</span>( eusilc$rb050 , <span class="kw">list</span>( eusilc$db040 ) , sum )
+
+<span class="co"># name the within-strata sums of weights the `cluster_sum`</span>
+<span class="kw">names</span>( cluster_sums ) &lt;-<span class="st"> </span><span class="kw">c</span>( <span class="st">&quot;db040&quot;</span> , <span class="st">&quot;cluster_sum&quot;</span> )
+
+<span class="co"># merge this column back onto the data.frame</span>
+eusilc &lt;-<span class="st"> </span><span class="kw">merge</span>( eusilc , cluster_sums )
+
+<span class="co"># construct a survey.design</span>
+<span class="co"># with the fpc using the cluster sum</span>
+des_eusilc_ultimate_cluster &lt;-<span class="st"> </span>
+<span class="st">    </span><span class="kw">svydesign</span>( 
+        <span class="dt">ids =</span> ~<span class="st"> </span>rb030 , 
+        <span class="dt">strata =</span> ~<span class="st"> </span>db040 ,  
+        <span class="dt">weights =</span> ~<span class="st"> </span>rb050 , 
+        <span class="dt">data =</span> eusilc , 
+        <span class="dt">fpc =</span> ~<span class="st"> </span>cluster_sum 
+    )
+
+<span class="co"># again, immediately run the convey_prep function on the `survey.design`</span>
+des_eusilc_ultimate_cluster &lt;-<span class="st"> </span><span class="kw">convey_prep</span>( des_eusilc_ultimate_cluster )
+
+<span class="co"># matches</span>
+<span class="kw">attr</span>( <span class="kw">svypoormed</span>( ~<span class="st"> </span>eqincome , des_eusilc_ultimate_cluster ) , <span class="st">&#39;var&#39;</span> )</code></pre></div>
+<pre><code>##          eqincome
+## eqincome 5302.086</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">varpoord_poormed_calculation$all_result$var</code></pre></div>
+<pre><code>## [1] 5302.086</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># matches</span>
+varpoord_poormed_calculation$all_result$se</code></pre></div>
+<pre><code>## [1] 72.81542</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SE</span>( <span class="kw">svypoormed</span>( ~<span class="st"> </span>eqincome , des_eusilc_ultimate_cluster ) )</code></pre></div>
+<pre><code>##          eqincome
+## eqincome 72.81542</code></pre>
+<p>For additional usage examples of <code>svypoormed</code>, type <code>?convey::svypoormed</code> in the R console.</p>
 </div>
 <p style="text-align: center;">
 <a href="2-4-relative-median-poverty-gap-svyrmpg.html"><button class="btn btn-default">Previous</button></a>
