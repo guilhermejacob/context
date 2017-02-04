@@ -349,8 +349,8 @@ and then use the function \texttt{svyarpr}:
 \end{Shaded}
 
 \begin{verbatim}
-            arpr     SE
-eqIncome 0.14444 0.0028
+            arpr    SE
+eqIncome 0.14444 0.003
 \end{verbatim}
 
 \begin{Shaded}
@@ -361,15 +361,15 @@ eqIncome 0.14444 0.0028
 
 \begin{verbatim}
                       db040  eqIncome se.eqIncome
-Burgenland       Burgenland 0.1953984 0.016262342
-Carinthia         Carinthia 0.1308627 0.011016574
-Lower Austria Lower Austria 0.1384362 0.007776597
-Salzburg           Salzburg 0.1378734 0.012686230
-Styria               Styria 0.1437464 0.008283656
-Tyrol                 Tyrol 0.1530819 0.009105411
-Upper Austria Upper Austria 0.1088977 0.006166868
-Vienna               Vienna 0.1723468 0.008294697
-Vorarlberg       Vorarlberg 0.1653731 0.012950938
+Burgenland       Burgenland 0.1953984 0.017584201
+Carinthia         Carinthia 0.1308627 0.010268500
+Lower Austria Lower Austria 0.1384362 0.006469449
+Salzburg           Salzburg 0.1378734 0.010295902
+Styria               Styria 0.1437464 0.008243255
+Tyrol                 Tyrol 0.1530819 0.010240236
+Upper Austria Upper Austria 0.1088977 0.005660615
+Vienna               Vienna 0.1723468 0.008440007
+Vorarlberg       Vorarlberg 0.1653731 0.011972791
 \end{verbatim}
 
 The functions of the library convey are called in a similar way to the
@@ -420,8 +420,8 @@ py010n   NA NA
 \end{Shaded}
 
 \begin{verbatim}
-          gini    SE
-py010n 0.64606 0.004
+          gini     SE
+py010n 0.64606 0.0039
 \end{verbatim}
 
 djalmapessoa\_look, where do these references go on this page?
@@ -630,203 +630,6 @@ where:
 \(m\) - median income;
 
 \(f\) - income density function;
-
-\section{Comparisons to Other
-Software}\label{comparisons-to-other-software}
-
-comparing se estimates for the domain ``Tyrol''
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{library}\NormalTok{(convey)}
-\KeywordTok{library}\NormalTok{(vardpoor)}
-\KeywordTok{data}\NormalTok{(eusilc)}
-\KeywordTok{names}\NormalTok{( eusilc ) <-}\StringTok{ }\KeywordTok{tolower}\NormalTok{( }\KeywordTok{names}\NormalTok{( eusilc ) )}
-\KeywordTok{library}\NormalTok{(survey)}
-\end{Highlighting}
-\end{Shaded}
-
-function to estimate the se
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{SE_lin2 <-}\StringTok{ }\NormalTok{function(t,des)\{}
-\NormalTok{variance<-survey::}\KeywordTok{svyrecvar}\NormalTok{(t/des$prob, des$cluster,des$strata, des$fpc,}
-\DataTypeTok{postStrata =} \NormalTok{des$postStrata)}
-\KeywordTok{sqrt}\NormalTok{(variance)}
-\NormalTok{\}}
-
-
-\NormalTok{des_eusilc <-}\StringTok{ }\KeywordTok{svydesign}\NormalTok{(}\DataTypeTok{ids =} \NormalTok{~rb030, }\DataTypeTok{strata =}\NormalTok{~db040,  }\DataTypeTok{weights =} \NormalTok{~rb050, }\DataTypeTok{data =} \NormalTok{eusilc)}
-
-\NormalTok{des_eusilc_Tyrol <-}\StringTok{ }\KeywordTok{subset}\NormalTok{(des_eusilc, db040==}\StringTok{"Tyrol"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-total
-
-convey
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{incvar <-}\StringTok{ }\NormalTok{des_eusilc_Tyrol$variables$eqincome}
-\NormalTok{lin.tot.conv <-}\StringTok{ }\NormalTok{incvar}
-\KeywordTok{SE_lin2} \NormalTok{(lin.tot.conv, des_eusilc_Tyrol)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##           [,1]
-## [1,] 208741523
-\end{verbatim}
-
-vardpoor
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{ncom<-}\StringTok{ }\KeywordTok{names}\NormalTok{(des_eusilc$prob)}
-\NormalTok{ind <-}\StringTok{ }\KeywordTok{names}\NormalTok{(des_eusilc_Tyrol$prob)}
-\NormalTok{ID <-}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\DecValTok{1}\NormalTok{, }\KeywordTok{nrow}\NormalTok{(des_eusilc))*}\StringTok{ }\NormalTok{(ncom %in%}\StringTok{ }\NormalTok{ind)}
-\NormalTok{incvec <-}\StringTok{ }\NormalTok{des_eusilc$variables$eqincome}
-\NormalTok{lin.tot.vardpoor <-}\StringTok{ }\NormalTok{incvec*ID}
-\KeywordTok{SE_lin2} \NormalTok{(lin.tot.vardpoor, des_eusilc)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##           [,1]
-## [1,] 208741523
-\end{verbatim}
-
-check using survey
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{SE}\NormalTok{(}\KeywordTok{svytotal}\NormalTok{(~eqincome, des_eusilc_Tyrol))}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##           eqincome
-## eqincome 208741523
-\end{verbatim}
-
-mean for domain or ratio:
-
-convey
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{num <-}\StringTok{ }\NormalTok{incvar}
-\NormalTok{den <-}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\DecValTok{1}\NormalTok{, }\KeywordTok{nrow}\NormalTok{(des_eusilc_Tyrol))}
-\NormalTok{Y <-}\StringTok{ }\KeywordTok{sum}\NormalTok{(num*}\StringTok{ }\KeywordTok{weights}\NormalTok{(des_eusilc_Tyrol))}
-\NormalTok{X <-}\StringTok{ }\KeywordTok{sum}\NormalTok{(den*}\StringTok{ }\KeywordTok{weights}\NormalTok{(des_eusilc_Tyrol))}
-\NormalTok{R <-}\StringTok{ }\NormalTok{Y/X}
-\end{Highlighting}
-\end{Shaded}
-
-linearized variable
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{lin.ratio.conv <-}\StringTok{ }\NormalTok{(}\DecValTok{1}\NormalTok{/X)*}\StringTok{ }\NormalTok{(num-R*den )}
-\KeywordTok{SE_lin2} \NormalTok{(lin.ratio.conv, des_eusilc_Tyrol)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##          [,1]
-## [1,] 279.8151
-\end{verbatim}
-
-vardpoor
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{num <-}\StringTok{ }\NormalTok{incvec*ID}
-\NormalTok{den <-}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\DecValTok{1}\NormalTok{, }\KeywordTok{nrow}\NormalTok{(des_eusilc))*ID}
-\NormalTok{Y <-}\StringTok{ }\KeywordTok{sum}\NormalTok{(num*}\StringTok{ }\KeywordTok{weights}\NormalTok{(des_eusilc))}
-\NormalTok{X <-}\StringTok{ }\KeywordTok{sum}\NormalTok{(den*}\StringTok{ }\KeywordTok{weights}\NormalTok{(des_eusilc))}
-\NormalTok{R <-}\StringTok{ }\NormalTok{Y/X}
-\end{Highlighting}
-\end{Shaded}
-
-linearized variable
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{lin.ratio.vardpoor <-}\StringTok{ }\NormalTok{(}\DecValTok{1}\NormalTok{/X)*}\StringTok{ }\NormalTok{(num-R*den )}
-\KeywordTok{SE_lin2} \NormalTok{(lin.ratio.vardpoor, des_eusilc)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##          [,1]
-## [1,] 279.8151
-\end{verbatim}
-
-check by survey
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{SE}\NormalTok{(}\KeywordTok{svymean}\NormalTok{(~eqincome,des_eusilc_Tyrol ))}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##          eqincome
-## eqincome 279.8151
-\end{verbatim}
-
-median
-
-convey
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{alpha <-}\StringTok{ }\NormalTok{.}\DecValTok{5}
-\NormalTok{h <-}\StringTok{ }\KeywordTok{h_fun}\NormalTok{(incvar, }\KeywordTok{weights}\NormalTok{(des_eusilc_Tyrol))}
-\NormalTok{q_alpha <-}\StringTok{ }\NormalTok{survey::}\KeywordTok{svyquantile}\NormalTok{(~eqincome, des_eusilc_Tyrol, .}\DecValTok{5}\NormalTok{,}
-\DataTypeTok{method =} \StringTok{"constant"}\NormalTok{)}
-\NormalTok{q_alpha <-}\StringTok{ }\KeywordTok{as.vector}\NormalTok{(q_alpha)}
-\NormalTok{Fprime <-}\StringTok{ }\KeywordTok{densfun}\NormalTok{( ~eqincome , des_eusilc_Tyrol, q_alpha,h, }\DataTypeTok{fun =} \StringTok{"F"}\NormalTok{)}
-\NormalTok{N <-}\StringTok{ }\KeywordTok{sum} \NormalTok{( }\KeywordTok{weights}\NormalTok{(des_eusilc_Tyrol))}
-\NormalTok{lin.quant.conv <-}\StringTok{  }\NormalTok{-(}\DecValTok{1}\NormalTok{/(N *}\StringTok{ }\NormalTok{Fprime)) *}\StringTok{ }\NormalTok{((incvar <=}\StringTok{ }\NormalTok{q_alpha) -}\StringTok{ }\NormalTok{alpha)}
-\end{Highlighting}
-\end{Shaded}
-
-se estimate
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{SE_lin2} \NormalTok{(lin.quant.conv, des_eusilc_Tyrol)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##          [,1]
-## [1,] 230.2058
-\end{verbatim}
-
-vardpoor
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{lin.quant.vardpoor <-}\StringTok{  }\NormalTok{-(}\DecValTok{1}\NormalTok{/(N *}\StringTok{ }\NormalTok{Fprime)) *ID*}\StringTok{ }\NormalTok{((incvec <=}\StringTok{ }\NormalTok{q_alpha) -}\StringTok{ }\NormalTok{alpha)}
-
-\KeywordTok{SE_lin2} \NormalTok{(lin.quant.vardpoor, des_eusilc)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##          [,1]
-## [1,] 230.2058
-\end{verbatim}
-
-Remarks: in all examples the results match. In these particular case,
-the linearized variable for vardpoor the ID always enter as a factor.
-There are formulas for the linearized variable in vardpoor where this is
-not the case. When this hapen, the se estimates are different!
 
 \section{Replication Designs}\label{replication-designs}
 
@@ -2365,7 +2168,7 @@ example below reproduces the statistics presented in his section 4.1.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{context_files/figure-latex/unnamed-chunk-43-1.pdf}
+\includegraphics{context_files/figure-latex/unnamed-chunk-30-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -2397,7 +2200,7 @@ example below reproduces the statistics presented in his section 4.1.
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-43}Here is a nice table!}
+\caption{\label{tab:unnamed-chunk-30}Here is a nice table!}
 \centering
 \begin{tabular}[t]{lrrrr}
 \toprule
@@ -3860,7 +3663,7 @@ Replicate PDF page 10
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-65}PDF Page 10 Replication}
+\caption{\label{tab:unnamed-chunk-52}PDF Page 10 Replication}
 \centering
 \begin{tabular}[t]{lrrrrrrr}
 \toprule
@@ -3920,7 +3723,7 @@ Replicate PDF page 13
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-67}PDF Page 13 Replication}
+\caption{\label{tab:unnamed-chunk-54}PDF Page 13 Replication}
 \centering
 \begin{tabular}[t]{lrrrrrrr}
 \toprule
@@ -3967,7 +3770,7 @@ Replicate PDF page 16
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-69}PDF Page 16 Replication}
+\caption{\label{tab:unnamed-chunk-56}PDF Page 16 Replication}
 \centering
 \begin{tabular}[t]{lrrr}
 \toprule
