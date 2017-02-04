@@ -132,27 +132,97 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <div class="row">
 <div class="col-sm-12">
-<div id="influence-function-examples" class="section level2">
-<h2><span class="header-section-number">1.7</span> Influence Function Examples</h2>
-<ul>
-<li><p>Total: <span class="math display">\[
-\begin{aligned}
-IT_k(M)&amp;=lim_{t\rightarrow 0}\frac{T(M+t\delta_k)-T(M)}{t}\\
-&amp;=lim_{t\rightarrow 0}\frac{\int y.d(M+t\delta_k)-\int y.dM}{t}\\
-&amp;=lim_{t\rightarrow 0}\frac{\int yd(t\delta_k)}{t}=y_k  
-\end{aligned}
-\]</span></p></li>
-<li><p>Ratio of two totals: <span class="math display">\[
-\begin{aligned}
-IR_k(M)&amp;=I\left(\frac{U}{V}\right)_k(M)=\frac{V(M)\times IU_k(M)-U(M)\times IV_k(M)}{V(M)^2}\\
-&amp;=\frac{X y_k-Y x_k}{X^2}=\frac{1}{X}(y_k-Rx_k)
-\end{aligned}
-\]</span></p></li>
-</ul>
+<div id="comparisons-to-other-software" class="section level2">
+<h2><span class="header-section-number">1.9</span> Comparisons to Other Software</h2>
+<p>comparing se estimates for the domain “Tyrol”</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(convey)
+<span class="kw">library</span>(vardpoor)
+<span class="kw">data</span>(eusilc)
+<span class="kw">names</span>( eusilc ) &lt;-<span class="st"> </span><span class="kw">tolower</span>( <span class="kw">names</span>( eusilc ) )
+<span class="kw">library</span>(survey)</code></pre></div>
+<p>function to estimate the se</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">SE_lin2 &lt;-<span class="st"> </span>function(t,des){
+variance&lt;-survey::<span class="kw">svyrecvar</span>(t/des$prob, des$cluster,des$strata, des$fpc,
+<span class="dt">postStrata =</span> des$postStrata)
+<span class="kw">sqrt</span>(variance)
+}
+
+
+des_eusilc &lt;-<span class="st"> </span><span class="kw">svydesign</span>(<span class="dt">ids =</span> ~rb030, <span class="dt">strata =</span>~db040,  <span class="dt">weights =</span> ~rb050, <span class="dt">data =</span> eusilc)
+
+des_eusilc_Tyrol &lt;-<span class="st"> </span><span class="kw">subset</span>(des_eusilc, db040==<span class="st">&quot;Tyrol&quot;</span>)</code></pre></div>
+<p>total</p>
+<p>convey</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">incvar &lt;-<span class="st"> </span>des_eusilc_Tyrol$variables$eqincome
+lin.tot.conv &lt;-<span class="st"> </span>incvar
+<span class="kw">SE_lin2</span> (lin.tot.conv, des_eusilc_Tyrol)</code></pre></div>
+<pre><code>##           [,1]
+## [1,] 208741523</code></pre>
+<p>vardpoor</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ncom&lt;-<span class="st"> </span><span class="kw">names</span>(des_eusilc$prob)
+ind &lt;-<span class="st"> </span><span class="kw">names</span>(des_eusilc_Tyrol$prob)
+ID &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">1</span>, <span class="kw">nrow</span>(des_eusilc))*<span class="st"> </span>(ncom %in%<span class="st"> </span>ind)
+incvec &lt;-<span class="st"> </span>des_eusilc$variables$eqincome
+lin.tot.vardpoor &lt;-<span class="st"> </span>incvec*ID
+<span class="kw">SE_lin2</span> (lin.tot.vardpoor, des_eusilc)</code></pre></div>
+<pre><code>##           [,1]
+## [1,] 208741523</code></pre>
+<p>check using survey</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SE</span>(<span class="kw">svytotal</span>(~eqincome, des_eusilc_Tyrol))</code></pre></div>
+<pre><code>##           eqincome
+## eqincome 208741523</code></pre>
+<p>mean for domain or ratio:</p>
+<p>convey</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">num &lt;-<span class="st"> </span>incvar
+den &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">1</span>, <span class="kw">nrow</span>(des_eusilc_Tyrol))
+Y &lt;-<span class="st"> </span><span class="kw">sum</span>(num*<span class="st"> </span><span class="kw">weights</span>(des_eusilc_Tyrol))
+X &lt;-<span class="st"> </span><span class="kw">sum</span>(den*<span class="st"> </span><span class="kw">weights</span>(des_eusilc_Tyrol))
+R &lt;-<span class="st"> </span>Y/X</code></pre></div>
+<p>linearized variable</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">lin.ratio.conv &lt;-<span class="st"> </span>(<span class="dv">1</span>/X)*<span class="st"> </span>(num-R*den )
+<span class="kw">SE_lin2</span> (lin.ratio.conv, des_eusilc_Tyrol)</code></pre></div>
+<pre><code>##          [,1]
+## [1,] 279.8151</code></pre>
+<p>vardpoor</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">num &lt;-<span class="st"> </span>incvec*ID
+den &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">1</span>, <span class="kw">nrow</span>(des_eusilc))*ID
+Y &lt;-<span class="st"> </span><span class="kw">sum</span>(num*<span class="st"> </span><span class="kw">weights</span>(des_eusilc))
+X &lt;-<span class="st"> </span><span class="kw">sum</span>(den*<span class="st"> </span><span class="kw">weights</span>(des_eusilc))
+R &lt;-<span class="st"> </span>Y/X</code></pre></div>
+<p>linearized variable</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">lin.ratio.vardpoor &lt;-<span class="st"> </span>(<span class="dv">1</span>/X)*<span class="st"> </span>(num-R*den )
+<span class="kw">SE_lin2</span> (lin.ratio.vardpoor, des_eusilc)</code></pre></div>
+<pre><code>##          [,1]
+## [1,] 279.8151</code></pre>
+<p>check by survey</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SE</span>(<span class="kw">svymean</span>(~eqincome,des_eusilc_Tyrol ))</code></pre></div>
+<pre><code>##          eqincome
+## eqincome 279.8151</code></pre>
+<p>median</p>
+<p>convey</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">alpha &lt;-<span class="st"> </span>.<span class="dv">5</span>
+h &lt;-<span class="st"> </span><span class="kw">h_fun</span>(incvar, <span class="kw">weights</span>(des_eusilc_Tyrol))
+q_alpha &lt;-<span class="st"> </span>survey::<span class="kw">svyquantile</span>(~eqincome, des_eusilc_Tyrol, .<span class="dv">5</span>,
+<span class="dt">method =</span> <span class="st">&quot;constant&quot;</span>)
+q_alpha &lt;-<span class="st"> </span><span class="kw">as.vector</span>(q_alpha)
+Fprime &lt;-<span class="st"> </span><span class="kw">densfun</span>( ~eqincome , des_eusilc_Tyrol, q_alpha,h, <span class="dt">fun =</span> <span class="st">&quot;F&quot;</span>)
+N &lt;-<span class="st"> </span><span class="kw">sum</span> ( <span class="kw">weights</span>(des_eusilc_Tyrol))
+lin.quant.conv &lt;-<span class="st">  </span>-(<span class="dv">1</span>/(N *<span class="st"> </span>Fprime)) *<span class="st"> </span>((incvar &lt;=<span class="st"> </span>q_alpha) -<span class="st"> </span>alpha)</code></pre></div>
+<p>se estimate</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SE_lin2</span> (lin.quant.conv, des_eusilc_Tyrol)</code></pre></div>
+<pre><code>##          [,1]
+## [1,] 230.2058</code></pre>
+<p>vardpoor</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">lin.quant.vardpoor &lt;-<span class="st">  </span>-(<span class="dv">1</span>/(N *<span class="st"> </span>Fprime)) *ID*<span class="st"> </span>((incvec &lt;=<span class="st"> </span>q_alpha) -<span class="st"> </span>alpha)
+
+<span class="kw">SE_lin2</span> (lin.quant.vardpoor, des_eusilc)</code></pre></div>
+<pre><code>##          [,1]
+## [1,] 230.2058</code></pre>
+<p>Remarks: in all examples the results match. In these particular case, the linearized variable for vardpoor the ID always enter as a factor. There are formulas for the linearized variable in vardpoor where this is not the case. When this hapen, the se estimates are different!</p>
 </div>
 <p style="text-align: center;">
-<a href="1-6-influence-functions.html"><button class="btn btn-default">Previous</button></a>
-<a href="1-8-examples-of-linearization-using-the-influence-function.html"><button class="btn btn-default">Next</button></a>
+<a href="1-8-examples-of-linearization-using-the-influence-function.html"><button class="btn btn-default">Previous</button></a>
+<a href="1-10-replication-designs.html"><button class="btn btn-default">Next</button></a>
 </p>
 </div>
 </div>
