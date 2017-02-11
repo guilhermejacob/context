@@ -73,7 +73,7 @@ des_nlsw88 <- svydesign( ids = ~1 , data = nlsw88 )
 des_nlsw88 <- convey_prep(des_nlsw88)
 
 # estimates lorenz curve
-result.lin <- svylorenz( ~wage, des_nlsw88, quantiles = seq( 0, 1, .05 ), na.rm = T )
+result.lin <- svylorenz( ~wage, des_nlsw88, quantiles = seq( 0, 1, .05 ), na.rm = TRUE )
 
 
 # note: most survey commands in R use Inf degrees of freedom by default
@@ -493,7 +493,35 @@ svygei( ~ eybhc0 , subset( z85 , eybhc0 > 1 ) , epsilon = 2 )
 svygei( ~ eybhc0 , subset( z85 , eybhc0 > 1 ) , epsilon = 3 )
 ```
 
+Replicate the author's decomposition by population subgroup (work status) shown on PDF page 57..
+```{r}
 
+# define work status (PDF page 22)
+z <- update( z , wkstatus = c( 1 , 1 , 1 , 1 , 2 , 3 , 2 , 2 )[ as.numeric( esbu ) ] )
+z <- update( z , factor( wkstatus , labels = c( "1+ ft working" , "no ft working" , "elderly" ) ) )
+
+# subset to 1991 and remove records with zero income
+z91 <- subset( z , year == 1991 & eybhc0 > 0 )
+
+# population share
+svymean( ~wkstatus, z91 )
+
+# mean
+svyby( ~eybhc0, ~wkstatus, z91, svymean )
+
+# subgroup indices: ge_k
+svyby( ~ eybhc0 , ~wkstatus , z91 , svygei , epsilon = -1 )
+svyby( ~ eybhc0 , ~wkstatus , z91 , svygei , epsilon = 0 )
+svyby( ~ eybhc0 , ~wkstatus , z91 , svygei , epsilon = 1 )
+svyby( ~ eybhc0 , ~wkstatus , z91 , svygei , epsilon = 2 )
+
+# GE decomposition
+svygeidec( ~eybhc0, ~wkstatus, z91, epsilon = -1 )
+svygeidec( ~eybhc0, ~wkstatus, z91, epsilon = 0 )
+svygeidec( ~eybhc0, ~wkstatus, z91, epsilon = 1 )
+svygeidec( ~eybhc0, ~wkstatus, z91, epsilon = 2 )
+
+```
 
 For additional usage examples of `svygei` or `svygeidec`, type `?convey::svygei` or `?convey::svygeidec` in the R console.
 
