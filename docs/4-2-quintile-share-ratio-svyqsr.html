@@ -230,7 +230,8 @@ varpoord_qsr_calculation$all_result$se</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SE</span>( <span class="kw">svyqsr</span>( ~<span class="st"> </span>eqincome , des_eusilc ) )</code></pre></div>
 <pre><code>##            eqincome
 ## eqincome 0.04255041</code></pre>
-<p>By default, the <code>convey::svyqsr</code> function comes close to the results of <code>vardpoor::linqsr</code>. However, the measures of uncertainty do not line up, because <code>library(vardpoor)</code> defaults to the ultimate cluster method. This can be replicated with an alternative setup of the <code>survey.design</code> object.</p>
+<p>The variance estimate is computed by using the approximation defined in <a href="1-5-the-variance-estimator.html#eq:var">(1.1)</a>, where the linearized variable <span class="math inline">\(z\)</span> is defined by <a href="1-5-the-variance-estimator.html#eq:lin">(1.2)</a>. The functions <code>convey::svygpg</code> and <code>vardpoor::lingpg</code> produce the same linearized variable <span class="math inline">\(z\)</span>.</p>
+<p>However, the measures of uncertainty do not line up, because <code>library(vardpoor)</code> defaults to an ultimate cluster method that can be replicated with an alternative setup of the <code>survey.design</code> object.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># within each strata, sum up the weights</span>
 cluster_sums &lt;-<span class="st"> </span><span class="kw">aggregate</span>( eusilc$rb050 , <span class="kw">list</span>( eusilc$db040 ) , sum )
 
