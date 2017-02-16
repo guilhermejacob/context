@@ -60,7 +60,10 @@ varpoord_arpr_calculation <-
 		dataset = dati, 
 		
 		# arpr coefficient function
-		type = "linarpr"
+		type = "linarpr",
+	  
+	  # get linearized variable
+	  outp_lin = TRUE
 		
 	)
 
@@ -83,6 +86,17 @@ des_eusilc <- convey_prep( des_eusilc )
 # coefficients do match
 varpoord_arpr_calculation$all_result$value
 coef( svyarpr( ~ eqincome , des_eusilc ) ) * 100
+
+# linearized variables
+# vardpoor
+lin_arpr_vardpoor<- varpoord_arpr_calculation$lin_out$lin_arpr
+# convey 
+lin_arpr_convey <- attr(svyarpr( ~ eqincome , des_eusilc ),"lin")
+
+# check equality
+all.equal(lin_arpr_vardpoor,lin_arpr_convey )
+
+
 
 # variances do not match exactly
 attr( svyarpr( ~ eqincome , des_eusilc ) , 'var' ) * 10000
