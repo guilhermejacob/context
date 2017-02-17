@@ -17,7 +17,7 @@
 
 <meta name="author" content="Guilherme Jacob, Anthony Damico, and Djalma Pessoa" />
 
-<meta name="date" content="2017-02-16" />
+<meta name="date" content="2017-02-17" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -183,8 +183,10 @@ varpoord_arpt_calculation &lt;-
         <span class="dt">dataset =</span> dati, 
         
         <span class="co"># arpt coefficient function</span>
-        <span class="dt">type =</span> <span class="st">&quot;linarpt&quot;</span>
-        
+        <span class="dt">type =</span> <span class="st">&quot;linarpt&quot;</span>,
+      
+        <span class="co"># get linearized variable</span>
+      <span class="dt">outp_lin =</span> <span class="ot">TRUE</span>
     )</code></pre></div>
 <pre><code>## NULL</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># all calculations produced by vardpoor::linarpt</span>
@@ -218,6 +220,15 @@ varpoord_arpt_calculation$all_result$value</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>( <span class="kw">svyarpt</span>( ~<span class="st"> </span>eqincome , des_eusilc ) )</code></pre></div>
 <pre><code>## eqincome 
 ## 10859.24</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># linearized variables do match</span>
+<span class="co"># vardpoor</span>
+lin_arpt_varpoord&lt;-<span class="st"> </span>varpoord_arpt_calculation$lin_out$lin_arpt
+<span class="co"># convey </span>
+lin_arpt_convey &lt;-<span class="st"> </span><span class="kw">attr</span>(<span class="kw">svyarpt</span>( ~<span class="st"> </span>eqincome , des_eusilc ),<span class="st">&quot;lin&quot;</span>)
+
+<span class="co"># check equality</span>
+<span class="kw">all.equal</span>(lin_arpt_varpoord, lin_arpt_convey )</code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># variances do not match exactly</span>
 <span class="kw">attr</span>( <span class="kw">svyarpt</span>( ~<span class="st"> </span>eqincome , des_eusilc ) , <span class="st">&#39;var&#39;</span> )</code></pre></div>
 <pre><code>##          eqincome

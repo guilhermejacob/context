@@ -17,7 +17,7 @@
 
 <meta name="author" content="Guilherme Jacob, Anthony Damico, and Djalma Pessoa" />
 
-<meta name="date" content="2017-02-16" />
+<meta name="date" content="2017-02-17" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -189,7 +189,10 @@ varpoord_gpg_calculation &lt;-
         <span class="dt">type =</span> <span class="st">&quot;lingpg&quot;</span> ,
         
         <span class="co"># gender variable</span>
-        <span class="dt">gender =</span> <span class="st">&quot;one_two&quot;</span>
+        <span class="dt">gender =</span> <span class="st">&quot;one_two&quot;</span>,
+      
+      <span class="co"># get linearized variable</span>
+      <span class="dt">outp_lin =</span> <span class="ot">TRUE</span>
     )</code></pre></div>
 <pre><code>## NULL</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># all calculations produced by vardpoor::lingpg</span>
@@ -223,6 +226,15 @@ varpoord_gpg_calculation$all_result$value</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>( <span class="kw">svygpg</span>( ~<span class="st"> </span>eqincome , des_eusilc , <span class="dt">sex =</span> ~<span class="st"> </span>rb090 ) ) *<span class="st"> </span><span class="dv">100</span></code></pre></div>
 <pre><code>## eqincome 
 ## 7.645389</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># linearized variables do match</span>
+<span class="co"># vardpoor</span>
+lin_gpg_varpoord&lt;-<span class="st"> </span>varpoord_gpg_calculation$lin_out$lin_gpg
+<span class="co"># convey </span>
+lin_gpg_convey &lt;-<span class="st"> </span><span class="kw">attr</span>(<span class="kw">svygpg</span>( ~<span class="st"> </span>eqincome , des_eusilc, <span class="dt">sex =</span> ~<span class="st"> </span>rb090 ),<span class="st">&quot;lin&quot;</span>)
+
+<span class="co"># check equality</span>
+<span class="kw">all.equal</span>(lin_gpg_varpoord,<span class="dv">100</span>*lin_gpg_convey[,<span class="dv">1</span>] )</code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># variances do not match exactly</span>
 <span class="kw">attr</span>( <span class="kw">svygpg</span>( ~<span class="st"> </span>eqincome , des_eusilc , <span class="dt">sex =</span> ~<span class="st"> </span>rb090 ) , <span class="st">&#39;var&#39;</span> ) *<span class="st"> </span><span class="dv">10000</span></code></pre></div>
 <pre><code>##           eqincome

@@ -181,7 +181,10 @@ varpoord_gini_calculation <-
 		dataset = dati, 
 		
 		# gini coefficient function
-		type = "lingini"
+		type = "lingini",
+	  
+	  # get linearized variable
+	  outp_lin = TRUE
 		
 	)
 
@@ -204,6 +207,15 @@ des_eusilc <- convey_prep( des_eusilc )
 # coefficients do match
 varpoord_gini_calculation$all_result$value
 coef( svygini( ~ eqincome , des_eusilc ) ) * 100
+
+# linearized variables do match
+# varpoord
+lin_gini_varpoord<- varpoord_gini_calculation$lin_out$lin_gini
+# convey 
+lin_gini_convey <- attr(svygini( ~ eqincome , des_eusilc ),"lin")
+
+# check equality
+all.equal(lin_gini_varpoord,100*lin_gini_convey )
 
 # variances do not match exactly
 attr( svygini( ~ eqincome , des_eusilc ) , 'var' ) * 10000

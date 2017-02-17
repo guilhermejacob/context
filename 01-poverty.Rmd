@@ -87,14 +87,14 @@ des_eusilc <- convey_prep( des_eusilc )
 varpoord_arpr_calculation$all_result$value
 coef( svyarpr( ~ eqincome , des_eusilc ) ) * 100
 
-# linearized variables
+# linearized variables do match
 # vardpoor
-lin_arpr_vardpoor<- varpoord_arpr_calculation$lin_out$lin_arpr
+lin_arpr_varpoord<- varpoord_arpr_calculation$lin_out$lin_arpr
 # convey 
 lin_arpr_convey <- attr(svyarpr( ~ eqincome , des_eusilc ),"lin")
 
 # check equality
-all.equal(lin_arpr_vardpoor,100*lin_arpr_convey )
+all.equal(lin_arpr_varpoord,100*lin_arpr_convey )
 
 
 
@@ -208,8 +208,10 @@ varpoord_arpt_calculation <-
 		dataset = dati, 
 		
 		# arpt coefficient function
-		type = "linarpt"
-		
+		type = "linarpt",
+	  
+		# get linearized variable
+	  outp_lin = TRUE
 	)
 
 # all calculations produced by vardpoor::linarpt
@@ -231,6 +233,15 @@ des_eusilc <- convey_prep( des_eusilc )
 # coefficients do match
 varpoord_arpt_calculation$all_result$value
 coef( svyarpt( ~ eqincome , des_eusilc ) )
+
+# linearized variables do match
+# vardpoor
+lin_arpt_varpoord<- varpoord_arpt_calculation$lin_out$lin_arpt
+# convey 
+lin_arpt_convey <- attr(svyarpt( ~ eqincome , des_eusilc ),"lin")
+
+# check equality
+all.equal(lin_arpt_varpoord, lin_arpt_convey )
 
 # variances do not match exactly
 attr( svyarpt( ~ eqincome , des_eusilc ) , 'var' )
@@ -356,7 +367,10 @@ varpoord_rmpg_calculation <-
 		dataset = dati, 
 		
 		# rmpg coefficient function
-		type = "linrmpg"
+		type = "linrmpg",
+	  
+	  # get linearized variable
+	  outp_lin = TRUE
 		
 	)
 
@@ -379,6 +393,15 @@ des_eusilc <- convey_prep( des_eusilc )
 # coefficients do match
 varpoord_rmpg_calculation$all_result$value
 coef( svyrmpg( ~ eqincome , des_eusilc ) ) * 100
+
+# linearized variables do match
+# vardpoor
+lin_rmpg_varpoord<- varpoord_rmpg_calculation$lin_out$lin_rmpg
+# convey 
+lin_rmpg_convey <- attr(svyrmpg( ~ eqincome , des_eusilc ),"lin")
+
+# check equality
+all.equal(lin_rmpg_varpoord, 100*lin_rmpg_convey[,1] )
 
 # variances do not match exactly
 attr( svyrmpg( ~ eqincome , des_eusilc ) , 'var' ) * 10000
@@ -492,7 +515,10 @@ varpoord_poormed_calculation <-
 		dataset = dati, 
 		
 		# poormed coefficient function
-		type = "linpoormed"
+		type = "linpoormed",
+	  
+	  # get linearized variable
+	  outp_lin = TRUE
 		
 	)
 
@@ -515,6 +541,15 @@ des_eusilc <- convey_prep( des_eusilc )
 # coefficients do match
 varpoord_poormed_calculation$all_result$value
 coef( svypoormed( ~ eqincome , des_eusilc ) )
+
+# linearized variables do match
+# vardpoor
+lin_poormed_varpoord<- varpoord_poormed_calculation$lin_out$lin_poormed
+# convey 
+lin_poormed_convey <- attr(svypoormed( ~ eqincome , des_eusilc ),"lin")
+
+# check equality
+all.equal(lin_rmpg_varpoord, 100*lin_rmpg_convey[,1] )
 
 # variances do not match exactly
 attr( svypoormed( ~ eqincome , des_eusilc ) , 'var' )
