@@ -124,7 +124,7 @@
   \postauthor{\par}
   \predate{\centering\large\emph}
   \postdate{\par}
-  \date{2017-02-11}
+  \date{2017-03-04}
 
 \usepackage{booktabs}
 
@@ -372,15 +372,15 @@ eqIncome 0.14444 0.0026
 
 \begin{verbatim}
                       db040  eqIncome se.eqIncome
-Burgenland       Burgenland 0.1953984 0.013193965
-Carinthia         Carinthia 0.1308627 0.012160555
-Lower Austria Lower Austria 0.1384362 0.006894124
-Salzburg           Salzburg 0.1378734 0.009184796
-Styria               Styria 0.1437464 0.007483205
-Tyrol                 Tyrol 0.1530819 0.011063640
-Upper Austria Upper Austria 0.1088977 0.005294699
-Vienna               Vienna 0.1723468 0.009363771
-Vorarlberg       Vorarlberg 0.1653731 0.015675166
+Burgenland       Burgenland 0.1953984 0.019906988
+Carinthia         Carinthia 0.1308627 0.007986081
+Lower Austria Lower Austria 0.1384362 0.006747692
+Salzburg           Salzburg 0.1378734 0.011004370
+Styria               Styria 0.1437464 0.008142479
+Tyrol                 Tyrol 0.1530819 0.008836565
+Upper Austria Upper Austria 0.1088977 0.004818589
+Vienna               Vienna 0.1723468 0.006268712
+Vorarlberg       Vorarlberg 0.1653731 0.015131573
 \end{verbatim}
 
 The functions of the library convey are called in a similar way to the
@@ -431,16 +431,33 @@ py010n   NA NA
 \end{Shaded}
 
 \begin{verbatim}
-          gini     SE
-py010n 0.64606 0.0031
+          gini    SE
+py010n 0.64606 0.004
 \end{verbatim}
-
-djalmapessoa\_look, where do these references go on this page?
-\citep{berger2003} and \citep{osier2009} and \citep{deville1999}
 
 \section{Underlying Calculations}\label{underlying-calculations}
 
-djalmapessoa\_look, please describe the general purpose of linearization
+In what follows, we often use the linearization method as a tool to
+produce an approximation for the variance of an estimator. From the
+linearized variable \(z\) of an estimator \(T\), we get from the
+expression \eqref{eq:var} an estimate of the variance of \(T\)
+
+If \(T\) can be expressed as a function of the population totals
+\(T = g(Y_1, Y_2, \ldots, Y_n)\), and if \(g\) is linear, the estimation
+of the variance of \(T = g(Y_1, Y_2, \ldots, Y_n)\) is straightforward.
+If \(g\) is not linear but is a `smooth' function, then it is possible
+to approximate the variance of \(g(Y_1, Y_2, \ldots, Y_n)\) by the
+variance of its first order Taylor expansion. For example, we can use
+Taylor expansion to linearize the ratio of two totals. However, there
+are situations where Taylor linearization cannot be immediately
+possible, either because \(T\) cannot be expressed as functions of the
+population totals, or because \(g\) is not a \texttt{smooth} function.
+An example is the case where \(T\) is a quantile.
+
+In these cases, it might work an alternative form of linearization of
+\(T\), by \texttt{Influence\ Function}, as defined in \eqref{eq:lin},
+proposed in \citep{deville1999}. Also, it coud be used replication
+methods such as \texttt{bootstrap} and \texttt{jackknife}.
 
 In the \texttt{convey} library, there are some basic functions that
 produce the linearized variables needed to measure income concentration
@@ -489,18 +506,21 @@ g(T_1,T_2)= \frac{(T_1 - T_2)}{T_1}
 
 \section{The Variance Estimator}\label{the-variance-estimator}
 
-djalmapessoa\_look please add references to this section
+Using the notation in \citep{osier2009}, the variance of the estimator
+\(T(\hat{M})\) can approximated by:
 
-The variance of the estimator \(T(\hat{M})\) can approximated by:
-
-\[Var\left[T(\hat{M})\right]\cong var\left[\sum_s w_i z_i\right]\]
+\begin{equation}
+Var\left[T(\hat{M})\right]\cong var\left[\sum_s w_i z_i\right]
+\label{eq:var}
+\end{equation}
 
 The \texttt{linearized} variable \(z\) is given by the derivative of the
 functional:
 
-\[
+\begin{equation}
 z_k=lim_{t\rightarrow0}\frac{T(M+t\delta_k)-T(M)}{t}=IT_k(M)
-\]
+\label{eq:lin}
+\end{equation}
 
 where, \(\delta_k\) is the Dirac measure in \(k\): \(\delta_k(i)=1\) if
 and only if \(i=k\).
@@ -644,8 +664,18 @@ where:
 
 \section{Replication Designs}\label{replication-designs}
 
-djalmapessoa\_look, please describe how the software works differently
-on svrepdesign objects -- as compared to svydesign objects
+All major functions in the library convey have S3 methods for the
+classes: \texttt{survey.design}, \texttt{svyrep.design} and
+\texttt{DBIdesign}. When the argument \texttt{design} is\\
+a survey design with replicate weights created by the library survey,
+convey uses the method \texttt{svrepdesign}.
+
+Considering the remarks in \citep{W85}, p.~163, concerning the
+deficiency of the \texttt{Jackknife} method in estimating the variance
+of \texttt{quantiles}, we adopted the type bootstrap instead.
+
+The function \texttt{bootVar} from the library \texttt{laeken} ,
+\citep{R-laeken}, also uses the bootstrap method to estimate variances.
 
 \section{Decomposition}\label{decomposition}
 
@@ -723,6 +753,9 @@ Load and prepare the same data set:
         \CommentTok{# row number variable}
         \DataTypeTok{ID_level1 =} \StringTok{"IDd"}\NormalTok{,}
         
+        \CommentTok{# row number variable}
+        \DataTypeTok{ID_level2 =} \StringTok{"IDd"}\NormalTok{,}
+        
         \CommentTok{# strata variable}
         \DataTypeTok{H =} \StringTok{"db040"}\NormalTok{, }
         
@@ -735,7 +768,10 @@ Load and prepare the same data set:
         \DataTypeTok{dataset =} \NormalTok{dati, }
         
         \CommentTok{# arpr coefficient function}
-        \DataTypeTok{type =} \StringTok{"linarpr"}
+        \DataTypeTok{type =} \StringTok{"linarpr"}\NormalTok{,}
+      
+      \CommentTok{# get linearized variable}
+      \DataTypeTok{outp_lin =} \OtherTok{TRUE}
         
     \NormalTok{)}
 \end{Highlighting}
@@ -743,26 +779,6 @@ Load and prepare the same data set:
 
 \begin{verbatim}
 ## NULL
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# all calculations produced by vardpoor::linarpr}
-\NormalTok{varpoord_arpr_calculation$all_result}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##    type respondent_count n_nonzero pop_size    value value_eu        var
-## 1: ARPR            14827     14824  8182222 14.44422       NA 0.07586194
-##           se        rse       cv absolute_margin_of_error
-## 1: 0.2754305 0.01906856 1.906856                0.5398338
-##    relative_margin_of_error CI_lower CI_upper      S2_y_HT      S2_y_ca
-## 1:                 3.737369 13.90438 14.98405 1.639976e-11 1.639976e-11
-##          S2_res var_srs_HT var_cur_HT var_srs_ca deff_sam deff_est
-## 1: 1.639976e-11 0.07391608 0.07586194 0.07391608 1.026325        1
-##        deff
-## 1: 1.026325
 \end{verbatim}
 
 \begin{Shaded}
@@ -798,6 +814,23 @@ Load and prepare the same data set:
 \begin{verbatim}
 ## eqincome 
 ## 14.44422
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# linearized variables do match}
+\CommentTok{# vardpoor}
+\NormalTok{lin_arpr_varpoord<-}\StringTok{ }\NormalTok{varpoord_arpr_calculation$lin_out$lin_arpr}
+\CommentTok{# convey }
+\NormalTok{lin_arpr_convey <-}\StringTok{ }\KeywordTok{attr}\NormalTok{(}\KeywordTok{svyarpr}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc ),}\StringTok{"lin"}\NormalTok{)}
+
+\CommentTok{# check equality}
+\KeywordTok{all.equal}\NormalTok{(lin_arpr_varpoord,}\DecValTok{100}\NormalTok{*lin_arpr_convey )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] TRUE
 \end{verbatim}
 
 \begin{Shaded}
@@ -844,11 +877,15 @@ Load and prepare the same data set:
 ## eqincome 0.2756769
 \end{verbatim}
 
-By default, the \texttt{convey::svyarpr} function comes close to the
-results of \texttt{vardpoor::linarpr}. However, the measures of
-uncertainty do not line up, because \texttt{library(vardpoor)} defaults
-to the ultimate cluster method. This can be replicated with an
-alternative setup of the \texttt{survey.design} object.
+The variance estimate is computed by using the approximation defined in
+\eqref{eq:var}, where the linearized variable \(z\) is defined by
+\eqref{eq:lin}. The functions \texttt{convey::svyarpr} and
+\texttt{vardpoor::linarpr} produce the same linearized variable \(z\).
+
+However, the measures of uncertainty do not line up, because
+\texttt{library(vardpoor)} defaults to an ultimate cluster method that
+can be replicated with an alternative setup of the
+\texttt{survey.design} object.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -972,6 +1009,9 @@ Load and prepare the same data set:
         \CommentTok{# row number variable}
         \DataTypeTok{ID_level1 =} \StringTok{"IDd"}\NormalTok{,}
         
+        \CommentTok{# row number variable}
+        \DataTypeTok{ID_level2 =} \StringTok{"IDd"}\NormalTok{,}
+        
         \CommentTok{# strata variable}
         \DataTypeTok{H =} \StringTok{"db040"}\NormalTok{, }
         
@@ -984,34 +1024,16 @@ Load and prepare the same data set:
         \DataTypeTok{dataset =} \NormalTok{dati, }
         
         \CommentTok{# arpt coefficient function}
-        \DataTypeTok{type =} \StringTok{"linarpt"}
-        
+        \DataTypeTok{type =} \StringTok{"linarpt"}\NormalTok{,}
+      
+        \CommentTok{# get linearized variable}
+      \DataTypeTok{outp_lin =} \OtherTok{TRUE}
     \NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
 ## NULL
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# all calculations produced by vardpoor::linarpt}
-\NormalTok{varpoord_arpt_calculation$all_result}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##    type respondent_count n_nonzero pop_size    value value_eu      var
-## 1: ARPT            14827     14824  8182222 10859.24       NA 2559.442
-##          se         rse        cv absolute_margin_of_error
-## 1: 50.59093 0.004658793 0.4658793                  99.1564
-##    relative_margin_of_error CI_lower CI_upper      S2_y_HT      S2_y_ca
-## 1:                0.9131066 10760.08 10958.39 5.557052e-07 5.557052e-07
-##          S2_res var_srs_HT var_cur_HT var_srs_ca deff_sam deff_est
-## 1: 5.557052e-07   2504.644   2559.442   2504.644 1.021879        1
-##        deff
-## 1: 1.021879
 \end{verbatim}
 
 \begin{Shaded}
@@ -1047,6 +1069,23 @@ Load and prepare the same data set:
 \begin{verbatim}
 ## eqincome 
 ## 10859.24
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# linearized variables do match}
+\CommentTok{# vardpoor}
+\NormalTok{lin_arpt_varpoord<-}\StringTok{ }\NormalTok{varpoord_arpt_calculation$lin_out$lin_arpt}
+\CommentTok{# convey }
+\NormalTok{lin_arpt_convey <-}\StringTok{ }\KeywordTok{attr}\NormalTok{(}\KeywordTok{svyarpt}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc ),}\StringTok{"lin"}\NormalTok{)}
+
+\CommentTok{# check equality}
+\KeywordTok{all.equal}\NormalTok{(lin_arpt_varpoord, lin_arpt_convey )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] TRUE
 \end{verbatim}
 
 \begin{Shaded}
@@ -1093,11 +1132,15 @@ Load and prepare the same data set:
 ## eqincome 50.63622
 \end{verbatim}
 
-By default, the \texttt{convey::svyarpt} function comes close to the
-results of \texttt{vardpoor::linarpt}. However, the measures of
-uncertainty do not line up, because \texttt{library(vardpoor)} defaults
-to the ultimate cluster method. This can be replicated with an
-alternative setup of the \texttt{survey.design} object.
+The variance estimate is computed by using the approximation defined in
+\eqref{eq:var}, where the linearized variable \(z\) is defined by
+\eqref{eq:lin}. The functions \texttt{convey::svyarpt} and
+\texttt{vardpoor::linarpt} produce the same linearized variable \(z\).
+
+However, the measures of uncertainty do not line up, because
+\texttt{library(vardpoor)} defaults to an ultimate cluster method that
+can be replicated with an alternative setup of the
+\texttt{survey.design} object.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1172,12 +1215,261 @@ For additional usage examples of \texttt{svyarpt}, type
 \section{Relative Median Income Ratio
 (svyrmir)}\label{relative-median-income-ratio-svyrmir}
 
-For additional usage examples of \texttt{svyrmir}, type
-\texttt{?convey::svyrmir} in the R console.
-
 here are the references
 
 \citep{osier2009} and \citep{deville1999}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{A replication example}
+
+The R \texttt{vardpoor} package \citep{vardpoor}, created by researchers
+at the Central Statistical Bureau of Latvia, includes a rmir coefficient
+calculation using the ultimate cluster method. The example below
+reproduces those statistics.
+
+Load and prepare the same data set:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# load the convey package}
+\KeywordTok{library}\NormalTok{(convey)}
+
+\CommentTok{# load the survey library}
+\KeywordTok{library}\NormalTok{(survey)}
+
+\CommentTok{# load the vardpoor library}
+\KeywordTok{library}\NormalTok{(vardpoor)}
+
+\CommentTok{# load the synthetic european union statistics on income & living conditions}
+\KeywordTok{data}\NormalTok{(eusilc)}
+
+\CommentTok{# make all column names lowercase}
+\KeywordTok{names}\NormalTok{( eusilc ) <-}\StringTok{ }\KeywordTok{tolower}\NormalTok{( }\KeywordTok{names}\NormalTok{( eusilc ) )}
+
+\CommentTok{# add a column with the row number}
+\NormalTok{dati <-}\StringTok{ }\KeywordTok{data.table}\NormalTok{(}\DataTypeTok{IDd =} \DecValTok{1} \NormalTok{:}\StringTok{ }\KeywordTok{nrow}\NormalTok{(eusilc), eusilc)}
+
+\CommentTok{# calculate the rmir coefficient}
+\CommentTok{# using the R vardpoor library}
+\NormalTok{varpoord_rmir_calculation <-}
+\StringTok{    }\KeywordTok{varpoord}\NormalTok{(}
+    
+        \CommentTok{# analysis variable}
+        \DataTypeTok{Y =} \StringTok{"eqincome"}\NormalTok{, }
+        
+        \CommentTok{# weights variable}
+        \DataTypeTok{w_final =} \StringTok{"rb050"}\NormalTok{,}
+        
+        \CommentTok{# row number variable}
+        \DataTypeTok{ID_level1 =} \StringTok{"IDd"}\NormalTok{,}
+        
+        \CommentTok{# row number variable}
+        \DataTypeTok{ID_level2 =} \StringTok{"IDd"}\NormalTok{,}
+        
+        \CommentTok{# strata variable}
+        \DataTypeTok{H =} \StringTok{"db040"}\NormalTok{, }
+        
+        \DataTypeTok{N_h =} \OtherTok{NULL} \NormalTok{,}
+        
+        \CommentTok{# clustering variable}
+        \DataTypeTok{PSU =} \StringTok{"rb030"}\NormalTok{, }
+        
+        \CommentTok{# data.table}
+        \DataTypeTok{dataset =} \NormalTok{dati,}
+      
+      \CommentTok{# age variable}
+      \DataTypeTok{age =} \StringTok{"age"}\NormalTok{,}
+        
+        \CommentTok{# rmir coefficient function}
+        \DataTypeTok{type =} \StringTok{"linrmir"}\NormalTok{,}
+      
+      \CommentTok{# get linearized variable}
+      \DataTypeTok{outp_lin =} \OtherTok{TRUE}
+        
+    \NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## NULL
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# construct a survey.design}
+\CommentTok{# using our recommended setup}
+\NormalTok{des_eusilc <-}\StringTok{ }
+\StringTok{    }\KeywordTok{svydesign}\NormalTok{( }
+        \DataTypeTok{ids =} \NormalTok{~}\StringTok{ }\NormalTok{rb030 , }
+        \DataTypeTok{strata =} \NormalTok{~}\StringTok{ }\NormalTok{db040 ,  }
+        \DataTypeTok{weights =} \NormalTok{~}\StringTok{ }\NormalTok{rb050 , }
+        \DataTypeTok{data =} \NormalTok{eusilc}
+    \NormalTok{)}
+
+\CommentTok{# immediately run the convey_prep function on it}
+\NormalTok{des_eusilc <-}\StringTok{ }\KeywordTok{convey_prep}\NormalTok{( des_eusilc )}
+
+\CommentTok{# coefficients do match}
+\NormalTok{varpoord_rmir_calculation$all_result$value}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.9330361
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{coef}\NormalTok{( }\KeywordTok{svyrmir}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc, }\DataTypeTok{age =} \NormalTok{~age ) ) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  eqincome 
+## 0.9330361
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# linearized variables do match}
+\CommentTok{# vardpoor}
+\NormalTok{lin_rmir_varpoord<-}\StringTok{ }\NormalTok{varpoord_rmir_calculation$lin_out$lin_rmir}
+\CommentTok{# convey }
+\NormalTok{lin_rmir_convey <-}\StringTok{ }\KeywordTok{attr}\NormalTok{(}\KeywordTok{svyrmir}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc, }\DataTypeTok{age =} \NormalTok{~age ),}\StringTok{"lin"}\NormalTok{)}
+
+\CommentTok{# check equality}
+\KeywordTok{all.equal}\NormalTok{(lin_rmir_varpoord, lin_rmir_convey[,}\DecValTok{1}\NormalTok{] )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] TRUE
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# variances do not match exactly}
+\KeywordTok{attr}\NormalTok{( }\KeywordTok{svyrmir}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc, }\DataTypeTok{age =} \NormalTok{~age ) , }\StringTok{'var'} \NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##             eqincome
+## eqincome 0.000127444
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{varpoord_rmir_calculation$all_result$var}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.0001272137
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# standard errors do not match exactly}
+\NormalTok{varpoord_rmir_calculation$all_result$se}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.0112789
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{SE}\NormalTok{( }\KeywordTok{svyrmir}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc , }\DataTypeTok{age =} \NormalTok{~age) ) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            eqincome
+## eqincome 0.01128911
+\end{verbatim}
+
+The variance estimate is computed by using the approximation defined in
+\eqref{eq:var}, where the linearized variable \(z\) is defined by
+\eqref{eq:lin}. The functions \texttt{convey::svyrmir} and
+\texttt{vardpoor::linrmir} produce the same linearized variable \(z\).
+
+However, the measures of uncertainty do not line up, because
+\texttt{library(vardpoor)} defaults to an ultimate cluster method that
+can be replicated with an alternative setup of the
+\texttt{survey.design} object.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# within each strata, sum up the weights}
+\NormalTok{cluster_sums <-}\StringTok{ }\KeywordTok{aggregate}\NormalTok{( eusilc$rb050 , }\KeywordTok{list}\NormalTok{( eusilc$db040 ) , sum )}
+
+\CommentTok{# name the within-strata sums of weights the `cluster_sum`}
+\KeywordTok{names}\NormalTok{( cluster_sums ) <-}\StringTok{ }\KeywordTok{c}\NormalTok{( }\StringTok{"db040"} \NormalTok{, }\StringTok{"cluster_sum"} \NormalTok{)}
+
+\CommentTok{# merge this column back onto the data.frame}
+\NormalTok{eusilc <-}\StringTok{ }\KeywordTok{merge}\NormalTok{( eusilc , cluster_sums )}
+
+\CommentTok{# construct a survey.design}
+\CommentTok{# with the fpc using the cluster sum}
+\NormalTok{des_eusilc_ultimate_cluster <-}\StringTok{ }
+\StringTok{    }\KeywordTok{svydesign}\NormalTok{( }
+        \DataTypeTok{ids =} \NormalTok{~}\StringTok{ }\NormalTok{rb030 , }
+        \DataTypeTok{strata =} \NormalTok{~}\StringTok{ }\NormalTok{db040 ,  }
+        \DataTypeTok{weights =} \NormalTok{~}\StringTok{ }\NormalTok{rb050 , }
+        \DataTypeTok{data =} \NormalTok{eusilc , }
+        \DataTypeTok{fpc =} \NormalTok{~}\StringTok{ }\NormalTok{cluster_sum }
+    \NormalTok{)}
+
+\CommentTok{# again, immediately run the convey_prep function on the `survey.design`}
+\NormalTok{des_eusilc_ultimate_cluster <-}\StringTok{ }\KeywordTok{convey_prep}\NormalTok{( des_eusilc_ultimate_cluster )}
+
+\CommentTok{# matches}
+\KeywordTok{attr}\NormalTok{( }\KeywordTok{svyrmir}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc_ultimate_cluster , }\DataTypeTok{age =} \NormalTok{~age ) , }\StringTok{'var'} \NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##              eqincome
+## eqincome 0.0001272137
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{varpoord_rmir_calculation$all_result$var}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.0001272137
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# matches}
+\NormalTok{varpoord_rmir_calculation$all_result$se}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.0112789
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{SE}\NormalTok{( }\KeywordTok{svyrmir}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc_ultimate_cluster, }\DataTypeTok{age =} \NormalTok{~age ) ) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##           eqincome
+## eqincome 0.0112789
+\end{verbatim}
+
+For additional usage examples of \texttt{svyrmir}, type
+\texttt{?convey::svyrmir} in the R console.
 
 \section{Relative Median Poverty Gap
 (svyrmpg)}\label{relative-median-poverty-gap-svyrmpg}
@@ -1230,7 +1522,10 @@ Load and prepare the same data set:
         
         \CommentTok{# row number variable}
         \DataTypeTok{ID_level1 =} \StringTok{"IDd"}\NormalTok{,}
-        
+
+        \CommentTok{# row number variable}
+        \DataTypeTok{ID_level2 =} \StringTok{"IDd"}\NormalTok{,}
+                
         \CommentTok{# strata variable}
         \DataTypeTok{H =} \StringTok{"db040"}\NormalTok{, }
         
@@ -1243,7 +1538,10 @@ Load and prepare the same data set:
         \DataTypeTok{dataset =} \NormalTok{dati, }
         
         \CommentTok{# rmpg coefficient function}
-        \DataTypeTok{type =} \StringTok{"linrmpg"}
+        \DataTypeTok{type =} \StringTok{"linrmpg"}\NormalTok{,}
+      
+      \CommentTok{# get linearized variable}
+      \DataTypeTok{outp_lin =} \OtherTok{TRUE}
         
     \NormalTok{)}
 \end{Highlighting}
@@ -1251,26 +1549,6 @@ Load and prepare the same data set:
 
 \begin{verbatim}
 ## NULL
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# all calculations produced by vardpoor::linrmpg}
-\NormalTok{varpoord_rmpg_calculation$all_result}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##    type respondent_count n_nonzero pop_size   value value_eu       var
-## 1: RMPG            14827     14824  8182222 18.9286       NA 0.3316454
-##           se        rse       cv absolute_margin_of_error
-## 1: 0.5758866 0.03042416 3.042416                 1.128717
-##    relative_margin_of_error CI_lower CI_upper      S2_y_HT      S2_y_ca
-## 1:                 5.963025 17.79988 20.05731 7.025364e-11 7.025364e-11
-##          S2_res var_srs_HT var_cur_HT var_srs_ca deff_sam deff_est
-## 1: 7.025364e-11  0.3166433  0.3316454  0.3166433 1.047378        1
-##        deff
-## 1: 1.047378
 \end{verbatim}
 
 \begin{Shaded}
@@ -1306,6 +1584,23 @@ Load and prepare the same data set:
 \begin{verbatim}
 ## eqincome 
 ##  18.9286
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# linearized variables do match}
+\CommentTok{# vardpoor}
+\NormalTok{lin_rmpg_varpoord<-}\StringTok{ }\NormalTok{varpoord_rmpg_calculation$lin_out$lin_rmpg}
+\CommentTok{# convey }
+\NormalTok{lin_rmpg_convey <-}\StringTok{ }\KeywordTok{attr}\NormalTok{(}\KeywordTok{svyrmpg}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc ),}\StringTok{"lin"}\NormalTok{)}
+
+\CommentTok{# check equality}
+\KeywordTok{all.equal}\NormalTok{(lin_rmpg_varpoord, }\DecValTok{100}\NormalTok{*lin_rmpg_convey[,}\DecValTok{1}\NormalTok{] )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] TRUE
 \end{verbatim}
 
 \begin{Shaded}
@@ -1352,11 +1647,15 @@ Load and prepare the same data set:
 ## eqincome 0.5763974
 \end{verbatim}
 
-By default, the \texttt{convey::svyrmpg} function comes close to the
-results of \texttt{vardpoor::linrmpg}. However, the measures of
-uncertainty do not line up, because \texttt{library(vardpoor)} defaults
-to the ultimate cluster method. This can be replicated with an
-alternative setup of the \texttt{survey.design} object.
+The variance estimate is computed by using the approximation defined in
+\eqref{eq:var}, where the linearized variable \(z\) is defined by
+\eqref{eq:lin}. The functions \texttt{convey::svyrmpg} and
+\texttt{vardpoor::linrmpg} produce the same linearized variable \(z\).
+
+However, the measures of uncertainty do not line up, because
+\texttt{library(vardpoor)} defaults to an ultimate cluster method that
+can be replicated with an alternative setup of the
+\texttt{survey.design} object.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1479,7 +1778,10 @@ Load and prepare the same data set:
         
         \CommentTok{# row number variable}
         \DataTypeTok{ID_level1 =} \StringTok{"IDd"}\NormalTok{,}
-        
+
+        \CommentTok{# row number variable}
+        \DataTypeTok{ID_level2 =} \StringTok{"IDd"}\NormalTok{,}
+                
         \CommentTok{# strata variable}
         \DataTypeTok{H =} \StringTok{"db040"}\NormalTok{, }
         
@@ -1492,7 +1794,10 @@ Load and prepare the same data set:
         \DataTypeTok{dataset =} \NormalTok{dati, }
         
         \CommentTok{# poormed coefficient function}
-        \DataTypeTok{type =} \StringTok{"linpoormed"}
+        \DataTypeTok{type =} \StringTok{"linpoormed"}\NormalTok{,}
+      
+      \CommentTok{# get linearized variable}
+      \DataTypeTok{outp_lin =} \OtherTok{TRUE}
         
     \NormalTok{)}
 \end{Highlighting}
@@ -1500,26 +1805,6 @@ Load and prepare the same data set:
 
 \begin{verbatim}
 ## NULL
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# all calculations produced by vardpoor::linpoormed}
-\NormalTok{varpoord_poormed_calculation$all_result}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##       type respondent_count n_nonzero pop_size    value value_eu      var
-## 1: POORMED            14827     14824  8182222 8803.735       NA 5302.086
-##          se         rse        cv absolute_margin_of_error
-## 1: 72.81542 0.008270969 0.8270969                 142.7156
-##    relative_margin_of_error CI_lower CI_upper      S2_y_HT      S2_y_ca
-## 1:                  1.62108 8661.019 8946.451 1.123565e-06 1.123565e-06
-##          S2_res var_srs_HT var_cur_HT var_srs_ca deff_sam deff_est
-## 1: 1.123565e-06   5064.071   5302.086   5064.071 1.047001        1
-##        deff
-## 1: 1.047001
 \end{verbatim}
 
 \begin{Shaded}
@@ -1555,6 +1840,23 @@ Load and prepare the same data set:
 \begin{verbatim}
 ## eqincome 
 ## 8803.735
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# linearized variables do match}
+\CommentTok{# vardpoor}
+\NormalTok{lin_poormed_varpoord<-}\StringTok{ }\NormalTok{varpoord_poormed_calculation$lin_out$lin_poormed}
+\CommentTok{# convey }
+\NormalTok{lin_poormed_convey <-}\StringTok{ }\KeywordTok{attr}\NormalTok{(}\KeywordTok{svypoormed}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc ),}\StringTok{"lin"}\NormalTok{)}
+
+\CommentTok{# check equality}
+\KeywordTok{all.equal}\NormalTok{(lin_poormed_varpoord, lin_poormed_convey )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] TRUE
 \end{verbatim}
 
 \begin{Shaded}
@@ -1601,11 +1903,16 @@ Load and prepare the same data set:
 ## eqincome 72.87983
 \end{verbatim}
 
-By default, the \texttt{convey::svypoormed} function comes close to the
-results of \texttt{vardpoor::linpoormed}. However, the measures of
-uncertainty do not line up, because \texttt{library(vardpoor)} defaults
-to the ultimate cluster method. This can be replicated with an
-alternative setup of the \texttt{survey.design} object.
+The variance estimate is computed by using the approximation defined in
+\eqref{eq:var}, where the linearized variable \(z\) is defined by
+\eqref{eq:lin}. The functions \texttt{convey::svypoormed} and
+\texttt{vardpoor::linpoormed} produce the same linearized variable
+\(z\).
+
+However, the measures of uncertainty do not line up, because
+\texttt{library(vardpoor)} defaults to an ultimate cluster method that
+can be replicated with an alternative setup of the
+\texttt{survey.design} object.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1699,9 +2006,15 @@ function that assigns value \(1\) if the condition
 \(\{y_{k}\leq \theta \}\) is satisfied and \(0\) otherwise, and
 \(\gamma\) is a non-negative constant.
 
-When \(\gamma =0\), \(p\) can be interpreted as the poverty headcount
-ratio, and for \(\gamma \geq 1\), the weight of the income shortfall of
-the poor to a power \(\gamma\), (Foster and all, 1984).
+If \(\gamma =0\), the \texttt{FGT\ index} equals the poverty headcount
+ratio, which accounts for the spread of poverty. If \(\gamma =1\), FGT
+is the mean of the normalized income shortfall of the poor. By doing so,
+the measure takes into account both the spread and the intensity of
+poverty. When \(\gamma =2\), the relative weight of larger shortfalls
+increases even more, which yields a measure that accounts for poverty
+severity, i.e., the inequality among the poor. This way, a transfer from
+a poor person to an even poorer person would reduce the FGT(2),
+\citep{foster1984}.
 
 The poverty measure FGT is implemented in the library convey by the
 function \texttt{svyfgt}. The argument \texttt{thresh\_type} of this
@@ -1725,7 +2038,8 @@ possible choices:
 The quantile and the mean involved in the definition of the threshold
 are estimated for the whole population. When \(\gamma=0\) and
 \(\theta= .6*MED\) the measure is equal to the indicator \texttt{arpr}
-computed by the function \texttt{svyarpr}.
+computed by the function \texttt{svyarpr}. The linearization of the FGT
+is presented in \citep{berger2003}.
 
 Next, we give some examples of the function \texttt{svyfgt} to estimate
 the values of the FGT poverty index.
@@ -2219,7 +2533,7 @@ example below reproduces the statistics presented in his section 4.1.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{context_files/figure-latex/unnamed-chunk-30-1.pdf}
+\includegraphics{context_files/figure-latex/unnamed-chunk-32-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -2251,7 +2565,7 @@ example below reproduces the statistics presented in his section 4.1.
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-30}Here is a nice table!}
+\caption{\label{tab:unnamed-chunk-32}Here is a nice table!}
 \centering
 \begin{tabular}[t]{lrrrr}
 \toprule
@@ -2357,6 +2671,9 @@ Load and prepare the same data set:
         \CommentTok{# row number variable}
         \DataTypeTok{ID_level1 =} \StringTok{"IDd"}\NormalTok{,}
         
+        \CommentTok{# row number variable}
+        \DataTypeTok{ID_level2 =} \StringTok{"IDd"}\NormalTok{,}
+        
         \CommentTok{# strata variable}
         \DataTypeTok{H =} \StringTok{"db040"}\NormalTok{, }
         
@@ -2369,7 +2686,10 @@ Load and prepare the same data set:
         \DataTypeTok{dataset =} \NormalTok{dati, }
         
         \CommentTok{# gini coefficient function}
-        \DataTypeTok{type =} \StringTok{"lingini"}
+        \DataTypeTok{type =} \StringTok{"lingini"}\NormalTok{,}
+      
+      \CommentTok{# get linearized variable}
+      \DataTypeTok{outp_lin =} \OtherTok{TRUE}
         
     \NormalTok{)}
 \end{Highlighting}
@@ -2377,26 +2697,6 @@ Load and prepare the same data set:
 
 \begin{verbatim}
 ## NULL
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# all calculations produced by vardpoor::lingini}
-\NormalTok{varpoord_gini_calculation$all_result}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##    type respondent_count n_nonzero pop_size    value value_eu        var
-## 1: GINI            14827     14824  8182222 26.49652 26.48962 0.03783931
-##           se         rse        cv absolute_margin_of_error
-## 1: 0.1945233 0.007341467 0.7341467                0.3812587
-##    relative_margin_of_error CI_lower CI_upper      S2_y_HT      S2_y_ca
-## 1:                 1.438901 26.11526 26.87778 8.120785e-12 8.120785e-12
-##          S2_res var_srs_HT var_cur_HT var_srs_ca deff_sam deff_est
-## 1: 8.120785e-12 0.03660155 0.03783931 0.03660155 1.033817        1
-##        deff
-## 1: 1.033817
 \end{verbatim}
 
 \begin{Shaded}
@@ -2432,6 +2732,23 @@ Load and prepare the same data set:
 \begin{verbatim}
 ## eqincome 
 ## 26.49652
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# linearized variables do match}
+\CommentTok{# varpoord}
+\NormalTok{lin_gini_varpoord<-}\StringTok{ }\NormalTok{varpoord_gini_calculation$lin_out$lin_gini}
+\CommentTok{# convey }
+\NormalTok{lin_gini_convey <-}\StringTok{ }\KeywordTok{attr}\NormalTok{(}\KeywordTok{svygini}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc ),}\StringTok{"lin"}\NormalTok{)}
+
+\CommentTok{# check equality}
+\KeywordTok{all.equal}\NormalTok{(lin_gini_varpoord,}\DecValTok{100}\NormalTok{*lin_gini_convey )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] TRUE
 \end{verbatim}
 
 \begin{Shaded}
@@ -2478,11 +2795,15 @@ Load and prepare the same data set:
 ## eqincome 0.1946982
 \end{verbatim}
 
-By default, the \texttt{convey::svygini} function comes close to the
-results of \texttt{vardpoor::lingini}. However, the measures of
-uncertainty do not line up, because \texttt{library(vardpoor)} defaults
-to the ultimate cluster method. This can be replicated with an
-alternative setup of the \texttt{survey.design} object.
+The variance estimate is computed by using the approximation defined in
+\eqref{eq:var}, where the linearized variable \(z\) is defined by
+\eqref{eq:lin}. The functions \texttt{convey::svygini} and
+\texttt{vardpoor::lingini} produce the same linearized variable \(z\).
+
+However, the measures of uncertainty do not line up, because
+\texttt{library(vardpoor)} defaults to an ultimate cluster method that
+can be replicated with an alternative setup of the
+\texttt{survey.design} object.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -3429,6 +3750,9 @@ Load and prepare the same data set:
         \CommentTok{# row number variable}
         \DataTypeTok{ID_level1 =} \StringTok{"IDd"}\NormalTok{,}
         
+        \CommentTok{# row number variable}
+        \DataTypeTok{ID_level2 =} \StringTok{"IDd"}\NormalTok{,}
+        
         \CommentTok{# strata variable}
         \DataTypeTok{H =} \StringTok{"db040"}\NormalTok{, }
         
@@ -3444,33 +3768,16 @@ Load and prepare the same data set:
         \DataTypeTok{type =} \StringTok{"lingpg"} \NormalTok{,}
         
         \CommentTok{# gender variable}
-        \DataTypeTok{gender =} \StringTok{"one_two"}
+        \DataTypeTok{gender =} \StringTok{"one_two"}\NormalTok{,}
+      
+      \CommentTok{# get linearized variable}
+      \DataTypeTok{outp_lin =} \OtherTok{TRUE}
     \NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
 ## NULL
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# all calculations produced by vardpoor::lingpg}
-\NormalTok{varpoord_gpg_calculation$all_result}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##    type respondent_count n_nonzero pop_size    value value_eu       var
-## 1:  GPG            14827     14824  8182222 7.645389       NA 0.6482346
-##           se       rse       cv absolute_margin_of_error
-## 1: 0.8051301 0.1053092 10.53092                 1.578026
-##    relative_margin_of_error CI_lower CI_upper      S2_y_HT      S2_y_ca
-## 1:                 20.64023 6.067363 9.223415 1.388432e-10 1.388432e-10
-##          S2_res var_srs_HT var_cur_HT var_srs_ca deff_sam deff_est
-## 1: 1.388432e-10  0.6257864  0.6482346  0.6257864 1.035872        1
-##        deff
-## 1: 1.035872
 \end{verbatim}
 
 \begin{Shaded}
@@ -3506,6 +3813,23 @@ Load and prepare the same data set:
 \begin{verbatim}
 ## eqincome 
 ## 7.645389
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# linearized variables do match}
+\CommentTok{# vardpoor}
+\NormalTok{lin_gpg_varpoord<-}\StringTok{ }\NormalTok{varpoord_gpg_calculation$lin_out$lin_gpg}
+\CommentTok{# convey }
+\NormalTok{lin_gpg_convey <-}\StringTok{ }\KeywordTok{attr}\NormalTok{(}\KeywordTok{svygpg}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc, }\DataTypeTok{sex =} \NormalTok{~}\StringTok{ }\NormalTok{rb090 ),}\StringTok{"lin"}\NormalTok{)}
+
+\CommentTok{# check equality}
+\KeywordTok{all.equal}\NormalTok{(lin_gpg_varpoord,}\DecValTok{100}\NormalTok{*lin_gpg_convey[,}\DecValTok{1}\NormalTok{] )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] TRUE
 \end{verbatim}
 
 \begin{Shaded}
@@ -3552,11 +3876,15 @@ Load and prepare the same data set:
 ## eqincome 0.8058481
 \end{verbatim}
 
-By default, the \texttt{convey::svygpg} function comes close to the
-results of \texttt{vardpoor::lingpg}. However, the measures of
-uncertainty do not line up, because \texttt{library(vardpoor)} defaults
-to the ultimate cluster method. This can be replicated with an
-alternative setup of the \texttt{survey.design} object.
+The variance estimate is computed by using the approximation defined in
+\eqref{eq:var}, where the linearized variable \(z\) is defined by
+\eqref{eq:lin}. The functions \texttt{convey::svygpg} and
+\texttt{vardpoor::lingpg} produce the same linearized variable \(z\).
+
+However, the measures of uncertainty do not line up, because
+\texttt{library(vardpoor)} defaults to an ultimate cluster method that
+can be replicated with an alternative setup of the
+\texttt{survey.design} object.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -3680,6 +4008,9 @@ Load and prepare the same data set:
         \CommentTok{# row number variable}
         \DataTypeTok{ID_level1 =} \StringTok{"IDd"}\NormalTok{,}
         
+        \CommentTok{# row number variable}
+        \DataTypeTok{ID_level2 =} \StringTok{"IDd"}\NormalTok{,}
+        
         \CommentTok{# strata variable}
         \DataTypeTok{H =} \StringTok{"db040"}\NormalTok{, }
         
@@ -3692,7 +4023,10 @@ Load and prepare the same data set:
         \DataTypeTok{dataset =} \NormalTok{dati, }
         
         \CommentTok{# qsr coefficient function}
-        \DataTypeTok{type =} \StringTok{"linqsr"}
+        \DataTypeTok{type =} \StringTok{"linqsr"}\NormalTok{,}
+      
+      \CommentTok{# get linearized variable}
+      \DataTypeTok{outp_lin =} \OtherTok{TRUE}
         
     \NormalTok{)}
 \end{Highlighting}
@@ -3700,26 +4034,6 @@ Load and prepare the same data set:
 
 \begin{verbatim}
 ## NULL
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# all calculations produced by vardpoor::linqsr}
-\NormalTok{varpoord_qsr_calculation$all_result}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##    type respondent_count n_nonzero pop_size    value value_eu         var
-## 1:  QSR            14827     14824  8182222 3.970004 3.971415 0.001807323
-##            se        rse       cv absolute_margin_of_error
-## 1: 0.04251263 0.01070846 1.070846               0.08332321
-##    relative_margin_of_error CI_lower CI_upper      S2_y_HT      S2_y_ca
-## 1:                 2.098819 3.886681 4.053328 3.840034e-13 3.840034e-13
-##          S2_res  var_srs_HT  var_cur_HT  var_srs_ca deff_sam deff_est
-## 1: 3.840034e-13 0.001730759 0.001807323 0.001730759 1.044238        1
-##        deff
-## 1: 1.044238
 \end{verbatim}
 
 \begin{Shaded}
@@ -3755,6 +4069,23 @@ Load and prepare the same data set:
 \begin{verbatim}
 ## eqincome 
 ## 3.970004
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# linearized variables do match}
+\CommentTok{# vardpoor}
+\NormalTok{lin_qsr_varpoord<-}\StringTok{ }\NormalTok{varpoord_qsr_calculation$lin_out$lin_qsr}
+\CommentTok{# convey }
+\NormalTok{lin_qsr_convey <-}\StringTok{ }\KeywordTok{attr}\NormalTok{(}\KeywordTok{svyqsr}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc ),}\StringTok{"lin"}\NormalTok{)}
+
+\CommentTok{# check equality}
+\KeywordTok{all.equal}\NormalTok{(lin_qsr_varpoord, lin_qsr_convey )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] TRUE
 \end{verbatim}
 
 \begin{Shaded}
@@ -3801,11 +4132,15 @@ Load and prepare the same data set:
 ## eqincome 0.04255041
 \end{verbatim}
 
-By default, the \texttt{convey::svyqsr} function comes close to the
-results of \texttt{vardpoor::linqsr}. However, the measures of
-uncertainty do not line up, because \texttt{library(vardpoor)} defaults
-to the ultimate cluster method. This can be replicated with an
-alternative setup of the \texttt{survey.design} object.
+The variance estimate is computed by using the approximation defined in
+\eqref{eq:var}, where the linearized variable \(z\) is defined by
+\eqref{eq:lin}. The functions \texttt{convey::svygpg} and
+\texttt{vardpoor::lingpg} produce the same linearized variable \(z\).
+
+However, the measures of uncertainty do not line up, because
+\texttt{library(vardpoor)} defaults to an ultimate cluster method that
+can be replicated with an alternative setup of the
+\texttt{survey.design} object.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -3905,7 +4240,7 @@ aspects of the theory and estimation procedures of each.
 \section{Alkire-Foster Class and Decomposition (svyafc,
 svyafcdec)}\label{alkire-foster-class-and-decomposition-svyafc-svyafcdec}
 
-This class of measures are defined in \citep{alkire2011}, using what is
+This class of measures are defined in \citet{alkire2011}, using what is
 called the ``dual cutoff'' approach. This method applies a cutoffs to
 define dimensional deprivations and another cutoff for multidimensional
 deprivation.
@@ -4116,7 +4451,7 @@ Replicate PDF page 10
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-55}PDF Page 10 Replication}
+\caption{\label{tab:unnamed-chunk-57}PDF Page 10 Replication}
 \centering
 \begin{tabular}[t]{lrrrrrrr}
 \toprule
@@ -4176,7 +4511,7 @@ Replicate PDF page 13
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-57}PDF Page 13 Replication}
+\caption{\label{tab:unnamed-chunk-59}PDF Page 13 Replication}
 \centering
 \begin{tabular}[t]{lrrrrrrr}
 \toprule
@@ -4223,7 +4558,7 @@ Replicate PDF page 16
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-59}PDF Page 16 Replication}
+\caption{\label{tab:unnamed-chunk-61}PDF Page 16 Replication}
 \centering
 \begin{tabular}[t]{lrrr}
 \toprule
@@ -4335,7 +4670,7 @@ console.
 \section{Bourguignon-Chakravarty (2003) multidimensional poverty
 class}\label{bourguignon-chakravarty-2003-multidimensional-poverty-class}
 
-A class of poverty measures is proposed in \citep{bourguignon2003},
+A class of poverty measures is proposed in \citet{bourguignon2003},
 using a cross-dimensional function that assigns values to each set of
 dimensionally normalized poverty gaps. It can be defined as: \[
 BCh = \sum_{i \in n} \bigg[ \bigg( \sum_{j \in d} w_{j} x_{ij} \bigg)^{\frac{1}{\theta}} \bigg]^\alpha \text{, } \theta > 0 \text{, } \alpha > 0
@@ -4349,7 +4684,7 @@ weighted generalized mean across achievement dimensions. For instance,
 when \(\theta = 1\), the cross-dimensional aggregation becomes the
 weighted average of all dimensions. As \(\theta\) increases, the
 importance of the individual's most deprived dimension increases. As
-\citep{vega2009} points out, it also weights the inequality among
+\citet{vega2009} points out, it also weights the inequality among
 deprivations. In its turn, \(\alpha\) works as society's
 poverty-aversion measure parameter. In another words, as \(\alpha\)
 increases, more weight is given to the most deprived individuals.
@@ -4359,10 +4694,25 @@ the weighted deprivation scores.
 \section{Bourguignon (1999) inequality class
 (svybmi)}\label{bourguignon-1999-inequality-class-svybmi}
 
+\citet{bourguignon1999} proposes a multidimensional inequality index
+that possesses interesting properties related to the correlation among
+the welfare dimensions measured. The estimator used in \texttt{convey}
+comes from the formula presented in \citet{lugo2007} and is defined as:
+\[
+B_{I} = 1 - \frac{1}{ \widehat{N} } \frac{ \sum_{ i \in S } w_i \bigg[ \sum_{ j \in d } w_j x_{ij} \bigg]^{ \alpha / \beta } }{ 
+\bigg[ \sum_{ j \in d } w_j \mu_{ij} \bigg]^{ \alpha / \beta } },
+\] where \(\alpha \geqslant 0\) is an inequality-aversion parameter and
+\(\beta \leqslant 1\) is a parameter defining the degree of substitution
+among dimensions.
+
+This measure is strong scale-invariant when \(\beta = 0\), although
+\citet{bourguignon1999} demonstrates that strong scale-dependent
+measures might be interesting in the context of multidimensional
+inequality. Also, it can be shown that stronger correlation among
+dimensions leads to less inequality if \(\beta > \alpha\).
+
 For additional usage examples of \texttt{svybmi}, type
 \texttt{?convey::svybmi} in the R console.
-
-\citep{bourguignon1999} and \citep{lugo2007}
 
 \bibliography{packages,book}
 
