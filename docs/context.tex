@@ -124,21 +124,10 @@
   \postauthor{\par}
   \predate{\centering\large\emph}
   \postdate{\par}
-  \date{2017-03-04}
+  \date{2017-04-06}
 
 \usepackage{booktabs}
 
-\usepackage{amsthm}
-\newtheorem{theorem}{Theorem}[chapter]
-\newtheorem{lemma}{Lemma}[chapter]
-\theoremstyle{definition}
-\newtheorem{definition}{Definition}[chapter]
-\newtheorem{corollary}{Corollary}[chapter]
-\newtheorem{proposition}{Proposition}[chapter]
-\theoremstyle{definition}
-\newtheorem{example}{Example}[chapter]
-\theoremstyle{remark}
-\newtheorem*{remark}{Remark}
 \begin{document}
 \maketitle
 
@@ -308,7 +297,7 @@ Using the same data set, we estimate the quintile share ratio:
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# for the whole population}
-\KeywordTok{svyqsr}\NormalTok{(~eqIncome, }\DataTypeTok{design=}\NormalTok{des_eusilc, }\DataTypeTok{alpha=} \NormalTok{.}\DecValTok{20}\NormalTok{)}
+\KeywordTok{svyqsr}\NormalTok{(~eqIncome, }\DataTypeTok{design=}\NormalTok{des_eusilc, }\DataTypeTok{alpha1=} \NormalTok{.}\DecValTok{20}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -321,7 +310,7 @@ eqIncome 3.97 0.0426
 \begin{Highlighting}[]
 \CommentTok{# for domains}
 \KeywordTok{svyby}\NormalTok{(~eqIncome, }\DataTypeTok{by =} \NormalTok{~db040, }\DataTypeTok{design =} \NormalTok{des_eusilc,}
-  \DataTypeTok{FUN =} \NormalTok{svyqsr, }\DataTypeTok{alpha=} \NormalTok{.}\DecValTok{20}\NormalTok{, }\DataTypeTok{deff =} \OtherTok{FALSE}\NormalTok{)}
+  \DataTypeTok{FUN =} \NormalTok{svyqsr, }\DataTypeTok{alpha1=} \NormalTok{.}\DecValTok{20}\NormalTok{, }\DataTypeTok{deff =} \OtherTok{FALSE}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -361,7 +350,7 @@ and then use the function \texttt{svyarpr}:
 
 \begin{verbatim}
             arpr     SE
-eqIncome 0.14444 0.0026
+eqIncome 0.14444 0.0029
 \end{verbatim}
 
 \begin{Shaded}
@@ -372,15 +361,15 @@ eqIncome 0.14444 0.0026
 
 \begin{verbatim}
                       db040  eqIncome se.eqIncome
-Burgenland       Burgenland 0.1953984 0.019906988
-Carinthia         Carinthia 0.1308627 0.007986081
-Lower Austria Lower Austria 0.1384362 0.006747692
-Salzburg           Salzburg 0.1378734 0.011004370
-Styria               Styria 0.1437464 0.008142479
-Tyrol                 Tyrol 0.1530819 0.008836565
-Upper Austria Upper Austria 0.1088977 0.004818589
-Vienna               Vienna 0.1723468 0.006268712
-Vorarlberg       Vorarlberg 0.1653731 0.015131573
+Burgenland       Burgenland 0.1953984 0.017314710
+Carinthia         Carinthia 0.1308627 0.009821102
+Lower Austria Lower Austria 0.1384362 0.007285043
+Salzburg           Salzburg 0.1378734 0.013427645
+Styria               Styria 0.1437464 0.008404135
+Tyrol                 Tyrol 0.1530819 0.010454606
+Upper Austria Upper Austria 0.1088977 0.005634936
+Vienna               Vienna 0.1723468 0.009446780
+Vorarlberg       Vorarlberg 0.1653731 0.014015339
 \end{verbatim}
 
 The functions of the library convey are called in a similar way to the
@@ -431,8 +420,8 @@ py010n   NA NA
 \end{Shaded}
 
 \begin{verbatim}
-          gini    SE
-py010n 0.64606 0.004
+          gini     SE
+py010n 0.64606 0.0031
 \end{verbatim}
 
 \section{Underlying Calculations}\label{underlying-calculations}
@@ -770,6 +759,9 @@ Load and prepare the same data set:
         \CommentTok{# arpr coefficient function}
         \DataTypeTok{type =} \StringTok{"linarpr"}\NormalTok{,}
       
+      \CommentTok{# poverty threshold range}
+      \DataTypeTok{order_quant =} \NormalTok{50L ,}
+          
       \CommentTok{# get linearized variable}
       \DataTypeTok{outp_lin =} \OtherTok{TRUE}
         
@@ -1025,6 +1017,9 @@ Load and prepare the same data set:
         
         \CommentTok{# arpt coefficient function}
         \DataTypeTok{type =} \StringTok{"linarpt"}\NormalTok{,}
+      
+      \CommentTok{# poverty threshold range}
+      \DataTypeTok{order_quant =} \NormalTok{50L ,}
       
         \CommentTok{# get linearized variable}
       \DataTypeTok{outp_lin =} \OtherTok{TRUE}
@@ -1284,6 +1279,9 @@ Load and prepare the same data set:
         \CommentTok{# rmir coefficient function}
         \DataTypeTok{type =} \StringTok{"linrmir"}\NormalTok{,}
       
+      \CommentTok{# poverty threshold range}
+      \DataTypeTok{order_quant =} \NormalTok{50L ,}
+      
       \CommentTok{# get linearized variable}
       \DataTypeTok{outp_lin =} \OtherTok{TRUE}
         
@@ -1540,6 +1538,9 @@ Load and prepare the same data set:
         \CommentTok{# rmpg coefficient function}
         \DataTypeTok{type =} \StringTok{"linrmpg"}\NormalTok{,}
       
+      \CommentTok{# poverty threshold range}
+      \DataTypeTok{order_quant =} \NormalTok{50L ,}
+      
       \CommentTok{# get linearized variable}
       \DataTypeTok{outp_lin =} \OtherTok{TRUE}
         
@@ -1795,6 +1796,9 @@ Load and prepare the same data set:
         
         \CommentTok{# poormed coefficient function}
         \DataTypeTok{type =} \StringTok{"linpoormed"}\NormalTok{,}
+      
+      \CommentTok{# poverty threshold range}
+      \DataTypeTok{order_quant =} \NormalTok{50L ,}
       
       \CommentTok{# get linearized variable}
       \DataTypeTok{outp_lin =} \OtherTok{TRUE}
@@ -2687,6 +2691,9 @@ Load and prepare the same data set:
         
         \CommentTok{# gini coefficient function}
         \DataTypeTok{type =} \StringTok{"lingini"}\NormalTok{,}
+      
+      \CommentTok{# poverty threshold range}
+      \DataTypeTok{order_quant =} \NormalTok{50L ,}
       
       \CommentTok{# get linearized variable}
       \DataTypeTok{outp_lin =} \OtherTok{TRUE}
@@ -3770,6 +3777,9 @@ Load and prepare the same data set:
         \CommentTok{# gender variable}
         \DataTypeTok{gender =} \StringTok{"one_two"}\NormalTok{,}
       
+      \CommentTok{# poverty threshold range}
+      \DataTypeTok{order_quant =} \NormalTok{50L ,}
+      
       \CommentTok{# get linearized variable}
       \DataTypeTok{outp_lin =} \OtherTok{TRUE}
     \NormalTok{)}
@@ -4025,6 +4035,9 @@ Load and prepare the same data set:
         \CommentTok{# qsr coefficient function}
         \DataTypeTok{type =} \StringTok{"linqsr"}\NormalTok{,}
       
+      \CommentTok{# poverty threshold range}
+      \DataTypeTok{order_quant =} \NormalTok{50L ,}
+      
       \CommentTok{# get linearized variable}
       \DataTypeTok{outp_lin =} \OtherTok{TRUE}
         
@@ -4233,9 +4246,9 @@ estimating individual scores from an individual's set of
 characteristics; then (2) aggregating those individual scores into a
 single measure for the population.
 
-The following section will present a measure of multidimensional poverty
-and a measure of multidimensional inequality, describing the main
-aspects of the theory and estimation procedures of each.
+The following section will present measures of multidimensional poverty
+and inequality, describing the main aspects of the theory and estimation
+procedures of each.
 
 \section{Alkire-Foster Class and Decomposition (svyafc,
 svyafcdec)}\label{alkire-foster-class-and-decomposition-svyafc-svyafcdec}
