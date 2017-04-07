@@ -4,7 +4,323 @@ Another problem faced by societies is inequality. Economic inequality can have s
 
 Most inequality data comes from censuses and household surveys. Therefore, in order to produce reliable estimates from this samples, appropriate procedures are necessary.
 
-This chapter presents brief presentations on inequality measures, also providing replication examples if possible. It starts with the Lorenz curve and inequality measures derived from it, then the concept of entropy and measures based on it are presented.
+This chapter presents brief presentations on inequality measures, also providing replication examples if possible. It starts with an initial attempt to measure the inequality between two groups of a population; then, it presents ideas of overall inequality indices, moving from the quintile share ratio to the Lorenz curve and measures derived from it; finally, it discusses the concept of entropy and presents inequality measures based on it. 
+
+
+## The Gender Pay Gap (svygpg)
+
+Although the $GPG$ is not an inequality measure in the usual sense, it can still be an useful instrument to evaluate the discrimination among men and women. Put simply, it expresses the relative difference between the average hourly earnings of men and women, presenting it as a percentage of the average of hourly earnings of men. 
+
+In mathematical terms, this index can be described as,
+
+\[ \widehat{GPG} = \frac{ \widehat{\bar{Y}}_{male} - \widehat{\bar{Y}}_{female} }{ \widehat{\bar{Y}}_{male} } \],
+
+which is precisely the estimator used in the package. As we can see from the formula, if there is no difference among classes, $GPG = 0$. Else, if $GPG > 0$, it means that the average hourly income received by women are $GPG$ percent smaller than men's. For negative $GPG$, it means that women's hourly earnings are $GPG$ percent larger than men's. In other words, the larger the $GPG$, larger is the shortfall of women's hourly earnings. 
+
+We can also develop a more straightforward idea: for every \$1 raise in men's hourly earnings, women's hourly earnings are expected to increase \$$(1-GPG)$. For instance, assuming $GPG = 0.8$, for every \$1.00 increase in men's average hourly earnings, women's hourly earnings would increase only \$0.20.
+
+---
+
+**A replication example**
+
+The R `vardpoor` package [@vardpoor], created by researchers at the Central Statistical Bureau of Latvia, includes a gpg coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.
+
+Load and prepare the same data set:
+
+```{r}
+# load the convey package
+library(convey)
+
+# load the survey library
+library(survey)
+
+# load the vardpoor library
+library(vardpoor)
+
+# load the synthetic european union statistics on income & living conditions
+data(eusilc)
+
+# make all column names lowercase
+names( eusilc ) <- tolower( names( eusilc ) )
+
+# coerce the gender variable to numeric 1 or 2
+eusilc$one_two <- as.numeric( eusilc$rb090 == "female" ) + 1
+
+# add a column with the row number
+dati <- data.table(IDd = 1 : nrow(eusilc), eusilc)
+
+# calculate the gpg coefficient
+# using the R vardpoor library
+varpoord_gpg_calculation <-
+	varpoord(
+	
+		# analysis variable
+		Y = "eqincome", 
+		
+		# weights variable
+		w_final = "rb050",
+		
+		# row number variable
+		ID_level1 = "IDd",
+		
+		# row number variable
+		ID_level2 = "IDd",
+		
+		# strata variable
+		H = "db040", 
+		
+		N_h = NULL ,
+		
+		# clustering variable
+		PSU = "rb030", 
+		
+		# data.table
+		dataset = dati, 
+		
+		# gpg coefficient function
+		type = "lingpg" ,
+		
+		# gender variable
+		gender = "one_two",
+	  
+	  # poverty threshold range
+	  order_quant = 50L ,
+	  
+	  # get linearized variable
+	  outp_lin = TRUE
+	)
+
+
+
+# construct a survey.design
+# using our recommended setup
+des_eusilc <- 
+	svydesign( 
+		ids = ~ rb030 , 
+		strata = ~ db040 ,  
+		weights = ~ rb050 , 
+		data = eusilc
+	)
+
+# immediately run the convey_prep function on it
+des_eusilc <- convey_prep( des_eusilc )
+
+# coefficients do match
+varpoord_gpg_calculation$all_result$value
+coef( svygpg( ~ eqincome , des_eusilc , sex = ~ rb090 ) ) * 100
+
+# linearized variables do match
+# vardpoor
+lin_gpg_varpoord<- varpoord_gpg_calculation$lin_out$lin_gpg
+# convey 
+lin_gpg_convey <- attr(svygpg( ~ eqincome , des_eusilc, sex = ~ rb090 ),"lin")
+
+# check equality
+all.equal(lin_gpg_varpoord,100*lin_gpg_convey[,1] )
+
+# variances do not match exactly
+attr( svygpg( ~ eqincome , des_eusilc , sex = ~ rb090 ) , 'var' ) * 10000
+varpoord_gpg_calculation$all_result$var
+
+# standard errors do not match exactly
+varpoord_gpg_calculation$all_result$se
+SE( svygpg( ~ eqincome , des_eusilc , sex = ~ rb090 ) ) * 100
+```
+
+The variance estimate is computed by using the approximation defined in \@ref(eq:var), where the linearized variable $z$ is defined by \@ref(eq:lin). The functions `convey::svygpg` and `vardpoor::lingpg` produce the same linearized variable $z$.
+
+However, the measures of uncertainty do not line up, because `library(vardpoor)` defaults to an ultimate cluster method that can be replicated with an alternative setup of the `survey.design` object.
+
+```{r}
+# within each strata, sum up the weights
+cluster_sums <- aggregate( eusilc$rb050 , list( eusilc$db040 ) , sum )
+
+# name the within-strata sums of weights the `cluster_sum`
+names( cluster_sums ) <- c( "db040" , "cluster_sum" )
+
+# merge this column back onto the data.frame
+eusilc <- merge( eusilc , cluster_sums )
+
+# construct a survey.design
+# with the fpc using the cluster sum
+des_eusilc_ultimate_cluster <- 
+	svydesign( 
+		ids = ~ rb030 , 
+		strata = ~ db040 ,  
+		weights = ~ rb050 , 
+		data = eusilc , 
+		fpc = ~ cluster_sum 
+	)
+
+# again, immediately run the convey_prep function on the `survey.design`
+des_eusilc_ultimate_cluster <- convey_prep( des_eusilc_ultimate_cluster )
+
+# matches
+attr( svygpg( ~ eqincome , des_eusilc_ultimate_cluster , sex = ~ rb090 ) , 'var' ) * 10000
+varpoord_gpg_calculation$all_result$var
+
+# matches
+varpoord_gpg_calculation$all_result$se
+SE( svygpg( ~ eqincome , des_eusilc_ultimate_cluster , sex = ~ rb090 ) ) * 100
+```
+
+For additional usage examples of `svygpg`, type `?convey::svygpg` in the R console.
+
+
+
+## Quintile Share Ratio (svyqsr)
+
+Unlike the previous measure, the quintile share ratio is an inequality measure in itself, depending only of the income distribution to evaluate the degree of inequality. By definition, it can be described as the ratio between the income share held by the richest 20% and the poorest 20% of the population. 
+
+In plain terms, it expresses how many times the wealthier part of the population are richer than the poorest part. For instance, a $QSR = 4$ implies that the upper class owns 4 times as much of the total income as the poor.
+
+The quintile share ratio can be modified to a more general function of fractile share ratios. For instance, the Palma index is defined as the ratio between the share of the 10% richest over the share held by the poorest 40% and [@cobham2015] presents interesting arguments for its usage.
+
+---
+
+**A replication example**
+
+The R `vardpoor` package [@vardpoor], created by researchers at the Central Statistical Bureau of Latvia, includes a qsr coefficient calculation using the ultimate cluster method.  The example below reproduces those statistics.
+
+Load and prepare the same data set:
+
+```{r}
+# load the convey package
+library(convey)
+
+# load the survey library
+library(survey)
+
+# load the vardpoor library
+library(vardpoor)
+
+# load the synthetic european union statistics on income & living conditions
+data(eusilc)
+
+# make all column names lowercase
+names( eusilc ) <- tolower( names( eusilc ) )
+
+# add a column with the row number
+dati <- data.table(IDd = 1 : nrow(eusilc), eusilc)
+
+# calculate the qsr coefficient
+# using the R vardpoor library
+varpoord_qsr_calculation <-
+	varpoord(
+	
+		# analysis variable
+		Y = "eqincome", 
+		
+		# weights variable
+		w_final = "rb050",
+		
+		# row number variable
+		ID_level1 = "IDd",
+		
+		# row number variable
+		ID_level2 = "IDd",
+		
+		# strata variable
+		H = "db040", 
+		
+		N_h = NULL ,
+		
+		# clustering variable
+		PSU = "rb030", 
+		
+		# data.table
+		dataset = dati, 
+		
+		# qsr coefficient function
+		type = "linqsr",
+	  
+	  # poverty threshold range
+	  order_quant = 50L ,
+	  
+	  # get linearized variable
+	  outp_lin = TRUE
+		
+	)
+
+
+
+# construct a survey.design
+# using our recommended setup
+des_eusilc <- 
+	svydesign( 
+		ids = ~ rb030 , 
+		strata = ~ db040 ,  
+		weights = ~ rb050 , 
+		data = eusilc
+	)
+
+# immediately run the convey_prep function on it
+des_eusilc <- convey_prep( des_eusilc )
+
+# coefficients do match
+varpoord_qsr_calculation$all_result$value
+coef( svyqsr( ~ eqincome , des_eusilc ) )
+
+# linearized variables do match
+# vardpoor
+lin_qsr_varpoord<- varpoord_qsr_calculation$lin_out$lin_qsr
+# convey 
+lin_qsr_convey <- attr(svyqsr( ~ eqincome , des_eusilc ),"lin")
+
+# check equality
+all.equal(lin_qsr_varpoord, lin_qsr_convey )
+
+# variances do not match exactly
+attr( svyqsr( ~ eqincome , des_eusilc ) , 'var' )
+varpoord_qsr_calculation$all_result$var
+
+# standard errors do not match exactly
+varpoord_qsr_calculation$all_result$se
+SE( svyqsr( ~ eqincome , des_eusilc ) )
+```
+
+The variance estimate is computed by using the approximation defined in \@ref(eq:var), where the linearized variable $z$ is defined by \@ref(eq:lin). The functions `convey::svygpg` and `vardpoor::lingpg` produce the same linearized variable $z$.
+
+However, the measures of uncertainty do not line up, because `library(vardpoor)` defaults to an ultimate cluster method that can be replicated with an alternative setup of the `survey.design` object.
+
+
+```{r}
+# within each strata, sum up the weights
+cluster_sums <- aggregate( eusilc$rb050 , list( eusilc$db040 ) , sum )
+
+# name the within-strata sums of weights the `cluster_sum`
+names( cluster_sums ) <- c( "db040" , "cluster_sum" )
+
+# merge this column back onto the data.frame
+eusilc <- merge( eusilc , cluster_sums )
+
+# construct a survey.design
+# with the fpc using the cluster sum
+des_eusilc_ultimate_cluster <- 
+	svydesign( 
+		ids = ~ rb030 , 
+		strata = ~ db040 ,  
+		weights = ~ rb050 , 
+		data = eusilc , 
+		fpc = ~ cluster_sum 
+	)
+
+# again, immediately run the convey_prep function on the `survey.design`
+des_eusilc_ultimate_cluster <- convey_prep( des_eusilc_ultimate_cluster )
+
+# matches
+attr( svyqsr( ~ eqincome , des_eusilc_ultimate_cluster ) , 'var' )
+varpoord_qsr_calculation$all_result$var
+
+# matches
+varpoord_qsr_calculation$all_result$se
+SE( svyqsr( ~ eqincome , des_eusilc_ultimate_cluster ) )
+```
+
+
+
+
+For additional usage examples of `svyqsr`, type `?convey::svyqsr` in the R console.
 
 ## Lorenz Curve (svylorenz)
 
@@ -730,327 +1046,3 @@ svyatk( ~ eybhc0 , z81_two , epsilon = 2.5 )
 
 
 For additional usage examples of `svyatk`, type `?convey::svyatk` in the R console.
-
-
-
-
-
-
-# Wellbeing Measures  {#wellbeing}
-
-djalmapessoa_look do any of the other functions need to be moved to this wellbeing chapter?
-
-
-## The Gender Pay Gap (svygpg)
-
-
-here are the references
-
-
-[@osier2009] and [@deville1999]
-
-
-
-
-
----
-
-**A replication example**
-
-The R `vardpoor` package [@vardpoor], created by researchers at the Central Statistical Bureau of Latvia, includes a gpg coefficient calculation using the ultimate cluster method.  The example below reproduces those statistics.
-
-Load and prepare the same data set:
-
-```{r}
-# load the convey package
-library(convey)
-
-# load the survey library
-library(survey)
-
-# load the vardpoor library
-library(vardpoor)
-
-# load the synthetic european union statistics on income & living conditions
-data(eusilc)
-
-# make all column names lowercase
-names( eusilc ) <- tolower( names( eusilc ) )
-
-# coerce the gender variable to numeric 1 or 2
-eusilc$one_two <- as.numeric( eusilc$rb090 == "female" ) + 1
-
-# add a column with the row number
-dati <- data.table(IDd = 1 : nrow(eusilc), eusilc)
-
-# calculate the gpg coefficient
-# using the R vardpoor library
-varpoord_gpg_calculation <-
-	varpoord(
-	
-		# analysis variable
-		Y = "eqincome", 
-		
-		# weights variable
-		w_final = "rb050",
-		
-		# row number variable
-		ID_level1 = "IDd",
-		
-		# row number variable
-		ID_level2 = "IDd",
-		
-		# strata variable
-		H = "db040", 
-		
-		N_h = NULL ,
-		
-		# clustering variable
-		PSU = "rb030", 
-		
-		# data.table
-		dataset = dati, 
-		
-		# gpg coefficient function
-		type = "lingpg" ,
-		
-		# gender variable
-		gender = "one_two",
-	  
-	  # poverty threshold range
-	  order_quant = 50L ,
-	  
-	  # get linearized variable
-	  outp_lin = TRUE
-	)
-
-
-
-# construct a survey.design
-# using our recommended setup
-des_eusilc <- 
-	svydesign( 
-		ids = ~ rb030 , 
-		strata = ~ db040 ,  
-		weights = ~ rb050 , 
-		data = eusilc
-	)
-
-# immediately run the convey_prep function on it
-des_eusilc <- convey_prep( des_eusilc )
-
-# coefficients do match
-varpoord_gpg_calculation$all_result$value
-coef( svygpg( ~ eqincome , des_eusilc , sex = ~ rb090 ) ) * 100
-
-# linearized variables do match
-# vardpoor
-lin_gpg_varpoord<- varpoord_gpg_calculation$lin_out$lin_gpg
-# convey 
-lin_gpg_convey <- attr(svygpg( ~ eqincome , des_eusilc, sex = ~ rb090 ),"lin")
-
-# check equality
-all.equal(lin_gpg_varpoord,100*lin_gpg_convey[,1] )
-
-# variances do not match exactly
-attr( svygpg( ~ eqincome , des_eusilc , sex = ~ rb090 ) , 'var' ) * 10000
-varpoord_gpg_calculation$all_result$var
-
-# standard errors do not match exactly
-varpoord_gpg_calculation$all_result$se
-SE( svygpg( ~ eqincome , des_eusilc , sex = ~ rb090 ) ) * 100
-```
-
-The variance estimate is computed by using the approximation defined in \@ref(eq:var), where the linearized variable $z$ is defined by \@ref(eq:lin). The functions `convey::svygpg` and `vardpoor::lingpg` produce the same linearized variable $z$.
-
-However, the measures of uncertainty do not line up, because `library(vardpoor)` defaults to an ultimate cluster method that can be replicated with an alternative setup of the `survey.design` object.
-
-```{r}
-# within each strata, sum up the weights
-cluster_sums <- aggregate( eusilc$rb050 , list( eusilc$db040 ) , sum )
-
-# name the within-strata sums of weights the `cluster_sum`
-names( cluster_sums ) <- c( "db040" , "cluster_sum" )
-
-# merge this column back onto the data.frame
-eusilc <- merge( eusilc , cluster_sums )
-
-# construct a survey.design
-# with the fpc using the cluster sum
-des_eusilc_ultimate_cluster <- 
-	svydesign( 
-		ids = ~ rb030 , 
-		strata = ~ db040 ,  
-		weights = ~ rb050 , 
-		data = eusilc , 
-		fpc = ~ cluster_sum 
-	)
-
-# again, immediately run the convey_prep function on the `survey.design`
-des_eusilc_ultimate_cluster <- convey_prep( des_eusilc_ultimate_cluster )
-
-# matches
-attr( svygpg( ~ eqincome , des_eusilc_ultimate_cluster , sex = ~ rb090 ) , 'var' ) * 10000
-varpoord_gpg_calculation$all_result$var
-
-# matches
-varpoord_gpg_calculation$all_result$se
-SE( svygpg( ~ eqincome , des_eusilc_ultimate_cluster , sex = ~ rb090 ) ) * 100
-```
-
-For additional usage examples of `svygpg`, type `?convey::svygpg` in the R console.
-
-
-
-## Quintile Share Ratio (svyqsr)
-
-
-here are the references
-
-[@osier2009] and [@deville1999]
-
----
-
-**A replication example**
-
-The R `vardpoor` package [@vardpoor], created by researchers at the Central Statistical Bureau of Latvia, includes a qsr coefficient calculation using the ultimate cluster method.  The example below reproduces those statistics.
-
-Load and prepare the same data set:
-
-```{r}
-# load the convey package
-library(convey)
-
-# load the survey library
-library(survey)
-
-# load the vardpoor library
-library(vardpoor)
-
-# load the synthetic european union statistics on income & living conditions
-data(eusilc)
-
-# make all column names lowercase
-names( eusilc ) <- tolower( names( eusilc ) )
-
-# add a column with the row number
-dati <- data.table(IDd = 1 : nrow(eusilc), eusilc)
-
-# calculate the qsr coefficient
-# using the R vardpoor library
-varpoord_qsr_calculation <-
-	varpoord(
-	
-		# analysis variable
-		Y = "eqincome", 
-		
-		# weights variable
-		w_final = "rb050",
-		
-		# row number variable
-		ID_level1 = "IDd",
-		
-		# row number variable
-		ID_level2 = "IDd",
-		
-		# strata variable
-		H = "db040", 
-		
-		N_h = NULL ,
-		
-		# clustering variable
-		PSU = "rb030", 
-		
-		# data.table
-		dataset = dati, 
-		
-		# qsr coefficient function
-		type = "linqsr",
-	  
-	  # poverty threshold range
-	  order_quant = 50L ,
-	  
-	  # get linearized variable
-	  outp_lin = TRUE
-		
-	)
-
-
-
-# construct a survey.design
-# using our recommended setup
-des_eusilc <- 
-	svydesign( 
-		ids = ~ rb030 , 
-		strata = ~ db040 ,  
-		weights = ~ rb050 , 
-		data = eusilc
-	)
-
-# immediately run the convey_prep function on it
-des_eusilc <- convey_prep( des_eusilc )
-
-# coefficients do match
-varpoord_qsr_calculation$all_result$value
-coef( svyqsr( ~ eqincome , des_eusilc ) )
-
-# linearized variables do match
-# vardpoor
-lin_qsr_varpoord<- varpoord_qsr_calculation$lin_out$lin_qsr
-# convey 
-lin_qsr_convey <- attr(svyqsr( ~ eqincome , des_eusilc ),"lin")
-
-# check equality
-all.equal(lin_qsr_varpoord, lin_qsr_convey )
-
-# variances do not match exactly
-attr( svyqsr( ~ eqincome , des_eusilc ) , 'var' )
-varpoord_qsr_calculation$all_result$var
-
-# standard errors do not match exactly
-varpoord_qsr_calculation$all_result$se
-SE( svyqsr( ~ eqincome , des_eusilc ) )
-```
-
-The variance estimate is computed by using the approximation defined in \@ref(eq:var), where the linearized variable $z$ is defined by \@ref(eq:lin). The functions `convey::svygpg` and `vardpoor::lingpg` produce the same linearized variable $z$.
-
-However, the measures of uncertainty do not line up, because `library(vardpoor)` defaults to an ultimate cluster method that can be replicated with an alternative setup of the `survey.design` object.
-
-
-```{r}
-# within each strata, sum up the weights
-cluster_sums <- aggregate( eusilc$rb050 , list( eusilc$db040 ) , sum )
-
-# name the within-strata sums of weights the `cluster_sum`
-names( cluster_sums ) <- c( "db040" , "cluster_sum" )
-
-# merge this column back onto the data.frame
-eusilc <- merge( eusilc , cluster_sums )
-
-# construct a survey.design
-# with the fpc using the cluster sum
-des_eusilc_ultimate_cluster <- 
-	svydesign( 
-		ids = ~ rb030 , 
-		strata = ~ db040 ,  
-		weights = ~ rb050 , 
-		data = eusilc , 
-		fpc = ~ cluster_sum 
-	)
-
-# again, immediately run the convey_prep function on the `survey.design`
-des_eusilc_ultimate_cluster <- convey_prep( des_eusilc_ultimate_cluster )
-
-# matches
-attr( svyqsr( ~ eqincome , des_eusilc_ultimate_cluster ) , 'var' )
-varpoord_qsr_calculation$all_result$var
-
-# matches
-varpoord_qsr_calculation$all_result$se
-SE( svyqsr( ~ eqincome , des_eusilc_ultimate_cluster ) )
-```
-
-
-
-For additional usage examples of `svyqsr`, type `?convey::svyqsr` in the R console.
-

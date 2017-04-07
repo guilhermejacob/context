@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:title" content="Poverty and Inequality with Complex Survey Data" />
+<meta property="og:type" content="book" />
+
+
+<meta property="og:description" content="A book about the R convey package" />
+<meta name="github-repo" content="guilhermejacob/context" />
+
+<meta name="author" content="Guilherme Jacob, Anthony Damico, and Djalma Pessoa" />
+
+<meta name="date" content="2017-04-07" />
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+</script>
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+
+<meta name="description" content="A book about the R convey package">
+
+<title>Poverty and Inequality with Complex Survey Data</title>
+
+<link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" />
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+<link rel="stylesheet" href="toc.css" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+<div class="row">
+<div class="col-sm-12">
+<div id="TOC">
+<ul>
+<li class="has-sub"><a href="index.html#introduction"><span class="toc-section-number">1</span> Introduction</a><ul>
+<li><a href="1-1-install.html#install"><span class="toc-section-number">1.1</span> Installation</a></li>
+<li><a href="1-2-survey.html#survey"><span class="toc-section-number">1.2</span> Complex surveys and statistical inference</a></li>
+<li><a href="1-3-usage-examples.html#usage-examples"><span class="toc-section-number">1.3</span> Usage Examples</a></li>
+<li><a href="1-4-underlying-calculations.html#underlying-calculations"><span class="toc-section-number">1.4</span> Underlying Calculations</a></li>
+<li><a href="1-5-the-variance-estimator.html#the-variance-estimator"><span class="toc-section-number">1.5</span> The Variance Estimator</a></li>
+<li><a href="1-6-influence-functions.html#influence-functions"><span class="toc-section-number">1.6</span> Influence Functions</a></li>
+<li><a href="1-7-influence-function-examples.html#influence-function-examples"><span class="toc-section-number">1.7</span> Influence Function Examples</a></li>
+<li><a href="1-8-examples-of-linearization-using-the-influence-function.html#examples-of-linearization-using-the-influence-function"><span class="toc-section-number">1.8</span> Examples of Linearization Using the Influence Function</a></li>
+<li><a href="1-9-replication-designs.html#replication-designs"><span class="toc-section-number">1.9</span> Replication Designs</a></li>
+<li><a href="1-10-decomposition.html#decomposition"><span class="toc-section-number">1.10</span> Decomposition</a></li>
+</ul></li>
+<li class="has-sub"><a href="2-poverty.html#poverty"><span class="toc-section-number">2</span> Poverty Indices</a><ul>
+<li><a href="2-1-at-risk-of-poverty-ratio-svyarpr.html#at-risk-of-poverty-ratio-svyarpr"><span class="toc-section-number">2.1</span> At Risk of Poverty Ratio (svyarpr)</a></li>
+<li><a href="2-2-at-risk-of-poverty-threshold-svyarpt.html#at-risk-of-poverty-threshold-svyarpt"><span class="toc-section-number">2.2</span> At Risk of Poverty Threshold (svyarpt)</a></li>
+<li><a href="2-3-relative-median-income-ratio-svyrmir.html#relative-median-income-ratio-svyrmir"><span class="toc-section-number">2.3</span> Relative Median Income Ratio (svyrmir)</a></li>
+<li><a href="2-4-relative-median-poverty-gap-svyrmpg.html#relative-median-poverty-gap-svyrmpg"><span class="toc-section-number">2.4</span> Relative Median Poverty Gap (svyrmpg)</a></li>
+<li><a href="2-5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#median-income-below-the-at-risk-of-poverty-threshold-svypoormed"><span class="toc-section-number">2.5</span> Median Income Below the At Risk of Poverty Threshold (svypoormed)</a></li>
+<li><a href="2-6-foster-greer-thorbecke-class-svyfgt.html#foster-greer-thorbecke-class-svyfgt"><span class="toc-section-number">2.6</span> Foster-Greer-Thorbecke class (svyfgt)</a></li>
+</ul></li>
+<li class="has-sub"><a href="3-inequality.html#inequality"><span class="toc-section-number">3</span> Inequality Measurement</a><ul>
+<li><a href="3-1-the-gender-pay-gap-svygpg.html#the-gender-pay-gap-svygpg"><span class="toc-section-number">3.1</span> The Gender Pay Gap (svygpg)</a></li>
+<li><a href="3-2-quintile-share-ratio-svyqsr.html#quintile-share-ratio-svyqsr"><span class="toc-section-number">3.2</span> Quintile Share Ratio (svyqsr)</a></li>
+<li><a href="3-3-lorenz-curve-svylorenz.html#lorenz-curve-svylorenz"><span class="toc-section-number">3.3</span> Lorenz Curve (svylorenz)</a></li>
+<li><a href="3-4-gini-index-svygini.html#gini-index-svygini"><span class="toc-section-number">3.4</span> Gini index (svygini)</a></li>
+<li><a href="3-5-amato-index-svyamato.html#amato-index-svyamato"><span class="toc-section-number">3.5</span> Amato index (svyamato)</a></li>
+<li><a href="3-6-zenga-index-and-curve-svyzenga-svyzengacurve.html#zenga-index-and-curve-svyzenga-svyzengacurve"><span class="toc-section-number">3.6</span> Zenga Index and Curve (svyzenga, svyzengacurve)</a></li>
+<li><a href="3-7-entropy-based-measures.html#entropy-based-measures"><span class="toc-section-number">3.7</span> Entropy-based Measures</a></li>
+<li><a href="3-8-generalized-entropy-and-decomposition-svygei-svygeidec.html#generalized-entropy-and-decomposition-svygei-svygeidec"><span class="toc-section-number">3.8</span> Generalized Entropy and Decomposition (svygei, svygeidec)</a></li>
+<li><a href="3-9-renyi-divergence-svyrenyi.html#renyi-divergence-svyrenyi"><span class="toc-section-number">3.9</span> Rényi Divergence (svyrenyi)</a></li>
+<li><a href="3-10-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#j-divergence-and-decomposition-svyjdiv-svyjdivdec"><span class="toc-section-number">3.10</span> J-Divergence and Decomposition (svyjdiv, svyjdivdec)</a></li>
+<li><a href="3-11-atkinson-index-svyatk.html#atkinson-index-svyatk"><span class="toc-section-number">3.11</span> Atkinson index (svyatk)</a></li>
+</ul></li>
+<li class="has-sub"><a href="4-multidimensional.html#multidimensional"><span class="toc-section-number">4</span> Multidimensional Indices</a><ul>
+<li><a href="4-1-alkire-foster-class-and-decomposition-svyafc-svyafcdec.html#alkire-foster-class-and-decomposition-svyafc-svyafcdec"><span class="toc-section-number">4.1</span> Alkire-Foster Class and Decomposition (svyafc, svyafcdec)</a></li>
+<li><a href="4-2-bourguignon-chakravarty-2003-multidimensional-poverty-class.html#bourguignon-chakravarty-2003-multidimensional-poverty-class"><span class="toc-section-number">4.2</span> Bourguignon-Chakravarty (2003) multidimensional poverty class</a></li>
+<li><a href="4-3-bourguignon-1999-inequality-class-svybmi.html#bourguignon-1999-inequality-class-svybmi"><span class="toc-section-number">4.3</span> Bourguignon (1999) inequality class (svybmi)</a></li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-sm-12">
+<div id="alkire-foster-class-and-decomposition-svyafc-svyafcdec" class="section level2">
+<h2><span class="header-section-number">4.1</span> Alkire-Foster Class and Decomposition (svyafc, svyafcdec)</h2>
+<p>This class of measures are defined in <span class="citation">Alkire and Foster (<label for="tufte-mn-54" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-54" class="margin-toggle">2011<span class="marginnote">Alkire, Sabina, and James Foster. 2011. “Counting and Multidimensional Poverty Measurement.” <em>Journal of Public Economics</em> 95 (7-8): 476–87. <a href="https://ideas.repec.org/a/eee/pubeco/v95y2011i7-8p476-487.html" class="uri">https://ideas.repec.org/a/eee/pubeco/v95y2011i7-8p476-487.html</a>.</span>)</span>, using what is called the “dual cutoff” approach. This method applies a cutoffs to define dimensional deprivations and another cutoff for multidimensional deprivation.</p>
+<p>To analyze a population of <span class="math inline">\(n\)</span> individuals across <span class="math inline">\(d\)</span> achievement dimensions, the first step of the method is applying a FGT-like transformation to each dimension, defined as</p>
+<p><span class="math display">\[
+g_{ij}^\alpha = \bigg( \frac{ z_j - x_{ij} }{ z_j } \bigg)^{\alpha}
+\]</span></p>
+<p>where <span class="math inline">\(i\)</span> is an observation index, <span class="math inline">\(j\)</span> is a dimension index and <span class="math inline">\(\alpha\)</span> is an exponent weighting the deprivation intensity. If <span class="math inline">\(\alpha=0\)</span>, then <span class="math inline">\(g_{ij}^0\)</span> becomes a binary variable, assuming value <span class="math inline">\(1\)</span> if person <span class="math inline">\(i\)</span> is deprived in dimension <span class="math inline">\(j\)</span> and <span class="math inline">\(0\)</span> otherwise. The <span class="math inline">\(n \times d\)</span> matrix <span class="math inline">\(G^\alpha\)</span> will be referred to as <em>deprivation matrix</em>.</p>
+<p>Each dimension receives a weight <span class="math inline">\(w_j\)</span>, so that the weighted sum of multidimensional deprivation is the matrix multiplication of <span class="math inline">\(G^\alpha\)</span> by the <span class="math inline">\(j \times 1\)</span> vector <span class="math inline">\(W = [w_j]\)</span>. The <span class="math inline">\(n \times 1\)</span> vector <span class="math inline">\(C^\alpha = [c^\alpha_i]\)</span> is the weighted sum of dimensional deprivation scores, i.e.,</p>
+<p><span class="math display">\[
+c^\alpha_{i} = \sum_{j \in d} w_j g_{ij}^\alpha
+\]</span></p>
+<p>The second cutoff is defining those considered to be multidimensionally poor. Assuming that <span class="math inline">\(\sum_{j \in d} w_j = 1\)</span>, the multidimensional cutoff <span class="math inline">\(k\)</span> belongs to the interval <span class="math inline">\((0,1]\)</span>. If <span class="math inline">\(c^0_{i} \geqslant k\)</span>, then this person is considered multidimensionally poor. The <em>censored vector of deprivation sums</em> <span class="math inline">\(C^\alpha(k)\)</span> is defined as</p>
+<p><span class="math display">\[
+C^\alpha (k) = \bigg[ c_{ij}^\alpha \cdot \delta \big( c_{ij}^0 \geqslant k \big) \bigg] \text{,}
+\]</span></p>
+<p>where <span class="math inline">\(\delta(A)\)</span> is an indicator function, taking value <span class="math inline">\(1\)</span> if condition <span class="math inline">\(A\)</span> is true and <span class="math inline">\(0\)</span> otherwise. If <span class="math inline">\(k \geqslant \min{ w_j }\)</span>, this is called the “union approach”, where a person is considered poor if she is poor in at least one dimension. On the other extreme, the “intersection approach” happens when <span class="math inline">\(k = 1\)</span>, meaning that a person is considered poor if she is poor in all dimensions.</p>
+<p>The average of vector <span class="math inline">\(C^0 (k)\)</span> returns the multidimensional headcount ratio. For the multidimensional FGT class, a general measure can be defined as</p>
+<p><span class="math display">\[
+M^\alpha = \frac{1}{n} \sum_{i \in n} \sum_{j \in d} w_j g_{ij}^{\alpha}(k) \text{, } \alpha \geq 0 \text{,}
+\]</span></p>
+<p>where <span class="math inline">\(g_{ij}^{\alpha}(k) = g_{ij}^\alpha \cdot \delta \big( c^0_i \geqslant k \big)\)</span>.</p>
+<p>For inferential purposes, since this variable is actually the average of scores <span class="math inline">\(\sum_{j \in d} w_j g_{ij}^{\alpha}(k)\)</span>, the linearization is straightforward.</p>
+<p>The Alkire-Foster index is both dimensional and subgroup decomposable. This way, it is possible to analyze how much each dimension or group contribute to the general result. The overall poverty measure can be seen as the weighted sum of each group’s poverty measure, as in the formula below:</p>
+<p><span class="math display">\[
+M^\alpha = \sum_{l \in L} \frac{ n_l }{ n } M^\alpha_{l}
+\]</span></p>
+<p>where <span class="math inline">\(l\)</span> is one of <span class="math inline">\(L\)</span> groups.</p>
+<p>Also, the overall poverty index can be expressed across dimensions as <span class="math display">\[
+M^\alpha = \sum_{j \in d} w_j \bigg[ \frac{1}{n} \sum_{i \in n} g_{ij}^\alpha (k) \bigg] \text{.}
+\]</span></p>
+<p>Since those functions are linear combinations of ratios and totals, it is also possible to calculate standard errors for such measures.</p>
+<hr />
+<p><strong>A replication example</strong></p>
+<p>In November 2015, Christopher Jindra presented at the Oxford Poverty and Human Development Initiative on the Alkire-Foster multidimensional poverty measure. His presentation can be viewed <a href="http://www.ophi.org.uk/wp-content/uploads/Jindra_151109_OPHISeminar.pdf">here</a>. The example below reproduces those statistics.</p>
+<p>Load and prepare the same data set:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the convey package</span>
+<span class="kw">library</span>(convey)
+
+<span class="co"># load the survey library</span>
+<span class="kw">library</span>(survey)
+
+<span class="co"># load the stata-style webuse library</span>
+<span class="kw">library</span>(webuse)
+
+<span class="co"># load the same microdata set used by Jindra in his presentation</span>
+<span class="kw">webuse</span>(<span class="st">&quot;nlsw88&quot;</span>)
+
+<span class="co"># coerce that `tbl_df` to a standard R `data.frame`</span>
+nlsw88 &lt;-<span class="st"> </span><span class="kw">data.frame</span>( nlsw88 )
+
+<span class="co"># create a `collgrad` column</span>
+nlsw88$collgrad &lt;-
+<span class="st">    </span><span class="kw">factor</span>( 
+        <span class="kw">as.numeric</span>( nlsw88$collgrad ) , 
+        <span class="dt">label =</span> <span class="kw">c</span>( <span class="st">&#39;not college grad&#39;</span> , <span class="st">&#39;college grad&#39;</span> ) , 
+        <span class="dt">ordered =</span> <span class="ot">TRUE</span> 
+      )
+
+<span class="co"># coerce `married` column to factor</span>
+nlsw88$married &lt;-<span class="st"> </span>
+<span class="st">    </span><span class="kw">factor</span>( 
+        nlsw88$married , 
+        <span class="dt">levels =</span> <span class="dv">0</span>:<span class="dv">1</span> , 
+        <span class="dt">labels =</span> <span class="kw">c</span>( <span class="st">&quot;single&quot;</span> , <span class="st">&quot;married&quot;</span> ) 
+    )
+
+<span class="co"># initiate a linearized survey design object</span>
+des_nlsw88 &lt;-<span class="st"> </span><span class="kw">svydesign</span>( <span class="dt">ids =</span> ~<span class="dv">1</span> , <span class="dt">data =</span> nlsw88 )
+
+<span class="co"># immediately run the `convey_prep` function on the survey design</span>
+des_nlsw88 &lt;-<span class="st"> </span><span class="kw">convey_prep</span>(des_nlsw88)</code></pre></div>
+<p>Replicate PDF page 9</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">page_nine &lt;-
+<span class="st">  </span><span class="kw">svyafc</span>(
+    ~<span class="st"> </span>wage +<span class="st"> </span>collgrad +<span class="st"> </span>hours , 
+    <span class="dt">design =</span> des_nlsw88 , 
+    <span class="dt">cutoffs =</span> <span class="kw">list</span>( <span class="dv">4</span>, <span class="st">&#39;college grad&#39;</span> , <span class="dv">26</span> ) , 
+    <span class="dt">k =</span> <span class="dv">1</span>/<span class="dv">3</span> , <span class="dt">g =</span> <span class="dv">0</span> , 
+    <span class="dt">na.rm =</span> <span class="ot">TRUE</span>
+  )
+
+<span class="co"># MO and seMO</span>
+<span class="kw">print</span>( page_nine )</code></pre></div>
+<pre><code>##      alkire-foster     SE
+## [1,]       0.36991 0.0053</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># H seH and A seA</span>
+<span class="kw">print</span>( <span class="kw">attr</span>( page_nine , <span class="st">&quot;extra&quot;</span> ) )</code></pre></div>
+<pre><code>##        coef          SE
+## H 0.8082070 0.008316807
+## A 0.4576895 0.004573443</code></pre>
+<p>Replicate PDF page 10</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">page_ten &lt;-<span class="st"> </span><span class="ot">NULL</span>
+
+<span class="co"># loop through every poverty cutoff `k`</span>
+for( ks in <span class="kw">seq</span>( <span class="fl">0.1</span> , <span class="dv">1</span> , .<span class="dv">1</span> ) ){
+    
+    this_ks &lt;-
+<span class="st">        </span><span class="kw">svyafc</span>(
+            ~<span class="st"> </span>wage +<span class="st"> </span>collgrad +<span class="st"> </span>hours , 
+            <span class="dt">design =</span> des_nlsw88 , 
+            <span class="dt">cutoffs =</span> <span class="kw">list</span>( <span class="dv">4</span> , <span class="st">&#39;college grad&#39;</span> , <span class="dv">26</span> ) , 
+            <span class="dt">k =</span> ks , 
+            <span class="dt">g =</span> <span class="dv">0</span> , 
+            <span class="dt">na.rm =</span> <span class="ot">TRUE</span> 
+           )
+    
+    page_ten &lt;-
+<span class="st">        </span><span class="kw">rbind</span>(
+            page_ten ,
+            <span class="kw">data.frame</span>( 
+                <span class="dt">k =</span> ks , 
+                <span class="dt">MO =</span> <span class="kw">coef</span>( this_ks ) ,
+                <span class="dt">seMO =</span> <span class="kw">SE</span>( this_ks ) ,
+                <span class="dt">H =</span> <span class="kw">attr</span>( this_ks , <span class="st">&quot;extra&quot;</span> )[ <span class="dv">1</span> , <span class="dv">1</span> ] ,
+                <span class="dt">seH =</span> <span class="kw">attr</span>( this_ks , <span class="st">&quot;extra&quot;</span> )[ <span class="dv">1</span> , <span class="dv">2</span> ] ,
+                <span class="dt">A =</span> <span class="kw">attr</span>( this_ks , <span class="st">&quot;extra&quot;</span> )[ <span class="dv">2</span> , <span class="dv">1</span> ] ,
+                <span class="dt">seA =</span> <span class="kw">attr</span>( this_ks , <span class="st">&quot;extra&quot;</span> )[ <span class="dv">2</span> , <span class="dv">2</span> ]
+          )
+        )
+    
+}</code></pre></div>
+<p><!--
+<caption>--><span class="marginnote shownote"><span id="tab:unnamed-chunk-57">Table 4.1: </span>PDF Page 10 Replication</span><!--</caption>--></p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">k</th>
+<th align="right">MO</th>
+<th align="right">seMO</th>
+<th align="right">H</th>
+<th align="right">seH</th>
+<th align="right">A</th>
+<th align="right">seA</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>alkire-foster</td>
+<td align="right">0.1</td>
+<td align="right">0.3699078</td>
+<td align="right">0.0053059</td>
+<td align="right">0.8082070</td>
+<td align="right">0.0083168</td>
+<td align="right">0.4576895</td>
+<td align="right">0.0045734</td>
+</tr>
+<tr class="even">
+<td>alkire-foster1</td>
+<td align="right">0.2</td>
+<td align="right">0.3699078</td>
+<td align="right">0.0053059</td>
+<td align="right">0.8082070</td>
+<td align="right">0.0083168</td>
+<td align="right">0.4576895</td>
+<td align="right">0.0045734</td>
+</tr>
+<tr class="odd">
+<td>alkire-foster2</td>
+<td align="right">0.3</td>
+<td align="right">0.3699078</td>
+<td align="right">0.0053059</td>
+<td align="right">0.8082070</td>
+<td align="right">0.0083168</td>
+<td align="right">0.4576895</td>
+<td align="right">0.0045734</td>
+</tr>
+<tr class="even">
+<td>alkire-foster3</td>
+<td align="right">0.4</td>
+<td align="right">0.1865894</td>
+<td align="right">0.0068123</td>
+<td align="right">0.2582516</td>
+<td align="right">0.0092455</td>
+<td align="right">0.7225101</td>
+<td align="right">0.0051745</td>
+</tr>
+<tr class="odd">
+<td>alkire-foster4</td>
+<td align="right">0.5</td>
+<td align="right">0.1865894</td>
+<td align="right">0.0068123</td>
+<td align="right">0.2582516</td>
+<td align="right">0.0092455</td>
+<td align="right">0.7225101</td>
+<td align="right">0.0051745</td>
+</tr>
+<tr class="even">
+<td>alkire-foster5</td>
+<td align="right">0.6</td>
+<td align="right">0.1865894</td>
+<td align="right">0.0068123</td>
+<td align="right">0.2582516</td>
+<td align="right">0.0092455</td>
+<td align="right">0.7225101</td>
+<td align="right">0.0051745</td>
+</tr>
+<tr class="odd">
+<td>alkire-foster6</td>
+<td align="right">0.7</td>
+<td align="right">0.0432649</td>
+<td align="right">0.0042978</td>
+<td align="right">0.0432649</td>
+<td align="right">0.0042978</td>
+<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+</tr>
+<tr class="even">
+<td>alkire-foster7</td>
+<td align="right">0.8</td>
+<td align="right">0.0432649</td>
+<td align="right">0.0042978</td>
+<td align="right">0.0432649</td>
+<td align="right">0.0042978</td>
+<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+</tr>
+<tr class="odd">
+<td>alkire-foster8</td>
+<td align="right">0.9</td>
+<td align="right">0.0432649</td>
+<td align="right">0.0042978</td>
+<td align="right">0.0432649</td>
+<td align="right">0.0042978</td>
+<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+</tr>
+<tr class="even">
+<td>alkire-foster9</td>
+<td align="right">1.0</td>
+<td align="right">0.0432649</td>
+<td align="right">0.0042978</td>
+<td align="right">0.0432649</td>
+<td align="right">0.0042978</td>
+<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+</tr>
+</tbody>
+</table>
+<p>Replicate PDF page 13</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">page_thirteen &lt;-<span class="st"> </span><span class="ot">NULL</span>
+
+<span class="co"># loop through every poverty cutoff `k`</span>
+for( ks in <span class="kw">c</span>( <span class="fl">0.5</span> , <span class="fl">0.75</span> , <span class="dv">1</span> ) ){
+    
+    this_ks &lt;-
+<span class="st">        </span><span class="kw">svyafc</span>(
+        ~<span class="st"> </span>wage +<span class="st"> </span>collgrad +<span class="st"> </span>hours , 
+        <span class="dt">design =</span> des_nlsw88 , 
+        <span class="dt">cutoffs =</span> <span class="kw">list</span>( <span class="dv">4</span>, <span class="st">&#39;college grad&#39;</span> , <span class="dv">26</span> ) , 
+        <span class="dt">k =</span> ks , 
+        <span class="dt">g =</span> <span class="dv">0</span> , 
+        <span class="dt">dimw =</span> <span class="kw">c</span>( <span class="fl">0.5</span> , <span class="fl">0.25</span> , <span class="fl">0.25</span> ) ,
+        <span class="dt">na.rm =</span> <span class="ot">TRUE</span>
+      )
+    
+    page_thirteen &lt;-
+<span class="st">        </span><span class="kw">rbind</span>(
+            page_thirteen ,
+            <span class="kw">data.frame</span>( 
+                <span class="dt">k =</span> ks , 
+                <span class="dt">MO =</span> <span class="kw">coef</span>( this_ks ) ,
+                <span class="dt">seMO =</span> <span class="kw">SE</span>( this_ks ) ,
+                <span class="dt">H =</span> <span class="kw">attr</span>( this_ks , <span class="st">&quot;extra&quot;</span> )[ <span class="dv">1</span> , <span class="dv">1</span> ] ,
+                <span class="dt">seH =</span> <span class="kw">attr</span>( this_ks , <span class="st">&quot;extra&quot;</span> )[ <span class="dv">1</span> , <span class="dv">2</span> ] ,
+                <span class="dt">A =</span> <span class="kw">attr</span>( this_ks , <span class="st">&quot;extra&quot;</span> )[ <span class="dv">2</span> , <span class="dv">1</span> ] ,
+                <span class="dt">seA =</span> <span class="kw">attr</span>( this_ks , <span class="st">&quot;extra&quot;</span> )[ <span class="dv">2</span> , <span class="dv">2</span> ]
+          )
+        )
+}</code></pre></div>
+<p><!--
+<caption>--><span class="marginnote shownote"><span id="tab:unnamed-chunk-59">Table 4.2: </span>PDF Page 13 Replication</span><!--</caption>--></p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">k</th>
+<th align="right">MO</th>
+<th align="right">seMO</th>
+<th align="right">H</th>
+<th align="right">seH</th>
+<th align="right">A</th>
+<th align="right">seA</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>alkire-foster</td>
+<td align="right">0.50</td>
+<td align="right">0.1913470</td>
+<td align="right">0.0069137</td>
+<td align="right">0.2689563</td>
+<td align="right">0.0093668</td>
+<td align="right">0.7114428</td>
+<td align="right">0.0068474</td>
+</tr>
+<tr class="even">
+<td>alkire-foster1</td>
+<td align="right">0.75</td>
+<td align="right">0.1489741</td>
+<td align="right">0.0066918</td>
+<td align="right">0.1842105</td>
+<td align="right">0.0081889</td>
+<td align="right">0.8087167</td>
+<td align="right">0.0052160</td>
+</tr>
+<tr class="odd">
+<td>alkire-foster2</td>
+<td align="right">1.00</td>
+<td align="right">0.0432649</td>
+<td align="right">0.0042978</td>
+<td align="right">0.0432649</td>
+<td align="right">0.0042978</td>
+<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+</tr>
+</tbody>
+</table>
+<p>Replicate PDF page 16</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">page_sixteen &lt;-<span class="st"> </span><span class="ot">NULL</span>
+
+<span class="co"># loop through every alpha value `g`</span>
+for( gs in <span class="dv">0</span>:<span class="dv">3</span> ){
+    
+    this_gs &lt;-
+<span class="st">        </span><span class="kw">svyafc</span>(
+        ~<span class="st"> </span>wage +<span class="st"> </span>collgrad +<span class="st"> </span>hours , 
+        <span class="dt">design =</span> des_nlsw88 , 
+        <span class="dt">cutoffs =</span> <span class="kw">list</span>( <span class="dv">4</span>, <span class="st">&#39;college grad&#39;</span> , <span class="dv">26</span> ) , 
+        <span class="dt">k =</span> <span class="dv">1</span>/<span class="dv">3</span> , 
+        <span class="dt">g =</span> gs , 
+        <span class="dt">na.rm =</span> <span class="ot">TRUE</span>
+      )
+    
+    page_sixteen &lt;-
+<span class="st">        </span><span class="kw">rbind</span>(
+            page_sixteen ,
+            <span class="kw">data.frame</span>( 
+                <span class="dt">g =</span> gs , 
+                <span class="dt">MO =</span> <span class="kw">coef</span>( this_gs ) ,
+                <span class="dt">seMO =</span> <span class="kw">SE</span>( this_gs ) 
+          )
+        )
+}</code></pre></div>
+<p><!--
+<caption>--><span class="marginnote shownote"><span id="tab:unnamed-chunk-61">Table 4.3: </span>PDF Page 16 Replication</span><!--</caption>--></p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">g</th>
+<th align="right">MO</th>
+<th align="right">seMO</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>alkire-foster</td>
+<td align="right">0</td>
+<td align="right">0.3699078</td>
+<td align="right">0.0053059</td>
+</tr>
+<tr class="even">
+<td>alkire-foster1</td>
+<td align="right">1</td>
+<td align="right">0.2859332</td>
+<td align="right">0.0033708</td>
+</tr>
+<tr class="odd">
+<td>alkire-foster2</td>
+<td align="right">2</td>
+<td align="right">0.2676266</td>
+<td align="right">0.0031164</td>
+</tr>
+<tr class="even">
+<td>alkire-foster3</td>
+<td align="right">3</td>
+<td align="right">0.2616335</td>
+<td align="right">0.0030531</td>
+</tr>
+</tbody>
+</table>
+<p>Replicate k=1/3 rows of PDF page 17 and 19</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svyafcdec</span>(
+    ~<span class="st"> </span>wage +<span class="st"> </span>collgrad +<span class="st"> </span>hours , 
+    <span class="dt">design =</span> des_nlsw88 , 
+    <span class="dt">cutoffs =</span> <span class="kw">list</span>( <span class="dv">4</span> , <span class="st">&#39;college grad&#39;</span> , <span class="dv">26</span> ) , 
+    <span class="dt">k =</span> <span class="dv">1</span>/<span class="dv">3</span> , 
+    <span class="dt">g =</span> <span class="dv">0</span> ,
+    <span class="dt">na.rm =</span> <span class="ot">TRUE</span>
+)</code></pre></div>
+<pre><code>## $overall
+##               alkire-foster     SE
+## alkire-foster       0.36991 0.0053
+## 
+## $`raw headcount ratio`
+##          raw headcount     SE
+## wage           0.19492 0.0084
+## collgrad       0.76316 0.0090
+## hours          0.15165 0.0076
+## 
+## $`censored headcount ratio`
+##          cens. headcount     SE
+## wage             0.19492 0.0084
+## collgrad         0.76316 0.0090
+## hours            0.15165 0.0076
+## 
+## $`percentual contribution per dimension`
+##          dim. % contribution     SE
+## wage                 0.17564 0.0061
+## collgrad             0.68770 0.0077
+## hours                0.13666 0.0059</code></pre>
+<p>Replicate PDF pages 21 and 22</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svyafcdec</span>(
+    ~<span class="st"> </span>wage +<span class="st"> </span>collgrad +<span class="st"> </span>hours , 
+    <span class="dt">subgroup =</span> ~married , 
+    <span class="dt">design =</span> des_nlsw88 , 
+    <span class="dt">cutoffs =</span> <span class="kw">list</span>( <span class="dv">4</span> , <span class="st">&#39;college grad&#39;</span> , <span class="dv">26</span> ) , 
+    <span class="dt">k =</span> <span class="dv">1</span>/<span class="dv">3</span> , 
+    <span class="dt">g =</span> <span class="dv">0</span> ,
+    <span class="dt">na.rm =</span> <span class="ot">TRUE</span>
+)</code></pre></div>
+<pre><code>## $overall
+##               alkire-foster     SE
+## alkire-foster       0.36991 0.0053
+## 
+## $`raw headcount ratio`
+##          raw headcount     SE
+## wage           0.19492 0.0084
+## collgrad       0.76316 0.0090
+## hours          0.15165 0.0076
+## 
+## $`censored headcount ratio`
+##          cens. headcount     SE
+## wage             0.19492 0.0084
+## collgrad         0.76316 0.0090
+## hours            0.15165 0.0076
+## 
+## $`percentual contribution per dimension`
+##          dim. % contribution     SE
+## wage                 0.17564 0.0061
+## collgrad             0.68770 0.0077
+## hours                0.13666 0.0059
+## 
+## $`subgroup alkire-foster estimates`
+##         alkire-foster     SE
+## single        0.35414 0.0088
+## married       0.37867 0.0066
+## 
+## $`percentual contribution per subgroup`
+##         grp. % contribution    SE
+## single              0.34204 0.012
+## married             0.65796 0.012</code></pre>
+<p>For additional usage examples of <code>svyafc</code> or <code>svyafcdec</code>, type <code>?convey::svyafc</code> or <code>?convey::svyafcdec</code> in the R console.</p>
+<p><span class="citation">(Alkire and Foster <label for="tufte-mn-55" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-55" class="margin-toggle">2011<span class="marginnote">Alkire, Sabina, and James Foster. 2011. “Counting and Multidimensional Poverty Measurement.” <em>Journal of Public Economics</em> 95 (7-8): 476–87. <a href="https://ideas.repec.org/a/eee/pubeco/v95y2011i7-8p476-487.html" class="uri">https://ideas.repec.org/a/eee/pubeco/v95y2011i7-8p476-487.html</a>.</span>)</span> and <span class="citation">(Alkire et al. <label for="tufte-mn-56" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-56" class="margin-toggle">2015<span class="marginnote">Alkire, Sabina, James Foster, Suman Seth, Maria Emma Santos, Jose Manuel Roche, and Paola Ballon. 2015. <em>Multidimensional Poverty Measurement and Analysis</em>. Oxford University Press.</span>)</span> and <span class="citation">(Pacifico and Poge <label for="tufte-mn-57" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-57" class="margin-toggle">2016<span class="marginnote">Pacifico, Daniele, and Felix Poge. 2016. “MPI: Stata Module to Compute the Alkire-Foster Multidimensional Poverty Measures and Their Decomposition by Deprivation Indicators and Population Sub-Groups.” <a href="http://EconPapers.repec.org/RePEc:boc:bocode:s458120" class="uri">http://EconPapers.repec.org/RePEc:boc:bocode:s458120</a>.</span>)</span></p>
+</div>
+<p style="text-align: center;">
+<a href="4-multidimensional.html"><button class="btn btn-default">Previous</button></a>
+<a href="4-2-bourguignon-chakravarty-2003-multidimensional-poverty-class.html"><button class="btn btn-default">Next</button></a>
+</p>
+</div>
+</div>
+
+
+
+</body>
+</html>

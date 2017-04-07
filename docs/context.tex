@@ -124,10 +124,21 @@
   \postauthor{\par}
   \predate{\centering\large\emph}
   \postdate{\par}
-  \date{2017-04-06}
+  \date{2017-04-07}
 
 \usepackage{booktabs}
 
+\usepackage{amsthm}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}{Lemma}[chapter]
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{corollary}{Corollary}[chapter]
+\newtheorem{proposition}{Proposition}[chapter]
+\theoremstyle{definition}
+\newtheorem{example}{Example}[chapter]
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
 \begin{document}
 \maketitle
 
@@ -361,15 +372,15 @@ eqIncome 0.14444 0.0029
 
 \begin{verbatim}
                       db040  eqIncome se.eqIncome
-Burgenland       Burgenland 0.1953984 0.017314710
-Carinthia         Carinthia 0.1308627 0.009821102
-Lower Austria Lower Austria 0.1384362 0.007285043
-Salzburg           Salzburg 0.1378734 0.013427645
-Styria               Styria 0.1437464 0.008404135
-Tyrol                 Tyrol 0.1530819 0.010454606
-Upper Austria Upper Austria 0.1088977 0.005634936
-Vienna               Vienna 0.1723468 0.009446780
-Vorarlberg       Vorarlberg 0.1653731 0.014015339
+Burgenland       Burgenland 0.1953984 0.017660193
+Carinthia         Carinthia 0.1308627 0.011125662
+Lower Austria Lower Austria 0.1384362 0.006418127
+Salzburg           Salzburg 0.1378734 0.011005791
+Styria               Styria 0.1437464 0.007904966
+Tyrol                 Tyrol 0.1530819 0.010126786
+Upper Austria Upper Austria 0.1088977 0.006651405
+Vienna               Vienna 0.1723468 0.006972142
+Vorarlberg       Vorarlberg 0.1653731 0.013980295
 \end{verbatim}
 
 The functions of the library convey are called in a similar way to the
@@ -421,7 +432,7 @@ py010n   NA NA
 
 \begin{verbatim}
           gini     SE
-py010n 0.64606 0.0031
+py010n 0.64606 0.0034
 \end{verbatim}
 
 \section{Underlying Calculations}\label{underlying-calculations}
@@ -2423,9 +2434,567 @@ Therefore, in order to produce reliable estimates from this samples,
 appropriate procedures are necessary.
 
 This chapter presents brief presentations on inequality measures, also
-providing replication examples if possible. It starts with the Lorenz
-curve and inequality measures derived from it, then the concept of
-entropy and measures based on it are presented.
+providing replication examples if possible. It starts with an initial
+attempt to measure the inequality between two groups of a population;
+then, it presents ideas of overall inequality indices, moving from the
+quintile share ratio to the Lorenz curve and measures derived from it;
+finally, it discusses the concept of entropy and presents inequality
+measures based on it.
+
+\section{The Gender Pay Gap (svygpg)}\label{the-gender-pay-gap-svygpg}
+
+Although the \(GPG\) is not an inequality measure in the usual sense, it
+can still be an useful instrument to evaluate the discrimination among
+men and women. Put simply, it expresses the relative difference between
+the average hourly earnings of men and women, presenting it as a
+percentage of the average of hourly earnings of men.
+
+In mathematical terms, this index can be described as,
+
+\[ \widehat{GPG} = \frac{ \widehat{\bar{Y}}_{male} - \widehat{\bar{Y}}_{female} }{ \widehat{\bar{Y}}_{male} } \],
+
+which is precisely the estimator used in the package. As we can see from
+the formula, if there is no difference among classes, \(GPG = 0\). Else,
+if \(GPG > 0\), it means that the average hourly income received by
+women are \(GPG\) percent smaller than men's. For negative \(GPG\), it
+means that women's hourly earnings are \(GPG\) percent larger than
+men's. In other words, the larger the \(GPG\), larger is the shortfall
+of women's hourly earnings.
+
+We can also develop a more straightforward idea: for every \$1 raise in
+men's hourly earnings, women's hourly earnings are expected to increase
+\$\((1-GPG)\). For instance, assuming \(GPG = 0.8\), for every \$1.00
+increase in men's average hourly earnings, women's hourly earnings would
+increase only \$0.20.
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{A replication example}
+
+The R \texttt{vardpoor} package \citep{vardpoor}, created by researchers
+at the Central Statistical Bureau of Latvia, includes a gpg coefficient
+calculation using the ultimate cluster method. The example below
+reproduces those statistics.
+
+Load and prepare the same data set:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# load the convey package}
+\KeywordTok{library}\NormalTok{(convey)}
+
+\CommentTok{# load the survey library}
+\KeywordTok{library}\NormalTok{(survey)}
+
+\CommentTok{# load the vardpoor library}
+\KeywordTok{library}\NormalTok{(vardpoor)}
+
+\CommentTok{# load the synthetic european union statistics on income & living conditions}
+\KeywordTok{data}\NormalTok{(eusilc)}
+
+\CommentTok{# make all column names lowercase}
+\KeywordTok{names}\NormalTok{( eusilc ) <-}\StringTok{ }\KeywordTok{tolower}\NormalTok{( }\KeywordTok{names}\NormalTok{( eusilc ) )}
+
+\CommentTok{# coerce the gender variable to numeric 1 or 2}
+\NormalTok{eusilc$one_two <-}\StringTok{ }\KeywordTok{as.numeric}\NormalTok{( eusilc$rb090 ==}\StringTok{ "female"} \NormalTok{) +}\StringTok{ }\DecValTok{1}
+
+\CommentTok{# add a column with the row number}
+\NormalTok{dati <-}\StringTok{ }\KeywordTok{data.table}\NormalTok{(}\DataTypeTok{IDd =} \DecValTok{1} \NormalTok{:}\StringTok{ }\KeywordTok{nrow}\NormalTok{(eusilc), eusilc)}
+
+\CommentTok{# calculate the gpg coefficient}
+\CommentTok{# using the R vardpoor library}
+\NormalTok{varpoord_gpg_calculation <-}
+\StringTok{    }\KeywordTok{varpoord}\NormalTok{(}
+    
+        \CommentTok{# analysis variable}
+        \DataTypeTok{Y =} \StringTok{"eqincome"}\NormalTok{, }
+        
+        \CommentTok{# weights variable}
+        \DataTypeTok{w_final =} \StringTok{"rb050"}\NormalTok{,}
+        
+        \CommentTok{# row number variable}
+        \DataTypeTok{ID_level1 =} \StringTok{"IDd"}\NormalTok{,}
+        
+        \CommentTok{# row number variable}
+        \DataTypeTok{ID_level2 =} \StringTok{"IDd"}\NormalTok{,}
+        
+        \CommentTok{# strata variable}
+        \DataTypeTok{H =} \StringTok{"db040"}\NormalTok{, }
+        
+        \DataTypeTok{N_h =} \OtherTok{NULL} \NormalTok{,}
+        
+        \CommentTok{# clustering variable}
+        \DataTypeTok{PSU =} \StringTok{"rb030"}\NormalTok{, }
+        
+        \CommentTok{# data.table}
+        \DataTypeTok{dataset =} \NormalTok{dati, }
+        
+        \CommentTok{# gpg coefficient function}
+        \DataTypeTok{type =} \StringTok{"lingpg"} \NormalTok{,}
+        
+        \CommentTok{# gender variable}
+        \DataTypeTok{gender =} \StringTok{"one_two"}\NormalTok{,}
+      
+      \CommentTok{# poverty threshold range}
+      \DataTypeTok{order_quant =} \NormalTok{50L ,}
+      
+      \CommentTok{# get linearized variable}
+      \DataTypeTok{outp_lin =} \OtherTok{TRUE}
+    \NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## NULL
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# construct a survey.design}
+\CommentTok{# using our recommended setup}
+\NormalTok{des_eusilc <-}\StringTok{ }
+\StringTok{    }\KeywordTok{svydesign}\NormalTok{( }
+        \DataTypeTok{ids =} \NormalTok{~}\StringTok{ }\NormalTok{rb030 , }
+        \DataTypeTok{strata =} \NormalTok{~}\StringTok{ }\NormalTok{db040 ,  }
+        \DataTypeTok{weights =} \NormalTok{~}\StringTok{ }\NormalTok{rb050 , }
+        \DataTypeTok{data =} \NormalTok{eusilc}
+    \NormalTok{)}
+
+\CommentTok{# immediately run the convey_prep function on it}
+\NormalTok{des_eusilc <-}\StringTok{ }\KeywordTok{convey_prep}\NormalTok{( des_eusilc )}
+
+\CommentTok{# coefficients do match}
+\NormalTok{varpoord_gpg_calculation$all_result$value}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 7.645389
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{coef}\NormalTok{( }\KeywordTok{svygpg}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc , }\DataTypeTok{sex =} \NormalTok{~}\StringTok{ }\NormalTok{rb090 ) ) *}\StringTok{ }\DecValTok{100}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## eqincome 
+## 7.645389
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# linearized variables do match}
+\CommentTok{# vardpoor}
+\NormalTok{lin_gpg_varpoord<-}\StringTok{ }\NormalTok{varpoord_gpg_calculation$lin_out$lin_gpg}
+\CommentTok{# convey }
+\NormalTok{lin_gpg_convey <-}\StringTok{ }\KeywordTok{attr}\NormalTok{(}\KeywordTok{svygpg}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc, }\DataTypeTok{sex =} \NormalTok{~}\StringTok{ }\NormalTok{rb090 ),}\StringTok{"lin"}\NormalTok{)}
+
+\CommentTok{# check equality}
+\KeywordTok{all.equal}\NormalTok{(lin_gpg_varpoord,}\DecValTok{100}\NormalTok{*lin_gpg_convey[,}\DecValTok{1}\NormalTok{] )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] TRUE
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# variances do not match exactly}
+\KeywordTok{attr}\NormalTok{( }\KeywordTok{svygpg}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc , }\DataTypeTok{sex =} \NormalTok{~}\StringTok{ }\NormalTok{rb090 ) , }\StringTok{'var'} \NormalTok{) *}\StringTok{ }\DecValTok{10000}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##           eqincome
+## eqincome 0.6493911
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{varpoord_gpg_calculation$all_result$var}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.6482346
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# standard errors do not match exactly}
+\NormalTok{varpoord_gpg_calculation$all_result$se}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.8051301
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{SE}\NormalTok{( }\KeywordTok{svygpg}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc , }\DataTypeTok{sex =} \NormalTok{~}\StringTok{ }\NormalTok{rb090 ) ) *}\StringTok{ }\DecValTok{100}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##           eqincome
+## eqincome 0.8058481
+\end{verbatim}
+
+The variance estimate is computed by using the approximation defined in
+\eqref{eq:var}, where the linearized variable \(z\) is defined by
+\eqref{eq:lin}. The functions \texttt{convey::svygpg} and
+\texttt{vardpoor::lingpg} produce the same linearized variable \(z\).
+
+However, the measures of uncertainty do not line up, because
+\texttt{library(vardpoor)} defaults to an ultimate cluster method that
+can be replicated with an alternative setup of the
+\texttt{survey.design} object.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# within each strata, sum up the weights}
+\NormalTok{cluster_sums <-}\StringTok{ }\KeywordTok{aggregate}\NormalTok{( eusilc$rb050 , }\KeywordTok{list}\NormalTok{( eusilc$db040 ) , sum )}
+
+\CommentTok{# name the within-strata sums of weights the `cluster_sum`}
+\KeywordTok{names}\NormalTok{( cluster_sums ) <-}\StringTok{ }\KeywordTok{c}\NormalTok{( }\StringTok{"db040"} \NormalTok{, }\StringTok{"cluster_sum"} \NormalTok{)}
+
+\CommentTok{# merge this column back onto the data.frame}
+\NormalTok{eusilc <-}\StringTok{ }\KeywordTok{merge}\NormalTok{( eusilc , cluster_sums )}
+
+\CommentTok{# construct a survey.design}
+\CommentTok{# with the fpc using the cluster sum}
+\NormalTok{des_eusilc_ultimate_cluster <-}\StringTok{ }
+\StringTok{    }\KeywordTok{svydesign}\NormalTok{( }
+        \DataTypeTok{ids =} \NormalTok{~}\StringTok{ }\NormalTok{rb030 , }
+        \DataTypeTok{strata =} \NormalTok{~}\StringTok{ }\NormalTok{db040 ,  }
+        \DataTypeTok{weights =} \NormalTok{~}\StringTok{ }\NormalTok{rb050 , }
+        \DataTypeTok{data =} \NormalTok{eusilc , }
+        \DataTypeTok{fpc =} \NormalTok{~}\StringTok{ }\NormalTok{cluster_sum }
+    \NormalTok{)}
+
+\CommentTok{# again, immediately run the convey_prep function on the `survey.design`}
+\NormalTok{des_eusilc_ultimate_cluster <-}\StringTok{ }\KeywordTok{convey_prep}\NormalTok{( des_eusilc_ultimate_cluster )}
+
+\CommentTok{# matches}
+\KeywordTok{attr}\NormalTok{( }\KeywordTok{svygpg}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc_ultimate_cluster , }\DataTypeTok{sex =} \NormalTok{~}\StringTok{ }\NormalTok{rb090 ) , }\StringTok{'var'} \NormalTok{) *}\StringTok{ }\DecValTok{10000}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##           eqincome
+## eqincome 0.6482346
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{varpoord_gpg_calculation$all_result$var}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.6482346
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# matches}
+\NormalTok{varpoord_gpg_calculation$all_result$se}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.8051301
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{SE}\NormalTok{( }\KeywordTok{svygpg}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc_ultimate_cluster , }\DataTypeTok{sex =} \NormalTok{~}\StringTok{ }\NormalTok{rb090 ) ) *}\StringTok{ }\DecValTok{100}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##           eqincome
+## eqincome 0.8051301
+\end{verbatim}
+
+For additional usage examples of \texttt{svygpg}, type
+\texttt{?convey::svygpg} in the R console.
+
+\section{Quintile Share Ratio
+(svyqsr)}\label{quintile-share-ratio-svyqsr}
+
+Unlike the previous measure, the quintile share ratio is an inequality
+measure in itself, depending only of the income distribution to evaluate
+the degree of inequality. By definition, it can be described as the
+ratio between the income share held by the richest 20\% and the poorest
+20\% of the population.
+
+In plain terms, it expresses how many times the wealthier part of the
+population are richer than the poorest part. For instance, a \(QSR = 4\)
+implies that the upper class owns 4 times as much of the total income as
+the poor.
+
+The quintile share ratio can be modified to a more general function of
+fractile share ratios. For instance, the Palma index is defined as the
+ratio between the share of the 10\% richest over the share held by the
+poorest 40\% and \citep{cobham2015} presents interesting arguments for
+its usage.
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{A replication example}
+
+The R \texttt{vardpoor} package \citep{vardpoor}, created by researchers
+at the Central Statistical Bureau of Latvia, includes a qsr coefficient
+calculation using the ultimate cluster method. The example below
+reproduces those statistics.
+
+Load and prepare the same data set:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# load the convey package}
+\KeywordTok{library}\NormalTok{(convey)}
+
+\CommentTok{# load the survey library}
+\KeywordTok{library}\NormalTok{(survey)}
+
+\CommentTok{# load the vardpoor library}
+\KeywordTok{library}\NormalTok{(vardpoor)}
+
+\CommentTok{# load the synthetic european union statistics on income & living conditions}
+\KeywordTok{data}\NormalTok{(eusilc)}
+
+\CommentTok{# make all column names lowercase}
+\KeywordTok{names}\NormalTok{( eusilc ) <-}\StringTok{ }\KeywordTok{tolower}\NormalTok{( }\KeywordTok{names}\NormalTok{( eusilc ) )}
+
+\CommentTok{# add a column with the row number}
+\NormalTok{dati <-}\StringTok{ }\KeywordTok{data.table}\NormalTok{(}\DataTypeTok{IDd =} \DecValTok{1} \NormalTok{:}\StringTok{ }\KeywordTok{nrow}\NormalTok{(eusilc), eusilc)}
+
+\CommentTok{# calculate the qsr coefficient}
+\CommentTok{# using the R vardpoor library}
+\NormalTok{varpoord_qsr_calculation <-}
+\StringTok{    }\KeywordTok{varpoord}\NormalTok{(}
+    
+        \CommentTok{# analysis variable}
+        \DataTypeTok{Y =} \StringTok{"eqincome"}\NormalTok{, }
+        
+        \CommentTok{# weights variable}
+        \DataTypeTok{w_final =} \StringTok{"rb050"}\NormalTok{,}
+        
+        \CommentTok{# row number variable}
+        \DataTypeTok{ID_level1 =} \StringTok{"IDd"}\NormalTok{,}
+        
+        \CommentTok{# row number variable}
+        \DataTypeTok{ID_level2 =} \StringTok{"IDd"}\NormalTok{,}
+        
+        \CommentTok{# strata variable}
+        \DataTypeTok{H =} \StringTok{"db040"}\NormalTok{, }
+        
+        \DataTypeTok{N_h =} \OtherTok{NULL} \NormalTok{,}
+        
+        \CommentTok{# clustering variable}
+        \DataTypeTok{PSU =} \StringTok{"rb030"}\NormalTok{, }
+        
+        \CommentTok{# data.table}
+        \DataTypeTok{dataset =} \NormalTok{dati, }
+        
+        \CommentTok{# qsr coefficient function}
+        \DataTypeTok{type =} \StringTok{"linqsr"}\NormalTok{,}
+      
+      \CommentTok{# poverty threshold range}
+      \DataTypeTok{order_quant =} \NormalTok{50L ,}
+      
+      \CommentTok{# get linearized variable}
+      \DataTypeTok{outp_lin =} \OtherTok{TRUE}
+        
+    \NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## NULL
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# construct a survey.design}
+\CommentTok{# using our recommended setup}
+\NormalTok{des_eusilc <-}\StringTok{ }
+\StringTok{    }\KeywordTok{svydesign}\NormalTok{( }
+        \DataTypeTok{ids =} \NormalTok{~}\StringTok{ }\NormalTok{rb030 , }
+        \DataTypeTok{strata =} \NormalTok{~}\StringTok{ }\NormalTok{db040 ,  }
+        \DataTypeTok{weights =} \NormalTok{~}\StringTok{ }\NormalTok{rb050 , }
+        \DataTypeTok{data =} \NormalTok{eusilc}
+    \NormalTok{)}
+
+\CommentTok{# immediately run the convey_prep function on it}
+\NormalTok{des_eusilc <-}\StringTok{ }\KeywordTok{convey_prep}\NormalTok{( des_eusilc )}
+
+\CommentTok{# coefficients do match}
+\NormalTok{varpoord_qsr_calculation$all_result$value}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 3.970004
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{coef}\NormalTok{( }\KeywordTok{svyqsr}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc ) )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## eqincome 
+## 3.970004
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# linearized variables do match}
+\CommentTok{# vardpoor}
+\NormalTok{lin_qsr_varpoord<-}\StringTok{ }\NormalTok{varpoord_qsr_calculation$lin_out$lin_qsr}
+\CommentTok{# convey }
+\NormalTok{lin_qsr_convey <-}\StringTok{ }\KeywordTok{attr}\NormalTok{(}\KeywordTok{svyqsr}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc ),}\StringTok{"lin"}\NormalTok{)}
+
+\CommentTok{# check equality}
+\KeywordTok{all.equal}\NormalTok{(lin_qsr_varpoord, lin_qsr_convey )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] TRUE
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# variances do not match exactly}
+\KeywordTok{attr}\NormalTok{( }\KeywordTok{svyqsr}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc ) , }\StringTok{'var'} \NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##             eqincome
+## eqincome 0.001810537
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{varpoord_qsr_calculation$all_result$var}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.001807323
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# standard errors do not match exactly}
+\NormalTok{varpoord_qsr_calculation$all_result$se}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.04251263
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{SE}\NormalTok{( }\KeywordTok{svyqsr}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc ) )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            eqincome
+## eqincome 0.04255041
+\end{verbatim}
+
+The variance estimate is computed by using the approximation defined in
+\eqref{eq:var}, where the linearized variable \(z\) is defined by
+\eqref{eq:lin}. The functions \texttt{convey::svygpg} and
+\texttt{vardpoor::lingpg} produce the same linearized variable \(z\).
+
+However, the measures of uncertainty do not line up, because
+\texttt{library(vardpoor)} defaults to an ultimate cluster method that
+can be replicated with an alternative setup of the
+\texttt{survey.design} object.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# within each strata, sum up the weights}
+\NormalTok{cluster_sums <-}\StringTok{ }\KeywordTok{aggregate}\NormalTok{( eusilc$rb050 , }\KeywordTok{list}\NormalTok{( eusilc$db040 ) , sum )}
+
+\CommentTok{# name the within-strata sums of weights the `cluster_sum`}
+\KeywordTok{names}\NormalTok{( cluster_sums ) <-}\StringTok{ }\KeywordTok{c}\NormalTok{( }\StringTok{"db040"} \NormalTok{, }\StringTok{"cluster_sum"} \NormalTok{)}
+
+\CommentTok{# merge this column back onto the data.frame}
+\NormalTok{eusilc <-}\StringTok{ }\KeywordTok{merge}\NormalTok{( eusilc , cluster_sums )}
+
+\CommentTok{# construct a survey.design}
+\CommentTok{# with the fpc using the cluster sum}
+\NormalTok{des_eusilc_ultimate_cluster <-}\StringTok{ }
+\StringTok{    }\KeywordTok{svydesign}\NormalTok{( }
+        \DataTypeTok{ids =} \NormalTok{~}\StringTok{ }\NormalTok{rb030 , }
+        \DataTypeTok{strata =} \NormalTok{~}\StringTok{ }\NormalTok{db040 ,  }
+        \DataTypeTok{weights =} \NormalTok{~}\StringTok{ }\NormalTok{rb050 , }
+        \DataTypeTok{data =} \NormalTok{eusilc , }
+        \DataTypeTok{fpc =} \NormalTok{~}\StringTok{ }\NormalTok{cluster_sum }
+    \NormalTok{)}
+
+\CommentTok{# again, immediately run the convey_prep function on the `survey.design`}
+\NormalTok{des_eusilc_ultimate_cluster <-}\StringTok{ }\KeywordTok{convey_prep}\NormalTok{( des_eusilc_ultimate_cluster )}
+
+\CommentTok{# matches}
+\KeywordTok{attr}\NormalTok{( }\KeywordTok{svyqsr}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc_ultimate_cluster ) , }\StringTok{'var'} \NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##             eqincome
+## eqincome 0.001807323
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{varpoord_qsr_calculation$all_result$var}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.001807323
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# matches}
+\NormalTok{varpoord_qsr_calculation$all_result$se}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.04251263
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{SE}\NormalTok{( }\KeywordTok{svyqsr}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc_ultimate_cluster ) )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            eqincome
+## eqincome 0.04251263
+\end{verbatim}
+
+For additional usage examples of \texttt{svyqsr}, type
+\texttt{?convey::svyqsr} in the R console.
 
 \section{Lorenz Curve (svylorenz)}\label{lorenz-curve-svylorenz}
 
@@ -2537,7 +3106,7 @@ example below reproduces the statistics presented in his section 4.1.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{context_files/figure-latex/unnamed-chunk-32-1.pdf}
+\includegraphics{context_files/figure-latex/unnamed-chunk-36-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -2569,7 +3138,7 @@ example below reproduces the statistics presented in his section 4.1.
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-32}Here is a nice table!}
+\caption{\label{tab:unnamed-chunk-36}Here is a nice table!}
 \centering
 \begin{tabular}[t]{lrrrr}
 \toprule
@@ -3698,533 +4267,6 @@ A(2.5)   |   .394787   .04155221     9.50    0.000      .3133461   .4762278
 For additional usage examples of \texttt{svyatk}, type
 \texttt{?convey::svyatk} in the R console.
 
-\chapter{Wellbeing Measures}\label{wellbeing}
-
-djalmapessoa\_look do any of the other functions need to be moved to
-this wellbeing chapter?
-
-\section{The Gender Pay Gap (svygpg)}\label{the-gender-pay-gap-svygpg}
-
-here are the references
-
-\citep{osier2009} and \citep{deville1999}
-
-\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
-
-\textbf{A replication example}
-
-The R \texttt{vardpoor} package \citep{vardpoor}, created by researchers
-at the Central Statistical Bureau of Latvia, includes a gpg coefficient
-calculation using the ultimate cluster method. The example below
-reproduces those statistics.
-
-Load and prepare the same data set:
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# load the convey package}
-\KeywordTok{library}\NormalTok{(convey)}
-
-\CommentTok{# load the survey library}
-\KeywordTok{library}\NormalTok{(survey)}
-
-\CommentTok{# load the vardpoor library}
-\KeywordTok{library}\NormalTok{(vardpoor)}
-
-\CommentTok{# load the synthetic european union statistics on income & living conditions}
-\KeywordTok{data}\NormalTok{(eusilc)}
-
-\CommentTok{# make all column names lowercase}
-\KeywordTok{names}\NormalTok{( eusilc ) <-}\StringTok{ }\KeywordTok{tolower}\NormalTok{( }\KeywordTok{names}\NormalTok{( eusilc ) )}
-
-\CommentTok{# coerce the gender variable to numeric 1 or 2}
-\NormalTok{eusilc$one_two <-}\StringTok{ }\KeywordTok{as.numeric}\NormalTok{( eusilc$rb090 ==}\StringTok{ "female"} \NormalTok{) +}\StringTok{ }\DecValTok{1}
-
-\CommentTok{# add a column with the row number}
-\NormalTok{dati <-}\StringTok{ }\KeywordTok{data.table}\NormalTok{(}\DataTypeTok{IDd =} \DecValTok{1} \NormalTok{:}\StringTok{ }\KeywordTok{nrow}\NormalTok{(eusilc), eusilc)}
-
-\CommentTok{# calculate the gpg coefficient}
-\CommentTok{# using the R vardpoor library}
-\NormalTok{varpoord_gpg_calculation <-}
-\StringTok{    }\KeywordTok{varpoord}\NormalTok{(}
-    
-        \CommentTok{# analysis variable}
-        \DataTypeTok{Y =} \StringTok{"eqincome"}\NormalTok{, }
-        
-        \CommentTok{# weights variable}
-        \DataTypeTok{w_final =} \StringTok{"rb050"}\NormalTok{,}
-        
-        \CommentTok{# row number variable}
-        \DataTypeTok{ID_level1 =} \StringTok{"IDd"}\NormalTok{,}
-        
-        \CommentTok{# row number variable}
-        \DataTypeTok{ID_level2 =} \StringTok{"IDd"}\NormalTok{,}
-        
-        \CommentTok{# strata variable}
-        \DataTypeTok{H =} \StringTok{"db040"}\NormalTok{, }
-        
-        \DataTypeTok{N_h =} \OtherTok{NULL} \NormalTok{,}
-        
-        \CommentTok{# clustering variable}
-        \DataTypeTok{PSU =} \StringTok{"rb030"}\NormalTok{, }
-        
-        \CommentTok{# data.table}
-        \DataTypeTok{dataset =} \NormalTok{dati, }
-        
-        \CommentTok{# gpg coefficient function}
-        \DataTypeTok{type =} \StringTok{"lingpg"} \NormalTok{,}
-        
-        \CommentTok{# gender variable}
-        \DataTypeTok{gender =} \StringTok{"one_two"}\NormalTok{,}
-      
-      \CommentTok{# poverty threshold range}
-      \DataTypeTok{order_quant =} \NormalTok{50L ,}
-      
-      \CommentTok{# get linearized variable}
-      \DataTypeTok{outp_lin =} \OtherTok{TRUE}
-    \NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## NULL
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# construct a survey.design}
-\CommentTok{# using our recommended setup}
-\NormalTok{des_eusilc <-}\StringTok{ }
-\StringTok{    }\KeywordTok{svydesign}\NormalTok{( }
-        \DataTypeTok{ids =} \NormalTok{~}\StringTok{ }\NormalTok{rb030 , }
-        \DataTypeTok{strata =} \NormalTok{~}\StringTok{ }\NormalTok{db040 ,  }
-        \DataTypeTok{weights =} \NormalTok{~}\StringTok{ }\NormalTok{rb050 , }
-        \DataTypeTok{data =} \NormalTok{eusilc}
-    \NormalTok{)}
-
-\CommentTok{# immediately run the convey_prep function on it}
-\NormalTok{des_eusilc <-}\StringTok{ }\KeywordTok{convey_prep}\NormalTok{( des_eusilc )}
-
-\CommentTok{# coefficients do match}
-\NormalTok{varpoord_gpg_calculation$all_result$value}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## [1] 7.645389
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{coef}\NormalTok{( }\KeywordTok{svygpg}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc , }\DataTypeTok{sex =} \NormalTok{~}\StringTok{ }\NormalTok{rb090 ) ) *}\StringTok{ }\DecValTok{100}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## eqincome 
-## 7.645389
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# linearized variables do match}
-\CommentTok{# vardpoor}
-\NormalTok{lin_gpg_varpoord<-}\StringTok{ }\NormalTok{varpoord_gpg_calculation$lin_out$lin_gpg}
-\CommentTok{# convey }
-\NormalTok{lin_gpg_convey <-}\StringTok{ }\KeywordTok{attr}\NormalTok{(}\KeywordTok{svygpg}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc, }\DataTypeTok{sex =} \NormalTok{~}\StringTok{ }\NormalTok{rb090 ),}\StringTok{"lin"}\NormalTok{)}
-
-\CommentTok{# check equality}
-\KeywordTok{all.equal}\NormalTok{(lin_gpg_varpoord,}\DecValTok{100}\NormalTok{*lin_gpg_convey[,}\DecValTok{1}\NormalTok{] )}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## [1] TRUE
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# variances do not match exactly}
-\KeywordTok{attr}\NormalTok{( }\KeywordTok{svygpg}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc , }\DataTypeTok{sex =} \NormalTok{~}\StringTok{ }\NormalTok{rb090 ) , }\StringTok{'var'} \NormalTok{) *}\StringTok{ }\DecValTok{10000}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##           eqincome
-## eqincome 0.6493911
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{varpoord_gpg_calculation$all_result$var}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## [1] 0.6482346
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# standard errors do not match exactly}
-\NormalTok{varpoord_gpg_calculation$all_result$se}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## [1] 0.8051301
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{SE}\NormalTok{( }\KeywordTok{svygpg}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc , }\DataTypeTok{sex =} \NormalTok{~}\StringTok{ }\NormalTok{rb090 ) ) *}\StringTok{ }\DecValTok{100}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##           eqincome
-## eqincome 0.8058481
-\end{verbatim}
-
-The variance estimate is computed by using the approximation defined in
-\eqref{eq:var}, where the linearized variable \(z\) is defined by
-\eqref{eq:lin}. The functions \texttt{convey::svygpg} and
-\texttt{vardpoor::lingpg} produce the same linearized variable \(z\).
-
-However, the measures of uncertainty do not line up, because
-\texttt{library(vardpoor)} defaults to an ultimate cluster method that
-can be replicated with an alternative setup of the
-\texttt{survey.design} object.
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# within each strata, sum up the weights}
-\NormalTok{cluster_sums <-}\StringTok{ }\KeywordTok{aggregate}\NormalTok{( eusilc$rb050 , }\KeywordTok{list}\NormalTok{( eusilc$db040 ) , sum )}
-
-\CommentTok{# name the within-strata sums of weights the `cluster_sum`}
-\KeywordTok{names}\NormalTok{( cluster_sums ) <-}\StringTok{ }\KeywordTok{c}\NormalTok{( }\StringTok{"db040"} \NormalTok{, }\StringTok{"cluster_sum"} \NormalTok{)}
-
-\CommentTok{# merge this column back onto the data.frame}
-\NormalTok{eusilc <-}\StringTok{ }\KeywordTok{merge}\NormalTok{( eusilc , cluster_sums )}
-
-\CommentTok{# construct a survey.design}
-\CommentTok{# with the fpc using the cluster sum}
-\NormalTok{des_eusilc_ultimate_cluster <-}\StringTok{ }
-\StringTok{    }\KeywordTok{svydesign}\NormalTok{( }
-        \DataTypeTok{ids =} \NormalTok{~}\StringTok{ }\NormalTok{rb030 , }
-        \DataTypeTok{strata =} \NormalTok{~}\StringTok{ }\NormalTok{db040 ,  }
-        \DataTypeTok{weights =} \NormalTok{~}\StringTok{ }\NormalTok{rb050 , }
-        \DataTypeTok{data =} \NormalTok{eusilc , }
-        \DataTypeTok{fpc =} \NormalTok{~}\StringTok{ }\NormalTok{cluster_sum }
-    \NormalTok{)}
-
-\CommentTok{# again, immediately run the convey_prep function on the `survey.design`}
-\NormalTok{des_eusilc_ultimate_cluster <-}\StringTok{ }\KeywordTok{convey_prep}\NormalTok{( des_eusilc_ultimate_cluster )}
-
-\CommentTok{# matches}
-\KeywordTok{attr}\NormalTok{( }\KeywordTok{svygpg}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc_ultimate_cluster , }\DataTypeTok{sex =} \NormalTok{~}\StringTok{ }\NormalTok{rb090 ) , }\StringTok{'var'} \NormalTok{) *}\StringTok{ }\DecValTok{10000}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##           eqincome
-## eqincome 0.6482346
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{varpoord_gpg_calculation$all_result$var}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## [1] 0.6482346
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# matches}
-\NormalTok{varpoord_gpg_calculation$all_result$se}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## [1] 0.8051301
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{SE}\NormalTok{( }\KeywordTok{svygpg}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc_ultimate_cluster , }\DataTypeTok{sex =} \NormalTok{~}\StringTok{ }\NormalTok{rb090 ) ) *}\StringTok{ }\DecValTok{100}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##           eqincome
-## eqincome 0.8051301
-\end{verbatim}
-
-For additional usage examples of \texttt{svygpg}, type
-\texttt{?convey::svygpg} in the R console.
-
-\section{Quintile Share Ratio
-(svyqsr)}\label{quintile-share-ratio-svyqsr}
-
-here are the references
-
-\citep{osier2009} and \citep{deville1999}
-
-\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
-
-\textbf{A replication example}
-
-The R \texttt{vardpoor} package \citep{vardpoor}, created by researchers
-at the Central Statistical Bureau of Latvia, includes a qsr coefficient
-calculation using the ultimate cluster method. The example below
-reproduces those statistics.
-
-Load and prepare the same data set:
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# load the convey package}
-\KeywordTok{library}\NormalTok{(convey)}
-
-\CommentTok{# load the survey library}
-\KeywordTok{library}\NormalTok{(survey)}
-
-\CommentTok{# load the vardpoor library}
-\KeywordTok{library}\NormalTok{(vardpoor)}
-
-\CommentTok{# load the synthetic european union statistics on income & living conditions}
-\KeywordTok{data}\NormalTok{(eusilc)}
-
-\CommentTok{# make all column names lowercase}
-\KeywordTok{names}\NormalTok{( eusilc ) <-}\StringTok{ }\KeywordTok{tolower}\NormalTok{( }\KeywordTok{names}\NormalTok{( eusilc ) )}
-
-\CommentTok{# add a column with the row number}
-\NormalTok{dati <-}\StringTok{ }\KeywordTok{data.table}\NormalTok{(}\DataTypeTok{IDd =} \DecValTok{1} \NormalTok{:}\StringTok{ }\KeywordTok{nrow}\NormalTok{(eusilc), eusilc)}
-
-\CommentTok{# calculate the qsr coefficient}
-\CommentTok{# using the R vardpoor library}
-\NormalTok{varpoord_qsr_calculation <-}
-\StringTok{    }\KeywordTok{varpoord}\NormalTok{(}
-    
-        \CommentTok{# analysis variable}
-        \DataTypeTok{Y =} \StringTok{"eqincome"}\NormalTok{, }
-        
-        \CommentTok{# weights variable}
-        \DataTypeTok{w_final =} \StringTok{"rb050"}\NormalTok{,}
-        
-        \CommentTok{# row number variable}
-        \DataTypeTok{ID_level1 =} \StringTok{"IDd"}\NormalTok{,}
-        
-        \CommentTok{# row number variable}
-        \DataTypeTok{ID_level2 =} \StringTok{"IDd"}\NormalTok{,}
-        
-        \CommentTok{# strata variable}
-        \DataTypeTok{H =} \StringTok{"db040"}\NormalTok{, }
-        
-        \DataTypeTok{N_h =} \OtherTok{NULL} \NormalTok{,}
-        
-        \CommentTok{# clustering variable}
-        \DataTypeTok{PSU =} \StringTok{"rb030"}\NormalTok{, }
-        
-        \CommentTok{# data.table}
-        \DataTypeTok{dataset =} \NormalTok{dati, }
-        
-        \CommentTok{# qsr coefficient function}
-        \DataTypeTok{type =} \StringTok{"linqsr"}\NormalTok{,}
-      
-      \CommentTok{# poverty threshold range}
-      \DataTypeTok{order_quant =} \NormalTok{50L ,}
-      
-      \CommentTok{# get linearized variable}
-      \DataTypeTok{outp_lin =} \OtherTok{TRUE}
-        
-    \NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## NULL
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# construct a survey.design}
-\CommentTok{# using our recommended setup}
-\NormalTok{des_eusilc <-}\StringTok{ }
-\StringTok{    }\KeywordTok{svydesign}\NormalTok{( }
-        \DataTypeTok{ids =} \NormalTok{~}\StringTok{ }\NormalTok{rb030 , }
-        \DataTypeTok{strata =} \NormalTok{~}\StringTok{ }\NormalTok{db040 ,  }
-        \DataTypeTok{weights =} \NormalTok{~}\StringTok{ }\NormalTok{rb050 , }
-        \DataTypeTok{data =} \NormalTok{eusilc}
-    \NormalTok{)}
-
-\CommentTok{# immediately run the convey_prep function on it}
-\NormalTok{des_eusilc <-}\StringTok{ }\KeywordTok{convey_prep}\NormalTok{( des_eusilc )}
-
-\CommentTok{# coefficients do match}
-\NormalTok{varpoord_qsr_calculation$all_result$value}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## [1] 3.970004
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{coef}\NormalTok{( }\KeywordTok{svyqsr}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc ) )}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## eqincome 
-## 3.970004
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# linearized variables do match}
-\CommentTok{# vardpoor}
-\NormalTok{lin_qsr_varpoord<-}\StringTok{ }\NormalTok{varpoord_qsr_calculation$lin_out$lin_qsr}
-\CommentTok{# convey }
-\NormalTok{lin_qsr_convey <-}\StringTok{ }\KeywordTok{attr}\NormalTok{(}\KeywordTok{svyqsr}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc ),}\StringTok{"lin"}\NormalTok{)}
-
-\CommentTok{# check equality}
-\KeywordTok{all.equal}\NormalTok{(lin_qsr_varpoord, lin_qsr_convey )}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## [1] TRUE
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# variances do not match exactly}
-\KeywordTok{attr}\NormalTok{( }\KeywordTok{svyqsr}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc ) , }\StringTok{'var'} \NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##             eqincome
-## eqincome 0.001810537
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{varpoord_qsr_calculation$all_result$var}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## [1] 0.001807323
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# standard errors do not match exactly}
-\NormalTok{varpoord_qsr_calculation$all_result$se}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## [1] 0.04251263
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{SE}\NormalTok{( }\KeywordTok{svyqsr}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc ) )}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##            eqincome
-## eqincome 0.04255041
-\end{verbatim}
-
-The variance estimate is computed by using the approximation defined in
-\eqref{eq:var}, where the linearized variable \(z\) is defined by
-\eqref{eq:lin}. The functions \texttt{convey::svygpg} and
-\texttt{vardpoor::lingpg} produce the same linearized variable \(z\).
-
-However, the measures of uncertainty do not line up, because
-\texttt{library(vardpoor)} defaults to an ultimate cluster method that
-can be replicated with an alternative setup of the
-\texttt{survey.design} object.
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# within each strata, sum up the weights}
-\NormalTok{cluster_sums <-}\StringTok{ }\KeywordTok{aggregate}\NormalTok{( eusilc$rb050 , }\KeywordTok{list}\NormalTok{( eusilc$db040 ) , sum )}
-
-\CommentTok{# name the within-strata sums of weights the `cluster_sum`}
-\KeywordTok{names}\NormalTok{( cluster_sums ) <-}\StringTok{ }\KeywordTok{c}\NormalTok{( }\StringTok{"db040"} \NormalTok{, }\StringTok{"cluster_sum"} \NormalTok{)}
-
-\CommentTok{# merge this column back onto the data.frame}
-\NormalTok{eusilc <-}\StringTok{ }\KeywordTok{merge}\NormalTok{( eusilc , cluster_sums )}
-
-\CommentTok{# construct a survey.design}
-\CommentTok{# with the fpc using the cluster sum}
-\NormalTok{des_eusilc_ultimate_cluster <-}\StringTok{ }
-\StringTok{    }\KeywordTok{svydesign}\NormalTok{( }
-        \DataTypeTok{ids =} \NormalTok{~}\StringTok{ }\NormalTok{rb030 , }
-        \DataTypeTok{strata =} \NormalTok{~}\StringTok{ }\NormalTok{db040 ,  }
-        \DataTypeTok{weights =} \NormalTok{~}\StringTok{ }\NormalTok{rb050 , }
-        \DataTypeTok{data =} \NormalTok{eusilc , }
-        \DataTypeTok{fpc =} \NormalTok{~}\StringTok{ }\NormalTok{cluster_sum }
-    \NormalTok{)}
-
-\CommentTok{# again, immediately run the convey_prep function on the `survey.design`}
-\NormalTok{des_eusilc_ultimate_cluster <-}\StringTok{ }\KeywordTok{convey_prep}\NormalTok{( des_eusilc_ultimate_cluster )}
-
-\CommentTok{# matches}
-\KeywordTok{attr}\NormalTok{( }\KeywordTok{svyqsr}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc_ultimate_cluster ) , }\StringTok{'var'} \NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##             eqincome
-## eqincome 0.001807323
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{varpoord_qsr_calculation$all_result$var}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## [1] 0.001807323
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# matches}
-\NormalTok{varpoord_qsr_calculation$all_result$se}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## [1] 0.04251263
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{SE}\NormalTok{( }\KeywordTok{svyqsr}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc_ultimate_cluster ) )}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##            eqincome
-## eqincome 0.04251263
-\end{verbatim}
-
-For additional usage examples of \texttt{svyqsr}, type
-\texttt{?convey::svyqsr} in the R console.
-
 \chapter{Multidimensional Indices}\label{multidimensional}
 
 Inequality and poverty can be seen as multidimensional concepts,
@@ -4602,8 +4644,8 @@ Replicate k=1/3 rows of PDF page 17 and 19
 
 \begin{verbatim}
 ## $overall
-##      alkire-foster     SE
-## [1,]       0.36991 0.0053
+##               alkire-foster     SE
+## alkire-foster       0.36991 0.0053
 ## 
 ## $`raw headcount ratio`
 ##          raw headcount     SE
@@ -4642,8 +4684,8 @@ Replicate PDF pages 21 and 22
 
 \begin{verbatim}
 ## $overall
-##      alkire-foster     SE
-## [1,]       0.36991 0.0053
+##               alkire-foster     SE
+## alkire-foster       0.36991 0.0053
 ## 
 ## $`raw headcount ratio`
 ##          raw headcount     SE

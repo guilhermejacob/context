@@ -129,34 +129,31 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <div class="row">
 <div class="col-sm-12">
-<div id="examples-of-linearization-using-the-influence-function" class="section level2">
-<h2><span class="header-section-number">1.8</span> Examples of Linearization Using the Influence Function</h2>
-<ul>
-<li>At-risk-of-poverty threshold: <span class="math display">\[
-arpt = 0.6\times m
-\]</span> where <span class="math inline">\(m\)</span> is the median income.</li>
-</ul>
+<div id="zenga-index-and-curve-svyzenga-svyzengacurve" class="section level2">
+<h2><span class="header-section-number">3.6</span> Zenga Index and Curve (svyzenga, svyzengacurve)</h2>
+<p>The Zenga index and its curve were proposed in <span class="citation">(Zenga <label for="tufte-mn-40" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-40" class="margin-toggle">2007<span class="marginnote">Zenga, Michele. 2007. “Inequality Curve and Inequality Index Based on the Ratios Between Lower and Upper Arithmetic Means.” <em>Statistica E Applicazioni</em> 1 (4): 3–27.</span>)</span>. As <span class="citation">(Polisicchio and Porro <label for="tufte-mn-41" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-41" class="margin-toggle">2011<span class="marginnote">Polisicchio, Marcella, and Francesco Porro. 2011. “A Comparison Between Lorenz L(P) Curve and Zenga I(P) Curve.” <em>Statistica Applicata</em> 21 (3-4): 289–301. <a href="http://hdl.handle.net/10281/49428" class="uri">http://hdl.handle.net/10281/49428</a>.</span>)</span> noticed, this curve derives directly from the Lorenz curve, and can be defined as:</p>
 <p><span class="math display">\[
-z_k= -\frac{0.6}{f(m)}\times\frac{1}{N}\times\left[I(y_k\leq m-0.5) \right]
+Z(p) = 1 - \frac{L(p)}{p} \cdot \frac{1 - p}{1 - L(p)}.
 \]</span></p>
-<ul>
-<li>At-risk-of-poverty rate:</li>
-</ul>
+<p>In the <code>convey</code> library, an experimental estimator based on the Lorenz curve is used:</p>
 <p><span class="math display">\[
- arpr=\frac{\sum_U I(y_i \leq t)}{\sum_U w_i}.100
-\]</span> <span class="math display">\[
-z_k=\frac{1}{N}\left[I(y_k\leq t)-t\right]-\frac{0.6}{N}\times\frac{f(t)}{f(m)}\left[I(y_k\leq m)-0.5\right]
+\widehat{Z(p)} = \frac{ p \widehat{Y} - \widehat{\widetilde{Y}}(p) }{p \big[ \widehat{Y} - \widehat{\widetilde{Y}}(p) \big] }.
 \]</span></p>
-<p>where:</p>
-<p><span class="math inline">\(N\)</span> - population size;</p>
-<p><span class="math inline">\(t\)</span> - at-risk-of-poverty threshold;</p>
-<p><span class="math inline">\(y_k\)</span> - income of person <span class="math inline">\(k\)</span>;</p>
-<p><span class="math inline">\(m\)</span> - median income;</p>
-<p><span class="math inline">\(f\)</span> - income density function;</p>
+<p>In turn, the Zenga index derives from this curve and is defined as:</p>
+<p><span class="math display">\[
+Z = \int_0^1 Z(p)dp.
+\]</span></p>
+<p>However, its estimators were proposed by <span class="citation">(Langel <label for="tufte-mn-42" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-42" class="margin-toggle">2012<span class="marginnote">Langel, Matti. 2012. “Measuring Inequality in Finite Population Sampling.” PhD thesis. <a href="http://doc.rero.ch/record/29204" class="uri">http://doc.rero.ch/record/29204</a>.</span>)</span> and <span class="citation">(Barabesi, Diana, and Perri <label for="tufte-mn-43" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-43" class="margin-toggle">2016<span class="marginnote">Barabesi, Lucio, Giancarlo Diana, and Pier Francesco Perri. 2016. “Linearization of Inequality Indices in the Design-Based Framework.” <em>Statistics</em> 50 (5): 1161–72. doi:<a href="https://doi.org/10.1080/02331888.2015.1135924">10.1080/02331888.2015.1135924</a>.</span>)</span>. In this library, the latter is used and is defined as:</p>
+<p><span class="math display">\[
+\widehat{Z} = 1 - \sum_{i \in S} w_i \bigg[ \frac{ ( \widehat{N} - \widehat{H}_{y_i} ) ( \widehat{Y} -\widehat{K}_{y_i} ) }
+{ \widehat{N} \cdot \widehat{H}_{y_i} \cdot \widehat{K}_{y_i} } \bigg]
+\]</span></p>
+<p>where <span class="math inline">\(\widehat{N}\)</span> is the population total, <span class="math inline">\(\widehat{Y}\)</span> is the total income, <span class="math inline">\(\widehat{H}_{y_i}\)</span> is the sum of incomes below or equal to <span class="math inline">\(y_i\)</span> and <span class="math inline">\(\widehat{N}_{y_i}\)</span> is the sum of incomes greater or equal to <span class="math inline">\(y_i\)</span>.</p>
+<p>For additional usage examples of <code>svyzenga</code> or <code>svyzengacurve</code>, type <code>?convey::svyzenga</code> or <code>?convey::svyzengacurve</code> in the R console.</p>
 </div>
 <p style="text-align: center;">
-<a href="1-7-influence-function-examples.html"><button class="btn btn-default">Previous</button></a>
-<a href="1-9-replication-designs.html"><button class="btn btn-default">Next</button></a>
+<a href="3-5-amato-index-svyamato.html"><button class="btn btn-default">Previous</button></a>
+<a href="3-7-entropy-based-measures.html"><button class="btn btn-default">Next</button></a>
 </p>
 </div>
 </div>

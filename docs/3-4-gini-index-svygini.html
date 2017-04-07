@@ -129,13 +129,24 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <div class="row">
 <div class="col-sm-12">
-<div id="at-risk-of-poverty-ratio-svyarpr" class="section level2">
-<h2><span class="header-section-number">2.1</span> At Risk of Poverty Ratio (svyarpr)</h2>
-<p>here are the references</p>
-<p><span class="citation">(Osier <label for="tufte-mn-8" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-8" class="margin-toggle">2009<span class="marginnote">Osier, Guillaume. 2009. “Variance Estimation for Complex Indicators of Poverty and Inequality.” <em>Journal of the European Survey Research Association</em> 3 (3): 167–95. <a href="http://ojs.ub.uni-konstanz.de/srm/article/view/369" class="uri">http://ojs.ub.uni-konstanz.de/srm/article/view/369</a>.</span>)</span> and <span class="citation">(Deville <label for="tufte-mn-9" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-9" class="margin-toggle">1999<span class="marginnote">Deville, Jean-Claude. 1999. “Variance Estimation for Complex Statistics and Estimators: Linearization and Residual Techniques.” <em>Survey Methodology</em> 25 (2): 193–203. <a href="http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf" class="uri">http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf</a>.</span>)</span></p>
+<div id="gini-index-svygini" class="section level2">
+<h2><span class="header-section-number">3.4</span> Gini index (svygini)</h2>
+<p>The Gini index is an attempt to express the inequality presented in the Lorenz curve as a single number. In essence, it is twice the area between the equality curve and the real Lorenz curve. Put simply:</p>
+<p><span class="math display">\[
+\begin{aligned}
+G &amp;= 2 \bigg( \int_{0}^{1} pdp - \int_{0}^{1} L(p)dp \bigg) \\
+\therefore G &amp;= 1 - 2 \int_{0}^{1} L(p)dp
+\end{aligned}
+\]</span></p>
+<p>where <span class="math inline">\(G=0\)</span> in case of perfect equality and <span class="math inline">\(G = 1\)</span> in the case of perfect inequality.</p>
+<p>The estimator proposed by <span class="citation">(Osier <label for="tufte-mn-36" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-36" class="margin-toggle">2009<span class="marginnote">Osier, Guillaume. 2009. “Variance Estimation for Complex Indicators of Poverty and Inequality.” <em>Journal of the European Survey Research Association</em> 3 (3): 167–95. <a href="http://ojs.ub.uni-konstanz.de/srm/article/view/369" class="uri">http://ojs.ub.uni-konstanz.de/srm/article/view/369</a>.</span>)</span> is defined as:</p>
+<p><span class="math display">\[
+\widehat{G} = \frac{ 2 \sum_{i \in S} w_i r_i y_i - \sum_{i \in S} w_i y_i }{ \hat{Y} }
+\]</span></p>
+<p>The linearized formula of <span class="math inline">\(\widehat{G}\)</span> is used to calculate the SE.</p>
 <hr />
 <p><strong>A replication example</strong></p>
-<p>The R <code>vardpoor</code> package <span class="citation">(Breidaks, Liberts, and Ivanova <label for="tufte-mn-10" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-10" class="margin-toggle">2016<span class="marginnote">Breidaks, Juris, Martins Liberts, and Santa Ivanova. 2016. “Vardpoor: Estimation of Indicators on Social Exclusion and Poverty and Its Linearization, Variance Estimation.” Riga, Latvia: CSB.</span>)</span>, created by researchers at the Central Statistical Bureau of Latvia, includes a arpr coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.</p>
+<p>The R <code>vardpoor</code> package <span class="citation">(Breidaks, Liberts, and Ivanova <label for="tufte-mn-37" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-37" class="margin-toggle">2016<span class="marginnote">Breidaks, Juris, Martins Liberts, and Santa Ivanova. 2016. “Vardpoor: Estimation of Indicators on Social Exclusion and Poverty and Its Linearization, Variance Estimation.” Riga, Latvia: CSB.</span>)</span>, created by researchers at the Central Statistical Bureau of Latvia, includes a gini coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.</p>
 <p>Load and prepare the same data set:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the convey package</span>
 <span class="kw">library</span>(convey)
@@ -155,9 +166,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="co"># add a column with the row number</span>
 dati &lt;-<span class="st"> </span><span class="kw">data.table</span>(<span class="dt">IDd =</span> <span class="dv">1</span> :<span class="st"> </span><span class="kw">nrow</span>(eusilc), eusilc)
 
-<span class="co"># calculate the arpr coefficient</span>
+<span class="co"># calculate the gini coefficient</span>
 <span class="co"># using the R vardpoor library</span>
-varpoord_arpr_calculation &lt;-
+varpoord_gini_calculation &lt;-
 <span class="st">    </span><span class="kw">varpoord</span>(
     
         <span class="co"># analysis variable</span>
@@ -183,12 +194,12 @@ varpoord_arpr_calculation &lt;-
         <span class="co"># data.table</span>
         <span class="dt">dataset =</span> dati, 
         
-        <span class="co"># arpr coefficient function</span>
-        <span class="dt">type =</span> <span class="st">&quot;linarpr&quot;</span>,
+        <span class="co"># gini coefficient function</span>
+        <span class="dt">type =</span> <span class="st">&quot;lingini&quot;</span>,
       
       <span class="co"># poverty threshold range</span>
       <span class="dt">order_quant =</span> 50L ,
-          
+      
       <span class="co"># get linearized variable</span>
       <span class="dt">outp_lin =</span> <span class="ot">TRUE</span>
         
@@ -208,33 +219,33 @@ des_eusilc &lt;-<span class="st"> </span>
 des_eusilc &lt;-<span class="st"> </span><span class="kw">convey_prep</span>( des_eusilc )
 
 <span class="co"># coefficients do match</span>
-varpoord_arpr_calculation$all_result$value</code></pre></div>
-<pre><code>## [1] 14.44422</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>( <span class="kw">svyarpr</span>( ~<span class="st"> </span>eqincome , des_eusilc ) ) *<span class="st"> </span><span class="dv">100</span></code></pre></div>
+varpoord_gini_calculation$all_result$value</code></pre></div>
+<pre><code>## [1] 26.49652</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>( <span class="kw">svygini</span>( ~<span class="st"> </span>eqincome , des_eusilc ) ) *<span class="st"> </span><span class="dv">100</span></code></pre></div>
 <pre><code>## eqincome 
-## 14.44422</code></pre>
+## 26.49652</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># linearized variables do match</span>
-<span class="co"># vardpoor</span>
-lin_arpr_varpoord&lt;-<span class="st"> </span>varpoord_arpr_calculation$lin_out$lin_arpr
+<span class="co"># varpoord</span>
+lin_gini_varpoord&lt;-<span class="st"> </span>varpoord_gini_calculation$lin_out$lin_gini
 <span class="co"># convey </span>
-lin_arpr_convey &lt;-<span class="st"> </span><span class="kw">attr</span>(<span class="kw">svyarpr</span>( ~<span class="st"> </span>eqincome , des_eusilc ),<span class="st">&quot;lin&quot;</span>)
+lin_gini_convey &lt;-<span class="st"> </span><span class="kw">attr</span>(<span class="kw">svygini</span>( ~<span class="st"> </span>eqincome , des_eusilc ),<span class="st">&quot;lin&quot;</span>)
 
 <span class="co"># check equality</span>
-<span class="kw">all.equal</span>(lin_arpr_varpoord,<span class="dv">100</span>*lin_arpr_convey )</code></pre></div>
+<span class="kw">all.equal</span>(lin_gini_varpoord,<span class="dv">100</span>*lin_gini_convey )</code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># variances do not match exactly</span>
-<span class="kw">attr</span>( <span class="kw">svyarpr</span>( ~<span class="st"> </span>eqincome , des_eusilc ) , <span class="st">&#39;var&#39;</span> ) *<span class="st"> </span><span class="dv">10000</span></code></pre></div>
+<span class="kw">attr</span>( <span class="kw">svygini</span>( ~<span class="st"> </span>eqincome , des_eusilc ) , <span class="st">&#39;var&#39;</span> ) *<span class="st"> </span><span class="dv">10000</span></code></pre></div>
 <pre><code>##            eqincome
-## eqincome 0.07599778</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">varpoord_arpr_calculation$all_result$var</code></pre></div>
-<pre><code>## [1] 0.07586194</code></pre>
+## eqincome 0.03790739</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">varpoord_gini_calculation$all_result$var</code></pre></div>
+<pre><code>## [1] 0.03783931</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># standard errors do not match exactly</span>
-varpoord_arpr_calculation$all_result$se</code></pre></div>
-<pre><code>## [1] 0.2754305</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SE</span>( <span class="kw">svyarpr</span>( ~<span class="st"> </span>eqincome , des_eusilc ) ) *<span class="st"> </span><span class="dv">100</span></code></pre></div>
+varpoord_gini_calculation$all_result$se</code></pre></div>
+<pre><code>## [1] 0.1945233</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SE</span>( <span class="kw">svygini</span>( ~<span class="st"> </span>eqincome , des_eusilc ) ) *<span class="st"> </span><span class="dv">100</span></code></pre></div>
 <pre><code>##           eqincome
-## eqincome 0.2756769</code></pre>
-<p>The variance estimate is computed by using the approximation defined in <a href="1-5-the-variance-estimator.html#eq:var">(1.1)</a>, where the linearized variable <span class="math inline">\(z\)</span> is defined by <a href="1-5-the-variance-estimator.html#eq:lin">(1.2)</a>. The functions <code>convey::svyarpr</code> and <code>vardpoor::linarpr</code> produce the same linearized variable <span class="math inline">\(z\)</span>.</p>
+## eqincome 0.1946982</code></pre>
+<p>The variance estimate is computed by using the approximation defined in <a href="1-5-the-variance-estimator.html#eq:var">(1.1)</a>, where the linearized variable <span class="math inline">\(z\)</span> is defined by <a href="1-5-the-variance-estimator.html#eq:lin">(1.2)</a>. The functions <code>convey::svygini</code> and <code>vardpoor::lingini</code> produce the same linearized variable <span class="math inline">\(z\)</span>.</p>
 <p>However, the measures of uncertainty do not line up, because <code>library(vardpoor)</code> defaults to an ultimate cluster method that can be replicated with an alternative setup of the <code>survey.design</code> object.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># within each strata, sum up the weights</span>
 cluster_sums &lt;-<span class="st"> </span><span class="kw">aggregate</span>( eusilc$rb050 , <span class="kw">list</span>( eusilc$db040 ) , sum )
@@ -260,22 +271,22 @@ des_eusilc_ultimate_cluster &lt;-<span class="st"> </span>
 des_eusilc_ultimate_cluster &lt;-<span class="st"> </span><span class="kw">convey_prep</span>( des_eusilc_ultimate_cluster )
 
 <span class="co"># matches</span>
-<span class="kw">attr</span>( <span class="kw">svyarpr</span>( ~<span class="st"> </span>eqincome , des_eusilc_ultimate_cluster ) , <span class="st">&#39;var&#39;</span> ) *<span class="st"> </span><span class="dv">10000</span></code></pre></div>
+<span class="kw">attr</span>( <span class="kw">svygini</span>( ~<span class="st"> </span>eqincome , des_eusilc_ultimate_cluster ) , <span class="st">&#39;var&#39;</span> ) *<span class="st"> </span><span class="dv">10000</span></code></pre></div>
 <pre><code>##            eqincome
-## eqincome 0.07586194</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">varpoord_arpr_calculation$all_result$var</code></pre></div>
-<pre><code>## [1] 0.07586194</code></pre>
+## eqincome 0.03783931</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">varpoord_gini_calculation$all_result$var</code></pre></div>
+<pre><code>## [1] 0.03783931</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># matches</span>
-varpoord_arpr_calculation$all_result$se</code></pre></div>
-<pre><code>## [1] 0.2754305</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SE</span>( <span class="kw">svyarpr</span>( ~<span class="st"> </span>eqincome , des_eusilc_ultimate_cluster ) ) *<span class="st"> </span><span class="dv">100</span></code></pre></div>
+varpoord_gini_calculation$all_result$se</code></pre></div>
+<pre><code>## [1] 0.1945233</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SE</span>( <span class="kw">svygini</span>( ~<span class="st"> </span>eqincome , des_eusilc_ultimate_cluster ) ) *<span class="st"> </span><span class="dv">100</span></code></pre></div>
 <pre><code>##           eqincome
-## eqincome 0.2754305</code></pre>
-<p>For additional usage examples of <code>svyarpr</code>, type <code>?convey::svyarpr</code> in the R console.</p>
+## eqincome 0.1945233</code></pre>
+<p>For additional usage examples of <code>svygini</code>, type <code>?convey::svygini</code> in the R console.</p>
 </div>
 <p style="text-align: center;">
-<a href="2-poverty.html"><button class="btn btn-default">Previous</button></a>
-<a href="2-2-at-risk-of-poverty-threshold-svyarpt.html"><button class="btn btn-default">Next</button></a>
+<a href="3-3-lorenz-curve-svylorenz.html"><button class="btn btn-default">Previous</button></a>
+<a href="3-5-amato-index-svyamato.html"><button class="btn btn-default">Next</button></a>
 </p>
 </div>
 </div>
