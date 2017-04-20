@@ -124,7 +124,7 @@
   \postauthor{\par}
   \predate{\centering\large\emph}
   \postdate{\par}
-  \date{2017-04-19}
+  \date{2017-04-20}
 
 \usepackage{booktabs}
 
@@ -361,15 +361,15 @@ eqIncome 0.14444 0.0028
 
 \begin{verbatim}
                       db040  eqIncome se.eqIncome
-Burgenland       Burgenland 0.1953984 0.017532250
-Carinthia         Carinthia 0.1308627 0.009752466
-Lower Austria Lower Austria 0.1384362 0.006816582
-Salzburg           Salzburg 0.1378734 0.011848790
-Styria               Styria 0.1437464 0.007914974
-Tyrol                 Tyrol 0.1530819 0.009760327
-Upper Austria Upper Austria 0.1088977 0.005662371
-Vienna               Vienna 0.1723468 0.006614422
-Vorarlberg       Vorarlberg 0.1653731 0.013052935
+Burgenland       Burgenland 0.1953984 0.015088185
+Carinthia         Carinthia 0.1308627 0.009914524
+Lower Austria Lower Austria 0.1384362 0.007056499
+Salzburg           Salzburg 0.1378734 0.012463802
+Styria               Styria 0.1437464 0.006631867
+Tyrol                 Tyrol 0.1530819 0.009949474
+Upper Austria Upper Austria 0.1088977 0.006845008
+Vienna               Vienna 0.1723468 0.006423093
+Vorarlberg       Vorarlberg 0.1653731 0.014623632
 \end{verbatim}
 
 The functions of the library convey are called in a similar way to the
@@ -421,7 +421,7 @@ py010n   NA NA
 
 \begin{verbatim}
           gini     SE
-py010n 0.64606 0.0034
+py010n 0.64606 0.0038
 \end{verbatim}
 
 \section{Underlying Calculations}\label{underlying-calculations}
@@ -690,21 +690,275 @@ economic analysis.
 
 \chapter{Poverty Indices}\label{poverty}
 
+\section{At Risk of Poverty Threshold
+(svyarpt)}\label{at-risk-of-poverty-threshold-svyarpt}
+
+The at-risk-of-poverty-theshold is \(0.6\) times the median income for
+the entire population.
+
+\[
+arpt = 0.6 \times median(y),
+\] where, \(y\) is the income variable and \texttt{median} is estimated
+for the whole population. The details of the linearization of the
+\texttt{arpt} are discussed by \citep{deville1999} and
+\citep{osier2009}. ---
+
+\textbf{A replication example}
+
+The R \texttt{vardpoor} package \citep{vardpoor}, created by researchers
+at the Central Statistical Bureau of Latvia, includes a arpt coefficient
+calculation using the ultimate cluster method. The example below
+reproduces those statistics.
+
+Load and prepare the same data set:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# load the convey package}
+\KeywordTok{library}\NormalTok{(convey)}
+
+\CommentTok{# load the survey library}
+\KeywordTok{library}\NormalTok{(survey)}
+
+\CommentTok{# load the vardpoor library}
+\KeywordTok{library}\NormalTok{(vardpoor)}
+
+\CommentTok{# load the synthetic european union statistics on income & living conditions}
+\KeywordTok{data}\NormalTok{(eusilc)}
+
+\CommentTok{# make all column names lowercase}
+\KeywordTok{names}\NormalTok{( eusilc ) <-}\StringTok{ }\KeywordTok{tolower}\NormalTok{( }\KeywordTok{names}\NormalTok{( eusilc ) )}
+
+\CommentTok{# add a column with the row number}
+\NormalTok{dati <-}\StringTok{ }\KeywordTok{data.table}\NormalTok{(}\DataTypeTok{IDd =} \DecValTok{1} \NormalTok{:}\StringTok{ }\KeywordTok{nrow}\NormalTok{(eusilc), eusilc)}
+
+\CommentTok{# calculate the arpt coefficient}
+\CommentTok{# using the R vardpoor library}
+\NormalTok{varpoord_arpt_calculation <-}
+\StringTok{    }\KeywordTok{varpoord}\NormalTok{(}
+    
+        \CommentTok{# analysis variable}
+        \DataTypeTok{Y =} \StringTok{"eqincome"}\NormalTok{, }
+        
+        \CommentTok{# weights variable}
+        \DataTypeTok{w_final =} \StringTok{"rb050"}\NormalTok{,}
+        
+        \CommentTok{# row number variable}
+        \DataTypeTok{ID_level1 =} \StringTok{"IDd"}\NormalTok{,}
+        
+        \CommentTok{# row number variable}
+        \DataTypeTok{ID_level2 =} \StringTok{"IDd"}\NormalTok{,}
+        
+        \CommentTok{# strata variable}
+        \DataTypeTok{H =} \StringTok{"db040"}\NormalTok{, }
+        
+        \DataTypeTok{N_h =} \OtherTok{NULL} \NormalTok{,}
+        
+        \CommentTok{# clustering variable}
+        \DataTypeTok{PSU =} \StringTok{"rb030"}\NormalTok{, }
+        
+        \CommentTok{# data.table}
+        \DataTypeTok{dataset =} \NormalTok{dati, }
+        
+        \CommentTok{# arpt coefficient function}
+        \DataTypeTok{type =} \StringTok{"linarpt"}\NormalTok{,}
+      
+      \CommentTok{# poverty threshold range}
+      \DataTypeTok{order_quant =} \NormalTok{50L ,}
+      
+        \CommentTok{# get linearized variable}
+      \DataTypeTok{outp_lin =} \OtherTok{TRUE}
+    \NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## NULL
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# construct a survey.design}
+\CommentTok{# using our recommended setup}
+\NormalTok{des_eusilc <-}\StringTok{ }
+\StringTok{    }\KeywordTok{svydesign}\NormalTok{( }
+        \DataTypeTok{ids =} \NormalTok{~}\StringTok{ }\NormalTok{rb030 , }
+        \DataTypeTok{strata =} \NormalTok{~}\StringTok{ }\NormalTok{db040 ,  }
+        \DataTypeTok{weights =} \NormalTok{~}\StringTok{ }\NormalTok{rb050 , }
+        \DataTypeTok{data =} \NormalTok{eusilc}
+    \NormalTok{)}
+
+\CommentTok{# immediately run the convey_prep function on it}
+\NormalTok{des_eusilc <-}\StringTok{ }\KeywordTok{convey_prep}\NormalTok{( des_eusilc )}
+
+\CommentTok{# coefficients do match}
+\NormalTok{varpoord_arpt_calculation$all_result$value}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 10859.24
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{coef}\NormalTok{( }\KeywordTok{svyarpt}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc ) )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## eqincome 
+## 10859.24
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# linearized variables do match}
+\CommentTok{# vardpoor}
+\NormalTok{lin_arpt_varpoord<-}\StringTok{ }\NormalTok{varpoord_arpt_calculation$lin_out$lin_arpt}
+\CommentTok{# convey }
+\NormalTok{lin_arpt_convey <-}\StringTok{ }\KeywordTok{attr}\NormalTok{(}\KeywordTok{svyarpt}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc ),}\StringTok{"lin"}\NormalTok{)}
+
+\CommentTok{# check equality}
+\KeywordTok{all.equal}\NormalTok{(lin_arpt_varpoord, lin_arpt_convey )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] TRUE
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# variances do not match exactly}
+\KeywordTok{attr}\NormalTok{( }\KeywordTok{svyarpt}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc ) , }\StringTok{'var'} \NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##          eqincome
+## eqincome 2564.027
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{varpoord_arpt_calculation$all_result$var}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 2559.442
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# standard errors do not match exactly}
+\NormalTok{varpoord_arpt_calculation$all_result$se}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 50.59093
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{SE}\NormalTok{( }\KeywordTok{svyarpt}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc ) )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##          eqincome
+## eqincome 50.63622
+\end{verbatim}
+
+The variance estimate is computed by using the approximation defined in
+\eqref{eq:var}, where the linearized variable \(z\) is defined by
+\eqref{eq:lin}. The functions \texttt{convey::svyarpt} and
+\texttt{vardpoor::linarpt} produce the same linearized variable \(z\).
+
+However, the measures of uncertainty do not line up, because
+\texttt{library(vardpoor)} defaults to an ultimate cluster method that
+can be replicated with an alternative setup of the
+\texttt{survey.design} object.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# within each strata, sum up the weights}
+\NormalTok{cluster_sums <-}\StringTok{ }\KeywordTok{aggregate}\NormalTok{( eusilc$rb050 , }\KeywordTok{list}\NormalTok{( eusilc$db040 ) , sum )}
+
+\CommentTok{# name the within-strata sums of weights the `cluster_sum`}
+\KeywordTok{names}\NormalTok{( cluster_sums ) <-}\StringTok{ }\KeywordTok{c}\NormalTok{( }\StringTok{"db040"} \NormalTok{, }\StringTok{"cluster_sum"} \NormalTok{)}
+
+\CommentTok{# merge this column back onto the data.frame}
+\NormalTok{eusilc <-}\StringTok{ }\KeywordTok{merge}\NormalTok{( eusilc , cluster_sums )}
+
+\CommentTok{# construct a survey.design}
+\CommentTok{# with the fpc using the cluster sum}
+\NormalTok{des_eusilc_ultimate_cluster <-}\StringTok{ }
+\StringTok{    }\KeywordTok{svydesign}\NormalTok{( }
+        \DataTypeTok{ids =} \NormalTok{~}\StringTok{ }\NormalTok{rb030 , }
+        \DataTypeTok{strata =} \NormalTok{~}\StringTok{ }\NormalTok{db040 ,  }
+        \DataTypeTok{weights =} \NormalTok{~}\StringTok{ }\NormalTok{rb050 , }
+        \DataTypeTok{data =} \NormalTok{eusilc , }
+        \DataTypeTok{fpc =} \NormalTok{~}\StringTok{ }\NormalTok{cluster_sum }
+    \NormalTok{)}
+
+\CommentTok{# again, immediately run the convey_prep function on the `survey.design`}
+\NormalTok{des_eusilc_ultimate_cluster <-}\StringTok{ }\KeywordTok{convey_prep}\NormalTok{( des_eusilc_ultimate_cluster )}
+
+\CommentTok{# matches}
+\KeywordTok{attr}\NormalTok{( }\KeywordTok{svyarpt}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc_ultimate_cluster ) , }\StringTok{'var'} \NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##          eqincome
+## eqincome 2559.442
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{varpoord_arpt_calculation$all_result$var}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 2559.442
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# matches}
+\NormalTok{varpoord_arpt_calculation$all_result$se}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 50.59093
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{SE}\NormalTok{( }\KeywordTok{svyarpt}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc_ultimate_cluster ) )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##          eqincome
+## eqincome 50.59093
+\end{verbatim}
+
+For additional usage examples of \texttt{svyarpt}, type
+\texttt{?convey::svyarpt} in the R console.
+
 \section{At Risk of Poverty Ratio
 (svyarpr)}\label{at-risk-of-poverty-ratio-svyarpr}
 
-Denoting by \(y\) the income variable, the at-risk-of-poverty threshold
-is defined by:
-
-\[
-arpt = 0.6 \times med(y)
-\] where, \(med(y)\) is the median income. The at-risk-of-poverty rate
-is the share of persons with an income below the at-risk-of-poverty
-threshold (arpt).
-
-Here are the references:
-
-\citep{osier2009} and \citep{deville1999}
+The at-risk-of-poverty rate is the share of persons with an income below
+the at-risk-of-poverty threshold (\texttt{arpt}). The details of the
+linearization of the \texttt{arpr} and are discussed by
+\citep{deville1999} and \citep{osier2009}.
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
@@ -958,267 +1212,6 @@ can be replicated with an alternative setup of the
 For additional usage examples of \texttt{svyarpr}, type
 \texttt{?convey::svyarpr} in the R console.
 
-\section{At Risk of Poverty Threshold
-(svyarpt)}\label{at-risk-of-poverty-threshold-svyarpt}
-
-The at-risk-of-poverty-theshold is \(0.6\) times the median income for
-the entire population.
-
-here are the references
-
-\citep{osier2009} and \citep{deville1999}
-
-\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
-
-\textbf{A replication example}
-
-The R \texttt{vardpoor} package \citep{vardpoor}, created by researchers
-at the Central Statistical Bureau of Latvia, includes a arpt coefficient
-calculation using the ultimate cluster method. The example below
-reproduces those statistics.
-
-Load and prepare the same data set:
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# load the convey package}
-\KeywordTok{library}\NormalTok{(convey)}
-
-\CommentTok{# load the survey library}
-\KeywordTok{library}\NormalTok{(survey)}
-
-\CommentTok{# load the vardpoor library}
-\KeywordTok{library}\NormalTok{(vardpoor)}
-
-\CommentTok{# load the synthetic european union statistics on income & living conditions}
-\KeywordTok{data}\NormalTok{(eusilc)}
-
-\CommentTok{# make all column names lowercase}
-\KeywordTok{names}\NormalTok{( eusilc ) <-}\StringTok{ }\KeywordTok{tolower}\NormalTok{( }\KeywordTok{names}\NormalTok{( eusilc ) )}
-
-\CommentTok{# add a column with the row number}
-\NormalTok{dati <-}\StringTok{ }\KeywordTok{data.table}\NormalTok{(}\DataTypeTok{IDd =} \DecValTok{1} \NormalTok{:}\StringTok{ }\KeywordTok{nrow}\NormalTok{(eusilc), eusilc)}
-
-\CommentTok{# calculate the arpt coefficient}
-\CommentTok{# using the R vardpoor library}
-\NormalTok{varpoord_arpt_calculation <-}
-\StringTok{    }\KeywordTok{varpoord}\NormalTok{(}
-    
-        \CommentTok{# analysis variable}
-        \DataTypeTok{Y =} \StringTok{"eqincome"}\NormalTok{, }
-        
-        \CommentTok{# weights variable}
-        \DataTypeTok{w_final =} \StringTok{"rb050"}\NormalTok{,}
-        
-        \CommentTok{# row number variable}
-        \DataTypeTok{ID_level1 =} \StringTok{"IDd"}\NormalTok{,}
-        
-        \CommentTok{# row number variable}
-        \DataTypeTok{ID_level2 =} \StringTok{"IDd"}\NormalTok{,}
-        
-        \CommentTok{# strata variable}
-        \DataTypeTok{H =} \StringTok{"db040"}\NormalTok{, }
-        
-        \DataTypeTok{N_h =} \OtherTok{NULL} \NormalTok{,}
-        
-        \CommentTok{# clustering variable}
-        \DataTypeTok{PSU =} \StringTok{"rb030"}\NormalTok{, }
-        
-        \CommentTok{# data.table}
-        \DataTypeTok{dataset =} \NormalTok{dati, }
-        
-        \CommentTok{# arpt coefficient function}
-        \DataTypeTok{type =} \StringTok{"linarpt"}\NormalTok{,}
-      
-      \CommentTok{# poverty threshold range}
-      \DataTypeTok{order_quant =} \NormalTok{50L ,}
-      
-        \CommentTok{# get linearized variable}
-      \DataTypeTok{outp_lin =} \OtherTok{TRUE}
-    \NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## NULL
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# construct a survey.design}
-\CommentTok{# using our recommended setup}
-\NormalTok{des_eusilc <-}\StringTok{ }
-\StringTok{    }\KeywordTok{svydesign}\NormalTok{( }
-        \DataTypeTok{ids =} \NormalTok{~}\StringTok{ }\NormalTok{rb030 , }
-        \DataTypeTok{strata =} \NormalTok{~}\StringTok{ }\NormalTok{db040 ,  }
-        \DataTypeTok{weights =} \NormalTok{~}\StringTok{ }\NormalTok{rb050 , }
-        \DataTypeTok{data =} \NormalTok{eusilc}
-    \NormalTok{)}
-
-\CommentTok{# immediately run the convey_prep function on it}
-\NormalTok{des_eusilc <-}\StringTok{ }\KeywordTok{convey_prep}\NormalTok{( des_eusilc )}
-
-\CommentTok{# coefficients do match}
-\NormalTok{varpoord_arpt_calculation$all_result$value}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## [1] 10859.24
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{coef}\NormalTok{( }\KeywordTok{svyarpt}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc ) )}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## eqincome 
-## 10859.24
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# linearized variables do match}
-\CommentTok{# vardpoor}
-\NormalTok{lin_arpt_varpoord<-}\StringTok{ }\NormalTok{varpoord_arpt_calculation$lin_out$lin_arpt}
-\CommentTok{# convey }
-\NormalTok{lin_arpt_convey <-}\StringTok{ }\KeywordTok{attr}\NormalTok{(}\KeywordTok{svyarpt}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc ),}\StringTok{"lin"}\NormalTok{)}
-
-\CommentTok{# check equality}
-\KeywordTok{all.equal}\NormalTok{(lin_arpt_varpoord, lin_arpt_convey )}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## [1] TRUE
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# variances do not match exactly}
-\KeywordTok{attr}\NormalTok{( }\KeywordTok{svyarpt}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc ) , }\StringTok{'var'} \NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##          eqincome
-## eqincome 2564.027
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{varpoord_arpt_calculation$all_result$var}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## [1] 2559.442
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# standard errors do not match exactly}
-\NormalTok{varpoord_arpt_calculation$all_result$se}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## [1] 50.59093
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{SE}\NormalTok{( }\KeywordTok{svyarpt}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc ) )}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##          eqincome
-## eqincome 50.63622
-\end{verbatim}
-
-The variance estimate is computed by using the approximation defined in
-\eqref{eq:var}, where the linearized variable \(z\) is defined by
-\eqref{eq:lin}. The functions \texttt{convey::svyarpt} and
-\texttt{vardpoor::linarpt} produce the same linearized variable \(z\).
-
-However, the measures of uncertainty do not line up, because
-\texttt{library(vardpoor)} defaults to an ultimate cluster method that
-can be replicated with an alternative setup of the
-\texttt{survey.design} object.
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# within each strata, sum up the weights}
-\NormalTok{cluster_sums <-}\StringTok{ }\KeywordTok{aggregate}\NormalTok{( eusilc$rb050 , }\KeywordTok{list}\NormalTok{( eusilc$db040 ) , sum )}
-
-\CommentTok{# name the within-strata sums of weights the `cluster_sum`}
-\KeywordTok{names}\NormalTok{( cluster_sums ) <-}\StringTok{ }\KeywordTok{c}\NormalTok{( }\StringTok{"db040"} \NormalTok{, }\StringTok{"cluster_sum"} \NormalTok{)}
-
-\CommentTok{# merge this column back onto the data.frame}
-\NormalTok{eusilc <-}\StringTok{ }\KeywordTok{merge}\NormalTok{( eusilc , cluster_sums )}
-
-\CommentTok{# construct a survey.design}
-\CommentTok{# with the fpc using the cluster sum}
-\NormalTok{des_eusilc_ultimate_cluster <-}\StringTok{ }
-\StringTok{    }\KeywordTok{svydesign}\NormalTok{( }
-        \DataTypeTok{ids =} \NormalTok{~}\StringTok{ }\NormalTok{rb030 , }
-        \DataTypeTok{strata =} \NormalTok{~}\StringTok{ }\NormalTok{db040 ,  }
-        \DataTypeTok{weights =} \NormalTok{~}\StringTok{ }\NormalTok{rb050 , }
-        \DataTypeTok{data =} \NormalTok{eusilc , }
-        \DataTypeTok{fpc =} \NormalTok{~}\StringTok{ }\NormalTok{cluster_sum }
-    \NormalTok{)}
-
-\CommentTok{# again, immediately run the convey_prep function on the `survey.design`}
-\NormalTok{des_eusilc_ultimate_cluster <-}\StringTok{ }\KeywordTok{convey_prep}\NormalTok{( des_eusilc_ultimate_cluster )}
-
-\CommentTok{# matches}
-\KeywordTok{attr}\NormalTok{( }\KeywordTok{svyarpt}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc_ultimate_cluster ) , }\StringTok{'var'} \NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##          eqincome
-## eqincome 2559.442
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{varpoord_arpt_calculation$all_result$var}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## [1] 2559.442
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# matches}
-\NormalTok{varpoord_arpt_calculation$all_result$se}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## [1] 50.59093
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{SE}\NormalTok{( }\KeywordTok{svyarpt}\NormalTok{( ~}\StringTok{ }\NormalTok{eqincome , des_eusilc_ultimate_cluster ) )}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##          eqincome
-## eqincome 50.59093
-\end{verbatim}
-
-For additional usage examples of \texttt{svyarpt}, type
-\texttt{?convey::svyarpt} in the R console.
-
 \section{Relative Median Income Ratio
 (svyrmir)}\label{relative-median-income-ratio-svyrmir}
 
@@ -1230,9 +1223,8 @@ below the same value.
 rmir = \frac{median\{y_i; age_i >65 \}}{median\{y_i; age_i \leq 65 \}}
 \]
 
-here are the references
-
-\citep{osier2009} and \citep{deville1999}
+The details of the linearization of the \texttt{rmir} and are discussed
+by \citep{deville1999} and \citep{osier2009}.
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
@@ -1498,11 +1490,8 @@ difference between the median income of people having income below the
 
 \[
 rmpg = \frac{median\{y_i, y_i<arpt\}-arpt}{arpt}
-\]
-
-here are the references
-
-\citep{osier2009} and \citep{deville1999}
+\] The details of the linearization of the \texttt{rmpg} are discussed
+by \citep{deville1999} and \citep{osier2009}.
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
@@ -1764,11 +1753,8 @@ median of incomes of people having the income below the \texttt{arpt}:
 
 \[
 poormed = median\{y_i; y_i< arpt\}
-\]
-
-here are the references
-
-\citep{osier2009} and \citep{deville1999}
+\] The details of the linearization of the \texttt{poormed} are
+discussed by \citep{deville1999} and \citep{osier2009}.
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
@@ -2440,11 +2426,9 @@ Number of PSUs   =    7476          Population size  = 5.5e+07
 \end{verbatim}
 
 For additional usage examples of \texttt{svyfgt}, type
-\texttt{?convey::svyfgt} in the R console.
-
-here are the references
-
-\citep{foster1984} and \citep{berger2003}
+\texttt{?convey::svyfgt} in the R console. The details of the
+linearization of the \texttt{arpt} are discussed by \citep{foster1984}
+and \citep{berger2003}.
 
 \chapter{Inequality Measurement}\label{inequality}
 
@@ -2490,6 +2474,9 @@ men's hourly earnings, women's hourly earnings are expected to increase
 \$\((1-GPG)\). For instance, assuming \(GPG = 0.8\), for every \$1.00
 increase in men's average hourly earnings, women's hourly earnings would
 increase only \$0.20.
+
+The details of the linearization of the \texttt{GPG} are discussed by
+\citep{deville1999} and \citep{osier2009}.
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
@@ -2767,6 +2754,9 @@ fractile share ratios. For instance, the Palma index is defined as the
 ratio between the share of the 10\% richest over the share held by the
 poorest 40\% and \citep{cobham2015} presents interesting arguments for
 its usage.
+
+The details of the linearization of the \texttt{QSR} are discussed by
+\citep{deville1999} and \citep{osier2009}.
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
