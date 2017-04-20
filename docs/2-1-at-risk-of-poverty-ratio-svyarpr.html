@@ -17,7 +17,7 @@
 
 <meta name="author" content="Guilherme Jacob, Anthony Damico, and Djalma Pessoa" />
 
-<meta name="date" content="2017-04-19" />
+<meta name="date" content="2017-04-20" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -131,12 +131,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="col-sm-12">
 <div id="at-risk-of-poverty-ratio-svyarpr" class="section level2">
 <h2><span class="header-section-number">2.1</span> At Risk of Poverty Ratio (svyarpr)</h2>
-<p>Denoting by <span class="math inline">\(y\)</span> the income variable, the at-risk-of-poverty threshold is defined by:</p>
-<p><span class="math display">\[
-arpt = 0.6 \times med(y)
-\]</span> where, <span class="math inline">\(med(y)\)</span> is the median income. The at-risk-of-poverty rate is the share of persons with an income below the at-risk-of-poverty threshold (arpt).</p>
-<p>Here are the references:</p>
-<p><span class="citation">(Osier <label for="tufte-mn-8" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-8" class="margin-toggle">2009<span class="marginnote">Osier, Guillaume. 2009. “Variance Estimation for Complex Indicators of Poverty and Inequality.” <em>Journal of the European Survey Research Association</em> 3 (3): 167–95. <a href="http://ojs.ub.uni-konstanz.de/srm/article/view/369" class="uri">http://ojs.ub.uni-konstanz.de/srm/article/view/369</a>.</span>)</span> and <span class="citation">(Deville <label for="tufte-mn-9" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-9" class="margin-toggle">1999<span class="marginnote">Deville, Jean-Claude. 1999. “Variance Estimation for Complex Statistics and Estimators: Linearization and Residual Techniques.” <em>Survey Methodology</em> 25 (2): 193–203. <a href="http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf" class="uri">http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf</a>.</span>)</span></p>
+<p>The at-risk-of-poverty rate is the share of persons with an income below the at-risk-of-poverty threshold (<code>arpt</code>). The details of the linearization of the <code>arpr</code> and are discussed by <span class="citation">(Deville <label for="tufte-mn-8" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-8" class="margin-toggle">1999<span class="marginnote">Deville, Jean-Claude. 1999. “Variance Estimation for Complex Statistics and Estimators: Linearization and Residual Techniques.” <em>Survey Methodology</em> 25 (2): 193–203. <a href="http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf" class="uri">http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf</a>.</span>)</span> and <span class="citation">(Osier <label for="tufte-mn-9" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-9" class="margin-toggle">2009<span class="marginnote">Osier, Guillaume. 2009. “Variance Estimation for Complex Indicators of Poverty and Inequality.” <em>Journal of the European Survey Research Association</em> 3 (3): 167–95. <a href="http://ojs.ub.uni-konstanz.de/srm/article/view/369" class="uri">http://ojs.ub.uni-konstanz.de/srm/article/view/369</a>.</span>)</span>.</p>
 <hr />
 <p><strong>A replication example</strong></p>
 <p>The R <code>vardpoor</code> package <span class="citation">(Breidaks, Liberts, and Ivanova <label for="tufte-mn-10" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-10" class="margin-toggle">2016<span class="marginnote">Breidaks, Juris, Martins Liberts, and Santa Ivanova. 2016. “Vardpoor: Estimation of Indicators on Social Exclusion and Poverty and Its Linearization, Variance Estimation.” Riga, Latvia: CSB.</span>)</span>, created by researchers at the Central Statistical Bureau of Latvia, includes a arpr coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.</p>
@@ -157,7 +152,7 @@ arpt = 0.6 \times med(y)
 <span class="kw">names</span>( eusilc ) &lt;-<span class="st"> </span><span class="kw">tolower</span>( <span class="kw">names</span>( eusilc ) )
 
 <span class="co"># add a column with the row number</span>
-dati &lt;-<span class="st"> </span><span class="kw">data.table</span>(<span class="dt">IDd =</span> <span class="dv">1</span> :<span class="st"> </span><span class="kw">nrow</span>(eusilc), eusilc)
+dati &lt;-<span class="st"> </span><span class="kw">data.table</span>(<span class="dt">IDd =</span> <span class="dv">1</span> <span class="op">:</span><span class="st"> </span><span class="kw">nrow</span>(eusilc), eusilc)
 
 <span class="co"># calculate the arpr coefficient</span>
 <span class="co"># using the R vardpoor library</span>
@@ -202,9 +197,9 @@ varpoord_arpr_calculation &lt;-
 <span class="co"># using our recommended setup</span>
 des_eusilc &lt;-<span class="st"> </span>
 <span class="st">    </span><span class="kw">svydesign</span>( 
-        <span class="dt">ids =</span> ~<span class="st"> </span>rb030 , 
-        <span class="dt">strata =</span> ~<span class="st"> </span>db040 ,  
-        <span class="dt">weights =</span> ~<span class="st"> </span>rb050 , 
+        <span class="dt">ids =</span> <span class="op">~</span><span class="st"> </span>rb030 , 
+        <span class="dt">strata =</span> <span class="op">~</span><span class="st"> </span>db040 ,  
+        <span class="dt">weights =</span> <span class="op">~</span><span class="st"> </span>rb050 , 
         <span class="dt">data =</span> eusilc
     )
 
@@ -212,36 +207,36 @@ des_eusilc &lt;-<span class="st"> </span>
 des_eusilc &lt;-<span class="st"> </span><span class="kw">convey_prep</span>( des_eusilc )
 
 <span class="co"># coefficients do match</span>
-varpoord_arpr_calculation$all_result$value</code></pre></div>
+varpoord_arpr_calculation<span class="op">$</span>all_result<span class="op">$</span>value</code></pre></div>
 <pre><code>## [1] 14.44422</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>( <span class="kw">svyarpr</span>( ~<span class="st"> </span>eqincome , des_eusilc ) ) *<span class="st"> </span><span class="dv">100</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>( <span class="kw">svyarpr</span>( <span class="op">~</span><span class="st"> </span>eqincome , des_eusilc ) ) <span class="op">*</span><span class="st"> </span><span class="dv">100</span></code></pre></div>
 <pre><code>## eqincome 
 ## 14.44422</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># linearized variables do match</span>
 <span class="co"># vardpoor</span>
-lin_arpr_varpoord&lt;-<span class="st"> </span>varpoord_arpr_calculation$lin_out$lin_arpr
+lin_arpr_varpoord&lt;-<span class="st"> </span>varpoord_arpr_calculation<span class="op">$</span>lin_out<span class="op">$</span>lin_arpr
 <span class="co"># convey </span>
-lin_arpr_convey &lt;-<span class="st"> </span><span class="kw">attr</span>(<span class="kw">svyarpr</span>( ~<span class="st"> </span>eqincome , des_eusilc ),<span class="st">&quot;lin&quot;</span>)
+lin_arpr_convey &lt;-<span class="st"> </span><span class="kw">attr</span>(<span class="kw">svyarpr</span>( <span class="op">~</span><span class="st"> </span>eqincome , des_eusilc ),<span class="st">&quot;lin&quot;</span>)
 
 <span class="co"># check equality</span>
-<span class="kw">all.equal</span>(lin_arpr_varpoord,<span class="dv">100</span>*lin_arpr_convey )</code></pre></div>
+<span class="kw">all.equal</span>(lin_arpr_varpoord,<span class="dv">100</span><span class="op">*</span>lin_arpr_convey )</code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># variances do not match exactly</span>
-<span class="kw">attr</span>( <span class="kw">svyarpr</span>( ~<span class="st"> </span>eqincome , des_eusilc ) , <span class="st">&#39;var&#39;</span> ) *<span class="st"> </span><span class="dv">10000</span></code></pre></div>
+<span class="kw">attr</span>( <span class="kw">svyarpr</span>( <span class="op">~</span><span class="st"> </span>eqincome , des_eusilc ) , <span class="st">&#39;var&#39;</span> ) <span class="op">*</span><span class="st"> </span><span class="dv">10000</span></code></pre></div>
 <pre><code>##            eqincome
 ## eqincome 0.07599778</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">varpoord_arpr_calculation$all_result$var</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">varpoord_arpr_calculation<span class="op">$</span>all_result<span class="op">$</span>var</code></pre></div>
 <pre><code>## [1] 0.07586194</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># standard errors do not match exactly</span>
-varpoord_arpr_calculation$all_result$se</code></pre></div>
+varpoord_arpr_calculation<span class="op">$</span>all_result<span class="op">$</span>se</code></pre></div>
 <pre><code>## [1] 0.2754305</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SE</span>( <span class="kw">svyarpr</span>( ~<span class="st"> </span>eqincome , des_eusilc ) ) *<span class="st"> </span><span class="dv">100</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SE</span>( <span class="kw">svyarpr</span>( <span class="op">~</span><span class="st"> </span>eqincome , des_eusilc ) ) <span class="op">*</span><span class="st"> </span><span class="dv">100</span></code></pre></div>
 <pre><code>##           eqincome
 ## eqincome 0.2756769</code></pre>
 <p>The variance estimate is computed by using the approximation defined in <a href="1-5-the-variance-estimator.html#eq:var">(1.1)</a>, where the linearized variable <span class="math inline">\(z\)</span> is defined by <a href="1-5-the-variance-estimator.html#eq:lin">(1.2)</a>. The functions <code>convey::svyarpr</code> and <code>vardpoor::linarpr</code> produce the same linearized variable <span class="math inline">\(z\)</span>.</p>
 <p>However, the measures of uncertainty do not line up, because <code>library(vardpoor)</code> defaults to an ultimate cluster method that can be replicated with an alternative setup of the <code>survey.design</code> object.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># within each strata, sum up the weights</span>
-cluster_sums &lt;-<span class="st"> </span><span class="kw">aggregate</span>( eusilc$rb050 , <span class="kw">list</span>( eusilc$db040 ) , sum )
+cluster_sums &lt;-<span class="st"> </span><span class="kw">aggregate</span>( eusilc<span class="op">$</span>rb050 , <span class="kw">list</span>( eusilc<span class="op">$</span>db040 ) , sum )
 
 <span class="co"># name the within-strata sums of weights the `cluster_sum`</span>
 <span class="kw">names</span>( cluster_sums ) &lt;-<span class="st"> </span><span class="kw">c</span>( <span class="st">&quot;db040&quot;</span> , <span class="st">&quot;cluster_sum&quot;</span> )
@@ -253,26 +248,26 @@ eusilc &lt;-<span class="st"> </span><span class="kw">merge</span>( eusilc , clu
 <span class="co"># with the fpc using the cluster sum</span>
 des_eusilc_ultimate_cluster &lt;-<span class="st"> </span>
 <span class="st">    </span><span class="kw">svydesign</span>( 
-        <span class="dt">ids =</span> ~<span class="st"> </span>rb030 , 
-        <span class="dt">strata =</span> ~<span class="st"> </span>db040 ,  
-        <span class="dt">weights =</span> ~<span class="st"> </span>rb050 , 
+        <span class="dt">ids =</span> <span class="op">~</span><span class="st"> </span>rb030 , 
+        <span class="dt">strata =</span> <span class="op">~</span><span class="st"> </span>db040 ,  
+        <span class="dt">weights =</span> <span class="op">~</span><span class="st"> </span>rb050 , 
         <span class="dt">data =</span> eusilc , 
-        <span class="dt">fpc =</span> ~<span class="st"> </span>cluster_sum 
+        <span class="dt">fpc =</span> <span class="op">~</span><span class="st"> </span>cluster_sum 
     )
 
 <span class="co"># again, immediately run the convey_prep function on the `survey.design`</span>
 des_eusilc_ultimate_cluster &lt;-<span class="st"> </span><span class="kw">convey_prep</span>( des_eusilc_ultimate_cluster )
 
 <span class="co"># matches</span>
-<span class="kw">attr</span>( <span class="kw">svyarpr</span>( ~<span class="st"> </span>eqincome , des_eusilc_ultimate_cluster ) , <span class="st">&#39;var&#39;</span> ) *<span class="st"> </span><span class="dv">10000</span></code></pre></div>
+<span class="kw">attr</span>( <span class="kw">svyarpr</span>( <span class="op">~</span><span class="st"> </span>eqincome , des_eusilc_ultimate_cluster ) , <span class="st">&#39;var&#39;</span> ) <span class="op">*</span><span class="st"> </span><span class="dv">10000</span></code></pre></div>
 <pre><code>##            eqincome
 ## eqincome 0.07586194</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">varpoord_arpr_calculation$all_result$var</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">varpoord_arpr_calculation<span class="op">$</span>all_result<span class="op">$</span>var</code></pre></div>
 <pre><code>## [1] 0.07586194</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># matches</span>
-varpoord_arpr_calculation$all_result$se</code></pre></div>
+varpoord_arpr_calculation<span class="op">$</span>all_result<span class="op">$</span>se</code></pre></div>
 <pre><code>## [1] 0.2754305</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SE</span>( <span class="kw">svyarpr</span>( ~<span class="st"> </span>eqincome , des_eusilc_ultimate_cluster ) ) *<span class="st"> </span><span class="dv">100</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SE</span>( <span class="kw">svyarpr</span>( <span class="op">~</span><span class="st"> </span>eqincome , des_eusilc_ultimate_cluster ) ) <span class="op">*</span><span class="st"> </span><span class="dv">100</span></code></pre></div>
 <pre><code>##           eqincome
 ## eqincome 0.2754305</code></pre>
 <p>For additional usage examples of <code>svyarpr</code>, type <code>?convey::svyarpr</code> in the R console.</p>

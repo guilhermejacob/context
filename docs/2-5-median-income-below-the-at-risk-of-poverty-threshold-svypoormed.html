@@ -98,8 +98,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="1-10-decomposition.html#decomposition"><span class="toc-section-number">1.10</span> Decomposition</a></li>
 </ul></li>
 <li class="has-sub"><a href="2-poverty.html#poverty"><span class="toc-section-number">2</span> Poverty Indices</a><ul>
-<li><a href="2-1-at-risk-of-poverty-threshold-svyarpt.html#at-risk-of-poverty-threshold-svyarpt"><span class="toc-section-number">2.1</span> At Risk of Poverty Threshold (svyarpt)</a></li>
-<li><a href="2-2-at-risk-of-poverty-ratio-svyarpr.html#at-risk-of-poverty-ratio-svyarpr"><span class="toc-section-number">2.2</span> At Risk of Poverty Ratio (svyarpr)</a></li>
+<li><a href="2-1-at-risk-of-poverty-ratio-svyarpr.html#at-risk-of-poverty-ratio-svyarpr"><span class="toc-section-number">2.1</span> At Risk of Poverty Ratio (svyarpr)</a></li>
+<li><a href="2-2-at-risk-of-poverty-threshold-svyarpt.html#at-risk-of-poverty-threshold-svyarpt"><span class="toc-section-number">2.2</span> At Risk of Poverty Threshold (svyarpt)</a></li>
 <li><a href="2-3-relative-median-income-ratio-svyrmir.html#relative-median-income-ratio-svyrmir"><span class="toc-section-number">2.3</span> Relative Median Income Ratio (svyrmir)</a></li>
 <li><a href="2-4-relative-median-poverty-gap-svyrmpg.html#relative-median-poverty-gap-svyrmpg"><span class="toc-section-number">2.4</span> Relative Median Poverty Gap (svyrmpg)</a></li>
 <li><a href="2-5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#median-income-below-the-at-risk-of-poverty-threshold-svypoormed"><span class="toc-section-number">2.5</span> Median Income Below the At Risk of Poverty Threshold (svypoormed)</a></li>
@@ -155,7 +155,7 @@ poormed = median\{y_i; y_i&lt; arpt\}
 <span class="kw">names</span>( eusilc ) &lt;-<span class="st"> </span><span class="kw">tolower</span>( <span class="kw">names</span>( eusilc ) )
 
 <span class="co"># add a column with the row number</span>
-dati &lt;-<span class="st"> </span><span class="kw">data.table</span>(<span class="dt">IDd =</span> <span class="dv">1</span> :<span class="st"> </span><span class="kw">nrow</span>(eusilc), eusilc)
+dati &lt;-<span class="st"> </span><span class="kw">data.table</span>(<span class="dt">IDd =</span> <span class="dv">1</span> <span class="op">:</span><span class="st"> </span><span class="kw">nrow</span>(eusilc), eusilc)
 
 <span class="co"># calculate the poormed coefficient</span>
 <span class="co"># using the R vardpoor library</span>
@@ -200,9 +200,9 @@ varpoord_poormed_calculation &lt;-
 <span class="co"># using our recommended setup</span>
 des_eusilc &lt;-<span class="st"> </span>
 <span class="st">    </span><span class="kw">svydesign</span>( 
-        <span class="dt">ids =</span> ~<span class="st"> </span>rb030 , 
-        <span class="dt">strata =</span> ~<span class="st"> </span>db040 ,  
-        <span class="dt">weights =</span> ~<span class="st"> </span>rb050 , 
+        <span class="dt">ids =</span> <span class="op">~</span><span class="st"> </span>rb030 , 
+        <span class="dt">strata =</span> <span class="op">~</span><span class="st"> </span>db040 ,  
+        <span class="dt">weights =</span> <span class="op">~</span><span class="st"> </span>rb050 , 
         <span class="dt">data =</span> eusilc
     )
 
@@ -210,36 +210,36 @@ des_eusilc &lt;-<span class="st"> </span>
 des_eusilc &lt;-<span class="st"> </span><span class="kw">convey_prep</span>( des_eusilc )
 
 <span class="co"># coefficients do match</span>
-varpoord_poormed_calculation$all_result$value</code></pre></div>
+varpoord_poormed_calculation<span class="op">$</span>all_result<span class="op">$</span>value</code></pre></div>
 <pre><code>## [1] 8803.735</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>( <span class="kw">svypoormed</span>( ~<span class="st"> </span>eqincome , des_eusilc ) )</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>( <span class="kw">svypoormed</span>( <span class="op">~</span><span class="st"> </span>eqincome , des_eusilc ) )</code></pre></div>
 <pre><code>## eqincome 
 ## 8803.735</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># linearized variables do match</span>
 <span class="co"># vardpoor</span>
-lin_poormed_varpoord&lt;-<span class="st"> </span>varpoord_poormed_calculation$lin_out$lin_poormed
+lin_poormed_varpoord&lt;-<span class="st"> </span>varpoord_poormed_calculation<span class="op">$</span>lin_out<span class="op">$</span>lin_poormed
 <span class="co"># convey </span>
-lin_poormed_convey &lt;-<span class="st"> </span><span class="kw">attr</span>(<span class="kw">svypoormed</span>( ~<span class="st"> </span>eqincome , des_eusilc ),<span class="st">&quot;lin&quot;</span>)
+lin_poormed_convey &lt;-<span class="st"> </span><span class="kw">attr</span>(<span class="kw">svypoormed</span>( <span class="op">~</span><span class="st"> </span>eqincome , des_eusilc ),<span class="st">&quot;lin&quot;</span>)
 
 <span class="co"># check equality</span>
 <span class="kw">all.equal</span>(lin_poormed_varpoord, lin_poormed_convey )</code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># variances do not match exactly</span>
-<span class="kw">attr</span>( <span class="kw">svypoormed</span>( ~<span class="st"> </span>eqincome , des_eusilc ) , <span class="st">&#39;var&#39;</span> )</code></pre></div>
+<span class="kw">attr</span>( <span class="kw">svypoormed</span>( <span class="op">~</span><span class="st"> </span>eqincome , des_eusilc ) , <span class="st">&#39;var&#39;</span> )</code></pre></div>
 <pre><code>##          eqincome
 ## eqincome  5311.47</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">varpoord_poormed_calculation$all_result$var</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">varpoord_poormed_calculation<span class="op">$</span>all_result<span class="op">$</span>var</code></pre></div>
 <pre><code>## [1] 5302.086</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># standard errors do not match exactly</span>
-varpoord_poormed_calculation$all_result$se</code></pre></div>
+varpoord_poormed_calculation<span class="op">$</span>all_result<span class="op">$</span>se</code></pre></div>
 <pre><code>## [1] 72.81542</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SE</span>( <span class="kw">svypoormed</span>( ~<span class="st"> </span>eqincome , des_eusilc ) )</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SE</span>( <span class="kw">svypoormed</span>( <span class="op">~</span><span class="st"> </span>eqincome , des_eusilc ) )</code></pre></div>
 <pre><code>##          eqincome
 ## eqincome 72.87983</code></pre>
 <p>The variance estimate is computed by using the approximation defined in <a href="1-5-the-variance-estimator.html#eq:var">(1.1)</a>, where the linearized variable <span class="math inline">\(z\)</span> is defined by <a href="1-5-the-variance-estimator.html#eq:lin">(1.2)</a>. The functions <code>convey::svypoormed</code> and <code>vardpoor::linpoormed</code> produce the same linearized variable <span class="math inline">\(z\)</span>.</p>
 <p>However, the measures of uncertainty do not line up, because <code>library(vardpoor)</code> defaults to an ultimate cluster method that can be replicated with an alternative setup of the <code>survey.design</code> object.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># within each strata, sum up the weights</span>
-cluster_sums &lt;-<span class="st"> </span><span class="kw">aggregate</span>( eusilc$rb050 , <span class="kw">list</span>( eusilc$db040 ) , sum )
+cluster_sums &lt;-<span class="st"> </span><span class="kw">aggregate</span>( eusilc<span class="op">$</span>rb050 , <span class="kw">list</span>( eusilc<span class="op">$</span>db040 ) , sum )
 
 <span class="co"># name the within-strata sums of weights the `cluster_sum`</span>
 <span class="kw">names</span>( cluster_sums ) &lt;-<span class="st"> </span><span class="kw">c</span>( <span class="st">&quot;db040&quot;</span> , <span class="st">&quot;cluster_sum&quot;</span> )
@@ -251,26 +251,26 @@ eusilc &lt;-<span class="st"> </span><span class="kw">merge</span>( eusilc , clu
 <span class="co"># with the fpc using the cluster sum</span>
 des_eusilc_ultimate_cluster &lt;-<span class="st"> </span>
 <span class="st">    </span><span class="kw">svydesign</span>( 
-        <span class="dt">ids =</span> ~<span class="st"> </span>rb030 , 
-        <span class="dt">strata =</span> ~<span class="st"> </span>db040 ,  
-        <span class="dt">weights =</span> ~<span class="st"> </span>rb050 , 
+        <span class="dt">ids =</span> <span class="op">~</span><span class="st"> </span>rb030 , 
+        <span class="dt">strata =</span> <span class="op">~</span><span class="st"> </span>db040 ,  
+        <span class="dt">weights =</span> <span class="op">~</span><span class="st"> </span>rb050 , 
         <span class="dt">data =</span> eusilc , 
-        <span class="dt">fpc =</span> ~<span class="st"> </span>cluster_sum 
+        <span class="dt">fpc =</span> <span class="op">~</span><span class="st"> </span>cluster_sum 
     )
 
 <span class="co"># again, immediately run the convey_prep function on the `survey.design`</span>
 des_eusilc_ultimate_cluster &lt;-<span class="st"> </span><span class="kw">convey_prep</span>( des_eusilc_ultimate_cluster )
 
 <span class="co"># matches</span>
-<span class="kw">attr</span>( <span class="kw">svypoormed</span>( ~<span class="st"> </span>eqincome , des_eusilc_ultimate_cluster ) , <span class="st">&#39;var&#39;</span> )</code></pre></div>
+<span class="kw">attr</span>( <span class="kw">svypoormed</span>( <span class="op">~</span><span class="st"> </span>eqincome , des_eusilc_ultimate_cluster ) , <span class="st">&#39;var&#39;</span> )</code></pre></div>
 <pre><code>##          eqincome
 ## eqincome 5302.086</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">varpoord_poormed_calculation$all_result$var</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">varpoord_poormed_calculation<span class="op">$</span>all_result<span class="op">$</span>var</code></pre></div>
 <pre><code>## [1] 5302.086</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># matches</span>
-varpoord_poormed_calculation$all_result$se</code></pre></div>
+varpoord_poormed_calculation<span class="op">$</span>all_result<span class="op">$</span>se</code></pre></div>
 <pre><code>## [1] 72.81542</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SE</span>( <span class="kw">svypoormed</span>( ~<span class="st"> </span>eqincome , des_eusilc_ultimate_cluster ) )</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SE</span>( <span class="kw">svypoormed</span>( <span class="op">~</span><span class="st"> </span>eqincome , des_eusilc_ultimate_cluster ) )</code></pre></div>
 <pre><code>##          eqincome
 ## eqincome 72.81542</code></pre>
 <p>For additional usage examples of <code>svypoormed</code>, type <code>?convey::svypoormed</code> in the R console.</p>
