@@ -17,7 +17,7 @@
 
 <meta name="author" content="Guilherme Jacob, Anthony Damico, and Djalma Pessoa" />
 
-<meta name="date" content="2017-04-20" />
+<meta name="date" content="2017-04-30" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -30,9 +30,6 @@ MathJax.Hub.Config({
 
 <title>Poverty and Inequality with Complex Survey Data</title>
 
-<link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
-<link href="libs/tufte-css-2015.12.29/tufte-background.css" rel="stylesheet" />
-<link href="libs/tufte-css-2015.12.29/tufte-italics.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" />
 
 
@@ -107,6 +104,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="2-4-relative-median-poverty-gap-svyrmpg.html#relative-median-poverty-gap-svyrmpg"><span class="toc-section-number">2.4</span> Relative Median Poverty Gap (svyrmpg)</a></li>
 <li><a href="2-5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#median-income-below-the-at-risk-of-poverty-threshold-svypoormed"><span class="toc-section-number">2.5</span> Median Income Below the At Risk of Poverty Threshold (svypoormed)</a></li>
 <li><a href="2-6-foster-greer-thorbecke-class-svyfgt.html#foster-greer-thorbecke-class-svyfgt"><span class="toc-section-number">2.6</span> Foster-Greer-Thorbecke class (svyfgt)</a></li>
+<li><a href="2-7-watts-poverty-measure.html#watts-poverty-measure"><span class="toc-section-number">2.7</span> Watts poverty measure</a></li>
+<li><a href="2-8-clark-hemming-ulph-class-of-poverty-measures.html#clark-hemming-ulph-class-of-poverty-measures"><span class="toc-section-number">2.8</span> Clark-Hemming-Ulph class of poverty measures</a></li>
 </ul></li>
 <li class="has-sub"><a href="3-inequality.html#inequality"><span class="toc-section-number">3</span> Inequality Measurement</a><ul>
 <li><a href="3-1-the-gender-pay-gap-svygpg.html#the-gender-pay-gap-svygpg"><span class="toc-section-number">3.1</span> The Gender Pay Gap (svygpg)</a></li>
@@ -137,7 +136,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>The relative median poverty gap (<code>rmpg</code>) is the relative difference between the median income of people having income below the <code>arpt</code> and the <code>arpt</code> itself:</p>
 <p><span class="math display">\[
 rmpg = \frac{median\{y_i, y_i&lt;arpt\}-arpt}{arpt}
-\]</span> The details of the linearization of the <code>rmpg</code> are discussed by <span class="citation">(Deville <label for="tufte-mn-17" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-17" class="margin-toggle">1999<span class="marginnote">Deville, Jean-Claude. 1999. “Variance Estimation for Complex Statistics and Estimators: Linearization and Residual Techniques.” <em>Survey Methodology</em> 25 (2): 193–203. <a href="http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf" class="uri">http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf</a>.</span>)</span> and <span class="citation">(Osier <label for="tufte-mn-18" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-18" class="margin-toggle">2009<span class="marginnote">Osier, Guillaume. 2009. “Variance Estimation for Complex Indicators of Poverty and Inequality.” <em>Journal of the European Survey Research Association</em> 3 (3): 167–95. <a href="http://ojs.ub.uni-konstanz.de/srm/article/view/369" class="uri">http://ojs.ub.uni-konstanz.de/srm/article/view/369</a>.</span>)</span>.</p>
+\]</span> The details of the linearization of the <code>rmpg</code> are discussed by <span class="citation">Deville (<label for="tufte-mn-17" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-17" class="margin-toggle">1999<span class="marginnote">Deville, Jean-Claude. 1999. “Variance Estimation for Complex Statistics and Estimators: Linearization and Residual Techniques.” <em>Survey Methodology</em> 25 (2): 193–203. <a href="http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf" class="uri">http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf</a>.</span>)</span> and <span class="citation">Osier (<label for="tufte-mn-18" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-18" class="margin-toggle">2009<span class="marginnote">Osier, Guillaume. 2009. “Variance Estimation for Complex Indicators of Poverty and Inequality.” <em>Journal of the European Survey Research Association</em> 3 (3): 167–95. <a href="http://ojs.ub.uni-konstanz.de/srm/article/view/369" class="uri">http://ojs.ub.uni-konstanz.de/srm/article/view/369</a>.</span>)</span>.</p>
 <hr />
 <p><strong>A replication example</strong></p>
 <p>The R <code>vardpoor</code> package <span class="citation">(Breidaks, Liberts, and Ivanova <label for="tufte-mn-19" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-19" class="margin-toggle">2016<span class="marginnote">Breidaks, Juris, Martins Liberts, and Santa Ivanova. 2016. “Vardpoor: Estimation of Indicators on Social Exclusion and Poverty and Its Linearization, Variance Estimation.” Riga, Latvia: CSB.</span>)</span>, created by researchers at the Central Statistical Bureau of Latvia, includes a rmpg coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.</p>
@@ -158,7 +157,7 @@ rmpg = \frac{median\{y_i, y_i&lt;arpt\}-arpt}{arpt}
 <span class="kw">names</span>( eusilc ) &lt;-<span class="st"> </span><span class="kw">tolower</span>( <span class="kw">names</span>( eusilc ) )
 
 <span class="co"># add a column with the row number</span>
-dati &lt;-<span class="st"> </span><span class="kw">data.table</span>(<span class="dt">IDd =</span> <span class="dv">1</span> <span class="op">:</span><span class="st"> </span><span class="kw">nrow</span>(eusilc), eusilc)
+dati &lt;-<span class="st"> </span><span class="kw">data.table</span>(<span class="dt">IDd =</span> <span class="dv">1</span> :<span class="st"> </span><span class="kw">nrow</span>(eusilc), eusilc)
 
 <span class="co"># calculate the rmpg coefficient</span>
 <span class="co"># using the R vardpoor library</span>
@@ -203,9 +202,9 @@ varpoord_rmpg_calculation &lt;-
 <span class="co"># using our recommended setup</span>
 des_eusilc &lt;-<span class="st"> </span>
 <span class="st">    </span><span class="kw">svydesign</span>( 
-        <span class="dt">ids =</span> <span class="op">~</span><span class="st"> </span>rb030 , 
-        <span class="dt">strata =</span> <span class="op">~</span><span class="st"> </span>db040 ,  
-        <span class="dt">weights =</span> <span class="op">~</span><span class="st"> </span>rb050 , 
+        <span class="dt">ids =</span> ~<span class="st"> </span>rb030 , 
+        <span class="dt">strata =</span> ~<span class="st"> </span>db040 ,  
+        <span class="dt">weights =</span> ~<span class="st"> </span>rb050 , 
         <span class="dt">data =</span> eusilc
     )
 
@@ -213,36 +212,36 @@ des_eusilc &lt;-<span class="st"> </span>
 des_eusilc &lt;-<span class="st"> </span><span class="kw">convey_prep</span>( des_eusilc )
 
 <span class="co"># coefficients do match</span>
-varpoord_rmpg_calculation<span class="op">$</span>all_result<span class="op">$</span>value</code></pre></div>
+varpoord_rmpg_calculation$all_result$value</code></pre></div>
 <pre><code>## [1] 18.9286</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>( <span class="kw">svyrmpg</span>( <span class="op">~</span><span class="st"> </span>eqincome , des_eusilc ) ) <span class="op">*</span><span class="st"> </span><span class="dv">100</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>( <span class="kw">svyrmpg</span>( ~<span class="st"> </span>eqincome , des_eusilc ) ) *<span class="st"> </span><span class="dv">100</span></code></pre></div>
 <pre><code>## eqincome 
 ##  18.9286</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># linearized variables do match</span>
 <span class="co"># vardpoor</span>
-lin_rmpg_varpoord&lt;-<span class="st"> </span>varpoord_rmpg_calculation<span class="op">$</span>lin_out<span class="op">$</span>lin_rmpg
+lin_rmpg_varpoord&lt;-<span class="st"> </span>varpoord_rmpg_calculation$lin_out$lin_rmpg
 <span class="co"># convey </span>
-lin_rmpg_convey &lt;-<span class="st"> </span><span class="kw">attr</span>(<span class="kw">svyrmpg</span>( <span class="op">~</span><span class="st"> </span>eqincome , des_eusilc ),<span class="st">&quot;lin&quot;</span>)
+lin_rmpg_convey &lt;-<span class="st"> </span><span class="kw">attr</span>(<span class="kw">svyrmpg</span>( ~<span class="st"> </span>eqincome , des_eusilc ),<span class="st">&quot;lin&quot;</span>)
 
 <span class="co"># check equality</span>
-<span class="kw">all.equal</span>(lin_rmpg_varpoord, <span class="dv">100</span><span class="op">*</span>lin_rmpg_convey[,<span class="dv">1</span>] )</code></pre></div>
+<span class="kw">all.equal</span>(lin_rmpg_varpoord, <span class="dv">100</span>*lin_rmpg_convey[,<span class="dv">1</span>] )</code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># variances do not match exactly</span>
-<span class="kw">attr</span>( <span class="kw">svyrmpg</span>( <span class="op">~</span><span class="st"> </span>eqincome , des_eusilc ) , <span class="st">&#39;var&#39;</span> ) <span class="op">*</span><span class="st"> </span><span class="dv">10000</span></code></pre></div>
+<span class="kw">attr</span>( <span class="kw">svyrmpg</span>( ~<span class="st"> </span>eqincome , des_eusilc ) , <span class="st">&#39;var&#39;</span> ) *<span class="st"> </span><span class="dv">10000</span></code></pre></div>
 <pre><code>##          eqincome
 ## eqincome 0.332234</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">varpoord_rmpg_calculation<span class="op">$</span>all_result<span class="op">$</span>var</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">varpoord_rmpg_calculation$all_result$var</code></pre></div>
 <pre><code>## [1] 0.3316454</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># standard errors do not match exactly</span>
-varpoord_rmpg_calculation<span class="op">$</span>all_result<span class="op">$</span>se</code></pre></div>
+varpoord_rmpg_calculation$all_result$se</code></pre></div>
 <pre><code>## [1] 0.5758866</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SE</span>( <span class="kw">svyrmpg</span>( <span class="op">~</span><span class="st"> </span>eqincome , des_eusilc ) ) <span class="op">*</span><span class="st"> </span><span class="dv">100</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SE</span>( <span class="kw">svyrmpg</span>( ~<span class="st"> </span>eqincome , des_eusilc ) ) *<span class="st"> </span><span class="dv">100</span></code></pre></div>
 <pre><code>##           eqincome
 ## eqincome 0.5763974</code></pre>
 <p>The variance estimate is computed by using the approximation defined in <a href="1-5-the-variance-estimator.html#eq:var">(1.1)</a>, where the linearized variable <span class="math inline">\(z\)</span> is defined by <a href="1-5-the-variance-estimator.html#eq:lin">(1.2)</a>. The functions <code>convey::svyrmpg</code> and <code>vardpoor::linrmpg</code> produce the same linearized variable <span class="math inline">\(z\)</span>.</p>
 <p>However, the measures of uncertainty do not line up, because <code>library(vardpoor)</code> defaults to an ultimate cluster method that can be replicated with an alternative setup of the <code>survey.design</code> object.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># within each strata, sum up the weights</span>
-cluster_sums &lt;-<span class="st"> </span><span class="kw">aggregate</span>( eusilc<span class="op">$</span>rb050 , <span class="kw">list</span>( eusilc<span class="op">$</span>db040 ) , sum )
+cluster_sums &lt;-<span class="st"> </span><span class="kw">aggregate</span>( eusilc$rb050 , <span class="kw">list</span>( eusilc$db040 ) , sum )
 
 <span class="co"># name the within-strata sums of weights the `cluster_sum`</span>
 <span class="kw">names</span>( cluster_sums ) &lt;-<span class="st"> </span><span class="kw">c</span>( <span class="st">&quot;db040&quot;</span> , <span class="st">&quot;cluster_sum&quot;</span> )
@@ -254,26 +253,26 @@ eusilc &lt;-<span class="st"> </span><span class="kw">merge</span>( eusilc , clu
 <span class="co"># with the fpc using the cluster sum</span>
 des_eusilc_ultimate_cluster &lt;-<span class="st"> </span>
 <span class="st">    </span><span class="kw">svydesign</span>( 
-        <span class="dt">ids =</span> <span class="op">~</span><span class="st"> </span>rb030 , 
-        <span class="dt">strata =</span> <span class="op">~</span><span class="st"> </span>db040 ,  
-        <span class="dt">weights =</span> <span class="op">~</span><span class="st"> </span>rb050 , 
+        <span class="dt">ids =</span> ~<span class="st"> </span>rb030 , 
+        <span class="dt">strata =</span> ~<span class="st"> </span>db040 ,  
+        <span class="dt">weights =</span> ~<span class="st"> </span>rb050 , 
         <span class="dt">data =</span> eusilc , 
-        <span class="dt">fpc =</span> <span class="op">~</span><span class="st"> </span>cluster_sum 
+        <span class="dt">fpc =</span> ~<span class="st"> </span>cluster_sum 
     )
 
 <span class="co"># again, immediately run the convey_prep function on the `survey.design`</span>
 des_eusilc_ultimate_cluster &lt;-<span class="st"> </span><span class="kw">convey_prep</span>( des_eusilc_ultimate_cluster )
 
 <span class="co"># matches</span>
-<span class="kw">attr</span>( <span class="kw">svyrmpg</span>( <span class="op">~</span><span class="st"> </span>eqincome , des_eusilc_ultimate_cluster ) , <span class="st">&#39;var&#39;</span> ) <span class="op">*</span><span class="st"> </span><span class="dv">10000</span></code></pre></div>
+<span class="kw">attr</span>( <span class="kw">svyrmpg</span>( ~<span class="st"> </span>eqincome , des_eusilc_ultimate_cluster ) , <span class="st">&#39;var&#39;</span> ) *<span class="st"> </span><span class="dv">10000</span></code></pre></div>
 <pre><code>##           eqincome
 ## eqincome 0.3316454</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">varpoord_rmpg_calculation<span class="op">$</span>all_result<span class="op">$</span>var</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">varpoord_rmpg_calculation$all_result$var</code></pre></div>
 <pre><code>## [1] 0.3316454</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># matches</span>
-varpoord_rmpg_calculation<span class="op">$</span>all_result<span class="op">$</span>se</code></pre></div>
+varpoord_rmpg_calculation$all_result$se</code></pre></div>
 <pre><code>## [1] 0.5758866</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SE</span>( <span class="kw">svyrmpg</span>( <span class="op">~</span><span class="st"> </span>eqincome , des_eusilc_ultimate_cluster ) ) <span class="op">*</span><span class="st"> </span><span class="dv">100</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SE</span>( <span class="kw">svyrmpg</span>( ~<span class="st"> </span>eqincome , des_eusilc_ultimate_cluster ) ) *<span class="st"> </span><span class="dv">100</span></code></pre></div>
 <pre><code>##           eqincome
 ## eqincome 0.5758866</code></pre>
 <p>For additional usage examples of <code>svyrmpg</code>, type <code>?convey::svyrmpg</code> in the R console.</p>
