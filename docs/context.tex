@@ -124,7 +124,7 @@
   \postauthor{\par}
   \predate{\centering\large\emph}
   \postdate{\par}
-  \date{2017-04-30}
+  \date{2017-05-01}
 
 \usepackage{booktabs}
 
@@ -350,7 +350,7 @@ and then use the function \texttt{svyarpr}:
 
 \begin{verbatim}
             arpr     SE
-eqIncome 0.14444 0.0027
+eqIncome 0.14444 0.0029
 \end{verbatim}
 
 \begin{Shaded}
@@ -361,15 +361,15 @@ eqIncome 0.14444 0.0027
 
 \begin{verbatim}
                       db040  eqIncome se.eqIncome
-Burgenland       Burgenland 0.1953984 0.015280232
-Carinthia         Carinthia 0.1308627 0.009216773
-Lower Austria Lower Austria 0.1384362 0.006397834
-Salzburg           Salzburg 0.1378734 0.009729009
-Styria               Styria 0.1437464 0.007463873
-Tyrol                 Tyrol 0.1530819 0.009751576
-Upper Austria Upper Austria 0.1088977 0.005424921
-Vienna               Vienna 0.1723468 0.008541516
-Vorarlberg       Vorarlberg 0.1653731 0.014506603
+Burgenland       Burgenland 0.1953984 0.015999619
+Carinthia         Carinthia 0.1308627 0.010628710
+Lower Austria Lower Austria 0.1384362 0.006642576
+Salzburg           Salzburg 0.1378734 0.012532946
+Styria               Styria 0.1437464 0.008368338
+Tyrol                 Tyrol 0.1530819 0.008926063
+Upper Austria Upper Austria 0.1088977 0.005767743
+Vienna               Vienna 0.1723468 0.007075549
+Vorarlberg       Vorarlberg 0.1653731 0.012170478
 \end{verbatim}
 
 The functions of the library convey are called in a similar way to the
@@ -421,7 +421,7 @@ py010n   NA NA
 
 \begin{verbatim}
           gini     SE
-py010n 0.64606 0.0032
+py010n 0.64606 0.0043
 \end{verbatim}
 
 \section{Underlying Calculations}\label{underlying-calculations}
@@ -2045,19 +2045,40 @@ function that assigns value \(1\) if the condition
 \(\{y_{k}\leq \theta \}\) is satisfied and \(0\) otherwise, and
 \(\gamma\) is a non-negative constant.
 
-If \(\gamma =0\), the \texttt{FGT\ index} equals the poverty headcount
-ratio, which accounts for the spread of poverty. If \(\gamma =1\), FGT
-is the mean of the normalized income shortfall of the poor. By doing so,
-the measure takes into account both the spread and the intensity of
-poverty. When \(\gamma =2\), the relative weight of larger shortfalls
-increases even more, which yields a measure that accounts for poverty
-severity, i.e., the inequality among the poor. This way, a transfer from
-a poor person to an even poorer person would reduce the FGT(2).
+If \(\gamma =0\), the FGT(0) equals the poverty headcount ratio, which
+accounts for the spread of poverty. If \(\gamma =1\), FGT(1) is the mean
+of the normalized income shortfall of the poor. By doing so, the measure
+takes into account both the spread and the intensity of poverty. When
+\(\gamma =2\), the relative weight of larger shortfalls increases even
+more, which yields a measure that accounts for poverty severity, i.e.,
+the inequality among the poor. This way, a transfer from a poor person
+to an even poorer person would reduce the FGT(2).
 
-The poverty measure FGT is implemented in the library convey by the
-function \texttt{svyfgt}. The argument \texttt{thresh\_type} of this
-function defines the type of poverty threshold adopted. There are three
-possible choices:
+Although \citet{foster1984} already presented a decomposition for the
+FGT(2) index, \citet{aristondo2010} provided a general formula that
+decomposes the FGT(\(\gamma\)) for any \(\gamma \geqslant 2\). Put
+simply, any such FGT(\(\text{\gamma}\)) index can be seen as function of
+the headcount ratio, the average income gap among the poor and a
+generalized entropy index of income gaps among poor. In mathematical
+terms,
+
+\[
+FGT_\gamma = FGT_0 \cdot I^\gamma \cdot \big[ 1 + \big( \gamma^2 -\gamma \big) GEI_\gamma^* \big] , \text{ } \gamma \geq 2
+\]
+
+where \(I\) is the average income gap among the poor and
+\(GEI_\gamma^*\) is a generalized entropy index of such income gaps
+among the poor.
+
+This result is particularly useful, as one can attribute cross-sectional
+differences of a FGT index to differences in the spread, depth and
+inequality of poverty.
+
+The FGT poverty class and its decomposition is implemented in the
+library convey by the function \texttt{svyfgt} and \texttt{svyfgtdec},
+respectively. The argument \texttt{thresh\_type} of this function
+defines the type of poverty threshold adopted. There are three possible
+choices:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -2096,7 +2117,7 @@ Consider first the poverty threshold fixed (\(\gamma=0\)) in the value
 eqincome 0.11444 0.0027
 \end{verbatim}
 
-The poverty gap ratio (FGT1) (\(\gamma=1\)) index for the poverty
+The poverty gap ratio (FGT(1)) (\(\gamma=1\)) index for the poverty
 threshold fixed at the same value is
 
 \begin{Shaded}
@@ -2110,9 +2131,9 @@ threshold fixed at the same value is
 eqincome 0.032085 0.0011
 \end{verbatim}
 
-To estimate the FGT0 with the poverty threshold fixed at \(0.6* MED\) we
-fix the argument type\_thresh=``relq'' and use the default values for
-\texttt{percent} and \texttt{order}:
+To estimate the FGT(0) with the poverty threshold fixed at \(0.6* MED\)
+we fix the argument \texttt{type\_thresh="relq"} and use the default
+values for \texttt{percent} and \texttt{order}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -2138,8 +2159,8 @@ that matches the estimate obtained by
 eqincome 0.14444 0.0028
 \end{verbatim}
 
-To estimate the poverty gap (FGT1) with the poverty threshold equal to
-\(0.6*MEAN\) we use:
+To estimate the poverty gap ratio with the poverty threshold equal to
+\(0.6*MEAN\), we use:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -2462,37 +2483,14 @@ time taken to exit poverty \(T_\theta\) would be
 T_\theta = \frac{Watts}{g}.
 \]
 
-Finally, the Watts poverty index has interesting decomposition
-properties, further explored in this chapter.
-
-\section{Clark-Hemming-Ulph class of poverty measures
-(svychu)}\label{clark-hemming-ulph-class-of-poverty-measures-svychu}
-
-\citet{clark1981} proposes two classes of distribution-sensitive poverty
-measures. Yet, the poverty measurement literature focuses on the second
-class\footnote{See \citet{atkinson1987} and \citet{verma2011}, for
-  instance.}, expressed as
-
-\[
-C_\alpha = \begin{cases}
-    \frac{1}{\alpha N} \sum_{i \in U} \big[ 1-(y_i/\theta)^\alpha \big] \cdot \delta ( y_i \leqslant \theta ) , & \alpha \leqslant 1 , \alpha \neq 0 \\
-    \frac{1}{N} \sum_{i \in U} \log (y_i/\theta) \cdot \delta ( y_i \leqslant \theta ) , &  \alpha = 0
-\end{cases}
-\]
-
-As an special case, \(CHU_0 = Watts\).
-
-\section{Poverty Decompositions}\label{poverty-decompositions}
-
-\subsection{Watts decomposition
-(svywattsdec)}\label{watts-decomposition-svywattsdec}
-
+The Watts poverty index also has interesting decomposition properties.
 \citet{chakravarty2008} proposed a decomposition for the Watts poverty
 index, rewriting it in terms of the headcount ratio, the Watts average
-income gap and the Theil-L index among the poor\footnote{The Theil-L (or
-  Bourguignon-Theil) index is an inequality measure of the generalized
-  entropy class. The family of generalized entropy indices is discussed
-  in the next chapter.}. Mathematically,
+income gap and the mean log deviaton of poor incomes\footnote{The mean
+  log deviation (also known as Theil-L or Bourguignon-Theil index) is an
+  inequality measure of the generalized entropy class. The family of
+  generalized entropy indices is discussed in the next chapter.}.
+Mathematically,
 
 \[
 Watts = FGT_0 \big( I_w + L_* \big)
@@ -2500,7 +2498,8 @@ Watts = FGT_0 \big( I_w + L_* \big)
 
 where \(I_w = \log(\theta/\mu_*)\) is the Watts average income
 gap\footnote{\(\mu_*\) stands for the average income among the poor.}
-and \(L_*\) is the Theil-L index of incomes among the poor.
+and \(L_*\) is the Theil-L index of incomes among the poor. This can be
+estimated using the \texttt{svywattsdec} function.
 
 This result can also be interpreted as a decomposition of the time taken
 to exit poverty, since
@@ -2518,27 +2517,22 @@ simply \(FGT_0 I_w / g\). Therefore, \(FGT_0 L_* / g\) can be seen as
 the additional time needed to exit poverty as a result of the inequality
 among the poor.
 
-\subsection{FGT decomposition
-(svyfgtdec)}\label{fgt-decomposition-svyfgtdec}
+\section{Clark-Hemming-Ulph class of poverty measures
+(svychu)}\label{clark-hemming-ulph-class-of-poverty-measures-svychu}
 
-Although \citet{foster1984} already presented a decomposition for the
-FGT(2) index, \citet{aristondo2010} provided a general formula that
-decomposes the FGT(\(\gamma\)) for any \(\gamma \geqslant 2\). Put
-simply, any such FGT index can be seen as function of the headcount
-ratio, the average income gap among the poor and a generalized entropy
-index of income gaps among poor. In mathematical terms,
+\citet{clark1981} proposes two classes of distribution-sensitive poverty
+measures. Yet, the poverty measurement literature focuses on the second
+class\footnote{See \citet{atkinson1987} and \citet{verma2011}, for
+  instance.}, expressed as
 
 \[
-FGT_\gamma = FGT_0 \cdot I^\gamma \cdot \big[ 1 + \big( \gamma^2 -\gamma \big) GEI_\gamma^* \big] , \text{ } \gamma \geq 2
+C_\alpha = \begin{cases}
+    \frac{1}{\alpha N} \sum_{i \in U} \big[ 1-(y_i/\theta)^\alpha \big] \cdot \delta ( y_i \leqslant \theta ) , & \alpha \leqslant 1 , \alpha \neq 0 \\
+    \frac{1}{N} \sum_{i \in U} \log (y_i/\theta) \cdot \delta ( y_i \leqslant \theta ) , &  \alpha = 0
+\end{cases}
 \]
 
-where \(I\) is the average income gap among the poor and
-\(GEI_\gamma^*\) is a generalized entropy index of such income gaps
-among the poor.
-
-This result is particularly useful, as one can attribute cross-sectional
-differences of a FGT-class index to differences in the spread, depth and
-inequality of poverty.
+As an special case, \(CHU_0 = Watts\).
 
 \chapter{Inequality Measurement}\label{inequality}
 
@@ -2569,7 +2563,7 @@ percentage of the average of hourly earnings of men.
 
 In mathematical terms, this index can be described as,
 
-\[ \widehat{GPG} = \frac{ \widehat{\bar{Y}}_{male} - \widehat{\bar{Y}}_{female} }{ \widehat{\bar{Y}}_{male} } \],
+\[ GPG = \frac{ \bar{y}_{male} - \bar{y}_{female} }{ \bar{y}_{male} } \],
 
 which is precisely the estimator used in the package. As we can see from
 the formula, if there is no difference among classes, \(GPG = 0\). Else,
@@ -2860,10 +2854,10 @@ implies that the upper class owns 4 times as much of the total income as
 the poor.
 
 The quintile share ratio can be modified to a more general function of
-fractile share ratios. For instance, the Palma index is defined as the
-ratio between the share of the 10\% richest over the share held by the
-poorest 40\% and \citet{cobham2015} presents interesting arguments for
-its use.
+fractile share ratios. For instance, \citet{cobham2015} presents
+interesting arguments for using the Palma index, defined as the ratio
+between the share of the 10\% richest over the share held by the poorest
+40\%.
 
 The details of the linearization of the \texttt{QSR} are discussed by
 \citet{deville1999} and \citet{osier2009}.
