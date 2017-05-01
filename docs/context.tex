@@ -350,7 +350,7 @@ and then use the function \texttt{svyarpr}:
 
 \begin{verbatim}
             arpr     SE
-eqIncome 0.14444 0.0028
+eqIncome 0.14444 0.0027
 \end{verbatim}
 
 \begin{Shaded}
@@ -361,15 +361,15 @@ eqIncome 0.14444 0.0028
 
 \begin{verbatim}
                       db040  eqIncome se.eqIncome
-Burgenland       Burgenland 0.1953984 0.018625704
-Carinthia         Carinthia 0.1308627 0.011675969
-Lower Austria Lower Austria 0.1384362 0.005682906
-Salzburg           Salzburg 0.1378734 0.009069611
-Styria               Styria 0.1437464 0.006980484
-Tyrol                 Tyrol 0.1530819 0.010766605
-Upper Austria Upper Austria 0.1088977 0.007186239
-Vienna               Vienna 0.1723468 0.006548245
-Vorarlberg       Vorarlberg 0.1653731 0.013407506
+Burgenland       Burgenland 0.1953984 0.015280232
+Carinthia         Carinthia 0.1308627 0.009216773
+Lower Austria Lower Austria 0.1384362 0.006397834
+Salzburg           Salzburg 0.1378734 0.009729009
+Styria               Styria 0.1437464 0.007463873
+Tyrol                 Tyrol 0.1530819 0.009751576
+Upper Austria Upper Austria 0.1088977 0.005424921
+Vienna               Vienna 0.1723468 0.008541516
+Vorarlberg       Vorarlberg 0.1653731 0.014506603
 \end{verbatim}
 
 The functions of the library convey are called in a similar way to the
@@ -421,7 +421,7 @@ py010n   NA NA
 
 \begin{verbatim}
           gini     SE
-py010n 0.64606 0.0036
+py010n 0.64606 0.0032
 \end{verbatim}
 
 \section{Underlying Calculations}\label{underlying-calculations}
@@ -2096,8 +2096,8 @@ Consider first the poverty threshold fixed (\(\gamma=0\)) in the value
 eqincome 0.11444 0.0027
 \end{verbatim}
 
-The poverty gap (FGT1) (\(\gamma=1\)) index for the poverty threshold
-fixed at the same value is
+The poverty gap ratio (FGT1) (\(\gamma=1\)) index for the poverty
+threshold fixed at the same value is
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -2138,7 +2138,7 @@ that matches the estimate obtained by
 eqincome 0.14444 0.0028
 \end{verbatim}
 
-To estimate the poverty gap(FGT1) with the poverty threshold equal to
+To estimate the poverty gap (FGT1) with the poverty threshold equal to
 \(0.6*MEAN\) we use:
 
 \begin{Shaded}
@@ -2441,7 +2441,8 @@ Number of PSUs   =    7476          Population size  = 5.5e+07
 For additional usage examples of \texttt{svyfgt}, type
 \texttt{?convey::svyfgt} in the R console.
 
-\section{Watts poverty measure}\label{watts-poverty-measure}
+\section{Watts poverty measure
+(svywatts)}\label{watts-poverty-measure-svywatts}
 
 The measure proposed in \citet{watts1968} satisfies a number of
 desirable poverty measurement axioms and is known to be one of the first
@@ -2449,7 +2450,7 @@ distribution-sensitive poverty measures, as noted by
 \citet{haughton2009}. It is defined as
 
 \[
-Watts = \frac{1}{N} \sum_{k \in U} \log{ \bigg( \frac{y_k}{\theta} \bigg) \delta( y_k \leqslant \theta) }.
+Watts = \frac{1}{N} \sum_{i \in U} \log{ \bigg( \frac{y_i}{\theta} \bigg) \delta ( y_i \leqslant \theta) }.
 \]
 
 \citet{murdoch1998} points out that the Watts poverty index can provide
@@ -2464,11 +2465,80 @@ T_\theta = \frac{Watts}{g}.
 Finally, the Watts poverty index has interesting decomposition
 properties, further explored in this chapter.
 
-\section{Clark-Hemming-Ulph class of poverty
-measures}\label{clark-hemming-ulph-class-of-poverty-measures}
+\section{Clark-Hemming-Ulph class of poverty measures
+(svychu)}\label{clark-hemming-ulph-class-of-poverty-measures-svychu}
 
-\citet{clark1981} proposes a class of distribution-sensitive poverty
-measures.
+\citet{clark1981} proposes two classes of distribution-sensitive poverty
+measures. Yet, the poverty measurement literature focuses on the second
+class\footnote{See \citet{atkinson1987} and \citet{verma2011}, for
+  instance.}, expressed as
+
+\[
+C_\alpha = \begin{cases}
+    \frac{1}{\alpha N} \sum_{i \in U} \big[ 1-(y_i/\theta)^\alpha \big] \cdot \delta ( y_i \leqslant \theta ) , & \alpha \leqslant 1 , \alpha \neq 0 \\
+    \frac{1}{N} \sum_{i \in U} \log (y_i/\theta) \cdot \delta ( y_i \leqslant \theta ) , &  \alpha = 0
+\end{cases}
+\]
+
+As an special case, \(CHU_0 = Watts\).
+
+\section{Poverty Decompositions}\label{poverty-decompositions}
+
+\subsection{Watts decomposition
+(svywattsdec)}\label{watts-decomposition-svywattsdec}
+
+\citet{chakravarty2008} proposed a decomposition for the Watts poverty
+index, rewriting it in terms of the headcount ratio, the Watts average
+income gap and the Theil-L index among the poor\footnote{The Theil-L (or
+  Bourguignon-Theil) index is an inequality measure of the generalized
+  entropy class. The family of generalized entropy indices is discussed
+  in the next chapter.}. Mathematically,
+
+\[
+Watts = FGT_0 \big( I_w + L_* \big)
+\]
+
+where \(I_w = \log(\theta/\mu_*)\) is the Watts average income
+gap\footnote{\(\mu_*\) stands for the average income among the poor.}
+and \(L_*\) is the Theil-L index of incomes among the poor.
+
+This result can also be interpreted as a decomposition of the time taken
+to exit poverty, since
+
+\[
+\begin{aligned}
+T_\theta &= \frac{Watts}{g} \\ 
+&= \frac{FGT_0}{g} \big( I_w + L_* \big)
+\end{aligned}
+\]
+
+As \citet{murdoch1998} points out, if the income among the poor is
+equally distributed (i.e., \(L_*=0\)), the time taken to exit poverty is
+simply \(FGT_0 I_w / g\). Therefore, \(FGT_0 L_* / g\) can be seen as
+the additional time needed to exit poverty as a result of the inequality
+among the poor.
+
+\subsection{FGT decomposition
+(svyfgtdec)}\label{fgt-decomposition-svyfgtdec}
+
+Although \citet{foster1984} already presented a decomposition for the
+FGT(2) index, \citet{aristondo2010} provided a general formula that
+decomposes the FGT(\(\gamma\)) for any \(\gamma \geqslant 2\). Put
+simply, any such FGT index can be seen as function of the headcount
+ratio, the average income gap among the poor and a generalized entropy
+index of income gaps among poor. In mathematical terms,
+
+\[
+FGT_\gamma = FGT_0 \cdot I^\gamma \cdot \big[ 1 + \big( \gamma^2 -\gamma \big) GEI_\gamma^* \big] , \text{ } \gamma \geq 2
+\]
+
+where \(I\) is the average income gap among the poor and
+\(GEI_\gamma^*\) is a generalized entropy index of such income gaps
+among the poor.
+
+This result is particularly useful, as one can attribute cross-sectional
+differences of a FGT-class index to differences in the spread, depth and
+inequality of poverty.
 
 \chapter{Inequality Measurement}\label{inequality}
 
@@ -2516,7 +2586,7 @@ increase in men's average hourly earnings, women's hourly earnings would
 increase only \$0.20.
 
 The details of the linearization of the \texttt{GPG} are discussed by
-\citep{deville1999} and \citep{osier2009}.
+\citet{deville1999} and \citet{osier2009}.
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
@@ -2792,11 +2862,11 @@ the poor.
 The quintile share ratio can be modified to a more general function of
 fractile share ratios. For instance, the Palma index is defined as the
 ratio between the share of the 10\% richest over the share held by the
-poorest 40\% and \citep{cobham2015} presents interesting arguments for
-its usage.
+poorest 40\% and \citet{cobham2015} presents interesting arguments for
+its use.
 
 The details of the linearization of the \texttt{QSR} are discussed by
-\citep{deville1999} and \citep{osier2009}.
+\citet{deville1999} and \citet{osier2009}.
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
@@ -3105,7 +3175,7 @@ In order to evaluate the degree of inequality in a society, the analyst
 looks at the distance between the real curve and those two reference
 curves.
 
-The estimator of this function was derived by \citep{kovacevic1997}:
+The estimator of this function was derived by \citet{kovacevic1997}:
 
 \[
 L(p) = \frac{ \sum_{i \in S} w_i \cdot y_i \cdot \delta \{ y_i \le \widehat{Q}_p \}}{\widehat{Y}}, \text{ } 0 \le p \le 1.
@@ -3113,7 +3183,7 @@ L(p) = \frac{ \sum_{i \in S} w_i \cdot y_i \cdot \delta \{ y_i \le \widehat{Q}_p
 
 Yet, this formula is used to calculate specific points of the curve and
 their respective SEs. The formula to plot an approximation of the
-continuous empirical curve comes from \citep{lerman1989}.
+continuous empirical curve comes from \citet{lerman1989}.
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
@@ -3245,7 +3315,7 @@ G &= 2 \bigg( \int_{0}^{1} pdp - \int_{0}^{1} L(p)dp \bigg) \\
 where \(G=0\) in case of perfect equality and \(G = 1\) in the case of
 perfect inequality.
 
-The estimator proposed by \citep{osier2009} is defined as:
+The estimator proposed by \citet{osier2009} is defined as:
 
 \[
 \widehat{G} = \frac{ 2 \sum_{i \in S} w_i r_i y_i - \sum_{i \in S} w_i y_i }{ \hat{Y} }
@@ -3509,8 +3579,8 @@ For additional usage examples of \texttt{svygini}, type
 
 The Amato index is also based on the Lorenz curve, but instead of
 focusing on the area of the curve, it focuses on its length.
-\citep{arnold2012} proposes a formula not directly based in the Lorenz
-curve, which \citep{barabesi2016} uses to present the following
+\citet{arnold2012} proposes a formula not directly based in the Lorenz
+curve, which \citet{barabesi2016} uses to present the following
 estimator:
 
 \[
@@ -3533,8 +3603,8 @@ For additional usage examples of \texttt{svyamato}, type
 \section{Zenga Index and Curve (svyzenga,
 svyzengacurve)}\label{zenga-index-and-curve-svyzenga-svyzengacurve}
 
-The Zenga index and its curve were proposed in \citep{zenga2007}. As
-\citep{polisicchio2011} noticed, this curve derives directly from the
+The Zenga index and its curve were proposed in \citet{zenga2007}. As
+\citet{polisicchio2011} noticed, this curve derives directly from the
 Lorenz curve, and can be defined as:
 
 \[
@@ -3554,8 +3624,8 @@ In turn, the Zenga index derives from this curve and is defined as:
 Z = \int_0^1 Z(p)dp.
 \]
 
-However, its estimators were proposed by \citep{langel2012} and
-\citep{barabesi2016}. In this library, the latter is used and is defined
+However, its estimators were proposed by \citet{langel2012} and
+\citet{barabesi2016}. In this library, the latter is used and is defined
 as:
 
 \[
@@ -3598,10 +3668,11 @@ event is inversely proportional to the probability of its occurrence. In
 other words, the information derived from the observation of a rare
 event is higher than of the information of more probable events.
 
-Using the intuition presented in \citep{cowell2009}, substituting the
-density function by the income share of an individual
+Using ideas presented in \citet{cowell2009}, substituting the density
+function by the income share of an individual
 \(s(q) = {F}^{-1}(q) / \int_{0}^{1} F^{-1}(t)dt = y/\mu\), the entropy
-function becomes the Theil inequality index
+function becomes the Theil\footnote{Also known as Theil-T index.}
+inequality index
 
 \[
 I_{Theil} = \int_{0}^{\infty} \frac{y}{\mu} \log \bigg( \frac{y}{\mu} \bigg) dF(y) = -H(s)
@@ -3632,7 +3703,7 @@ The parameter \(\alpha\) also has an economic interpretation: as
 increases. In some cases, this measure takes special forms, such as mean
 log deviation and the aforementioned Theil index.
 
-In order to estimate it, \citep{biewen2003} proposed the following:
+In order to estimate it, \citet{biewen2003} proposed the following:
 
 \[
 GE_\alpha =
@@ -3646,7 +3717,7 @@ T_1 U_1^{-1} - \log ( U_1 / U_0 ), & \text{if } \alpha \rightarrow 1
 where \(U_\gamma = \sum_{i \in S} w_i \cdot y_i^\gamma\) and
 \(T_\gamma = \sum_{i \in S} w_i \cdot y_i^\gamma \cdot \log y_i\). since
 those are all functions of totals, the linearization of the indices are
-easily achieved using the theorems described in \citep{deville1999}.
+easily achieved using the theorems described in \citet{deville1999}.
 
 This class also has several desirable properties, such as additive
 decomposition. The additive decomposition allows to compare the effects
@@ -3661,7 +3732,7 @@ I_{Total} = I_{Between} + I_{Within} \text{.}
 
 \textbf{A replication example}
 
-In July 2006, \citep{jenkins2006} presented at the North American Stata
+In July 2006, \citet{jenkins2006} presented at the North American Stata
 Users' Group Meetings on the stata Generalized Entropy Index command.
 The example below reproduces those statistics.
 
@@ -4082,8 +4153,8 @@ console.
 \section{Rényi Divergence (svyrenyi)}\label{renyi-divergence-svyrenyi}
 
 Another measure used in areas like ecology, statistics and information
-theory is Rényi divergence measure. Using the formula defined in
-\citep{langel2012}, the estimator can be defined as:
+theory is the Rényi divergence measure. Using the formula defined in
+\citet{langel2012}, the estimator can be defined as:
 
 \[
 \widehat{R}_\alpha =
@@ -4102,10 +4173,10 @@ For additional usage examples of \texttt{svyrenyi}, type
 \section{J-Divergence and Decomposition (svyjdiv,
 svyjdivdec)}\label{j-divergence-and-decomposition-svyjdiv-svyjdivdec}
 
-Proposed by \citep{rohde2016}, the J-divergence measure can be seen as
-the sum of \(GE_0\) and \(GE_1\), satisfying axioms that, individually,
-those two indices do not. Using \(U_\gamma\) and \(T_\gamma\) functions
-defined in \ref{subsection.3.3.1}, the estimator can be defined as:
+The J-divergence measure \citep{rohde2016} can be seen as the sum of
+\(GE_0\) and \(GE_1\), satisfying axioms that, individually, those two
+indices do not. Using \(U_\gamma\) and \(T_\gamma\) functions defined in
+\ref{subsection.3.3.1}, the estimator can be defined as:
 
 \[
 \begin{aligned}
@@ -4123,8 +4194,8 @@ For additional usage examples of \texttt{svyjdiv} or
 
 \section{Atkinson index (svyatk)}\label{atkinson-index-svyatk}
 
-Although the original formula was proposed in \citep{atkinson1970}, the
-estimator used here comes from \citep{biewen2003}:
+Although the original formula was proposed in \citet{atkinson1970}, the
+estimator used here comes from \citet{biewen2003}:
 
 \[
 \widehat{A}_\epsilon =
@@ -4141,7 +4212,7 @@ infinity, more weight is given to incomes in bottom of the distribution.
 
 \textbf{A replication example}
 
-In July 2006, \citep{jenkins2006} presented at the North American Stata
+In July 2006, \citet{jenkins2006} presented at the North American Stata
 Users' Group Meetings on the stata Atkinson Index command. The example
 below reproduces those statistics.
 

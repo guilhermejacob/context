@@ -794,7 +794,7 @@ Consider first the poverty threshold fixed ($\gamma=0$) in the value $10000$. Th
 svyfgt(~eqincome, des_eusilc, g=0, abs_thresh=10000)
 ```
 
-The poverty gap (FGT1) ($\gamma=1$) index for the poverty threshold fixed at the same value is
+The poverty gap ratio (FGT1) ($\gamma=1$) index for the poverty threshold fixed at the same value is
 
 ```{r comment=NA}
 svyfgt(~eqincome, des_eusilc, g=1, abs_thresh=10000)
@@ -810,7 +810,7 @@ that matches the estimate obtained by
 ```{r comment=NA}
 svyarpr(~eqincome, design=des_eusilc, .5, .6)
 ```
-To estimate the poverty gap(FGT1) with the poverty threshold equal to $0.6*MEAN$
+To estimate the poverty gap (FGT1) with the poverty threshold equal to $0.6*MEAN$
 we use:
 
 ```{r comment=NA}
@@ -1016,12 +1016,12 @@ confint( norm_pov_81 , df = degf( subset( z , year == 1981 ) ) )
 
 For additional usage examples of `svyfgt`, type `?convey::svyfgt` in the R console.
 
-## Watts poverty measure
+## Watts poverty measure (svywatts)
 
 The measure proposed in @watts1968 satisfies a number of desirable poverty measurement axioms and is known to be one of the first distribution-sensitive poverty measures, as noted by @haughton2009. It is defined as
 
 \[
-Watts = \frac{1}{N} \sum_{k \in U} \log{ \bigg( \frac{y_k}{\theta} \bigg) \delta( y_k \leqslant \theta) }.
+Watts = \frac{1}{N} \sum_{i \in U} \log{ \bigg( \frac{y_i}{\theta} \bigg) \delta ( y_i \leqslant \theta) }.
 \]
 
 @murdoch1998 points out that the Watts poverty index can provide an estimate of the expected time to exit poverty. Given the expected growth rate of income per capita among the poor, $g$, the expected time taken to exit poverty $T_\theta$ would be
@@ -1032,7 +1032,50 @@ T_\theta = \frac{Watts}{g}.
 
 Finally, the Watts poverty index has interesting decomposition properties, further explored in this chapter.
 
-## Clark-Hemming-Ulph class of poverty measures
+## Clark-Hemming-Ulph class of poverty measures (svychu)
 
-@clark1981 proposes a class of distribution-sensitive poverty measures. 
+@clark1981 proposes two classes of distribution-sensitive poverty measures. Yet, the poverty measurement literature focuses on the second class^[See @atkinson1987 and @verma2011, for instance.], expressed as
 
+\[
+C_\alpha = \begin{cases}
+    \frac{1}{\alpha N} \sum_{i \in U} \big[ 1-(y_i/\theta)^\alpha \big] \cdot \delta ( y_i \leqslant \theta ) , & \alpha \leqslant 1 , \alpha \neq 0 \\
+    \frac{1}{N} \sum_{i \in U} \log (y_i/\theta) \cdot \delta ( y_i \leqslant \theta ) , &  \alpha = 0
+\end{cases}
+\]
+
+As an special case, $CHU_0 = Watts$.
+
+## Poverty Decompositions
+
+### Watts decomposition (svywattsdec)
+
+@chakravarty2008 proposed a decomposition for the Watts poverty index, rewriting it in terms of the headcount ratio, the Watts average income gap and the Theil-L index among the poor^[The Theil-L (or Bourguignon-Theil) index is an inequality measure of the generalized entropy class. The family of generalized entropy indices is discussed in the next chapter.]. Mathematically,
+
+\[
+Watts = FGT_0 \big( I_w + L_* \big)
+\]
+
+where $I_w = \log(\theta/\mu_*)$ is the Watts average income gap^[ $\mu_*$ stands for the average income among the poor.] and $L_*$ is the Theil-L index of incomes among the poor.
+
+This result can also be interpreted as a decomposition of the time taken to exit poverty, since
+
+\[
+\begin{aligned}
+T_\theta &= \frac{Watts}{g} \\ 
+&= \frac{FGT_0}{g} \big( I_w + L_* \big)
+\end{aligned}
+\]
+
+As @murdoch1998 points out, if the income among the poor is equally distributed (i.e., $L_*=0$), the time taken to exit poverty is simply $FGT_0 I_w / g$. Therefore, $FGT_0 L_* / g$ can be seen as the additional time needed to exit poverty as a result of the inequality among the poor.
+
+### FGT decomposition (svyfgtdec)
+
+Although @foster1984 already presented a decomposition for the FGT(2) index, @aristondo2010 provided a general formula that decomposes the FGT($\gamma$) for any $\gamma \geqslant 2$. Put simply, any such FGT index can be seen as function of the headcount ratio, the average income gap among the poor and a generalized entropy index of income gaps among poor. In mathematical terms,
+
+\[
+FGT_\gamma = FGT_0 \cdot I^\gamma \cdot \big[ 1 + \big( \gamma^2 -\gamma \big) GEI_\gamma^* \big] , \text{ } \gamma \geq 2
+\]
+
+where $I$ is the average income gap among the poor and $GEI_\gamma^*$ is a generalized entropy index of such income gaps among the poor.
+
+This result is particularly useful, as one can attribute cross-sectional differences of a FGT-class index to differences in the spread, depth and inequality of poverty.
