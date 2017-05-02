@@ -131,22 +131,33 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <div class="row">
 <div class="col-sm-12">
-<div id="renyi-divergence-svyrenyi" class="section level2">
-<h2><span class="header-section-number">3.9</span> Rényi Divergence (svyrenyi)</h2>
-<p>Another measure used in areas like ecology, statistics and information theory is the Rényi divergence measure. Using the formula defined in <span class="citation">Langel (<label for="tufte-mn-59" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-59" class="margin-toggle">2012<span class="marginnote">Langel, Matti. 2012. “Measuring Inequality in Finite Population Sampling.” PhD thesis. <a href="http://doc.rero.ch/record/29204" class="uri">http://doc.rero.ch/record/29204</a>.</span>)</span>, the estimator can be defined as:</p>
+<div id="watts-poverty-measure-svywatts-svywattsdec" class="section level2">
+<h2><span class="header-section-number">2.7</span> Watts poverty measure (svywatts, svywattsdec)</h2>
+<p>The measure proposed in <span class="citation">Watts (<label for="tufte-mn-28" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-28" class="margin-toggle">1968<span class="marginnote">Watts, Harold W. 1968. “An Economic Definition of Poverty.” Discussion Papers 5. Institute For Research on Poverty. <a href="https://www.irp.wisc.edu/publications/dps/pdfs/dp568.pdf" class="uri">https://www.irp.wisc.edu/publications/dps/pdfs/dp568.pdf</a>.</span>)</span> satisfies a number of desirable poverty measurement axioms and is known to be one of the first distribution-sensitive poverty measures, as noted by <span class="citation">Haughton and Khandker (<label for="tufte-mn-29" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-29" class="margin-toggle">2009<span class="marginnote">Haughton, Jonathan, and Shahidur Khandker. 2009. <em>Handbook on Poverty and Inequality</em>. World Bank Training Series. World Bank Publications. <a href="https://openknowledge.worldbank.org/bitstream/handle/10986/11985/9780821376133.pdf" class="uri">https://openknowledge.worldbank.org/bitstream/handle/10986/11985/9780821376133.pdf</a>.</span>)</span>. It is defined as</p>
 <p><span class="math display">\[
-\widehat{R}_\alpha =
-\begin{cases}
-\frac{1}{\alpha - 1} \log \bigg[ \widehat{N}^{\alpha - 1} \sum_{i \in S} w_i \cdot \bigg( \frac{y_k}{ \widehat{Y} } \bigg) \bigg], &amp;\text{if } \alpha \neq 1, \\
-\sum_{i \in S} \frac{w_i y_i}{ \widehat{Y}} \log \frac{\widehat{N} y_i}{\widehat{Y}}, &amp;\text{if } \alpha = 1,
-\end{cases}
+Watts = \frac{1}{N} \sum_{i \in U} \log{ \bigg( \frac{y_i}{\theta} \bigg) \delta ( y_i \leqslant \theta) }.
 \]</span></p>
-<p>where <span class="math inline">\(\alpha\)</span> is a parameter with a similar economic interpretation to that of the <span class="math inline">\(GE_\alpha\)</span> index.</p>
-<p>For additional usage examples of <code>svyrenyi</code>, type <code>?convey::svyrenyi</code> in the R console.</p>
+<p><span class="citation">Morduch (<label for="tufte-mn-30" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-30" class="margin-toggle">1998<span class="marginnote">Morduch, Jonathan. 1998. “Poverty, Economic Growth, and Average Exit Time.” <em>Economics Letters</em> 59 (3): 385–90. doi:<a href="https://doi.org/https://doi.org/10.1016/S0165-1765(98)00070-6">https://doi.org/10.1016/S0165-1765(98)00070-6</a>.</span>)</span> points out that the Watts poverty index can provide an estimate of the expected time to exit poverty. Given the expected growth rate of income per capita among the poor, <span class="math inline">\(g\)</span>, the expected time taken to exit poverty <span class="math inline">\(T_\theta\)</span> would be</p>
+<p><span class="math display">\[
+T_\theta = \frac{Watts}{g}.
+\]</span></p>
+<p>The Watts poverty index also has interesting decomposition properties. <span class="citation">Chakravarty, Deutsch, and Silber (<label for="tufte-mn-31" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-31" class="margin-toggle">2008<span class="marginnote">Chakravarty, Satya R., Joseph Deutsch, and Jacques Silber. 2008. “On the Watts Multidimensional Poverty Index and Its Decomposition.” <em>World Development</em> 36 (6). Elsevier Science. doi:<a href="https://doi.org/10.1016/j.worlddev.2007.10.003">10.1016/j.worlddev.2007.10.003</a>.</span>)</span> proposed a decomposition for the Watts poverty index, rewriting it in terms of the headcount ratio, the Watts average income gap and the mean log deviaton of poor incomes<label for="tufte-sn-1" class="margin-toggle sidenote-number">1</label><input type="checkbox" id="tufte-sn-1" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">1</span> The mean log deviation (also known as Theil-L or Bourguignon-Theil index) is an inequality measure of the generalized entropy class. The family of generalized entropy indices is discussed in the next chapter.</span>. Mathematically,</p>
+<p><span class="math display">\[
+Watts = FGT_0 \big( I_w + L_* \big)
+\]</span></p>
+<p>where <span class="math inline">\(I_w = \log(\theta/\mu_*)\)</span> is the Watts average income gap<label for="tufte-sn-2" class="margin-toggle sidenote-number">2</label><input type="checkbox" id="tufte-sn-2" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">2</span> <span class="math inline">\(\mu_*\)</span> stands for the average income among the poor.</span> and <span class="math inline">\(L_*\)</span> is the Theil-L index of incomes among the poor. This can be estimated using the <code>svywattsdec</code> function.</p>
+<p>This result can also be interpreted as a decomposition of the time taken to exit poverty, since</p>
+<p><span class="math display">\[
+\begin{aligned}
+T_\theta &amp;= \frac{Watts}{g} \\ 
+&amp;= \frac{FGT_0}{g} \big( I_w + L_* \big)
+\end{aligned}
+\]</span></p>
+<p>As <span class="citation">Morduch (<label for="tufte-mn-32" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-32" class="margin-toggle">1998<span class="marginnote">Morduch, Jonathan. 1998. “Poverty, Economic Growth, and Average Exit Time.” <em>Economics Letters</em> 59 (3): 385–90. doi:<a href="https://doi.org/https://doi.org/10.1016/S0165-1765(98)00070-6">https://doi.org/10.1016/S0165-1765(98)00070-6</a>.</span>)</span> points out, if the income among the poor is equally distributed (i.e., <span class="math inline">\(L_*=0\)</span>), the time taken to exit poverty is simply <span class="math inline">\(FGT_0 I_w / g\)</span>. Therefore, <span class="math inline">\(FGT_0 L_* / g\)</span> can be seen as the additional time needed to exit poverty as a result of the inequality among the poor.</p>
 </div>
 <p style="text-align: center;">
-<a href="3-8-generalized-entropy-and-decomposition-svygei-svygeidec.html"><button class="btn btn-default">Previous</button></a>
-<a href="3-10-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html"><button class="btn btn-default">Next</button></a>
+<a href="2-6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html"><button class="btn btn-default">Previous</button></a>
+<a href="2-8-clark-hemming-ulph-class-of-poverty-measures-svychu.html"><button class="btn btn-default">Next</button></a>
 </p>
 </div>
 </div>
