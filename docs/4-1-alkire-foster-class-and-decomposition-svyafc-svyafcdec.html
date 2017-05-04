@@ -17,7 +17,7 @@
 
 <meta name="author" content="Guilherme Jacob, Anthony Damico, and Djalma Pessoa" />
 
-<meta name="date" content="2017-05-02" />
+<meta name="date" content="2017-05-04" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -183,33 +183,33 @@ M^\alpha = \sum_{j \in d} w_j \bigg[ \frac{1}{n} \sum_{i \in n} g_{ij}^\alpha (k
 nlsw88 &lt;-<span class="st"> </span><span class="kw">data.frame</span>( nlsw88 )
 
 <span class="co"># create a `collgrad` column</span>
-nlsw88$collgrad &lt;-
+nlsw88<span class="op">$</span>collgrad &lt;-
 <span class="st">    </span><span class="kw">factor</span>( 
-        <span class="kw">as.numeric</span>( nlsw88$collgrad ) , 
+        <span class="kw">as.numeric</span>( nlsw88<span class="op">$</span>collgrad ) , 
         <span class="dt">label =</span> <span class="kw">c</span>( <span class="st">&#39;not college grad&#39;</span> , <span class="st">&#39;college grad&#39;</span> ) , 
         <span class="dt">ordered =</span> <span class="ot">TRUE</span> 
       )
 
 <span class="co"># coerce `married` column to factor</span>
-nlsw88$married &lt;-<span class="st"> </span>
+nlsw88<span class="op">$</span>married &lt;-<span class="st"> </span>
 <span class="st">    </span><span class="kw">factor</span>( 
-        nlsw88$married , 
-        <span class="dt">levels =</span> <span class="dv">0</span>:<span class="dv">1</span> , 
+        nlsw88<span class="op">$</span>married , 
+        <span class="dt">levels =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">1</span> , 
         <span class="dt">labels =</span> <span class="kw">c</span>( <span class="st">&quot;single&quot;</span> , <span class="st">&quot;married&quot;</span> ) 
     )
 
 <span class="co"># initiate a linearized survey design object</span>
-des_nlsw88 &lt;-<span class="st"> </span><span class="kw">svydesign</span>( <span class="dt">ids =</span> ~<span class="dv">1</span> , <span class="dt">data =</span> nlsw88 )
+des_nlsw88 &lt;-<span class="st"> </span><span class="kw">svydesign</span>( <span class="dt">ids =</span> <span class="op">~</span><span class="dv">1</span> , <span class="dt">data =</span> nlsw88 )
 
 <span class="co"># immediately run the `convey_prep` function on the survey design</span>
 des_nlsw88 &lt;-<span class="st"> </span><span class="kw">convey_prep</span>(des_nlsw88)</code></pre></div>
 <p>Replicate PDF page 9</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">page_nine &lt;-
 <span class="st">  </span><span class="kw">svyafc</span>(
-    ~<span class="st"> </span>wage +<span class="st"> </span>collgrad +<span class="st"> </span>hours , 
+    <span class="op">~</span><span class="st"> </span>wage <span class="op">+</span><span class="st"> </span>collgrad <span class="op">+</span><span class="st"> </span>hours , 
     <span class="dt">design =</span> des_nlsw88 , 
     <span class="dt">cutoffs =</span> <span class="kw">list</span>( <span class="dv">4</span>, <span class="st">&#39;college grad&#39;</span> , <span class="dv">26</span> ) , 
-    <span class="dt">k =</span> <span class="dv">1</span>/<span class="dv">3</span> , <span class="dt">g =</span> <span class="dv">0</span> , 
+    <span class="dt">k =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">3</span> , <span class="dt">g =</span> <span class="dv">0</span> , 
     <span class="dt">na.rm =</span> <span class="ot">TRUE</span>
   )
 
@@ -226,11 +226,11 @@ des_nlsw88 &lt;-<span class="st"> </span><span class="kw">convey_prep</span>(des
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">page_ten &lt;-<span class="st"> </span><span class="ot">NULL</span>
 
 <span class="co"># loop through every poverty cutoff `k`</span>
-for( ks in <span class="kw">seq</span>( <span class="fl">0.1</span> , <span class="dv">1</span> , .<span class="dv">1</span> ) ){
+<span class="cf">for</span>( ks <span class="cf">in</span> <span class="kw">seq</span>( <span class="fl">0.1</span> , <span class="dv">1</span> , .<span class="dv">1</span> ) ){
     
     this_ks &lt;-
 <span class="st">        </span><span class="kw">svyafc</span>(
-            ~<span class="st"> </span>wage +<span class="st"> </span>collgrad +<span class="st"> </span>hours , 
+            <span class="op">~</span><span class="st"> </span>wage <span class="op">+</span><span class="st"> </span>collgrad <span class="op">+</span><span class="st"> </span>hours , 
             <span class="dt">design =</span> des_nlsw88 , 
             <span class="dt">cutoffs =</span> <span class="kw">list</span>( <span class="dv">4</span> , <span class="st">&#39;college grad&#39;</span> , <span class="dv">26</span> ) , 
             <span class="dt">k =</span> ks , 
@@ -375,11 +375,11 @@ for( ks in <span class="kw">seq</span>( <span class="fl">0.1</span> , <span clas
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">page_thirteen &lt;-<span class="st"> </span><span class="ot">NULL</span>
 
 <span class="co"># loop through every poverty cutoff `k`</span>
-for( ks in <span class="kw">c</span>( <span class="fl">0.5</span> , <span class="fl">0.75</span> , <span class="dv">1</span> ) ){
+<span class="cf">for</span>( ks <span class="cf">in</span> <span class="kw">c</span>( <span class="fl">0.5</span> , <span class="fl">0.75</span> , <span class="dv">1</span> ) ){
     
     this_ks &lt;-
 <span class="st">        </span><span class="kw">svyafc</span>(
-        ~<span class="st"> </span>wage +<span class="st"> </span>collgrad +<span class="st"> </span>hours , 
+        <span class="op">~</span><span class="st"> </span>wage <span class="op">+</span><span class="st"> </span>collgrad <span class="op">+</span><span class="st"> </span>hours , 
         <span class="dt">design =</span> des_nlsw88 , 
         <span class="dt">cutoffs =</span> <span class="kw">list</span>( <span class="dv">4</span>, <span class="st">&#39;college grad&#39;</span> , <span class="dv">26</span> ) , 
         <span class="dt">k =</span> ks , 
@@ -454,14 +454,14 @@ for( ks in <span class="kw">c</span>( <span class="fl">0.5</span> , <span class=
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">page_sixteen &lt;-<span class="st"> </span><span class="ot">NULL</span>
 
 <span class="co"># loop through every alpha value `g`</span>
-for( gs in <span class="dv">0</span>:<span class="dv">3</span> ){
+<span class="cf">for</span>( gs <span class="cf">in</span> <span class="dv">0</span><span class="op">:</span><span class="dv">3</span> ){
     
     this_gs &lt;-
 <span class="st">        </span><span class="kw">svyafc</span>(
-        ~<span class="st"> </span>wage +<span class="st"> </span>collgrad +<span class="st"> </span>hours , 
+        <span class="op">~</span><span class="st"> </span>wage <span class="op">+</span><span class="st"> </span>collgrad <span class="op">+</span><span class="st"> </span>hours , 
         <span class="dt">design =</span> des_nlsw88 , 
         <span class="dt">cutoffs =</span> <span class="kw">list</span>( <span class="dv">4</span>, <span class="st">&#39;college grad&#39;</span> , <span class="dv">26</span> ) , 
-        <span class="dt">k =</span> <span class="dv">1</span>/<span class="dv">3</span> , 
+        <span class="dt">k =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">3</span> , 
         <span class="dt">g =</span> gs , 
         <span class="dt">na.rm =</span> <span class="ot">TRUE</span>
       )
@@ -516,10 +516,10 @@ for( gs in <span class="dv">0</span>:<span class="dv">3</span> ){
 </table>
 <p>Replicate k=1/3 rows of PDF page 17 and 19</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svyafcdec</span>(
-    ~<span class="st"> </span>wage +<span class="st"> </span>collgrad +<span class="st"> </span>hours , 
+    <span class="op">~</span><span class="st"> </span>wage <span class="op">+</span><span class="st"> </span>collgrad <span class="op">+</span><span class="st"> </span>hours , 
     <span class="dt">design =</span> des_nlsw88 , 
     <span class="dt">cutoffs =</span> <span class="kw">list</span>( <span class="dv">4</span> , <span class="st">&#39;college grad&#39;</span> , <span class="dv">26</span> ) , 
-    <span class="dt">k =</span> <span class="dv">1</span>/<span class="dv">3</span> , 
+    <span class="dt">k =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">3</span> , 
     <span class="dt">g =</span> <span class="dv">0</span> ,
     <span class="dt">na.rm =</span> <span class="ot">TRUE</span>
 )</code></pre></div>
@@ -546,11 +546,11 @@ for( gs in <span class="dv">0</span>:<span class="dv">3</span> ){
 ## hours                0.13666 0.0059</code></pre>
 <p>Replicate PDF pages 21 and 22</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svyafcdec</span>(
-    ~<span class="st"> </span>wage +<span class="st"> </span>collgrad +<span class="st"> </span>hours , 
-    <span class="dt">subgroup =</span> ~married , 
+    <span class="op">~</span><span class="st"> </span>wage <span class="op">+</span><span class="st"> </span>collgrad <span class="op">+</span><span class="st"> </span>hours , 
+    <span class="dt">subgroup =</span> <span class="op">~</span>married , 
     <span class="dt">design =</span> des_nlsw88 , 
     <span class="dt">cutoffs =</span> <span class="kw">list</span>( <span class="dv">4</span> , <span class="st">&#39;college grad&#39;</span> , <span class="dv">26</span> ) , 
-    <span class="dt">k =</span> <span class="dv">1</span>/<span class="dv">3</span> , 
+    <span class="dt">k =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">3</span> , 
     <span class="dt">g =</span> <span class="dv">0</span> ,
     <span class="dt">na.rm =</span> <span class="ot">TRUE</span>
 )</code></pre></div>
