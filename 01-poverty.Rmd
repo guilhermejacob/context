@@ -775,13 +775,13 @@ where: $\theta$ is the poverty threshold; $\delta$ the indicator function that a
 
 If $\gamma =0$, the FGT(0) equals the poverty headcount ratio, which accounts for the spread of poverty. If $\gamma =1$, FGT(1) is the mean of the normalized income shortfall of the poor. By doing so, the measure takes into account both the spread and the intensity of poverty. When $\gamma =2$, the relative weight of larger shortfalls increases even more, which yields a measure that accounts for poverty severity, i.e., the inequality among the poor. This way, a transfer from a poor person to an even poorer person would reduce the FGT(2).
 
-Although @foster1984 already presented a decomposition for the FGT(2) index, @aristondo2010 provided a general formula that decomposes the FGT($\gamma$) for any $\gamma \geqslant 2$. Put simply, any such FGT($\text{\gamma}$) index can be seen as function of the headcount ratio, the average income gap among the poor and a generalized entropy index of income gaps among poor. In mathematical terms,
+Although @foster1984 already presented a decomposition for the FGT(2) index, @aristondo2010 provided a general formula that decomposes the FGT($\gamma$) for any $\gamma \geqslant 2$. Put simply, any such FGT($\text{\gamma}$) index can be seen as function of the headcount ratio, the average normalized income gap among the poor and a generalized entropy index of the normalized income gaps among poor. In mathematical terms,
 
 \[
 FGT_\gamma = FGT_0 \cdot I^\gamma \cdot \big[ 1 + \big( \gamma^2 -\gamma \big) GEI_\gamma^* \big] , \text{ } \gamma \geq 2
 \]
 
-where $I$ is the average income gap among the poor and $GEI_\gamma^*$ is a generalized entropy index of such income gaps among the poor.
+where $I$ is the average normalized income gap among the poor and $GEI_\gamma^*$ is a generalized entropy index of such income gaps among the poor.
 
 This result is particularly useful, as one can attribute cross-sectional differences of a FGT index to differences in the spread, depth and inequality of poverty.
 
@@ -1037,13 +1037,13 @@ Watts = \frac{1}{N} \sum_{i \in U} \log{ \bigg( \frac{y_i}{\theta} \bigg) \delta
 T_\theta = \frac{Watts}{g}.
 \]
 
-The Watts poverty index also has interesting decomposition properties. @chakravarty2008 proposed a decomposition for the Watts poverty index, rewriting it in terms of the headcount ratio, the Watts poverty gap ratio and the mean log deviaton of poor incomes^[The mean log deviation (also known as Theil-L or Bourguignon-Theil index) is an inequality measure of the generalized entropy class. The family of generalized entropy indices is discussed in the next chapter.]. Mathematically,
+The Watts poverty index also has interesting decomposition properties. @blackburn1989 proposed a decomposition for the Watts poverty index, rewriting it in terms of the headcount ratio, the Watts poverty gap ratio and the mean log deviaton of poor incomes^[The mean log deviation (also known as Theil-L or Bourguignon-Theil index) is an inequality measure of the generalized entropy class. The family of generalized entropy indices is discussed in the next chapter.]. Mathematically,
 
 \[
 Watts = FGT_0 \big( I_w + L_* \big)
 \]
 
-where $I_w = \log(\theta/\mu_*)$ is the Watts poverty gap ratio^[ $\mu_*$ stands for the average income among the poor.] and $L_*$ is the Theil-L index of incomes among the poor. This can be estimated using the `svywattsdec` function.
+where $I_w = \log(\theta/\mu_*)$ is the Watts poverty gap ratio^[ $\mu_*$ stands for the average income among the poor.] and $L_*$ is the mean log deviation of incomes among the poor. This can be estimated using the `svywattsdec` function.
 
 This result can also be interpreted as a decomposition of the time taken to exit poverty, since
 
@@ -1063,8 +1063,8 @@ As @murdoch1998 points out, if the income among the poor is equally distributed 
 \[
 C_\alpha = \begin{cases}
     \frac{1}{\alpha N} \sum_{i \in U} \big[ 1-(y_i/\theta)^\alpha \big] \cdot \delta ( y_i \leqslant \theta ) , & \alpha \leqslant 1 , \alpha \neq 0 \\
-    \frac{1}{N} \sum_{i \in U} \log (y_i/\theta) \cdot \delta ( y_i \leqslant \theta ) , &  \alpha = 0
+    1 - \bigg( \prod_{i \in U} y_i^{\delta ( y_i \leqslant \theta )} \bigg)^{1/N} \bigg/ \theta , &  \alpha = 0
 \end{cases}
 \]
 
-As an special case, $CHU_0 = Watts$.
+As an special case, $CHU_0 = 1 - \exp{(-Watts)}$. The $\alpha$ parameter defines the sensivity towards regressive income transfers among the poor, such that the lower its value, larger is the regressive transfer impact on the index. When $\alpha \rightarrow 1$, $CHU_1 = FGT_0 \cdot I$, a measure insensitive to regressive income transfers among the poor. 
