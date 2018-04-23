@@ -17,7 +17,7 @@
 
 <meta name="author" content="Guilherme Jacob, Anthony Damico, and Djalma Pessoa" />
 
-<meta name="date" content="2017-11-06" />
+<meta name="date" content="2018-04-23" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -30,6 +30,9 @@ MathJax.Hub.Config({
 
 <title>Poverty and Inequality with Complex Survey Data</title>
 
+<link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
+<link href="libs/tufte-css-2015.12.29/tufte-background.css" rel="stylesheet" />
+<link href="libs/tufte-css-2015.12.29/tufte-italics.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" />
 
 
@@ -119,6 +122,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="3-9-renyi-divergence-svyrenyi.html#renyi-divergence-svyrenyi"><span class="toc-section-number">3.9</span> Rényi Divergence (svyrenyi)</a></li>
 <li><a href="3-10-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#j-divergence-and-decomposition-svyjdiv-svyjdivdec"><span class="toc-section-number">3.10</span> J-Divergence and Decomposition (svyjdiv, svyjdivdec)</a></li>
 <li><a href="3-11-atkinson-index-svyatk.html#atkinson-index-svyatk"><span class="toc-section-number">3.11</span> Atkinson index (svyatk)</a></li>
+<li><a href="3-12-which-inequality-measure-should-be-used.html#which-inequality-measure-should-be-used"><span class="toc-section-number">3.12</span> Which inequality measure should be used?</a></li>
 </ul></li>
 <li class="has-sub"><a href="4-multidimensional.html#multidimensional"><span class="toc-section-number">4</span> Multidimensional Indices</a><ul>
 <li><a href="4-1-alkire-foster-class-and-decomposition-svyafc-svyafcdec.html#alkire-foster-class-and-decomposition-svyafc-svyafcdec"><span class="toc-section-number">4.1</span> Alkire-Foster Class and Decomposition (svyafc, svyafcdec)</a></li>
@@ -223,20 +227,20 @@ GE(3)    |  .1739994   .00662015    26.28    0.000      .1610242   .1869747
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">z81 &lt;-<span class="st"> </span><span class="kw">subset</span>( z , year <span class="op">==</span><span class="st"> </span><span class="dv">1981</span> )
 
 <span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z81 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> ) , <span class="dt">epsilon =</span> <span class="op">-</span><span class="dv">1</span> )</code></pre></div>
-<pre><code>##            gei     SE
-## eybhc0 0.19021 0.0247</code></pre>
+<pre><code>##             gei       SE epsilon
+## eybhc0 0.190206 0.024748      -1</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z81 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> ) , <span class="dt">epsilon =</span> <span class="dv">0</span> )</code></pre></div>
-<pre><code>##            gei     SE
-## eybhc0 0.11429 0.0028</code></pre>
+<pre><code>##              gei        SE epsilon
+## eybhc0 0.1142851 0.0027513       0</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z81 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> ) )</code></pre></div>
-<pre><code>##            gei     SE
-## eybhc0 0.11169 0.0023</code></pre>
+<pre><code>##              gei        SE epsilon
+## eybhc0 0.1116923 0.0022648       1</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z81 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> ) , <span class="dt">epsilon =</span> <span class="dv">2</span> )</code></pre></div>
-<pre><code>##            gei     SE
-## eybhc0 0.12879 0.0033</code></pre>
+<pre><code>##              gei        SE epsilon
+## eybhc0 0.1287930 0.0033076       2</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z81 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> ) , <span class="dt">epsilon =</span> <span class="dv">3</span> )</code></pre></div>
-<pre><code>##          gei     SE
-## eybhc0 0.174 0.0066</code></pre>
+<pre><code>##              gei        SE epsilon
+## eybhc0 0.1739994 0.0066199       3</code></pre>
 <p>Confirm this replication applies for subsetted objects as well. Compare stata output..</p>
 <pre class="code"><code>. svygei x if year == 1985 &amp; x &gt;= 1
 
@@ -259,20 +263,20 @@ GE(3)    |  .2609507   .01850689    14.10    0.000      .2246779   .2972235
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">z85 &lt;-<span class="st"> </span><span class="kw">subset</span>( z , year <span class="op">==</span><span class="st"> </span><span class="dv">1985</span> )
 
 <span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z85 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span> ) , <span class="dt">epsilon =</span> <span class="op">-</span><span class="dv">1</span> )</code></pre></div>
-<pre><code>##            gei     SE
-## eybhc0 0.16024 0.0094</code></pre>
+<pre><code>##              gei        SE epsilon
+## eybhc0 0.1602358 0.0093689      -1</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z85 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span> ) , <span class="dt">epsilon =</span> <span class="dv">0</span> )</code></pre></div>
-<pre><code>##            gei     SE
-## eybhc0 0.12762 0.0033</code></pre>
+<pre><code>##              gei        SE epsilon
+## eybhc0 0.1276160 0.0033217       0</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z85 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span> ) )</code></pre></div>
-<pre><code>##            gei     SE
-## eybhc0 0.13372 0.0041</code></pre>
+<pre><code>##              gei        SE epsilon
+## eybhc0 0.1337177 0.0040628       1</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z85 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span> ) , <span class="dt">epsilon =</span> <span class="dv">2</span> )</code></pre></div>
-<pre><code>##            gei     SE
-## eybhc0 0.16764 0.0073</code></pre>
+<pre><code>##              gei        SE epsilon
+## eybhc0 0.1676393 0.0073002       2</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z85 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span> ) , <span class="dt">epsilon =</span> <span class="dv">3</span> )</code></pre></div>
-<pre><code>##            gei     SE
-## eybhc0 0.26095 0.0185</code></pre>
+<pre><code>##             gei       SE epsilon
+## eybhc0 0.260951 0.018506       3</code></pre>
 <p>Replicate the author’s decomposition by population subgroup (work status) shown on PDF page 57..</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># define work status (PDF page 22)</span>
 z &lt;-<span class="st"> </span><span class="kw">update</span>( z , <span class="dt">wkstatus =</span> <span class="kw">c</span>( <span class="dv">1</span> , <span class="dv">1</span> , <span class="dv">1</span> , <span class="dv">1</span> , <span class="dv">2</span> , <span class="dv">3</span> , <span class="dv">2</span> , <span class="dv">2</span> )[ <span class="kw">as.numeric</span>( esbu ) ] )
@@ -324,7 +328,7 @@ z91 &lt;-<span class="st"> </span><span class="kw">subset</span>( z , year <span
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svygeidec</span>( <span class="op">~</span>eybhc0, <span class="op">~</span>wkstatus, z91, <span class="dt">epsilon =</span> <span class="dv">1</span> )</code></pre></div>
 <pre><code>##          total    within between
 ## coef 0.2003897 0.1693958  0.0310
-## SE   0.0079299 0.0044132  0.0073</code></pre>
+## SE   0.0079299 0.0082236  0.0027</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svygeidec</span>( <span class="op">~</span>eybhc0, <span class="op">~</span>wkstatus, z91, <span class="dt">epsilon =</span> <span class="dv">2</span> )</code></pre></div>
 <pre><code>##         total   within between
 ## coef 0.274325 0.245067  0.0293
@@ -341,4 +345,4 @@ z91 &lt;-<span class="st"> </span><span class="kw">subset</span>( z , year <span
 
 
 </body>
-<!-- </html> -->
+</html>
