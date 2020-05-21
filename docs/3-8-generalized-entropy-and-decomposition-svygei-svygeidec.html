@@ -1,14 +1,11 @@
 <!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-
+<html lang="" xml:lang="">
 <head>
 
-<meta charset="utf-8">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta charset="utf-8" />
 <meta name="generator" content="pandoc" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta property="og:title" content="Poverty and Inequality with Complex Survey Data" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="3.8 Generalized Entropy and Decomposition (svygei, svygeidec) | Poverty and Inequality with Complex Survey Data" />
 <meta property="og:type" content="book" />
 
 
@@ -17,18 +14,18 @@
 
 <meta name="author" content="Guilherme Jacob, Anthony Damico, and Djalma Pessoa" />
 
-<meta name="date" content="2018-04-23" />
+<meta name="date" content="2020-05-21" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
   TeX: { equationNumbers: { autoNumber: "AMS" } }
 });
 </script>
-  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
 
 <meta name="description" content="A book about the R convey package">
 
-<title>Poverty and Inequality with Complex Survey Data</title>
+<title>3.8 Generalized Entropy and Decomposition (svygei, svygeidec) | Poverty and Inequality with Complex Survey Data</title>
 
 <link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte-background.css" rel="stylesheet" />
@@ -38,41 +35,67 @@ MathJax.Hub.Config({
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
@@ -119,7 +142,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="3-6-zenga-index-and-curve-svyzenga-svyzengacurve.html#zenga-index-and-curve-svyzenga-svyzengacurve"><span class="toc-section-number">3.6</span> Zenga Index and Curve (svyzenga, svyzengacurve)</a></li>
 <li><a href="3-7-entropy-based-measures.html#entropy-based-measures"><span class="toc-section-number">3.7</span> Entropy-based Measures</a></li>
 <li><a href="3-8-generalized-entropy-and-decomposition-svygei-svygeidec.html#generalized-entropy-and-decomposition-svygei-svygeidec"><span class="toc-section-number">3.8</span> Generalized Entropy and Decomposition (svygei, svygeidec)</a></li>
-<li><a href="3-9-renyi-divergence-svyrenyi.html#renyi-divergence-svyrenyi"><span class="toc-section-number">3.9</span> Rényi Divergence (svyrenyi)</a></li>
+<li><a href="3-9-rényi-divergence-svyrenyi.html#rényi-divergence-svyrenyi"><span class="toc-section-number">3.9</span> Rényi Divergence (svyrenyi)</a></li>
 <li><a href="3-10-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#j-divergence-and-decomposition-svyjdiv-svyjdivdec"><span class="toc-section-number">3.10</span> J-Divergence and Decomposition (svyjdiv, svyjdivdec)</a></li>
 <li><a href="3-11-atkinson-index-svyatk.html#atkinson-index-svyatk"><span class="toc-section-number">3.11</span> Atkinson index (svyatk)</a></li>
 <li><a href="3-12-which-inequality-measure-should-be-used.html#which-inequality-measure-should-be-used"><span class="toc-section-number">3.12</span> Which inequality measure should be used?</a></li>
@@ -137,7 +160,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="col-sm-12">
 <div id="generalized-entropy-and-decomposition-svygei-svygeidec" class="section level2">
 <h2><span class="header-section-number">3.8</span> Generalized Entropy and Decomposition (svygei, svygeidec)</h2>
-<p>Using a generalization of the information function, now defined as <span class="math inline">\(g(f) = \frac{1}{\alpha-1} [ 1 - f^{\alpha - 1} ]\)</span>, the <span class="math inline">\(\alpha\)</span>-class entropy is <span class="math display">\[
+<p>Using a generalization of the information function, now defined as <span class="math inline">\(g(f) = \frac{1}{\alpha-1} [ 1 - f^{\alpha - 1} ]\)</span>, the <span class="math inline">\(\alpha\)</span>-class entropy is
+<span class="math display">\[
 H_\alpha(f) = \frac{1}{\alpha - 1} \bigg[ 1 - \int_{-\infty}^{\infty} f(y)^{ \alpha - 1} f(y) dy \bigg] \text{.}
 \]</span></p>
 <p>This relates to a class of inequality measures, the Generalized entropy indices, defined as:</p>
@@ -145,7 +169,7 @@ H_\alpha(f) = \frac{1}{\alpha - 1} \bigg[ 1 - \int_{-\infty}^{\infty} f(y)^{ \al
 GE_\alpha = \frac{1}{\alpha^2 - \alpha} \int_{0}^\infty \bigg[ \bigg( \frac{y}{\mu} \bigg)^\alpha - 1 \bigg]dF(x) = - \frac{-H_\alpha(s) }{ \alpha } \text{.}
 \]</span></p>
 <p>The parameter <span class="math inline">\(\alpha\)</span> also has an economic interpretation: as <span class="math inline">\(\alpha\)</span> increases, the influence of top incomes upon the index increases. In some cases, this measure takes special forms, such as mean log deviation and the aforementioned Theil index.</p>
-<p>In order to estimate it, <span class="citation">Biewen and Jenkins (<label for="tufte-mn-64" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-64" class="margin-toggle">2003<span class="marginnote">Biewen, Martin, and Stephen Jenkins. 2003. “Estimation of Generalized Entropy and Atkinson Inequality Indices from Complex Survey Data.” Discussion Papers of DIW Berlin 345. DIW Berlin, German Institute for Economic Research. <a href="http://EconPapers.repec.org/RePEc:diw:diwwpp:dp345" class="uri">http://EconPapers.repec.org/RePEc:diw:diwwpp:dp345</a>.</span>)</span> proposed the following:</p>
+<p>In order to estimate it, <span class="citation">Biewen and Jenkins (<label for="tufte-mn-64" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-64" class="margin-toggle">2003<span class="marginnote">Biewen, Martin, and Stephen Jenkins. 2003. “Estimation of Generalized Entropy and Atkinson Inequality Indices from Complex Survey Data.” Discussion Papers of DIW Berlin 345. DIW Berlin, German Institute for Economic Research. <a href="http://EconPapers.repec.org/RePEc:diw:diwwpp:dp345">http://EconPapers.repec.org/RePEc:diw:diwwpp:dp345</a>.</span>)</span> proposed the following:</p>
 <p><span class="math display">\[
 GE_\alpha =
 \begin{cases}
@@ -154,43 +178,43 @@ GE_\alpha =
 T_1 U_1^{-1} - \log ( U_1 / U_0 ), &amp; \text{if } \alpha \rightarrow 1
 \end{cases}
 \]</span></p>
-<p>where <span class="math inline">\(U_\gamma = \sum_{i \in S} w_i \cdot y_i^\gamma\)</span> and <span class="math inline">\(T_\gamma = \sum_{i \in S} w_i \cdot y_i^\gamma \cdot \log y_i\)</span>. Since those are all functions of totals, the linearization of the indices are easily achieved using the theorems described in <span class="citation">Deville (<label for="tufte-mn-65" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-65" class="margin-toggle">1999<span class="marginnote">Deville, Jean-Claude. 1999. “Variance Estimation for Complex Statistics and Estimators: Linearization and Residual Techniques.” <em>Survey Methodology</em> 25 (2): 193–203. <a href="http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf" class="uri">http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf</a>.</span>)</span>.</p>
+<p>where <span class="math inline">\(U_\gamma = \sum_{i \in S} w_i \cdot y_i^\gamma\)</span> and <span class="math inline">\(T_\gamma = \sum_{i \in S} w_i \cdot y_i^\gamma \cdot \log y_i\)</span>. Since those are all functions of totals, the linearization of the indices are easily achieved using the theorems described in <span class="citation">Deville (<label for="tufte-mn-65" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-65" class="margin-toggle">1999<span class="marginnote">Deville, Jean-Claude. 1999. “Variance Estimation for Complex Statistics and Estimators: Linearization and Residual Techniques.” <em>Survey Methodology</em> 25 (2): 193–203. <a href="http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf">http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf</a>.</span>)</span>.</p>
 <p>This class also has several desirable properties, such as additive decomposition. The additive decomposition allows to compare the effects of inequality within and between population groups on the population inequality. Put simply, an additive decomposable index allows for:</p>
 <p><span class="math display">\[
 I_{Total} = I_{Between} + I_{Within} \text{.}
 \]</span></p>
 <hr />
 <p><strong>A replication example</strong></p>
-<p>In July 2006, <span class="citation">Jenkins (<label for="tufte-mn-66" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-66" class="margin-toggle">2008<span class="marginnote">Jenkins, Stephen. 2008. “Estimation and Interpretation of Measures of Inequality, Poverty, and Social Welfare Using Stata.” North American Stata Users’ Group Meetings 2006. Stata Users Group. <a href="http://EconPapers.repec.org/RePEc:boc:asug06:16" class="uri">http://EconPapers.repec.org/RePEc:boc:asug06:16</a>.</span>)</span> presented at the North American Stata Users’ Group Meetings on the stata Generalized Entropy Index command. The example below reproduces those statistics.</p>
+<p>In July 2006, <span class="citation">Jenkins (<label for="tufte-mn-66" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-66" class="margin-toggle">2008<span class="marginnote">Jenkins, Stephen. 2008. “Estimation and Interpretation of Measures of Inequality, Poverty, and Social Welfare Using Stata.” North American Stata Users’ Group Meetings 2006. Stata Users Group. <a href="http://EconPapers.repec.org/RePEc:boc:asug06:16">http://EconPapers.repec.org/RePEc:boc:asug06:16</a>.</span>)</span> presented at the North American Stata Users’ Group Meetings on the stata Generalized Entropy Index command. The example below reproduces those statistics.</p>
 <p>Load and prepare the same data set:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># load the convey package</span>
-<span class="kw">library</span>(convey)
-
-<span class="co"># load the survey library</span>
-<span class="kw">library</span>(survey)
-
-<span class="co"># load the foreign library</span>
-<span class="kw">library</span>(foreign)
-
-<span class="co"># create a temporary file on the local disk</span>
-tf &lt;-<span class="st"> </span><span class="kw">tempfile</span>()
-
-<span class="co"># store the location of the presentation file</span>
-presentation_zip &lt;-<span class="st"> &quot;http://repec.org/nasug2006/nasug2006_jenkins.zip&quot;</span>
-
-<span class="co"># download jenkins&#39; presentation to the temporary file</span>
-<span class="kw">download.file</span>( presentation_zip , tf , <span class="dt">mode =</span> <span class="st">&#39;wb&#39;</span> )
-
-<span class="co"># unzip the contents of the archive</span>
-presentation_files &lt;-<span class="st"> </span><span class="kw">unzip</span>( tf , <span class="dt">exdir =</span> <span class="kw">tempdir</span>() )
-
-<span class="co"># load the institute for fiscal studies&#39; 1981, 1985, and 1991 data.frame objects</span>
-x81 &lt;-<span class="st"> </span><span class="kw">read.dta</span>( <span class="kw">grep</span>( <span class="st">&quot;ifs81&quot;</span> , presentation_files , <span class="dt">value =</span> <span class="ot">TRUE</span> ) )
-x85 &lt;-<span class="st"> </span><span class="kw">read.dta</span>( <span class="kw">grep</span>( <span class="st">&quot;ifs85&quot;</span> , presentation_files , <span class="dt">value =</span> <span class="ot">TRUE</span> ) )
-x91 &lt;-<span class="st"> </span><span class="kw">read.dta</span>( <span class="kw">grep</span>( <span class="st">&quot;ifs91&quot;</span> , presentation_files , <span class="dt">value =</span> <span class="ot">TRUE</span> ) )
-
-<span class="co"># stack each of these three years of data into a single data.frame</span>
-x &lt;-<span class="st"> </span><span class="kw">rbind</span>( x81 , x85 , x91 )</code></pre></div>
+<div class="sourceCode" id="cb238"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb238-1" data-line-number="1"><span class="co"># load the convey package</span></a>
+<a class="sourceLine" id="cb238-2" data-line-number="2"><span class="kw">library</span>(convey)</a>
+<a class="sourceLine" id="cb238-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb238-4" data-line-number="4"><span class="co"># load the survey library</span></a>
+<a class="sourceLine" id="cb238-5" data-line-number="5"><span class="kw">library</span>(survey)</a>
+<a class="sourceLine" id="cb238-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb238-7" data-line-number="7"><span class="co"># load the foreign library</span></a>
+<a class="sourceLine" id="cb238-8" data-line-number="8"><span class="kw">library</span>(foreign)</a>
+<a class="sourceLine" id="cb238-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb238-10" data-line-number="10"><span class="co"># create a temporary file on the local disk</span></a>
+<a class="sourceLine" id="cb238-11" data-line-number="11">tf &lt;-<span class="st"> </span><span class="kw">tempfile</span>()</a>
+<a class="sourceLine" id="cb238-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb238-13" data-line-number="13"><span class="co"># store the location of the presentation file</span></a>
+<a class="sourceLine" id="cb238-14" data-line-number="14">presentation_zip &lt;-<span class="st"> &quot;http://repec.org/nasug2006/nasug2006_jenkins.zip&quot;</span></a>
+<a class="sourceLine" id="cb238-15" data-line-number="15"></a>
+<a class="sourceLine" id="cb238-16" data-line-number="16"><span class="co"># download jenkins&#39; presentation to the temporary file</span></a>
+<a class="sourceLine" id="cb238-17" data-line-number="17"><span class="kw">download.file</span>( presentation_zip , tf , <span class="dt">mode =</span> <span class="st">&#39;wb&#39;</span> )</a>
+<a class="sourceLine" id="cb238-18" data-line-number="18"></a>
+<a class="sourceLine" id="cb238-19" data-line-number="19"><span class="co"># unzip the contents of the archive</span></a>
+<a class="sourceLine" id="cb238-20" data-line-number="20">presentation_files &lt;-<span class="st"> </span><span class="kw">unzip</span>( tf , <span class="dt">exdir =</span> <span class="kw">tempdir</span>() )</a>
+<a class="sourceLine" id="cb238-21" data-line-number="21"></a>
+<a class="sourceLine" id="cb238-22" data-line-number="22"><span class="co"># load the institute for fiscal studies&#39; 1981, 1985, and 1991 data.frame objects</span></a>
+<a class="sourceLine" id="cb238-23" data-line-number="23">x81 &lt;-<span class="st"> </span><span class="kw">read.dta</span>( <span class="kw">grep</span>( <span class="st">&quot;ifs81&quot;</span> , presentation_files , <span class="dt">value =</span> <span class="ot">TRUE</span> ) )</a>
+<a class="sourceLine" id="cb238-24" data-line-number="24">x85 &lt;-<span class="st"> </span><span class="kw">read.dta</span>( <span class="kw">grep</span>( <span class="st">&quot;ifs85&quot;</span> , presentation_files , <span class="dt">value =</span> <span class="ot">TRUE</span> ) )</a>
+<a class="sourceLine" id="cb238-25" data-line-number="25">x91 &lt;-<span class="st"> </span><span class="kw">read.dta</span>( <span class="kw">grep</span>( <span class="st">&quot;ifs91&quot;</span> , presentation_files , <span class="dt">value =</span> <span class="ot">TRUE</span> ) )</a>
+<a class="sourceLine" id="cb238-26" data-line-number="26"></a>
+<a class="sourceLine" id="cb238-27" data-line-number="27"><span class="co"># stack each of these three years of data into a single data.frame</span></a>
+<a class="sourceLine" id="cb238-28" data-line-number="28">x &lt;-<span class="st"> </span><span class="kw">rbind</span>( x81 , x85 , x91 )</a></code></pre></div>
 <p>Replicate the author’s survey design statement from stata code..</p>
 <pre class="code"><code>. * account for clustering within HHs 
 . version 8: svyset [pweight = wgt], psu(hrn)
@@ -198,11 +222,11 @@ pweight is wgt
 psu is hrn
 construct an</code></pre>
 <p>.. into R code:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># initiate a linearized survey design object</span>
-y &lt;-<span class="st"> </span><span class="kw">svydesign</span>( <span class="op">~</span><span class="st"> </span>hrn , <span class="dt">data =</span> x , <span class="dt">weights =</span> <span class="op">~</span><span class="st"> </span>wgt )
-
-<span class="co"># immediately run the `convey_prep` function on the survey design</span>
-z &lt;-<span class="st"> </span><span class="kw">convey_prep</span>( y )</code></pre></div>
+<div class="sourceCode" id="cb240"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb240-1" data-line-number="1"><span class="co"># initiate a linearized survey design object</span></a>
+<a class="sourceLine" id="cb240-2" data-line-number="2">y &lt;-<span class="st"> </span><span class="kw">svydesign</span>( <span class="op">~</span><span class="st"> </span>hrn , <span class="dt">data =</span> x , <span class="dt">weights =</span> <span class="op">~</span><span class="st"> </span>wgt )</a>
+<a class="sourceLine" id="cb240-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb240-4" data-line-number="4"><span class="co"># immediately run the `convey_prep` function on the survey design</span></a>
+<a class="sourceLine" id="cb240-5" data-line-number="5">z &lt;-<span class="st"> </span><span class="kw">convey_prep</span>( y )</a></code></pre></div>
 <p>Replicate the author’s subset statement and each of his svygei results..</p>
 <pre class="code"><code>. svygei x if year == 1981
  
@@ -224,23 +248,23 @@ GE(2)    |   .128793   .00330774    38.94    0.000      .1223099    .135276
 GE(3)    |  .1739994   .00662015    26.28    0.000      .1610242   .1869747
 ---------------------------------------------------------------------------</code></pre>
 <p>..using R code:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">z81 &lt;-<span class="st"> </span><span class="kw">subset</span>( z , year <span class="op">==</span><span class="st"> </span><span class="dv">1981</span> )
-
-<span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z81 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> ) , <span class="dt">epsilon =</span> <span class="op">-</span><span class="dv">1</span> )</code></pre></div>
-<pre><code>##             gei       SE epsilon
-## eybhc0 0.190206 0.024748      -1</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z81 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> ) , <span class="dt">epsilon =</span> <span class="dv">0</span> )</code></pre></div>
-<pre><code>##              gei        SE epsilon
-## eybhc0 0.1142851 0.0027513       0</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z81 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> ) )</code></pre></div>
-<pre><code>##              gei        SE epsilon
-## eybhc0 0.1116923 0.0022648       1</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z81 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> ) , <span class="dt">epsilon =</span> <span class="dv">2</span> )</code></pre></div>
-<pre><code>##              gei        SE epsilon
-## eybhc0 0.1287930 0.0033076       2</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z81 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> ) , <span class="dt">epsilon =</span> <span class="dv">3</span> )</code></pre></div>
-<pre><code>##              gei        SE epsilon
-## eybhc0 0.1739994 0.0066199       3</code></pre>
+<div class="sourceCode" id="cb242"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb242-1" data-line-number="1">z81 &lt;-<span class="st"> </span><span class="kw">subset</span>( z , year <span class="op">==</span><span class="st"> </span><span class="dv">1981</span> )</a>
+<a class="sourceLine" id="cb242-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb242-3" data-line-number="3"><span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z81 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> ) , <span class="dt">epsilon =</span> <span class="dv">-1</span> )</a></code></pre></div>
+<pre><code>##            gei     SE
+## eybhc0 0.19021 0.0247</code></pre>
+<div class="sourceCode" id="cb244"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb244-1" data-line-number="1"><span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z81 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> ) , <span class="dt">epsilon =</span> <span class="dv">0</span> )</a></code></pre></div>
+<pre><code>##            gei     SE
+## eybhc0 0.11429 0.0028</code></pre>
+<div class="sourceCode" id="cb246"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb246-1" data-line-number="1"><span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z81 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> ) )</a></code></pre></div>
+<pre><code>##            gei     SE
+## eybhc0 0.11169 0.0023</code></pre>
+<div class="sourceCode" id="cb248"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb248-1" data-line-number="1"><span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z81 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> ) , <span class="dt">epsilon =</span> <span class="dv">2</span> )</a></code></pre></div>
+<pre><code>##            gei     SE
+## eybhc0 0.12879 0.0033</code></pre>
+<div class="sourceCode" id="cb250"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb250-1" data-line-number="1"><span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z81 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> ) , <span class="dt">epsilon =</span> <span class="dv">3</span> )</a></code></pre></div>
+<pre><code>##          gei     SE
+## eybhc0 0.174 0.0066</code></pre>
 <p>Confirm this replication applies for subsetted objects as well. Compare stata output..</p>
 <pre class="code"><code>. svygei x if year == 1985 &amp; x &gt;= 1
 
@@ -260,76 +284,76 @@ GE(2)    |  .1676393   .00730057    22.96    0.000      .1533304   .1819481
 GE(3)    |  .2609507   .01850689    14.10    0.000      .2246779   .2972235
 ---------------------------------------------------------------------------</code></pre>
 <p>..to R code:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">z85 &lt;-<span class="st"> </span><span class="kw">subset</span>( z , year <span class="op">==</span><span class="st"> </span><span class="dv">1985</span> )
-
-<span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z85 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span> ) , <span class="dt">epsilon =</span> <span class="op">-</span><span class="dv">1</span> )</code></pre></div>
-<pre><code>##              gei        SE epsilon
-## eybhc0 0.1602358 0.0093689      -1</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z85 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span> ) , <span class="dt">epsilon =</span> <span class="dv">0</span> )</code></pre></div>
-<pre><code>##              gei        SE epsilon
-## eybhc0 0.1276160 0.0033217       0</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z85 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span> ) )</code></pre></div>
-<pre><code>##              gei        SE epsilon
-## eybhc0 0.1337177 0.0040628       1</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z85 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span> ) , <span class="dt">epsilon =</span> <span class="dv">2</span> )</code></pre></div>
-<pre><code>##              gei        SE epsilon
-## eybhc0 0.1676393 0.0073002       2</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z85 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span> ) , <span class="dt">epsilon =</span> <span class="dv">3</span> )</code></pre></div>
-<pre><code>##             gei       SE epsilon
-## eybhc0 0.260951 0.018506       3</code></pre>
+<div class="sourceCode" id="cb253"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb253-1" data-line-number="1">z85 &lt;-<span class="st"> </span><span class="kw">subset</span>( z , year <span class="op">==</span><span class="st"> </span><span class="dv">1985</span> )</a>
+<a class="sourceLine" id="cb253-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb253-3" data-line-number="3"><span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z85 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span> ) , <span class="dt">epsilon =</span> <span class="dv">-1</span> )</a></code></pre></div>
+<pre><code>##            gei     SE
+## eybhc0 0.16024 0.0094</code></pre>
+<div class="sourceCode" id="cb255"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb255-1" data-line-number="1"><span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z85 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span> ) , <span class="dt">epsilon =</span> <span class="dv">0</span> )</a></code></pre></div>
+<pre><code>##            gei     SE
+## eybhc0 0.12762 0.0033</code></pre>
+<div class="sourceCode" id="cb257"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb257-1" data-line-number="1"><span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z85 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span> ) )</a></code></pre></div>
+<pre><code>##            gei     SE
+## eybhc0 0.13372 0.0041</code></pre>
+<div class="sourceCode" id="cb259"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb259-1" data-line-number="1"><span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z85 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span> ) , <span class="dt">epsilon =</span> <span class="dv">2</span> )</a></code></pre></div>
+<pre><code>##            gei     SE
+## eybhc0 0.16764 0.0073</code></pre>
+<div class="sourceCode" id="cb261"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb261-1" data-line-number="1"><span class="kw">svygei</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="kw">subset</span>( z85 , eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span> ) , <span class="dt">epsilon =</span> <span class="dv">3</span> )</a></code></pre></div>
+<pre><code>##            gei     SE
+## eybhc0 0.26095 0.0185</code></pre>
 <p>Replicate the author’s decomposition by population subgroup (work status) shown on PDF page 57..</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># define work status (PDF page 22)</span>
-z &lt;-<span class="st"> </span><span class="kw">update</span>( z , <span class="dt">wkstatus =</span> <span class="kw">c</span>( <span class="dv">1</span> , <span class="dv">1</span> , <span class="dv">1</span> , <span class="dv">1</span> , <span class="dv">2</span> , <span class="dv">3</span> , <span class="dv">2</span> , <span class="dv">2</span> )[ <span class="kw">as.numeric</span>( esbu ) ] )
-z &lt;-<span class="st"> </span><span class="kw">update</span>( z , <span class="kw">factor</span>( wkstatus , <span class="dt">labels =</span> <span class="kw">c</span>( <span class="st">&quot;1+ ft working&quot;</span> , <span class="st">&quot;no ft working&quot;</span> , <span class="st">&quot;elderly&quot;</span> ) ) )
-
-<span class="co"># subset to 1991 and remove records with zero income</span>
-z91 &lt;-<span class="st"> </span><span class="kw">subset</span>( z , year <span class="op">==</span><span class="st"> </span><span class="dv">1991</span> <span class="op">&amp;</span><span class="st"> </span>eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> )
-
-<span class="co"># population share</span>
-<span class="kw">svymean</span>( <span class="op">~</span>wkstatus, z91 )</code></pre></div>
+<div class="sourceCode" id="cb263"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb263-1" data-line-number="1"><span class="co"># define work status (PDF page 22)</span></a>
+<a class="sourceLine" id="cb263-2" data-line-number="2">z &lt;-<span class="st"> </span><span class="kw">update</span>( z , <span class="dt">wkstatus =</span> <span class="kw">c</span>( <span class="dv">1</span> , <span class="dv">1</span> , <span class="dv">1</span> , <span class="dv">1</span> , <span class="dv">2</span> , <span class="dv">3</span> , <span class="dv">2</span> , <span class="dv">2</span> )[ <span class="kw">as.numeric</span>( esbu ) ] )</a>
+<a class="sourceLine" id="cb263-3" data-line-number="3">z &lt;-<span class="st"> </span><span class="kw">update</span>( z , <span class="kw">factor</span>( wkstatus , <span class="dt">labels =</span> <span class="kw">c</span>( <span class="st">&quot;1+ ft working&quot;</span> , <span class="st">&quot;no ft working&quot;</span> , <span class="st">&quot;elderly&quot;</span> ) ) )</a>
+<a class="sourceLine" id="cb263-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb263-5" data-line-number="5"><span class="co"># subset to 1991 and remove records with zero income</span></a>
+<a class="sourceLine" id="cb263-6" data-line-number="6">z91 &lt;-<span class="st"> </span><span class="kw">subset</span>( z , year <span class="op">==</span><span class="st"> </span><span class="dv">1991</span> <span class="op">&amp;</span><span class="st"> </span>eybhc0 <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> )</a>
+<a class="sourceLine" id="cb263-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb263-8" data-line-number="8"><span class="co"># population share</span></a>
+<a class="sourceLine" id="cb263-9" data-line-number="9"><span class="kw">svymean</span>( <span class="op">~</span>wkstatus, z91 )</a></code></pre></div>
 <pre><code>##            mean     SE
 ## wkstatus 1.5594 0.0099</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># mean</span>
-<span class="kw">svyby</span>( <span class="op">~</span>eybhc0, <span class="op">~</span>wkstatus, z91, svymean )</code></pre></div>
+<div class="sourceCode" id="cb265"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb265-1" data-line-number="1"><span class="co"># mean</span></a>
+<a class="sourceLine" id="cb265-2" data-line-number="2"><span class="kw">svyby</span>( <span class="op">~</span>eybhc0, <span class="op">~</span>wkstatus, z91, svymean )</a></code></pre></div>
 <pre><code>##   wkstatus   eybhc0       se
 ## 1        1 278.8040 3.703790
 ## 2        2 151.6317 3.153968
 ## 3        3 176.6045 4.661740</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># subgroup indices: ge_k</span>
-<span class="kw">svyby</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="op">~</span>wkstatus , z91 , svygei , <span class="dt">epsilon =</span> <span class="op">-</span><span class="dv">1</span> )</code></pre></div>
+<div class="sourceCode" id="cb267"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb267-1" data-line-number="1"><span class="co"># subgroup indices: ge_k</span></a>
+<a class="sourceLine" id="cb267-2" data-line-number="2"><span class="kw">svyby</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="op">~</span>wkstatus , z91 , svygei , <span class="dt">epsilon =</span> <span class="dv">-1</span> )</a></code></pre></div>
 <pre><code>##   wkstatus     eybhc0          se
 ## 1        1  0.2300708  0.02853959
 ## 2        2 10.9231761 10.65482557
 ## 3        3  0.1932164  0.02571991</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svyby</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="op">~</span>wkstatus , z91 , svygei , <span class="dt">epsilon =</span> <span class="dv">0</span> )</code></pre></div>
+<div class="sourceCode" id="cb269"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb269-1" data-line-number="1"><span class="kw">svyby</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="op">~</span>wkstatus , z91 , svygei , <span class="dt">epsilon =</span> <span class="dv">0</span> )</a></code></pre></div>
 <pre><code>##   wkstatus    eybhc0          se
 ## 1        1 0.1536921 0.006955506
 ## 2        2 0.1836835 0.014740510
 ## 3        3 0.1653658 0.016409770</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svyby</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="op">~</span>wkstatus , z91 , svygei , <span class="dt">epsilon =</span> <span class="dv">1</span> )</code></pre></div>
+<div class="sourceCode" id="cb271"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb271-1" data-line-number="1"><span class="kw">svyby</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="op">~</span>wkstatus , z91 , svygei , <span class="dt">epsilon =</span> <span class="dv">1</span> )</a></code></pre></div>
 <pre><code>##   wkstatus    eybhc0          se
 ## 1        1 0.1598558 0.008327994
 ## 2        2 0.1889909 0.016766120
 ## 3        3 0.2023862 0.027787224</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svyby</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="op">~</span>wkstatus , z91 , svygei , <span class="dt">epsilon =</span> <span class="dv">2</span> )</code></pre></div>
+<div class="sourceCode" id="cb273"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb273-1" data-line-number="1"><span class="kw">svyby</span>( <span class="op">~</span><span class="st"> </span>eybhc0 , <span class="op">~</span>wkstatus , z91 , svygei , <span class="dt">epsilon =</span> <span class="dv">2</span> )</a></code></pre></div>
 <pre><code>##   wkstatus    eybhc0         se
 ## 1        1 0.2130664 0.01546521
 ## 2        2 0.2846345 0.06016394
 ## 3        3 0.3465088 0.07362898</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># GE decomposition</span>
-<span class="kw">svygeidec</span>( <span class="op">~</span>eybhc0, <span class="op">~</span>wkstatus, z91, <span class="dt">epsilon =</span> <span class="op">-</span><span class="dv">1</span> )</code></pre></div>
+<div class="sourceCode" id="cb275"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb275-1" data-line-number="1"><span class="co"># GE decomposition</span></a>
+<a class="sourceLine" id="cb275-2" data-line-number="2"><span class="kw">svygeidec</span>( <span class="op">~</span>eybhc0, <span class="op">~</span>wkstatus, z91, <span class="dt">epsilon =</span> <span class="dv">-1</span> )</a></code></pre></div>
 <pre><code>##       total within between
 ## coef 3.6829 3.6466  0.0363
 ## SE   3.3999 3.3993  0.0541</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svygeidec</span>( <span class="op">~</span>eybhc0, <span class="op">~</span>wkstatus, z91, <span class="dt">epsilon =</span> <span class="dv">0</span> )</code></pre></div>
+<div class="sourceCode" id="cb277"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb277-1" data-line-number="1"><span class="kw">svygeidec</span>( <span class="op">~</span>eybhc0, <span class="op">~</span>wkstatus, z91, <span class="dt">epsilon =</span> <span class="dv">0</span> )</a></code></pre></div>
 <pre><code>##          total    within between
 ## coef 0.1952363 0.1619352  0.0333
 ## SE   0.0064615 0.0062209  0.0027</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svygeidec</span>( <span class="op">~</span>eybhc0, <span class="op">~</span>wkstatus, z91, <span class="dt">epsilon =</span> <span class="dv">1</span> )</code></pre></div>
+<div class="sourceCode" id="cb279"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb279-1" data-line-number="1"><span class="kw">svygeidec</span>( <span class="op">~</span>eybhc0, <span class="op">~</span>wkstatus, z91, <span class="dt">epsilon =</span> <span class="dv">1</span> )</a></code></pre></div>
 <pre><code>##          total    within between
 ## coef 0.2003897 0.1693958  0.0310
-## SE   0.0079299 0.0082236  0.0027</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">svygeidec</span>( <span class="op">~</span>eybhc0, <span class="op">~</span>wkstatus, z91, <span class="dt">epsilon =</span> <span class="dv">2</span> )</code></pre></div>
+## SE   0.0079299 0.0044132  0.0073</code></pre>
+<div class="sourceCode" id="cb281"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb281-1" data-line-number="1"><span class="kw">svygeidec</span>( <span class="op">~</span>eybhc0, <span class="op">~</span>wkstatus, z91, <span class="dt">epsilon =</span> <span class="dv">2</span> )</a></code></pre></div>
 <pre><code>##         total   within between
 ## coef 0.274325 0.245067  0.0293
 ## SE   0.016694 0.017831  0.0038</code></pre>
@@ -337,7 +361,7 @@ z91 &lt;-<span class="st"> </span><span class="kw">subset</span>( z , year <span
 </div>
 <p style="text-align: center;">
 <a href="3-7-entropy-based-measures.html"><button class="btn btn-default">Previous</button></a>
-<a href="3-9-renyi-divergence-svyrenyi.html"><button class="btn btn-default">Next</button></a>
+<a href="3-9-rényi-divergence-svyrenyi.html"><button class="btn btn-default">Next</button></a>
 </p>
 </div>
 </div>

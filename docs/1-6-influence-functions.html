@@ -1,14 +1,11 @@
 <!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-
+<html lang="" xml:lang="">
 <head>
 
-<meta charset="utf-8">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta charset="utf-8" />
 <meta name="generator" content="pandoc" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta property="og:title" content="Poverty and Inequality with Complex Survey Data" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="1.6 Influence Functions | Poverty and Inequality with Complex Survey Data" />
 <meta property="og:type" content="book" />
 
 
@@ -17,18 +14,18 @@
 
 <meta name="author" content="Guilherme Jacob, Anthony Damico, and Djalma Pessoa" />
 
-<meta name="date" content="2018-04-23" />
+<meta name="date" content="2020-05-21" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
   TeX: { equationNumbers: { autoNumber: "AMS" } }
 });
 </script>
-  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
 
 <meta name="description" content="A book about the R convey package">
 
-<title>Poverty and Inequality with Complex Survey Data</title>
+<title>1.6 Influence Functions | Poverty and Inequality with Complex Survey Data</title>
 
 <link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte-background.css" rel="stylesheet" />
@@ -38,41 +35,67 @@ MathJax.Hub.Config({
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
@@ -119,7 +142,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="3-6-zenga-index-and-curve-svyzenga-svyzengacurve.html#zenga-index-and-curve-svyzenga-svyzengacurve"><span class="toc-section-number">3.6</span> Zenga Index and Curve (svyzenga, svyzengacurve)</a></li>
 <li><a href="3-7-entropy-based-measures.html#entropy-based-measures"><span class="toc-section-number">3.7</span> Entropy-based Measures</a></li>
 <li><a href="3-8-generalized-entropy-and-decomposition-svygei-svygeidec.html#generalized-entropy-and-decomposition-svygei-svygeidec"><span class="toc-section-number">3.8</span> Generalized Entropy and Decomposition (svygei, svygeidec)</a></li>
-<li><a href="3-9-renyi-divergence-svyrenyi.html#renyi-divergence-svyrenyi"><span class="toc-section-number">3.9</span> Rényi Divergence (svyrenyi)</a></li>
+<li><a href="3-9-rényi-divergence-svyrenyi.html#rényi-divergence-svyrenyi"><span class="toc-section-number">3.9</span> Rényi Divergence (svyrenyi)</a></li>
 <li><a href="3-10-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#j-divergence-and-decomposition-svyjdiv-svyjdivdec"><span class="toc-section-number">3.10</span> J-Divergence and Decomposition (svyjdiv, svyjdivdec)</a></li>
 <li><a href="3-11-atkinson-index-svyatk.html#atkinson-index-svyatk"><span class="toc-section-number">3.11</span> Atkinson index (svyatk)</a></li>
 <li><a href="3-12-which-inequality-measure-should-be-used.html#which-inequality-measure-should-be-used"><span class="toc-section-number">3.12</span> Which inequality measure should be used?</a></li>
@@ -137,32 +160,43 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="col-sm-12">
 <div id="influence-functions" class="section level2">
 <h2><span class="header-section-number">1.6</span> Influence Functions</h2>
-<p>Some measures of poverty and income concentration are defined by non-differentiable functions so that it is not possible to use Taylor linearization to estimate their variances. An alternative is to use <strong>Influence functions</strong> as described in <span class="citation">(Deville <label for="tufte-mn-3" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-3" class="margin-toggle">1999<span class="marginnote">Deville, Jean-Claude. 1999. “Variance Estimation for Complex Statistics and Estimators: Linearization and Residual Techniques.” <em>Survey Methodology</em> 25 (2): 193–203. <a href="http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf" class="uri">http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf</a>.</span>)</span> and <span class="citation">(Osier <label for="tufte-mn-4" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-4" class="margin-toggle">2009<span class="marginnote">Osier, Guillaume. 2009. “Variance Estimation for Complex Indicators of Poverty and Inequality.” <em>Journal of the European Survey Research Association</em> 3 (3): 167–95. <a href="http://ojs.ub.uni-konstanz.de/srm/article/view/369" class="uri">http://ojs.ub.uni-konstanz.de/srm/article/view/369</a>.</span>)</span>. The convey library implements this methodology to work with <code>survey.design</code> objects and also with <code>svyrep.design</code> objects.</p>
+<p>Some measures of poverty and income concentration are defined by non-differentiable functions so that it is not possible to use Taylor linearization to estimate their variances. An alternative is to use <strong>Influence functions</strong> as described in <span class="citation">(Deville <label for="tufte-mn-3" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-3" class="margin-toggle">1999<span class="marginnote">Deville, Jean-Claude. 1999. “Variance Estimation for Complex Statistics and Estimators: Linearization and Residual Techniques.” <em>Survey Methodology</em> 25 (2): 193–203. <a href="http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf">http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf</a>.</span>)</span> and <span class="citation">(Osier <label for="tufte-mn-4" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-4" class="margin-toggle">2009<span class="marginnote">Osier, Guillaume. 2009. “Variance Estimation for Complex Indicators of Poverty and Inequality.” <em>Journal of the European Survey Research Association</em> 3 (3): 167–95. <a href="http://ojs.ub.uni-konstanz.de/srm/article/view/369">http://ojs.ub.uni-konstanz.de/srm/article/view/369</a>.</span>)</span>. The convey library implements this methodology to work with <code>survey.design</code> objects and also with <code>svyrep.design</code> objects.</p>
 <p>Some examples of these measures are:</p>
 <ul>
-<li><p>At-risk-of-poverty threshold: <span class="math inline">\(arpt=.60q_{.50}\)</span> where <span class="math inline">\(q_{.50}\)</span> is the income median;</p></li>
-<li><p>At-risk-of-poverty rate <span class="math inline">\(arpr=\frac{\sum_U 1(y_i \leq arpt)}{N}.100\)</span></p></li>
+<li><p>At-risk-of-poverty threshold:
+<span class="math inline">\(arpt=.60q_{.50}\)</span> where <span class="math inline">\(q_{.50}\)</span> is the income median;</p></li>
+<li><p>At-risk-of-poverty rate
+<span class="math inline">\(arpr=\frac{\sum_U 1(y_i \leq arpt)}{N}.100\)</span></p></li>
 <li><p>Quintile share ratio</p></li>
 </ul>
 <p><span class="math inline">\(qsr=\frac{\sum_U 1(y_i&gt;q_{.80})}{\sum_U 1(y_i\leq q_{.20})}\)</span></p>
 <ul>
-<li>Gini coefficient <span class="math inline">\(1+G=\frac{2\sum_U (r_i-1)y_i}{N\sum_Uy_i}\)</span> where <span class="math inline">\(r_i\)</span> is the rank of <span class="math inline">\(y_i\)</span>.</li>
+<li>Gini coefficient
+<span class="math inline">\(1+G=\frac{2\sum_U (r_i-1)y_i}{N\sum_Uy_i}\)</span>
+where <span class="math inline">\(r_i\)</span> is the rank of <span class="math inline">\(y_i\)</span>.</li>
 </ul>
 <p>Note that it is not possible to use Taylor linearization for these measures because they depend on quantiles and the Gini is defined as a function of ranks. This could be done using the approach proposed by Deville (1999) based upon influence functions.</p>
 <p>Let <span class="math inline">\(U\)</span> be a population of size <span class="math inline">\(N\)</span> and <span class="math inline">\(M\)</span> be a measure that allocates mass one to the set composed by one unit, that is <span class="math inline">\(M(i)=M_i= 1\)</span> if <span class="math inline">\(i\in U\)</span> and <span class="math inline">\(M(i)=0\)</span> if <span class="math inline">\(i\notin U\)</span></p>
-<p>Now, a population parameter <span class="math inline">\(\theta\)</span> can be expressed as a functional of <span class="math inline">\(M\)</span> <span class="math inline">\(\theta=T(M)\)</span></p>
+<p>Now, a population parameter <span class="math inline">\(\theta\)</span> can be expressed as a functional of <span class="math inline">\(M\)</span>
+<span class="math inline">\(\theta=T(M)\)</span></p>
 <p>Examples of such parameters are:</p>
 <ul>
-<li><p>Total: <span class="math inline">\(Y=\sum_Uy_i=\sum_U y_iM_i=\int ydM=T(M)\)</span></p></li>
-<li><p>Ratio of two totals: <span class="math inline">\(R=\frac{Y}{X}=\frac{\int y dM}{\int x dM}=T(M)\)</span></p></li>
-<li><p>Cumulative distribution function: <span class="math inline">\(F(x)=\frac{\sum_U 1(y_i\leq x)}{N}=\frac{\int 1(y\leq x)dM}{\int{dM}}=T(M)\)</span></p></li>
+<li><p>Total:
+<span class="math inline">\(Y=\sum_Uy_i=\sum_U y_iM_i=\int ydM=T(M)\)</span></p></li>
+<li><p>Ratio of two totals:
+<span class="math inline">\(R=\frac{Y}{X}=\frac{\int y dM}{\int x dM}=T(M)\)</span></p></li>
+<li><p>Cumulative distribution function:
+<span class="math inline">\(F(x)=\frac{\sum_U 1(y_i\leq x)}{N}=\frac{\int 1(y\leq x)dM}{\int{dM}}=T(M)\)</span></p></li>
 </ul>
 <p>To estimate these parameters from the sample, we replace the measure <span class="math inline">\(M\)</span> by the estimated measure <span class="math inline">\(\hat{M}\)</span> defined by: <span class="math inline">\(\hat{M}(i)=\hat{M}_i= w_i\)</span> if <span class="math inline">\(i\in s\)</span> and <span class="math inline">\(\hat{M}(i)=0\)</span> if <span class="math inline">\(i\notin s\)</span>.</p>
 <p>The estimators of the population parameters can then be expressed as functional of the measure <span class="math inline">\(\hat{M}\)</span>.</p>
 <ul>
-<li><p>Total: <span class="math inline">\(\hat{Y}=T(\hat{M})=\int yd\hat{M}=\sum_s w_iy_i\)</span></p></li>
-<li><p>Ratio of totals: <span class="math inline">\(\hat{R}=T(\hat{M})=\frac{\int y d\hat{M}}{\int x d\hat{M}}=\frac{\sum_s w_iy_i}{\sum_s w_ix_i}\)</span></p></li>
-<li><p>Cumulative distribution function: <span class="math inline">\(\hat{F}(x)=T(\hat{M})=\frac{\int 1(y\leq x)d\hat{M}}{\int{d\hat{M}}}=\frac{\sum_s w_i 1(y_i\leq x)}{\sum_s w_i}\)</span></p></li>
+<li><p>Total:
+<span class="math inline">\(\hat{Y}=T(\hat{M})=\int yd\hat{M}=\sum_s w_iy_i\)</span></p></li>
+<li><p>Ratio of totals:
+<span class="math inline">\(\hat{R}=T(\hat{M})=\frac{\int y d\hat{M}}{\int x d\hat{M}}=\frac{\sum_s w_iy_i}{\sum_s w_ix_i}\)</span></p></li>
+<li><p>Cumulative distribution function:
+<span class="math inline">\(\hat{F}(x)=T(\hat{M})=\frac{\int 1(y\leq x)d\hat{M}}{\int{d\hat{M}}}=\frac{\sum_s w_i 1(y_i\leq x)}{\sum_s w_i}\)</span></p></li>
 </ul>
 </div>
 <p style="text-align: center;">
