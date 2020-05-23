@@ -111,7 +111,7 @@
 
 \title{Poverty and Inequality with Complex Survey Data}
 \author{Guilherme Jacob, Anthony Damico, and Djalma Pessoa}
-\date{2020-05-21}
+\date{2020-05-23}
 
 \begin{document}
 \maketitle
@@ -123,7 +123,7 @@
 \hypertarget{introduction}{%
 \chapter{Introduction}\label{introduction}}
 
-The R \texttt{convey} library estimates measures of poverty, inequality, and wellbeing. There are two other R libraries covering this subject, \href{https://CRAN.R-project.org/package=vardpoor}{vardpoor} and \href{https://CRAN.R-project.org/package=laeken}{laeken}, however, only \texttt{convey} integrates seamlessly with the \href{https://CRAN.R-project.org/package=survey}{R survey package}.
+The R \texttt{convey} library estimates measures of poverty, inequality, and wellbeing. There are two other R libraries covering this subject, \href{https://CRAN.R-project.org/package=vardpoor}{vardpoor} \citep{R-vardpoor} and \href{https://CRAN.R-project.org/package=laeken}{laeken} \citep{R-laeken}, however, only \texttt{convey} integrates seamlessly with the \href{https://CRAN.R-project.org/package=survey}{R survey package} \citep{R-survey-article, R-survey-book, R-survey}.
 
 \texttt{convey} is free and open-source software that runs inside the \href{https://www.r-project.org/}{R environment for statistical computing}. Anyone can review and propose changes to \href{https://github.com/DjalmaPessoa/convey}{the source code} for this software. Readers are welcome to \href{https://github.com/guilhermejacob/context/}{propose changes to this book} as well.
 
@@ -133,23 +133,30 @@ The R \texttt{convey} library estimates measures of poverty, inequality, and wel
 In order to work with the \texttt{convey} library, you will need to have R running on your machine. If you have never used R before, you will need to \href{https://www.r-project.org/}{install that software} before \texttt{convey} can be accessed. Check out \href{http://flowingdata.com/2012/06/04/resources-for-getting-started-with-r/}{FlowingData} for a concise list of resources for new R users. Once you have R loaded on your machine, you can install..
 
 \begin{itemize}
+\tightlist
 \item
   the latest released version from \href{https://CRAN.R-project.org/package=convey}{CRAN} with
+\end{itemize}
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{install.packages}\NormalTok{(}\StringTok{"convey"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{itemize}
+\tightlist
 \item
   the latest development version from github with
+\end{itemize}
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{devtools}\OperatorTok{::}\KeywordTok{install_github}\NormalTok{(}\StringTok{"djalmapessoa/convey"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
-\end{itemize}
+
+In order to know how to cite this package, run \texttt{citation("convey")}.
 
 \hypertarget{survey}{%
 \section{Complex surveys and statistical inference}\label{survey}}
@@ -176,7 +183,7 @@ Unlike other software, the R \texttt{convey} package does not require that the u
 \hypertarget{usage-examples}{%
 \section{Usage Examples}\label{usage-examples}}
 
-In the following example, we've loaded the data set \texttt{eusilc} from the R library \href{https://CRAN.R-project.org/package=laeken}{laeken}.
+In the following example, we've loaded the data set \texttt{eusilc} from the R library \href{https://CRAN.R-project.org/package=laeken}{laeken} \citep{R-laeken}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -226,15 +233,15 @@ To estimate the at-risk-of-poverty rate across domains defined by the variable \
 
 \begin{verbatim}
                       db040  eqIncome          se
-Burgenland       Burgenland 0.1953984 0.017202243
-Carinthia         Carinthia 0.1308627 0.010610622
-Lower Austria Lower Austria 0.1384362 0.006517660
-Salzburg           Salzburg 0.1378734 0.011579280
-Styria               Styria 0.1437464 0.007452360
-Tyrol                 Tyrol 0.1530819 0.009880430
-Upper Austria Upper Austria 0.1088977 0.005928336
-Vienna               Vienna 0.1723468 0.007682826
-Vorarlberg       Vorarlberg 0.1653731 0.013754670
+Burgenland       Burgenland 0.1953984 0.017202852
+Carinthia         Carinthia 0.1308627 0.010606502
+Lower Austria Lower Austria 0.1384362 0.006513217
+Salzburg           Salzburg 0.1378734 0.011581408
+Styria               Styria 0.1437464 0.007453192
+Tyrol                 Tyrol 0.1530819 0.009884094
+Upper Austria Upper Austria 0.1088977 0.005933094
+Vienna               Vienna 0.1723468 0.007684540
+Vorarlberg       Vorarlberg 0.1653731 0.013756389
 \end{verbatim}
 
 Using the same data set, we estimate the quintile share ratio:
@@ -255,7 +262,7 @@ eqIncome 3.97 0.0426
 \begin{Highlighting}[]
 \CommentTok{# for domains}
 \KeywordTok{svyby}\NormalTok{(}\OperatorTok{~}\NormalTok{eqIncome, }\DataTypeTok{by =} \OperatorTok{~}\NormalTok{db040, }\DataTypeTok{design =}\NormalTok{ des_eusilc,}
-  \DataTypeTok{FUN =}\NormalTok{ svyqsr, }\DataTypeTok{alpha1=} \FloatTok{.20}\NormalTok{, }\DataTypeTok{deff =} \OtherTok{FALSE}\NormalTok{)}
+      \DataTypeTok{FUN =}\NormalTok{ svyqsr, }\DataTypeTok{alpha1=} \FloatTok{.20}\NormalTok{, }\DataTypeTok{deff =} \OtherTok{FALSE}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -372,7 +379,7 @@ In what follows, we often use the linearization method as a tool to produce an a
 
 If \(T\) can be expressed as a function of the population totals \(T = g(Y_1, Y_2, \ldots, Y_n)\), and if \(g\) is linear, the estimation of the variance of \(T = g(Y_1, Y_2, \ldots, Y_n)\) is straightforward. If \(g\) is not linear but is a `smooth' function, then it is possible to approximate the variance of \(g(Y_1, Y_2, \ldots, Y_n)\) by the variance of its first order Taylor expansion. For example, we can use Taylor expansion to linearize the ratio of two totals. However, there are situations where Taylor linearization cannot be immediately possible, either because \(T\) cannot be expressed as functions of the population totals, or because \(g\) is not a \texttt{smooth} function. An example is the case where \(T\) is a quantile.
 
-In these cases, it might work an alternative form of linearization of \(T\), by \texttt{Influence\ Function}, as defined in \eqref{eq:lin}, proposed in \citep{deville1999}. Also, it coud be used replication methods such as \texttt{bootstrap} and \texttt{jackknife}.
+In these cases, it might work an alternative form of linearization of \(T\), by \texttt{Influence\ Function}, as defined in \eqref{eq:lin}, proposed in \citet{deville1999}. Also, it coud be used replication methods such as \texttt{bootstrap} and \texttt{jackknife}.
 
 In the \texttt{convey} library, there are some basic functions that produce the linearized variables needed to measure income concentration and poverty. For example, looking at the income variable in some complex survey dataset, the \texttt{quantile} of that income variable can be linearized by the function \texttt{convey::svyiqalpha} and the sum total below any quantile of the variable is linearized by the function \texttt{convey::svyisq}.
 
@@ -403,7 +410,7 @@ we linearize the \texttt{rmpg}.
 \hypertarget{the-variance-estimator}{%
 \section{The Variance Estimator}\label{the-variance-estimator}}
 
-Using the notation in \citep{osier2009}, the variance of the estimator \(T(\hat{M})\) can approximated by:
+Using the notation in \citet{osier2009}, the variance of the estimator \(T(\hat{M})\) can approximated by:
 
 \begin{equation}
 Var\left[T(\hat{M})\right]\cong var\left[\sum_s w_i z_i\right]
@@ -424,7 +431,7 @@ This \textbf{derivative} is called \textbf{Influence Function} and was introduce
 \hypertarget{influence-functions}{%
 \section{Influence Functions}\label{influence-functions}}
 
-Some measures of poverty and income concentration are defined by non-differentiable functions so that it is not possible to use Taylor linearization to estimate their variances. An alternative is to use \textbf{Influence functions} as described in \citep{deville1999} and \citep{osier2009}. The convey library implements this methodology to work with \texttt{survey.design} objects and also with \texttt{svyrep.design} objects.
+Some measures of poverty and income concentration are defined by non-differentiable functions so that it is not possible to use Taylor linearization to estimate their variances. An alternative is to use \textbf{Influence functions} as described in \citet{deville1999} and \citet{osier2009}. The convey library implements this methodology to work with \texttt{survey.design} objects and also with \texttt{svyrep.design} objects.
 
 Some examples of these measures are:
 
@@ -533,7 +540,7 @@ z_k= -\frac{0.6}{f(m)}\times\frac{1}{N}\times\left[I(y_k\leq m-0.5) \right]
 \end{itemize}
 
 \[
- arpr=\frac{\sum_U I(y_i \leq t)}{\sum_U w_i}.100
+arpr=\frac{\sum_U I(y_i \leq t)}{\sum_U w_i}.100
 \]
 \[
 z_k=\frac{1}{N}\left[I(y_k\leq t)-t\right]-\frac{0.6}{N}\times\frac{f(t)}{f(m)}\left[I(y_k\leq m)-0.5\right]
@@ -3409,8 +3416,8 @@ GE(3)    |  .1739994   .00662015    26.28    0.000      .1610242   .1869747
 \end{Shaded}
 
 \begin{verbatim}
-##            gei     SE
-## eybhc0 0.19021 0.0247
+##             gei       SE epsilon
+## eybhc0 0.190206 0.024748      -1
 \end{verbatim}
 
 \begin{Shaded}
@@ -3420,8 +3427,8 @@ GE(3)    |  .1739994   .00662015    26.28    0.000      .1610242   .1869747
 \end{Shaded}
 
 \begin{verbatim}
-##            gei     SE
-## eybhc0 0.11429 0.0028
+##              gei        SE epsilon
+## eybhc0 0.1142851 0.0027513       0
 \end{verbatim}
 
 \begin{Shaded}
@@ -3431,8 +3438,8 @@ GE(3)    |  .1739994   .00662015    26.28    0.000      .1610242   .1869747
 \end{Shaded}
 
 \begin{verbatim}
-##            gei     SE
-## eybhc0 0.11169 0.0023
+##              gei        SE epsilon
+## eybhc0 0.1116923 0.0022648       1
 \end{verbatim}
 
 \begin{Shaded}
@@ -3442,8 +3449,8 @@ GE(3)    |  .1739994   .00662015    26.28    0.000      .1610242   .1869747
 \end{Shaded}
 
 \begin{verbatim}
-##            gei     SE
-## eybhc0 0.12879 0.0033
+##              gei        SE epsilon
+## eybhc0 0.1287930 0.0033076       2
 \end{verbatim}
 
 \begin{Shaded}
@@ -3453,8 +3460,8 @@ GE(3)    |  .1739994   .00662015    26.28    0.000      .1610242   .1869747
 \end{Shaded}
 
 \begin{verbatim}
-##          gei     SE
-## eybhc0 0.174 0.0066
+##              gei        SE epsilon
+## eybhc0 0.1739994 0.0066199       3
 \end{verbatim}
 
 Confirm this replication applies for subsetted objects as well. Compare stata output..
@@ -3490,8 +3497,8 @@ GE(3)    |  .2609507   .01850689    14.10    0.000      .2246779   .2972235
 \end{Shaded}
 
 \begin{verbatim}
-##            gei     SE
-## eybhc0 0.16024 0.0094
+##              gei        SE epsilon
+## eybhc0 0.1602358 0.0093689      -1
 \end{verbatim}
 
 \begin{Shaded}
@@ -3501,8 +3508,8 @@ GE(3)    |  .2609507   .01850689    14.10    0.000      .2246779   .2972235
 \end{Shaded}
 
 \begin{verbatim}
-##            gei     SE
-## eybhc0 0.12762 0.0033
+##              gei        SE epsilon
+## eybhc0 0.1276160 0.0033217       0
 \end{verbatim}
 
 \begin{Shaded}
@@ -3512,8 +3519,8 @@ GE(3)    |  .2609507   .01850689    14.10    0.000      .2246779   .2972235
 \end{Shaded}
 
 \begin{verbatim}
-##            gei     SE
-## eybhc0 0.13372 0.0041
+##              gei        SE epsilon
+## eybhc0 0.1337177 0.0040628       1
 \end{verbatim}
 
 \begin{Shaded}
@@ -3523,8 +3530,8 @@ GE(3)    |  .2609507   .01850689    14.10    0.000      .2246779   .2972235
 \end{Shaded}
 
 \begin{verbatim}
-##            gei     SE
-## eybhc0 0.16764 0.0073
+##              gei        SE epsilon
+## eybhc0 0.1676393 0.0073002       2
 \end{verbatim}
 
 \begin{Shaded}
@@ -3534,8 +3541,8 @@ GE(3)    |  .2609507   .01850689    14.10    0.000      .2246779   .2972235
 \end{Shaded}
 
 \begin{verbatim}
-##            gei     SE
-## eybhc0 0.26095 0.0185
+##             gei       SE epsilon
+## eybhc0 0.260951 0.018506       3
 \end{verbatim}
 
 Replicate the author's decomposition by population subgroup (work status) shown on PDF page 57..
@@ -3660,7 +3667,7 @@ Replicate the author's decomposition by population subgroup (work status) shown 
 \begin{verbatim}
 ##          total    within between
 ## coef 0.2003897 0.1693958  0.0310
-## SE   0.0079299 0.0044132  0.0073
+## SE   0.0079299 0.0082236  0.0027
 \end{verbatim}
 
 \begin{Shaded}

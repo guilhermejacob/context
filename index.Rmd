@@ -3,7 +3,6 @@ title: "Poverty and Inequality with Complex Survey Data"
 author: "Guilherme Jacob, Anthony Damico, and Djalma Pessoa"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
-
 output:
   bookdown::tufte_html_book:
     toc: yes
@@ -15,8 +14,6 @@ output:
     citation_package: natbib
     keep_tex: yes
   bookdown::epub_book: default
-
-    
 documentclass: book
 bibliography: [book.bib, packages.bib]
 biblio-style: apalike
@@ -31,7 +28,7 @@ set.seed(2017)
 
 # Introduction
 
-The R `convey` library estimates measures of poverty, inequality, and wellbeing.  There are two other R libraries covering this subject, [vardpoor](https://CRAN.R-project.org/package=vardpoor) and [laeken](https://CRAN.R-project.org/package=laeken), however, only `convey` integrates seamlessly with the [R survey package](https://CRAN.R-project.org/package=survey).
+The R `convey` library estimates measures of poverty, inequality, and wellbeing.  There are two other R libraries covering this subject, [vardpoor](https://CRAN.R-project.org/package=vardpoor) [@R-vardpoor] and [laeken](https://CRAN.R-project.org/package=laeken) [@R-laeken], however, only `convey` integrates seamlessly with the [R survey package](https://CRAN.R-project.org/package=survey) [@R-survey-article;@R-survey-book;@R-survey].
 
 `convey` is free and open-source software that runs inside the [R environment for statistical computing](https://www.r-project.org/).  Anyone can review and propose changes to [the source code](https://github.com/DjalmaPessoa/convey) for this software.  Readers are welcome to [propose changes to this book](https://github.com/guilhermejacob/context/) as well.
 
@@ -39,20 +36,19 @@ The R `convey` library estimates measures of poverty, inequality, and wellbeing.
 
 In order to work with the `convey` library, you will need to have R running on your machine.  If you have never used R before, you will need to [install that software](https://www.r-project.org/) before `convey` can be accessed.  Check out [FlowingData](http://flowingdata.com/2012/06/04/resources-for-getting-started-with-r/) for a concise list of resources for new R users.  Once you have R loaded on your machine, you can install..
 
-
 * the latest released version from [CRAN](https://CRAN.R-project.org/package=convey) with
 
-    ```R
-    install.packages("convey")
-    ````
+```R
+install.packages("convey")
+````
 
 * the latest development version from github with
 
-    ```R
-    devtools::install_github("djalmapessoa/convey")
-    ```
+```R
+devtools::install_github("djalmapessoa/convey")
+```
 
-
+In order to know how to cite this package, run `citation("convey")`.
 
 ## Complex surveys and statistical inference {#survey}
 
@@ -71,7 +67,7 @@ Unlike other software, the R `convey` package does not require that the user spe
 ## Usage Examples
 
 
-In the following example, we've loaded the data set `eusilc` from the R library [laeken](https://CRAN.R-project.org/package=laeken).
+In the following example, we've loaded the data set `eusilc` from the R library [laeken](https://CRAN.R-project.org/package=laeken) [@R-laeken].
 
 ```{r results='hide', message=FALSE, warning=FALSE}
 library(laeken)
@@ -108,7 +104,7 @@ svyqsr(~eqIncome, design=des_eusilc, alpha1= .20)
 
 # for domains
 svyby(~eqIncome, by = ~db040, design = des_eusilc,
-  FUN = svyqsr, alpha1= .20, deff = FALSE)
+      FUN = svyqsr, alpha1= .20, deff = FALSE)
 
 ```
 
@@ -150,7 +146,7 @@ In what follows, we often use the linearization method as a tool to produce an a
 
 If $T$ can be expressed as a function of the population totals $T = g(Y_1, Y_2, \ldots, Y_n)$, and if $g$ is linear,  the estimation of the variance of $T = g(Y_1, Y_2, \ldots, Y_n)$ is straightforward. If $g$ is not linear but is a 'smooth' function, then it is possible to approximate the variance of $g(Y_1, Y_2, \ldots, Y_n)$ by the variance of its first order Taylor expansion. For example, we can use Taylor expansion to linearize the ratio of two totals. However, there are situations where Taylor linearization cannot be immediately possible, either because $T$ cannot be expressed as functions of the population totals, or because $g$ is not  a `smooth` function. An example is the case where $T$ is a quantile.
 
-In these cases, it might work an alternative form of linearization of $T$,  by `Influence Function`, as defined in \@ref(eq:lin), proposed in [@deville1999]. Also, it coud be used replication methods such as `bootstrap` and `jackknife`.
+In these cases, it might work an alternative form of linearization of $T$,  by `Influence Function`, as defined in \@ref(eq:lin), proposed in @deville1999. Also, it coud be used replication methods such as `bootstrap` and `jackknife`.
 
 In the `convey` library, there are some basic functions that produce the linearized variables needed to measure income concentration and poverty.  For example, looking at the income variable in some complex survey dataset, the `quantile` of that income variable can be linearized by the function `convey::svyiqalpha` and the sum total below any quantile of the variable is linearized by the function `convey::svyisq`.
 
@@ -183,7 +179,7 @@ we linearize the `rmpg`.
 ## The Variance Estimator
 
 
-Using the notation in [@osier2009], the variance of the estimator $T(\hat{M})$ can approximated by:
+Using the notation in @osier2009, the variance of the estimator $T(\hat{M})$ can approximated by:
 
 \begin{equation}
 Var\left[T(\hat{M})\right]\cong var\left[\sum_s w_i z_i\right]
@@ -205,7 +201,7 @@ This **derivative** is called  **Influence Function** and was introduced in the 
 
 ## Influence Functions
 
-Some measures of poverty and income concentration are defined by non-differentiable functions so that it is not possible to use Taylor linearization to estimate their variances. An alternative is to use **Influence functions** as described in [@deville1999] and [@osier2009]. The convey library implements this methodology to work with `survey.design` objects and also with `svyrep.design` objects.
+Some measures of poverty and income concentration are defined by non-differentiable functions so that it is not possible to use Taylor linearization to estimate their variances. An alternative is to use **Influence functions** as described in @deville1999 and @osier2009. The convey library implements this methodology to work with `survey.design` objects and also with `svyrep.design` objects.
 
 Some examples of these measures are:
 
@@ -216,7 +212,7 @@ $arpt=.60q_{.50}$ where $q_{.50}$ is the income median;
 $arpr=\frac{\sum_U 1(y_i \leq arpt)}{N}.100$
 
 - Quintile share ratio
-     
+
 $qsr=\frac{\sum_U 1(y_i>q_{.80})}{\sum_U 1(y_i\leq q_{.20})}$
 
 - Gini coefficient
@@ -296,7 +292,7 @@ $$
 - At-risk-of-poverty rate:
 
 \[
- arpr=\frac{\sum_U I(y_i \leq t)}{\sum_U w_i}.100
+arpr=\frac{\sum_U I(y_i \leq t)}{\sum_U w_i}.100
 \]
 \[
 z_k=\frac{1}{N}\left[I(y_k\leq t)-t\right]-\frac{0.6}{N}\times\frac{f(t)}{f(m)}\left[I(y_k\leq m)-0.5\right]
@@ -324,8 +320,6 @@ Considering the remarks in [@W85],  p. 163, concerning the deficiency of the `Ja
 
 The function `bootVar` from the library  `laeken` , [@R-laeken], also uses the bootstrap
 method to estimate variances. 
-
-
 
 ## Decomposition
 
