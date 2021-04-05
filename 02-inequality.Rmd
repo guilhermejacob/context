@@ -591,57 +591,6 @@ SE( svygini( ~ eqincome , des_eusilc_ultimate_cluster ) ) * 100
 ```
 
 
-For additional usage examples of `svygini`, type `?convey::svygini` in the R console.
-
-## Amato index (svyamato)
-
-The Amato index is also based on the Lorenz curve, but instead of focusing on the area of the curve, it focuses on its length. @arnold2012 proposes a formula not directly based in the Lorenz curve, which @barabesi2016 uses to present the following estimator:
-
-\[
-\widehat{A} = \sum_{i \in S} w_i \bigg[ \frac{1}{\widehat{N}^2} + \frac{y_i^2}{\widehat{Y}^2} \bigg]^{\frac{1}{2}} \text{,}
-\]
-
-which also generates the linearized formula for SE estimation.
-
-The minimum value $A$ assumes is $\sqrt{2}$ and the maximum is $2$. In order to get a measure in the interval $[0,1]$, the standardized Amato index $\widetilde{A}$ can be defined as:
-
-\[
-\widetilde{A} = \frac{ A - \sqrt{2} }{2 - \sqrt{2} } \text{ .}
-\]
-
-For additional usage examples of `svyamato`, type `?convey::svyamato` in the R console.
-
-## Zenga Index and Curve (svyzenga, svyzengacurve)
-
-The Zenga index and its curve were proposed in @zenga2007. As @polisicchio2011 noticed, this curve derives directly from the Lorenz curve, and can be defined as:
-
-\[
-Z(p) = 1 - \frac{L(p)}{p} \cdot \frac{1 - p}{1 - L(p)}.
-\]
-
-In the `convey` library, an experimental estimator based on the Lorenz curve is used:
-
-\[
-\widehat{Z(p)} = \frac{ p \widehat{Y} - \widehat{\widetilde{Y}}(p) }{p \big[ \widehat{Y} - \widehat{\widetilde{Y}}(p) \big] }.
-\]
-
-In turn, the Zenga index derives from this curve and is defined as:
-
-\[
-Z = \int_0^1 Z(p)dp.
-\]
-
-However, its estimators were proposed by @langel2012 and @barabesi2016. In this library, the latter is used and is defined as:
-
-\[
-\widehat{Z} = 1 - \sum_{i \in S} w_i \bigg[ \frac{ ( \widehat{N} - \widehat{H}_{y_i} ) ( \widehat{Y} -\widehat{K}_{y_i} ) }
-{ \widehat{N} \cdot \widehat{H}_{y_i} \cdot \widehat{K}_{y_i} } \bigg]
-\]
-
-where $\widehat{N}$ is the population total, $\widehat{Y}$ is the total income, $\widehat{H}_{y_i}$ is the sum of incomes below or equal to $y_i$ and $\widehat{N}_{y_i}$ is the sum of incomes greater or equal to $y_i$.
-
-For additional usage examples of `svyzenga` or `svyzengacurve`, type `?convey::svyzenga` or `?convey::svyzengacurve` in the R console.
-
 ## Entropy-based Measures
 
 Entropy is a concept derived from information theory, meaning the expected amount of information given the occurrence of an event. Following [@shannon1948], given an event $y$ with probability density function $f(\cdot)$, the information content given the occurrence of $y$ can be defined as $g(f(y)) \colon= - \log f(y)$. Therefore, the expected information or, put simply, the *entropy* is
@@ -739,7 +688,7 @@ x <- rbind( x81 , x85 , x91 )
 ```
 
 Replicate the author's survey design statement from stata code..
-```{code}
+```
 . * account for clustering within HHs 
 . version 8: svyset [pweight = wgt], psu(hrn)
 pweight is wgt
@@ -759,7 +708,7 @@ z <- convey_prep( y )
 ```
 
 Replicate the author's subset statement and each of his svygei results..
-```{code}
+```
 . svygei x if year == 1981
  
 Warning: x has 20 values = 0. Not used in calculations
@@ -795,7 +744,7 @@ svygei( ~ eybhc0 , subset( z81 , eybhc0 > 0 ) , epsilon = 3 )
 
 Confirm this replication applies for subsetted objects as well.  Compare stata output..
 
-```{code}
+```
 . svygei x if year == 1985 & x >= 1
 
 Complex survey estimates of Generalized Entropy inequality indices
@@ -858,22 +807,6 @@ svygeidec( ~eybhc0, ~wkstatus, z91, epsilon = 2 )
 ```
 
 For additional usage examples of `svygei` or `svygeidec`, type `?convey::svygei` or `?convey::svygeidec` in the R console.
-
-## Rényi Divergence (svyrenyi)
-
-Another measure used in areas like ecology, statistics and information theory is the Rényi divergence measure. Using the formula defined in @langel2012, the estimator can be defined as:
-
-\[
-\widehat{R}_\alpha =
-\begin{cases}
-\frac{1}{\alpha - 1} \log \bigg[ \widehat{N}^{\alpha - 1} \sum_{i \in S} w_i \cdot \bigg( \frac{y_k}{ \widehat{Y} } \bigg) \bigg], &\text{if } \alpha \neq 1, \\
-\sum_{i \in S} \frac{w_i y_i}{ \widehat{Y}} \log \frac{\widehat{N} y_i}{\widehat{Y}}, &\text{if } \alpha = 1,
-\end{cases}
-\]
-
-where $\alpha$ is a parameter with a similar economic interpretation to that of the $GE_\alpha$ index.
-
-For additional usage examples of `svyrenyi`, type `?convey::svyrenyi` in the R console.
 
 ## J-Divergence and Decomposition (svyjdiv, svyjdivdec)
 
@@ -943,7 +876,7 @@ x <- rbind( x81 , x85 , x91 )
 ```
 
 Replicate the author's survey design statement from stata code..
-```{code}
+```
 . * account for clustering within HHs 
 . version 8: svyset [pweight = wgt], psu(hrn)
 pweight is wgt
@@ -963,7 +896,7 @@ z <- convey_prep( y )
 ```
 
 Replicate the author's subset statement and each of his svyatk results with stata..
-```{code}
+```
 . svyatk x if year == 1981
  
 Warning: x has 20 values = 0. Not used in calculations
@@ -998,7 +931,7 @@ svyatk( ~ eybhc0 , subset( z81 , eybhc0 > 0 ) , epsilon = 2.5 )
 ```
 
 Confirm this replication applies for subsetted objects as well, comparing stata code..
-```{code}
+```
 . svyatk x if year == 1981 & x >= 1
 
 Complex survey estimates of Atkinson inequality indices

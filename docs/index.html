@@ -14,19 +14,20 @@
 
 <meta name="author" content="Guilherme Jacob, Anthony Damico, and Djalma Pessoa" />
 
-<meta name="date" content="2020-05-23" />
+<meta name="date" content="2021-04-05" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
   TeX: { equationNumbers: { autoNumber: "AMS" } }
 });
 </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <meta name="description" content="A book about the R convey package">
 
 <title>Poverty and Inequality with Complex Survey Data</title>
 
+<script src="libs/header-attrs-2.6/header-attrs.js"></script>
 <link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte-background.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte-italics.css" rel="stylesheet" />
@@ -35,26 +36,27 @@ MathJax.Hub.Config({
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -63,9 +65,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -111,7 +113,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="col-sm-12">
 <div id="TOC">
 <ul>
-<li class="has-sub"><a href="index.html#introduction"><span class="toc-section-number">1</span> Introduction</a><ul>
+<li><a href="index.html#introduction"><span class="toc-section-number">1</span> Introduction</a>
+<ul>
 <li><a href="1-1-install.html#install"><span class="toc-section-number">1.1</span> Installation</a></li>
 <li><a href="1-2-survey.html#survey"><span class="toc-section-number">1.2</span> Complex surveys and statistical inference</a></li>
 <li><a href="1-3-usage-examples.html#usage-examples"><span class="toc-section-number">1.3</span> Usage Examples</a></li>
@@ -123,7 +126,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="1-9-replication-designs.html#replication-designs"><span class="toc-section-number">1.9</span> Replication Designs</a></li>
 <li><a href="1-10-decomposition.html#decomposition"><span class="toc-section-number">1.10</span> Decomposition</a></li>
 </ul></li>
-<li class="has-sub"><a href="2-poverty.html#poverty"><span class="toc-section-number">2</span> Poverty Indices</a><ul>
+<li><a href="2-poverty.html#poverty"><span class="toc-section-number">2</span> Poverty Indices</a>
+<ul>
 <li><a href="2-1-at-risk-of-poverty-threshold-svyarpt.html#at-risk-of-poverty-threshold-svyarpt"><span class="toc-section-number">2.1</span> At Risk of Poverty Threshold (svyarpt)</a></li>
 <li><a href="2-2-at-risk-of-poverty-ratio-svyarpr.html#at-risk-of-poverty-ratio-svyarpr"><span class="toc-section-number">2.2</span> At Risk of Poverty Ratio (svyarpr)</a></li>
 <li><a href="2-3-relative-median-income-ratio-svyrmir.html#relative-median-income-ratio-svyrmir"><span class="toc-section-number">2.3</span> Relative Median Income Ratio (svyrmir)</a></li>
@@ -133,24 +137,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="2-7-watts-poverty-measure-svywatts-svywattsdec.html#watts-poverty-measure-svywatts-svywattsdec"><span class="toc-section-number">2.7</span> Watts poverty measure (svywatts, svywattsdec)</a></li>
 <li><a href="2-8-clark-hemming-ulph-class-of-poverty-measures-svychu.html#clark-hemming-ulph-class-of-poverty-measures-svychu"><span class="toc-section-number">2.8</span> Clark-Hemming-Ulph class of poverty measures (svychu)</a></li>
 </ul></li>
-<li class="has-sub"><a href="3-inequality.html#inequality"><span class="toc-section-number">3</span> Inequality Measurement</a><ul>
+<li><a href="3-inequality.html#inequality"><span class="toc-section-number">3</span> Inequality Measurement</a>
+<ul>
 <li><a href="3-1-the-gender-pay-gap-svygpg.html#the-gender-pay-gap-svygpg"><span class="toc-section-number">3.1</span> The Gender Pay Gap (svygpg)</a></li>
 <li><a href="3-2-quintile-share-ratio-svyqsr.html#quintile-share-ratio-svyqsr"><span class="toc-section-number">3.2</span> Quintile Share Ratio (svyqsr)</a></li>
 <li><a href="3-3-lorenz-curve-svylorenz.html#lorenz-curve-svylorenz"><span class="toc-section-number">3.3</span> Lorenz Curve (svylorenz)</a></li>
 <li><a href="3-4-gini-index-svygini.html#gini-index-svygini"><span class="toc-section-number">3.4</span> Gini index (svygini)</a></li>
-<li><a href="3-5-amato-index-svyamato.html#amato-index-svyamato"><span class="toc-section-number">3.5</span> Amato index (svyamato)</a></li>
-<li><a href="3-6-zenga-index-and-curve-svyzenga-svyzengacurve.html#zenga-index-and-curve-svyzenga-svyzengacurve"><span class="toc-section-number">3.6</span> Zenga Index and Curve (svyzenga, svyzengacurve)</a></li>
-<li><a href="3-7-entropy-based-measures.html#entropy-based-measures"><span class="toc-section-number">3.7</span> Entropy-based Measures</a></li>
-<li><a href="3-8-generalized-entropy-and-decomposition-svygei-svygeidec.html#generalized-entropy-and-decomposition-svygei-svygeidec"><span class="toc-section-number">3.8</span> Generalized Entropy and Decomposition (svygei, svygeidec)</a></li>
-<li><a href="3-9-rényi-divergence-svyrenyi.html#rényi-divergence-svyrenyi"><span class="toc-section-number">3.9</span> Rényi Divergence (svyrenyi)</a></li>
-<li><a href="3-10-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#j-divergence-and-decomposition-svyjdiv-svyjdivdec"><span class="toc-section-number">3.10</span> J-Divergence and Decomposition (svyjdiv, svyjdivdec)</a></li>
-<li><a href="3-11-atkinson-index-svyatk.html#atkinson-index-svyatk"><span class="toc-section-number">3.11</span> Atkinson index (svyatk)</a></li>
-<li><a href="3-12-which-inequality-measure-should-be-used.html#which-inequality-measure-should-be-used"><span class="toc-section-number">3.12</span> Which inequality measure should be used?</a></li>
-</ul></li>
-<li class="has-sub"><a href="4-multidimensional.html#multidimensional"><span class="toc-section-number">4</span> Multidimensional Indices</a><ul>
-<li><a href="4-1-alkire-foster-class-and-decomposition-svyafc-svyafcdec.html#alkire-foster-class-and-decomposition-svyafc-svyafcdec"><span class="toc-section-number">4.1</span> Alkire-Foster Class and Decomposition (svyafc, svyafcdec)</a></li>
-<li><a href="4-2-bourguignon-chakravarty-2003-multidimensional-poverty-class.html#bourguignon-chakravarty-2003-multidimensional-poverty-class"><span class="toc-section-number">4.2</span> Bourguignon-Chakravarty (2003) multidimensional poverty class</a></li>
-<li><a href="4-3-bourguignon-1999-inequality-class-svybmi.html#bourguignon-1999-inequality-class-svybmi"><span class="toc-section-number">4.3</span> Bourguignon (1999) inequality class (svybmi)</a></li>
+<li><a href="3-5-entropy-based-measures.html#entropy-based-measures"><span class="toc-section-number">3.5</span> Entropy-based Measures</a></li>
+<li><a href="3-6-generalized-entropy-and-decomposition-svygei-svygeidec.html#generalized-entropy-and-decomposition-svygei-svygeidec"><span class="toc-section-number">3.6</span> Generalized Entropy and Decomposition (svygei, svygeidec)</a></li>
+<li><a href="3-7-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#j-divergence-and-decomposition-svyjdiv-svyjdivdec"><span class="toc-section-number">3.7</span> J-Divergence and Decomposition (svyjdiv, svyjdivdec)</a></li>
+<li><a href="3-8-atkinson-index-svyatk.html#atkinson-index-svyatk"><span class="toc-section-number">3.8</span> Atkinson index (svyatk)</a></li>
+<li><a href="3-9-which-inequality-measure-should-be-used.html#which-inequality-measure-should-be-used"><span class="toc-section-number">3.9</span> Which inequality measure should be used?</a></li>
 </ul></li>
 </ul>
 </div>
@@ -161,11 +158,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="header">
 <h1 class="title">Poverty and Inequality with Complex Survey Data</h1>
 <h4 class="author"><em>Guilherme Jacob, Anthony Damico, and Djalma Pessoa</em></h4>
-<h4 class="date"><em>2020-05-23</em></h4>
+<h4 class="date"><em>2021-04-05</em></h4>
 </div>
-<div id="introduction" class="section level1">
+<div id="introduction" class="section level1" number="1">
 <h1><span class="header-section-number">Chapter 1</span> Introduction</h1>
-<p>The R <code>convey</code> library estimates measures of poverty, inequality, and wellbeing. There are two other R libraries covering this subject, <a href="https://CRAN.R-project.org/package=vardpoor">vardpoor</a> <span class="citation">(Breidaks, Liberts, and Ivanova <label for="tufte-mn-1" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-1" class="margin-toggle">2020<span class="marginnote">Breidaks, Juris, Martins Liberts, and Santa Ivanova. 2020. <em>vardpoor: Estimation of Indicators on Social Exclusion and Poverty and Its Linearization, Variance Estimation</em>. Riga, Latvia: Central Statistical Bureau of Latvia. <a href="https://csblatvia.github.io/vardpoor/">https://csblatvia.github.io/vardpoor/</a>.</span>)</span> and <a href="https://CRAN.R-project.org/package=laeken">laeken</a> <span class="citation">(Alfons, Holzer, and Templ <label for="tufte-mn-2" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-2" class="margin-toggle">2014<span class="marginnote">Alfons, Andreas, Josef Holzer, and Matthias Templ. 2014. <em>Laeken: Estimation of Indicators on Social Exclusion and Poverty</em>. <a href="https://CRAN.R-project.org/package=laeken">https://CRAN.R-project.org/package=laeken</a>.</span>)</span>, however, only <code>convey</code> integrates seamlessly with the <a href="https://CRAN.R-project.org/package=survey">R survey package</a> <span class="citation">(Lumley <label for="tufte-mn-3" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-3" class="margin-toggle">2004<span class="marginnote">Lumley, Thomas. 2004. “Analysis of Complex Survey Samples.” <em>Journal of Statistical Software</em> 9 (1): 1–19.</span>, <label for="tufte-mn-4" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-4" class="margin-toggle">2010<span class="marginnote">Lumley, Thomas. 2010. <em>Complex Surveys: A Guide to Analysis Using R: A Guide to Analysis Using R</em>. John Wiley; Sons.</span>, <label for="tufte-mn-5" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-5" class="margin-toggle">2020<span class="marginnote">Lumley, Thomas. 2020. “Survey: Analysis of Complex Survey Samples.”</span>)</span>.</p>
+<p>The R <code>convey</code> library estimates measures of poverty, inequality, and wellbeing. There are two other R libraries covering this subject, <a href="https://CRAN.R-project.org/package=vardpoor">vardpoor</a> <span class="citation">(<label for="tufte-mn-1" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-1" class="margin-toggle">Breidaks, Liberts, and Ivanova 2020<span class="marginnote">Breidaks, Juris, Martins Liberts, and Santa Ivanova. 2020. <em><span class="nocase">vardpoor</span>: Estimation of Indicators on Social Exclusion and Poverty and Its Linearization, Variance Estimation</em>. Riga, Latvia: Central Statistical Bureau of Latvia. <a href="https://csblatvia.github.io/vardpoor/">https://csblatvia.github.io/vardpoor/</a>.</span>)</span> and <a href="https://CRAN.R-project.org/package=laeken">laeken</a> <span class="citation">(<label for="tufte-mn-2" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-2" class="margin-toggle">Alfons and Templ 2013<span class="marginnote">Alfons, Andreas, and Matthias Templ. 2013. <span>“Estimation of Social Exclusion Indicators from Complex Surveys: The <span>R</span> Package <span class="nocase">laeken</span>.”</span> <em>Journal of Statistical Software</em> 54 (15): 1–25. <a href="http://www.jstatsoft.org/v54/i15/">http://www.jstatsoft.org/v54/i15/</a>.</span>)</span>, however, only <code>convey</code> integrates seamlessly with the <a href="https://CRAN.R-project.org/package=survey">R survey package</a> <span class="citation">(<label for="tufte-mn-3" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-3" class="margin-toggle">Lumley 2004<span class="marginnote">Lumley, Thomas. 2004. <span>“Analysis of Complex Survey Samples.”</span> <em>Journal of Statistical Software</em> 9 (1): 1–19.</span>, <label for="tufte-mn-4" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-4" class="margin-toggle">2010<span class="marginnote">Lumley, Thomas. 2010. <em>Complex Surveys: A Guide to Analysis Using r: A Guide to Analysis Using r</em>. John Wiley; Sons.</span>, <label for="tufte-mn-5" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-5" class="margin-toggle">2020<span class="marginnote">Lumley, Thomas. 2020. <span>“Survey: Analysis of Complex Survey Samples.”</span></span>)</span>.</p>
 <p><code>convey</code> is free and open-source software that runs inside the <a href="https://www.r-project.org/">R environment for statistical computing</a>. Anyone can review and propose changes to <a href="https://github.com/DjalmaPessoa/convey">the source code</a> for this software. Readers are welcome to <a href="https://github.com/guilhermejacob/context/">propose changes to this book</a> as well.</p>
 </div>
 <p style="text-align: center;">
