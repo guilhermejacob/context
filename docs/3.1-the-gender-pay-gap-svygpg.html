@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="3.1 The Gender Pay Gap (svygpg) | Poverty and Inequality with Complex Survey Data" />
+<meta property="og:type" content="book" />
+
+<meta property="og:description" content="A book about the R convey package" />
+<meta name="github-repo" content="guilhermejacob/context" />
+
+<meta name="author" content="Guilherme Jacob, Anthony Damico, and Djalma Pessoa" />
+
+<meta name="date" content="2022-07-05" />
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+</script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<meta name="description" content="A book about the R convey package">
+
+<title>3.1 The Gender Pay Gap (svygpg) | Poverty and Inequality with Complex Survey Data</title>
+
+<link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
+<link href="libs/tufte-css-2015.12.29/tufte-background.css" rel="stylesheet" />
+<link href="libs/tufte-css-2015.12.29/tufte-italics.css" rel="stylesheet" />
+<link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" />
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="toc.css" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+<div class="row">
+<div class="col-sm-12">
+<div id="TOC">
+<ul>
+<li class="has-sub"><a href="index.html#introduction"><span class="toc-section-number">1</span> Introduction</a>
+<ul>
+<li><a href="1.1-install.html#install"><span class="toc-section-number">1.1</span> Installation</a></li>
+<li><a href="1.2-survey.html#survey"><span class="toc-section-number">1.2</span> Complex surveys and statistical inference</a></li>
+<li><a href="1.3-usage-examples.html#usage-examples"><span class="toc-section-number">1.3</span> Usage Examples</a></li>
+<li><a href="1.4-underlying-calculations.html#underlying-calculations"><span class="toc-section-number">1.4</span> Underlying Calculations</a></li>
+<li><a href="1.5-the-variance-estimator.html#the-variance-estimator"><span class="toc-section-number">1.5</span> The Variance Estimator</a></li>
+<li><a href="1.6-influence-functions.html#influence-functions"><span class="toc-section-number">1.6</span> Influence Functions</a></li>
+<li><a href="1.7-influence-function-examples.html#influence-function-examples"><span class="toc-section-number">1.7</span> Influence Function Examples</a></li>
+<li><a href="1.8-examples-of-linearization-using-the-influence-function.html#examples-of-linearization-using-the-influence-function"><span class="toc-section-number">1.8</span> Examples of Linearization Using the Influence Function</a></li>
+<li><a href="1.9-replication-designs.html#replication-designs"><span class="toc-section-number">1.9</span> Replication Designs</a></li>
+<li><a href="1.10-decomposition.html#decomposition"><span class="toc-section-number">1.10</span> Decomposition</a></li>
+</ul></li>
+<li class="has-sub"><a href="2-poverty.html#poverty"><span class="toc-section-number">2</span> Poverty Indices</a>
+<ul>
+<li><a href="2.1-at-risk-of-poverty-threshold-svyarpt.html#at-risk-of-poverty-threshold-svyarpt"><span class="toc-section-number">2.1</span> At Risk of Poverty Threshold (svyarpt)</a></li>
+<li><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#at-risk-of-poverty-ratio-svyarpr"><span class="toc-section-number">2.2</span> At Risk of Poverty Ratio (svyarpr)</a></li>
+<li><a href="2.3-relative-median-income-ratio-svyrmir.html#relative-median-income-ratio-svyrmir"><span class="toc-section-number">2.3</span> Relative Median Income Ratio (svyrmir)</a></li>
+<li><a href="2.4-relative-median-poverty-gap-svyrmpg.html#relative-median-poverty-gap-svyrmpg"><span class="toc-section-number">2.4</span> Relative Median Poverty Gap (svyrmpg)</a></li>
+<li><a href="2.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#median-income-below-the-at-risk-of-poverty-threshold-svypoormed"><span class="toc-section-number">2.5</span> Median Income Below the At Risk of Poverty Threshold (svypoormed)</a></li>
+<li><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#foster-greer-thorbecke-class-svyfgt-svyfgtdec"><span class="toc-section-number">2.6</span> Foster-Greer-Thorbecke class (svyfgt, svyfgtdec)</a></li>
+<li><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#watts-poverty-measure-svywatts-svywattsdec"><span class="toc-section-number">2.7</span> Watts poverty measure (svywatts, svywattsdec)</a></li>
+<li><a href="2.8-clark-hemming-ulph-class-of-poverty-measures-svychu.html#clark-hemming-ulph-class-of-poverty-measures-svychu"><span class="toc-section-number">2.8</span> Clark-Hemming-Ulph class of poverty measures (svychu)</a></li>
+</ul></li>
+<li class="has-sub"><a href="3-inequality.html#inequality"><span class="toc-section-number">3</span> Inequality Measurement</a>
+<ul>
+<li><a href="3.1-the-gender-pay-gap-svygpg.html#the-gender-pay-gap-svygpg"><span class="toc-section-number">3.1</span> The Gender Pay Gap (svygpg)</a></li>
+<li><a href="3.2-quintile-share-ratio-svyqsr.html#quintile-share-ratio-svyqsr"><span class="toc-section-number">3.2</span> Quintile Share Ratio (svyqsr)</a></li>
+<li><a href="3.3-lorenz-curve-svylorenz.html#lorenz-curve-svylorenz"><span class="toc-section-number">3.3</span> Lorenz Curve (svylorenz)</a></li>
+<li><a href="3.4-gini-index-svygini.html#gini-index-svygini"><span class="toc-section-number">3.4</span> Gini index (svygini)</a></li>
+<li><a href="3.5-entropy-based-measures.html#entropy-based-measures"><span class="toc-section-number">3.5</span> Entropy-based Measures</a></li>
+<li><a href="3.6-generalized-entropy-and-decomposition-svygei-svygeidec.html#generalized-entropy-and-decomposition-svygei-svygeidec"><span class="toc-section-number">3.6</span> Generalized Entropy and Decomposition (svygei, svygeidec)</a></li>
+<li><a href="3.7-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#j-divergence-and-decomposition-svyjdiv-svyjdivdec"><span class="toc-section-number">3.7</span> J-Divergence and Decomposition (svyjdiv, svyjdivdec)</a></li>
+<li><a href="3.8-atkinson-index-svyatk.html#atkinson-index-svyatk"><span class="toc-section-number">3.8</span> Atkinson index (svyatk)</a></li>
+<li><a href="3.9-which-inequality-measure-should-be-used.html#which-inequality-measure-should-be-used"><span class="toc-section-number">3.9</span> Which inequality measure should be used?</a></li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-sm-12">
+<div id="the-gender-pay-gap-svygpg" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> The Gender Pay Gap (svygpg)</h2>
+<p>Although the <span class="math inline">\(GPG\)</span> is not an inequality measure in the usual sense, it can still be an useful instrument to evaluate the discrimination among men and women. Put simply, it expresses the relative difference between the average hourly earnings of men and women, presenting it as a percentage of the average of hourly earnings of men.</p>
+<p>In mathematical terms, this index can be described as,</p>
+<p><span class="math display">\[ GPG = \frac{ \bar{y}_{male} - \bar{y}_{female} }{ \bar{y}_{male} } \]</span>,</p>
+<p>which is precisely the estimator used in the package. As we can see from the formula, if there is no difference among classes, <span class="math inline">\(GPG = 0\)</span>. Else, if <span class="math inline">\(GPG &gt; 0\)</span>, it means that the average hourly income received by women are <span class="math inline">\(GPG\)</span> percent smaller than men’s. For negative <span class="math inline">\(GPG\)</span>, it means that women’s hourly earnings are <span class="math inline">\(GPG\)</span> percent larger than men’s. In other words, the larger the <span class="math inline">\(GPG\)</span>, larger is the shortfall of women’s hourly earnings.</p>
+<p>We can also develop a more straightforward idea: for every $1 raise in men’s hourly earnings, women’s hourly earnings are expected to increase $<span class="math inline">\((1-GPG)\)</span>. For instance, assuming <span class="math inline">\(GPG = 0.8\)</span>, for every $1.00 increase in men’s average hourly earnings, women’s hourly earnings would increase only $0.20.</p>
+<p>The details of the linearization of the <code>GPG</code> are discussed by <span class="citation">Deville (<label for="tufte-mn-50" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-50" class="margin-toggle">1999<span class="marginnote">Deville, Jean-Claude. 1999. <span>“Variance Estimation for Complex Statistics and Estimators: Linearization and Residual Techniques.”</span> <em>Survey Methodology</em> 25 (2): 193–203. <a href="http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf">http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf</a>.</span>)</span> and <span class="citation">Osier (<label for="tufte-mn-51" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-51" class="margin-toggle">2009<span class="marginnote">Osier, Guillaume. 2009. <span>“Variance Estimation for Complex Indicators of Poverty and Inequality.”</span> <em>Journal of the European Survey Research Association</em> 3 (3): 167–95. <a href="http://ojs.ub.uni-konstanz.de/srm/article/view/369">http://ojs.ub.uni-konstanz.de/srm/article/view/369</a>.</span>)</span>.</p>
+<hr />
+<p><strong>A replication example</strong></p>
+<p>The R <code>vardpoor</code> package <span class="citation">(<label for="tufte-mn-52" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-52" class="margin-toggle">Breidaks, Liberts, and Ivanova 2016<span class="marginnote">Breidaks, Juris, Martins Liberts, and Santa Ivanova. 2016. <span>“Vardpoor: Estimation of Indicators on Social Exclusion and Poverty and Its Linearization, Variance Estimation.”</span> Riga, Latvia: CSB.</span>)</span>, created by researchers at the Central Statistical Bureau of Latvia, includes a gpg coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.</p>
+<p>Load and prepare the same data set:</p>
+<div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb168-1"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load the convey package</span></span>
+<span id="cb168-2"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
+<span id="cb168-3"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb168-4"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-4" aria-hidden="true" tabindex="-1"></a><span class="co"># load the survey library</span></span>
+<span id="cb168-5"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb168-6"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb168-7"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-7" aria-hidden="true" tabindex="-1"></a><span class="co"># load the vardpoor library</span></span>
+<span id="cb168-8"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(vardpoor)</span>
+<span id="cb168-9"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb168-10"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-10" aria-hidden="true" tabindex="-1"></a><span class="co"># load the laeken library</span></span>
+<span id="cb168-11"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(laeken)</span>
+<span id="cb168-12"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb168-13"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-13" aria-hidden="true" tabindex="-1"></a><span class="co"># load the synthetic EU statistics on income &amp; living conditions</span></span>
+<span id="cb168-14"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-14" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(eusilc)</span>
+<span id="cb168-15"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb168-16"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-16" aria-hidden="true" tabindex="-1"></a><span class="co"># make all column names lowercase</span></span>
+<span id="cb168-17"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-17" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>( eusilc ) <span class="ot">&lt;-</span> <span class="fu">tolower</span>( <span class="fu">names</span>( eusilc ) )</span>
+<span id="cb168-18"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb168-19"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-19" aria-hidden="true" tabindex="-1"></a><span class="co"># coerce the gender variable to numeric 1 or 2</span></span>
+<span id="cb168-20"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-20" aria-hidden="true" tabindex="-1"></a>eusilc<span class="sc">$</span>one_two <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>( eusilc<span class="sc">$</span>rb090 <span class="sc">==</span> <span class="st">&quot;female&quot;</span> ) <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb168-21"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb168-22"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-22" aria-hidden="true" tabindex="-1"></a><span class="co"># add a column with the row number</span></span>
+<span id="cb168-23"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-23" aria-hidden="true" tabindex="-1"></a>dati <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">data.table</span>(<span class="at">IDd =</span> <span class="dv">1</span> <span class="sc">:</span> <span class="fu">nrow</span>(eusilc), eusilc)</span>
+<span id="cb168-24"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb168-25"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-25" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate the gpg coefficient</span></span>
+<span id="cb168-26"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-26" aria-hidden="true" tabindex="-1"></a><span class="co"># using the R vardpoor library</span></span>
+<span id="cb168-27"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-27" aria-hidden="true" tabindex="-1"></a>varpoord_gpg_calculation <span class="ot">&lt;-</span></span>
+<span id="cb168-28"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">varpoord</span>(</span>
+<span id="cb168-29"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-29" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb168-30"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-30" aria-hidden="true" tabindex="-1"></a>        <span class="co"># analysis variable</span></span>
+<span id="cb168-31"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-31" aria-hidden="true" tabindex="-1"></a>        <span class="at">Y =</span> <span class="st">&quot;eqincome&quot;</span>, </span>
+<span id="cb168-32"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-32" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb168-33"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-33" aria-hidden="true" tabindex="-1"></a>        <span class="co"># weights variable</span></span>
+<span id="cb168-34"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-34" aria-hidden="true" tabindex="-1"></a>        <span class="at">w_final =</span> <span class="st">&quot;rb050&quot;</span>,</span>
+<span id="cb168-35"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-35" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb168-36"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-36" aria-hidden="true" tabindex="-1"></a>        <span class="co"># row number variable</span></span>
+<span id="cb168-37"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-37" aria-hidden="true" tabindex="-1"></a>        <span class="at">ID_level1 =</span> <span class="st">&quot;IDd&quot;</span>,</span>
+<span id="cb168-38"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-38" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb168-39"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-39" aria-hidden="true" tabindex="-1"></a>        <span class="co"># row number variable</span></span>
+<span id="cb168-40"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-40" aria-hidden="true" tabindex="-1"></a>        <span class="at">ID_level2 =</span> <span class="st">&quot;IDd&quot;</span>,</span>
+<span id="cb168-41"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-41" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb168-42"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-42" aria-hidden="true" tabindex="-1"></a>        <span class="co"># strata variable</span></span>
+<span id="cb168-43"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-43" aria-hidden="true" tabindex="-1"></a>        <span class="at">H =</span> <span class="st">&quot;db040&quot;</span>, </span>
+<span id="cb168-44"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-44" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb168-45"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-45" aria-hidden="true" tabindex="-1"></a>        <span class="at">N_h =</span> <span class="cn">NULL</span> ,</span>
+<span id="cb168-46"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-46" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb168-47"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-47" aria-hidden="true" tabindex="-1"></a>        <span class="co"># clustering variable</span></span>
+<span id="cb168-48"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-48" aria-hidden="true" tabindex="-1"></a>        <span class="at">PSU =</span> <span class="st">&quot;rb030&quot;</span>, </span>
+<span id="cb168-49"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-49" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb168-50"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-50" aria-hidden="true" tabindex="-1"></a>        <span class="co"># data.table</span></span>
+<span id="cb168-51"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-51" aria-hidden="true" tabindex="-1"></a>        <span class="at">dataset =</span> dati, </span>
+<span id="cb168-52"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-52" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb168-53"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-53" aria-hidden="true" tabindex="-1"></a>        <span class="co"># gpg coefficient function</span></span>
+<span id="cb168-54"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-54" aria-hidden="true" tabindex="-1"></a>        <span class="at">type =</span> <span class="st">&quot;lingpg&quot;</span> ,</span>
+<span id="cb168-55"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-55" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb168-56"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-56" aria-hidden="true" tabindex="-1"></a>        <span class="co"># gender variable</span></span>
+<span id="cb168-57"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-57" aria-hidden="true" tabindex="-1"></a>        <span class="at">gender =</span> <span class="st">&quot;one_two&quot;</span>,</span>
+<span id="cb168-58"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-58" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb168-59"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-59" aria-hidden="true" tabindex="-1"></a>      <span class="co"># poverty threshold range</span></span>
+<span id="cb168-60"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-60" aria-hidden="true" tabindex="-1"></a>      <span class="at">order_quant =</span> 50L ,</span>
+<span id="cb168-61"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-61" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb168-62"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-62" aria-hidden="true" tabindex="-1"></a>      <span class="co"># get linearized variable</span></span>
+<span id="cb168-63"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-63" aria-hidden="true" tabindex="-1"></a>      <span class="at">outp_lin =</span> <span class="cn">TRUE</span></span>
+<span id="cb168-64"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-64" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb168-65"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb168-66"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb168-67"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb168-68"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-68" aria-hidden="true" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
+<span id="cb168-69"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-69" aria-hidden="true" tabindex="-1"></a><span class="co"># using our recommended setup</span></span>
+<span id="cb168-70"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-70" aria-hidden="true" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span> </span>
+<span id="cb168-71"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-71" aria-hidden="true" tabindex="-1"></a>    <span class="fu">svydesign</span>( </span>
+<span id="cb168-72"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-72" aria-hidden="true" tabindex="-1"></a>        <span class="at">ids =</span> <span class="sc">~</span> rb030 , </span>
+<span id="cb168-73"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-73" aria-hidden="true" tabindex="-1"></a>        <span class="at">strata =</span> <span class="sc">~</span> db040 ,  </span>
+<span id="cb168-74"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-74" aria-hidden="true" tabindex="-1"></a>        <span class="at">weights =</span> <span class="sc">~</span> rb050 , </span>
+<span id="cb168-75"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-75" aria-hidden="true" tabindex="-1"></a>        <span class="at">data =</span> eusilc</span>
+<span id="cb168-76"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-76" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb168-77"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb168-78"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-78" aria-hidden="true" tabindex="-1"></a><span class="co"># immediately run the convey_prep function on it</span></span>
+<span id="cb168-79"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-79" aria-hidden="true" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>( des_eusilc )</span>
+<span id="cb168-80"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb168-81"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-81" aria-hidden="true" tabindex="-1"></a><span class="co"># coefficients do match</span></span>
+<span id="cb168-82"><a href="3.1-the-gender-pay-gap-svygpg.html#cb168-82" aria-hidden="true" tabindex="-1"></a>varpoord_gpg_calculation<span class="sc">$</span>all_result<span class="sc">$</span>value</span></code></pre></div>
+<pre><code>## [1] 7.645389</code></pre>
+<div class="sourceCode" id="cb170"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb170-1"><a href="3.1-the-gender-pay-gap-svygpg.html#cb170-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>( <span class="fu">svygpg</span>( <span class="sc">~</span> eqincome , des_eusilc , <span class="at">sex =</span> <span class="sc">~</span> rb090 ) ) <span class="sc">*</span> <span class="dv">100</span></span></code></pre></div>
+<pre><code>## eqincome 
+## 7.645389</code></pre>
+<div class="sourceCode" id="cb172"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb172-1"><a href="3.1-the-gender-pay-gap-svygpg.html#cb172-1" aria-hidden="true" tabindex="-1"></a><span class="co"># linearized variables do match</span></span>
+<span id="cb172-2"><a href="3.1-the-gender-pay-gap-svygpg.html#cb172-2" aria-hidden="true" tabindex="-1"></a><span class="co"># vardpoor</span></span>
+<span id="cb172-3"><a href="3.1-the-gender-pay-gap-svygpg.html#cb172-3" aria-hidden="true" tabindex="-1"></a>lin_gpg_varpoord<span class="ot">&lt;-</span> varpoord_gpg_calculation<span class="sc">$</span>lin_out<span class="sc">$</span>lin_gpg</span>
+<span id="cb172-4"><a href="3.1-the-gender-pay-gap-svygpg.html#cb172-4" aria-hidden="true" tabindex="-1"></a><span class="co"># convey </span></span>
+<span id="cb172-5"><a href="3.1-the-gender-pay-gap-svygpg.html#cb172-5" aria-hidden="true" tabindex="-1"></a>lin_gpg_convey <span class="ot">&lt;-</span> <span class="fu">attr</span>(<span class="fu">svygpg</span>( <span class="sc">~</span> eqincome , des_eusilc, <span class="at">sex =</span> <span class="sc">~</span> rb090 ),<span class="st">&quot;lin&quot;</span>)</span>
+<span id="cb172-6"><a href="3.1-the-gender-pay-gap-svygpg.html#cb172-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb172-7"><a href="3.1-the-gender-pay-gap-svygpg.html#cb172-7" aria-hidden="true" tabindex="-1"></a><span class="co"># check equality</span></span>
+<span id="cb172-8"><a href="3.1-the-gender-pay-gap-svygpg.html#cb172-8" aria-hidden="true" tabindex="-1"></a><span class="fu">all.equal</span>(lin_gpg_varpoord,<span class="dv">100</span><span class="sc">*</span>lin_gpg_convey[,<span class="dv">1</span>] )</span></code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<div class="sourceCode" id="cb174"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb174-1"><a href="3.1-the-gender-pay-gap-svygpg.html#cb174-1" aria-hidden="true" tabindex="-1"></a><span class="co"># variances do not match exactly</span></span>
+<span id="cb174-2"><a href="3.1-the-gender-pay-gap-svygpg.html#cb174-2" aria-hidden="true" tabindex="-1"></a><span class="fu">attr</span>( <span class="fu">svygpg</span>( <span class="sc">~</span> eqincome , des_eusilc , <span class="at">sex =</span> <span class="sc">~</span> rb090 ) , <span class="st">&#39;var&#39;</span> ) <span class="sc">*</span> <span class="dv">10000</span></span></code></pre></div>
+<pre><code>##           eqincome
+## eqincome 0.6493911</code></pre>
+<div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb176-1"><a href="3.1-the-gender-pay-gap-svygpg.html#cb176-1" aria-hidden="true" tabindex="-1"></a>varpoord_gpg_calculation<span class="sc">$</span>all_result<span class="sc">$</span>var</span></code></pre></div>
+<pre><code>## [1] 0.6482346</code></pre>
+<div class="sourceCode" id="cb178"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb178-1"><a href="3.1-the-gender-pay-gap-svygpg.html#cb178-1" aria-hidden="true" tabindex="-1"></a><span class="co"># standard errors do not match exactly</span></span>
+<span id="cb178-2"><a href="3.1-the-gender-pay-gap-svygpg.html#cb178-2" aria-hidden="true" tabindex="-1"></a>varpoord_gpg_calculation<span class="sc">$</span>all_result<span class="sc">$</span>se</span></code></pre></div>
+<pre><code>## [1] 0.8051301</code></pre>
+<div class="sourceCode" id="cb180"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb180-1"><a href="3.1-the-gender-pay-gap-svygpg.html#cb180-1" aria-hidden="true" tabindex="-1"></a><span class="fu">SE</span>( <span class="fu">svygpg</span>( <span class="sc">~</span> eqincome , des_eusilc , <span class="at">sex =</span> <span class="sc">~</span> rb090 ) ) <span class="sc">*</span> <span class="dv">100</span></span></code></pre></div>
+<pre><code>##           eqincome
+## eqincome 0.8058481</code></pre>
+<p>The variance estimate is computed by using the approximation defined in <a href="1.5-the-variance-estimator.html#eq:var">(1.1)</a>, where the linearized variable <span class="math inline">\(z\)</span> is defined by <a href="1.5-the-variance-estimator.html#eq:lin">(1.2)</a>. The functions <code>convey::svygpg</code> and <code>vardpoor::lingpg</code> produce the same linearized variable <span class="math inline">\(z\)</span>.</p>
+<p>However, the measures of uncertainty do not line up, because <code>library(vardpoor)</code> defaults to an ultimate cluster method that can be replicated with an alternative setup of the <code>survey.design</code> object.</p>
+<div class="sourceCode" id="cb182"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb182-1"><a href="3.1-the-gender-pay-gap-svygpg.html#cb182-1" aria-hidden="true" tabindex="-1"></a><span class="co"># within each strata, sum up the weights</span></span>
+<span id="cb182-2"><a href="3.1-the-gender-pay-gap-svygpg.html#cb182-2" aria-hidden="true" tabindex="-1"></a>cluster_sums <span class="ot">&lt;-</span> <span class="fu">aggregate</span>( eusilc<span class="sc">$</span>rb050 , <span class="fu">list</span>( eusilc<span class="sc">$</span>db040 ) , sum )</span>
+<span id="cb182-3"><a href="3.1-the-gender-pay-gap-svygpg.html#cb182-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb182-4"><a href="3.1-the-gender-pay-gap-svygpg.html#cb182-4" aria-hidden="true" tabindex="-1"></a><span class="co"># name the within-strata sums of weights the `cluster_sum`</span></span>
+<span id="cb182-5"><a href="3.1-the-gender-pay-gap-svygpg.html#cb182-5" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>( cluster_sums ) <span class="ot">&lt;-</span> <span class="fu">c</span>( <span class="st">&quot;db040&quot;</span> , <span class="st">&quot;cluster_sum&quot;</span> )</span>
+<span id="cb182-6"><a href="3.1-the-gender-pay-gap-svygpg.html#cb182-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb182-7"><a href="3.1-the-gender-pay-gap-svygpg.html#cb182-7" aria-hidden="true" tabindex="-1"></a><span class="co"># merge this column back onto the data.frame</span></span>
+<span id="cb182-8"><a href="3.1-the-gender-pay-gap-svygpg.html#cb182-8" aria-hidden="true" tabindex="-1"></a>eusilc <span class="ot">&lt;-</span> <span class="fu">merge</span>( eusilc , cluster_sums )</span>
+<span id="cb182-9"><a href="3.1-the-gender-pay-gap-svygpg.html#cb182-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb182-10"><a href="3.1-the-gender-pay-gap-svygpg.html#cb182-10" aria-hidden="true" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
+<span id="cb182-11"><a href="3.1-the-gender-pay-gap-svygpg.html#cb182-11" aria-hidden="true" tabindex="-1"></a><span class="co"># with the fpc using the cluster sum</span></span>
+<span id="cb182-12"><a href="3.1-the-gender-pay-gap-svygpg.html#cb182-12" aria-hidden="true" tabindex="-1"></a>des_eusilc_ultimate_cluster <span class="ot">&lt;-</span> </span>
+<span id="cb182-13"><a href="3.1-the-gender-pay-gap-svygpg.html#cb182-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">svydesign</span>( </span>
+<span id="cb182-14"><a href="3.1-the-gender-pay-gap-svygpg.html#cb182-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">ids =</span> <span class="sc">~</span> rb030 , </span>
+<span id="cb182-15"><a href="3.1-the-gender-pay-gap-svygpg.html#cb182-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">strata =</span> <span class="sc">~</span> db040 ,  </span>
+<span id="cb182-16"><a href="3.1-the-gender-pay-gap-svygpg.html#cb182-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">weights =</span> <span class="sc">~</span> rb050 , </span>
+<span id="cb182-17"><a href="3.1-the-gender-pay-gap-svygpg.html#cb182-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">data =</span> eusilc , </span>
+<span id="cb182-18"><a href="3.1-the-gender-pay-gap-svygpg.html#cb182-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">fpc =</span> <span class="sc">~</span> cluster_sum </span>
+<span id="cb182-19"><a href="3.1-the-gender-pay-gap-svygpg.html#cb182-19" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb182-20"><a href="3.1-the-gender-pay-gap-svygpg.html#cb182-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb182-21"><a href="3.1-the-gender-pay-gap-svygpg.html#cb182-21" aria-hidden="true" tabindex="-1"></a><span class="co"># again, immediately run the convey_prep function on the `survey.design`</span></span>
+<span id="cb182-22"><a href="3.1-the-gender-pay-gap-svygpg.html#cb182-22" aria-hidden="true" tabindex="-1"></a>des_eusilc_ultimate_cluster <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>( des_eusilc_ultimate_cluster )</span>
+<span id="cb182-23"><a href="3.1-the-gender-pay-gap-svygpg.html#cb182-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb182-24"><a href="3.1-the-gender-pay-gap-svygpg.html#cb182-24" aria-hidden="true" tabindex="-1"></a><span class="co"># matches</span></span>
+<span id="cb182-25"><a href="3.1-the-gender-pay-gap-svygpg.html#cb182-25" aria-hidden="true" tabindex="-1"></a><span class="fu">attr</span>( <span class="fu">svygpg</span>( <span class="sc">~</span> eqincome , des_eusilc_ultimate_cluster , <span class="at">sex =</span> <span class="sc">~</span> rb090 ) , <span class="st">&#39;var&#39;</span> ) <span class="sc">*</span> <span class="dv">10000</span></span></code></pre></div>
+<pre><code>##           eqincome
+## eqincome 0.6482346</code></pre>
+<div class="sourceCode" id="cb184"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb184-1"><a href="3.1-the-gender-pay-gap-svygpg.html#cb184-1" aria-hidden="true" tabindex="-1"></a>varpoord_gpg_calculation<span class="sc">$</span>all_result<span class="sc">$</span>var</span></code></pre></div>
+<pre><code>## [1] 0.6482346</code></pre>
+<div class="sourceCode" id="cb186"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb186-1"><a href="3.1-the-gender-pay-gap-svygpg.html#cb186-1" aria-hidden="true" tabindex="-1"></a><span class="co"># matches</span></span>
+<span id="cb186-2"><a href="3.1-the-gender-pay-gap-svygpg.html#cb186-2" aria-hidden="true" tabindex="-1"></a>varpoord_gpg_calculation<span class="sc">$</span>all_result<span class="sc">$</span>se</span></code></pre></div>
+<pre><code>## [1] 0.8051301</code></pre>
+<div class="sourceCode" id="cb188"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb188-1"><a href="3.1-the-gender-pay-gap-svygpg.html#cb188-1" aria-hidden="true" tabindex="-1"></a><span class="fu">SE</span>( <span class="fu">svygpg</span>( <span class="sc">~</span> eqincome , des_eusilc_ultimate_cluster , <span class="at">sex =</span> <span class="sc">~</span> rb090 ) ) <span class="sc">*</span> <span class="dv">100</span></span></code></pre></div>
+<pre><code>##           eqincome
+## eqincome 0.8051301</code></pre>
+<p>For additional usage examples of <code>svygpg</code>, type <code>?convey::svygpg</code> in the R console.</p>
+</div>
+<p style="text-align: center;">
+<a href="3-inequality.html"><button class="btn btn-default">Previous</button></a>
+<a href="3.2-quintile-share-ratio-svyqsr.html"><button class="btn btn-default">Next</button></a>
+</p>
+</div>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="2.6 Foster-Greer-Thorbecke class (svyfgt, svyfgtdec) | Poverty and Inequality with Complex Survey Data" />
+<meta property="og:type" content="book" />
+
+<meta property="og:description" content="A book about the R convey package" />
+<meta name="github-repo" content="guilhermejacob/context" />
+
+<meta name="author" content="Guilherme Jacob, Anthony Damico, and Djalma Pessoa" />
+
+<meta name="date" content="2022-07-05" />
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+</script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<meta name="description" content="A book about the R convey package">
+
+<title>2.6 Foster-Greer-Thorbecke class (svyfgt, svyfgtdec) | Poverty and Inequality with Complex Survey Data</title>
+
+<link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
+<link href="libs/tufte-css-2015.12.29/tufte-background.css" rel="stylesheet" />
+<link href="libs/tufte-css-2015.12.29/tufte-italics.css" rel="stylesheet" />
+<link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" />
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="toc.css" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+<div class="row">
+<div class="col-sm-12">
+<div id="TOC">
+<ul>
+<li class="has-sub"><a href="index.html#introduction"><span class="toc-section-number">1</span> Introduction</a>
+<ul>
+<li><a href="1.1-install.html#install"><span class="toc-section-number">1.1</span> Installation</a></li>
+<li><a href="1.2-survey.html#survey"><span class="toc-section-number">1.2</span> Complex surveys and statistical inference</a></li>
+<li><a href="1.3-usage-examples.html#usage-examples"><span class="toc-section-number">1.3</span> Usage Examples</a></li>
+<li><a href="1.4-underlying-calculations.html#underlying-calculations"><span class="toc-section-number">1.4</span> Underlying Calculations</a></li>
+<li><a href="1.5-the-variance-estimator.html#the-variance-estimator"><span class="toc-section-number">1.5</span> The Variance Estimator</a></li>
+<li><a href="1.6-influence-functions.html#influence-functions"><span class="toc-section-number">1.6</span> Influence Functions</a></li>
+<li><a href="1.7-influence-function-examples.html#influence-function-examples"><span class="toc-section-number">1.7</span> Influence Function Examples</a></li>
+<li><a href="1.8-examples-of-linearization-using-the-influence-function.html#examples-of-linearization-using-the-influence-function"><span class="toc-section-number">1.8</span> Examples of Linearization Using the Influence Function</a></li>
+<li><a href="1.9-replication-designs.html#replication-designs"><span class="toc-section-number">1.9</span> Replication Designs</a></li>
+<li><a href="1.10-decomposition.html#decomposition"><span class="toc-section-number">1.10</span> Decomposition</a></li>
+</ul></li>
+<li class="has-sub"><a href="2-poverty.html#poverty"><span class="toc-section-number">2</span> Poverty Indices</a>
+<ul>
+<li><a href="2.1-at-risk-of-poverty-threshold-svyarpt.html#at-risk-of-poverty-threshold-svyarpt"><span class="toc-section-number">2.1</span> At Risk of Poverty Threshold (svyarpt)</a></li>
+<li><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#at-risk-of-poverty-ratio-svyarpr"><span class="toc-section-number">2.2</span> At Risk of Poverty Ratio (svyarpr)</a></li>
+<li><a href="2.3-relative-median-income-ratio-svyrmir.html#relative-median-income-ratio-svyrmir"><span class="toc-section-number">2.3</span> Relative Median Income Ratio (svyrmir)</a></li>
+<li><a href="2.4-relative-median-poverty-gap-svyrmpg.html#relative-median-poverty-gap-svyrmpg"><span class="toc-section-number">2.4</span> Relative Median Poverty Gap (svyrmpg)</a></li>
+<li><a href="2.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#median-income-below-the-at-risk-of-poverty-threshold-svypoormed"><span class="toc-section-number">2.5</span> Median Income Below the At Risk of Poverty Threshold (svypoormed)</a></li>
+<li><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#foster-greer-thorbecke-class-svyfgt-svyfgtdec"><span class="toc-section-number">2.6</span> Foster-Greer-Thorbecke class (svyfgt, svyfgtdec)</a></li>
+<li><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#watts-poverty-measure-svywatts-svywattsdec"><span class="toc-section-number">2.7</span> Watts poverty measure (svywatts, svywattsdec)</a></li>
+<li><a href="2.8-clark-hemming-ulph-class-of-poverty-measures-svychu.html#clark-hemming-ulph-class-of-poverty-measures-svychu"><span class="toc-section-number">2.8</span> Clark-Hemming-Ulph class of poverty measures (svychu)</a></li>
+</ul></li>
+<li class="has-sub"><a href="3-inequality.html#inequality"><span class="toc-section-number">3</span> Inequality Measurement</a>
+<ul>
+<li><a href="3.1-the-gender-pay-gap-svygpg.html#the-gender-pay-gap-svygpg"><span class="toc-section-number">3.1</span> The Gender Pay Gap (svygpg)</a></li>
+<li><a href="3.2-quintile-share-ratio-svyqsr.html#quintile-share-ratio-svyqsr"><span class="toc-section-number">3.2</span> Quintile Share Ratio (svyqsr)</a></li>
+<li><a href="3.3-lorenz-curve-svylorenz.html#lorenz-curve-svylorenz"><span class="toc-section-number">3.3</span> Lorenz Curve (svylorenz)</a></li>
+<li><a href="3.4-gini-index-svygini.html#gini-index-svygini"><span class="toc-section-number">3.4</span> Gini index (svygini)</a></li>
+<li><a href="3.5-entropy-based-measures.html#entropy-based-measures"><span class="toc-section-number">3.5</span> Entropy-based Measures</a></li>
+<li><a href="3.6-generalized-entropy-and-decomposition-svygei-svygeidec.html#generalized-entropy-and-decomposition-svygei-svygeidec"><span class="toc-section-number">3.6</span> Generalized Entropy and Decomposition (svygei, svygeidec)</a></li>
+<li><a href="3.7-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#j-divergence-and-decomposition-svyjdiv-svyjdivdec"><span class="toc-section-number">3.7</span> J-Divergence and Decomposition (svyjdiv, svyjdivdec)</a></li>
+<li><a href="3.8-atkinson-index-svyatk.html#atkinson-index-svyatk"><span class="toc-section-number">3.8</span> Atkinson index (svyatk)</a></li>
+<li><a href="3.9-which-inequality-measure-should-be-used.html#which-inequality-measure-should-be-used"><span class="toc-section-number">3.9</span> Which inequality measure should be used?</a></li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-sm-12">
+<div id="foster-greer-thorbecke-class-svyfgt-svyfgtdec" class="section level2" number="2.6">
+<h2><span class="header-section-number">2.6</span> Foster-Greer-Thorbecke class (svyfgt, svyfgtdec)</h2>
+<p><span class="citation">Foster, Greer, and Thorbecke (<label for="tufte-mn-37" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-37" class="margin-toggle">1984<span class="marginnote">Foster, James, Joel Greer, and Erik Thorbecke. 1984. <span>“A Class of Decomposable Poverty Measures.”</span> <em>Econometrica</em> 52 (3): 761–66. <a href="http://www.jstor.org/stable/1913475">http://www.jstor.org/stable/1913475</a>.</span>)</span> proposed a family of indicators to measure poverty. This class of <span class="math inline">\(FGT\)</span> measures, can be defined as</p>
+<p><span class="math display">\[
+p=\frac{1}{N}\sum_{k\in U}h(y_{k},\theta ),
+\]</span></p>
+<p>where</p>
+<p><span class="math display">\[
+h(y_{k},\theta )=\left[ \frac{(\theta -y_{k})}{\theta }\right] ^{\gamma
+}\delta \left\{ y_{k}\leq \theta \right\} ,
+\]</span></p>
+<p>where: <span class="math inline">\(\theta\)</span> is the poverty threshold; <span class="math inline">\(\delta\)</span> the indicator function that assigns value <span class="math inline">\(1\)</span> if the condition <span class="math inline">\(\{y_{k}\leq \theta \}\)</span> is satisfied and <span class="math inline">\(0\)</span> otherwise, and <span class="math inline">\(\gamma\)</span> is a non-negative constant.</p>
+<p>If <span class="math inline">\(\gamma =0\)</span>, the FGT(0) equals the poverty headcount ratio, which accounts for the spread of poverty. If <span class="math inline">\(\gamma =1\)</span>, FGT(1) is the mean of the normalized income shortfall of the poor. By doing so, the measure takes into account both the spread and the intensity of poverty. When <span class="math inline">\(\gamma =2\)</span>, the relative weight of larger shortfalls increases even more, which yields a measure that accounts for poverty severity, i.e., the inequality among the poor. This way, a transfer from a poor person to an even poorer person would reduce the FGT(2).</p>
+<p>Although <span class="citation">Foster, Greer, and Thorbecke (<label for="tufte-mn-38" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-38" class="margin-toggle">1984<span class="marginnote">Foster, James, Joel Greer, and Erik Thorbecke. 1984. <span>“A Class of Decomposable Poverty Measures.”</span> <em>Econometrica</em> 52 (3): 761–66. <a href="http://www.jstor.org/stable/1913475">http://www.jstor.org/stable/1913475</a>.</span>)</span> already presented a decomposition for the FGT(2) index, <span class="citation">Aristondo, De La Vega, and Urrutia (<label for="tufte-mn-39" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-39" class="margin-toggle">2010<span class="marginnote">Aristondo, Oihana, Casilda Lasso De La Vega, and Ana Urrutia. 2010. <span>“A New Multiplicative Decomposition for the Foster–Greer–Thorbecke Poverty Indices.”</span> <em>Bulletin of Economic Research</em> 62 (3): 259–67. <a href="https://doi.org/10.1111/j.1467-8586.2009.00320.x">https://doi.org/10.1111/j.1467-8586.2009.00320.x</a>.</span>)</span> provided a general formula that decomposes the FGT(<span class="math inline">\(\gamma\)</span>) for any <span class="math inline">\(\gamma \geqslant 2\)</span>. Put simply, any such FGT(<span class="math inline">\(\gamma\)</span>) index can be seen as function of the headcount ratio, the average normalized income gap among the poor and a generalized entropy index of the normalized income gaps among poor. In mathematical terms,</p>
+<p><span class="math display">\[
+FGT_\gamma = FGT_0 \cdot I^\gamma \cdot \big[ 1 + \big( \gamma^2 -\gamma \big) GEI_\gamma^* \big] , \text{ } \gamma \geq 2
+\]</span></p>
+<p>where <span class="math inline">\(I\)</span> is the average normalized income gap among the poor and <span class="math inline">\(GEI_\gamma^*\)</span> is a generalized entropy index of such income gaps among the poor.</p>
+<p>This result is particularly useful, as one can attribute cross-sectional differences of a FGT index to differences in the spread, depth and inequality of poverty.</p>
+<p>The FGT poverty class and its decomposition is implemented in the library convey by the function <code>svyfgt</code> and <code>svyfgtdec</code>, respectively.
+The argument <code>thresh_type</code> of this function defines the type of poverty threshold adopted.
+There are three possible choices:</p>
+<ol style="list-style-type: decimal">
+<li><code>abs</code> – fixed and given by the argument thresh_value</li>
+<li><code>relq</code> – a proportion of a quantile fixed by the argument <code>proportion</code> and the quantile is defined by the argument <code>order</code>.</li>
+<li><code>relm</code> – a proportion of the mean fixed the argument <code>proportion</code></li>
+</ol>
+<p>The quantile and the mean involved in the definition of the threshold are estimated for the whole population. When <span class="math inline">\(\gamma=0\)</span> and <span class="math inline">\(\theta= .6*MED\)</span> the measure is equal to the indicator <code>arpr</code> computed by the function <code>svyarpr</code>. The linearization of the FGT(0) is presented in <span class="citation">Berger and Skinner (<label for="tufte-mn-40" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-40" class="margin-toggle">2003<span class="marginnote">Berger, Yves G., and Chris J. Skinner. 2003. <span>“Variance Estimation for a Low Income Proportion.”</span> <em>Journal of the Royal Statistical Society: Series C (Applied Statistics)</em> 52 (4): 457–68. <a href="https://doi.org/10.1111/1467-9876.00417">https://doi.org/10.1111/1467-9876.00417</a>.</span>)</span>.</p>
+<p>Next, we give some examples of the function <code>svyfgt</code> to estimate the values of the FGT poverty index.</p>
+<p>Consider first the poverty threshold fixed (<span class="math inline">\(\gamma=0\)</span>) in the value <span class="math inline">\(10000\)</span>. The headcount ratio (FGT0) is</p>
+<div class="sourceCode" id="cb137"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb137-1"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb137-1" aria-hidden="true" tabindex="-1"></a><span class="fu">svyfgt</span>(<span class="sc">~</span>eqincome, des_eusilc, <span class="at">g=</span><span class="dv">0</span>, <span class="at">abs_thresh=</span><span class="dv">10000</span>)</span></code></pre></div>
+<pre><code>            fgt0     SE
+eqincome 0.11444 0.0027</code></pre>
+<p>The poverty gap ratio (FGT(1)) (<span class="math inline">\(\gamma=1\)</span>) index for the poverty threshold fixed at the same value is</p>
+<div class="sourceCode" id="cb139"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb139-1"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-1" aria-hidden="true" tabindex="-1"></a><span class="fu">svyfgt</span>(<span class="sc">~</span>eqincome, des_eusilc, <span class="at">g=</span><span class="dv">1</span>, <span class="at">abs_thresh=</span><span class="dv">10000</span>)</span></code></pre></div>
+<pre><code>             fgt1     SE
+eqincome 0.032085 0.0011</code></pre>
+<p>To estimate the FGT(0) with the poverty threshold fixed at <span class="math inline">\(0.6* MED\)</span> we fix the argument <code>type_thresh="relq"</code> and use the default values for <code>percent</code> and <code>order</code>:</p>
+<div class="sourceCode" id="cb141"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb141-1"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb141-1" aria-hidden="true" tabindex="-1"></a><span class="fu">svyfgt</span>(<span class="sc">~</span>eqincome, des_eusilc, <span class="at">g=</span><span class="dv">0</span>, <span class="at">type_thresh=</span> <span class="st">&quot;relq&quot;</span>)</span></code></pre></div>
+<pre><code>            fgt0     SE
+eqincome 0.14444 0.0028</code></pre>
+<p>that matches the estimate obtained by</p>
+<div class="sourceCode" id="cb143"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb143-1"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-1" aria-hidden="true" tabindex="-1"></a><span class="fu">svyarpr</span>(<span class="sc">~</span>eqincome, <span class="at">design=</span>des_eusilc, .<span class="dv">5</span>, .<span class="dv">6</span>)</span></code></pre></div>
+<pre><code>            arpr     SE
+eqincome 0.14444 0.0028</code></pre>
+<p>To estimate the poverty gap ratio with the poverty threshold equal to <span class="math inline">\(0.6*MEAN\)</span>, we use:</p>
+<div class="sourceCode" id="cb145"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb145-1"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb145-1" aria-hidden="true" tabindex="-1"></a><span class="fu">svyfgt</span>(<span class="sc">~</span>eqincome, des_eusilc, <span class="at">g=</span><span class="dv">1</span>, <span class="at">type_thresh=</span> <span class="st">&quot;relm&quot;</span>)</span></code></pre></div>
+<pre><code>             fgt1     SE
+eqincome 0.051187 0.0011</code></pre>
+<hr />
+<p><strong>A replication example</strong></p>
+<p>In July 2006, <span class="citation">Jenkins (<label for="tufte-mn-41" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-41" class="margin-toggle">2008<span class="marginnote">Jenkins, Stephen. 2008. <span>“Estimation and Interpretation of Measures of Inequality, Poverty, and Social Welfare Using Stata.”</span> North American Stata Users' Group Meetings 2006. Stata Users Group. <a href="http://EconPapers.repec.org/RePEc:boc:asug06:16">http://EconPapers.repec.org/RePEc:boc:asug06:16</a>.</span>)</span> presented at the North American Stata Users’ Group Meetings on the stata Atkinson Index command. The example below reproduces those statistics.</p>
+<p>In order to match the presentation’s results using the <code>svyfgt</code> function from the convey library, the poverty threshold was considered absolute despite being directly estimated from the survey sample. This effectively treats the variance of the estimated poverty threshold as zero; <code>svyfgt</code> does not account for the uncertainty of the poverty threshold when the level has been stated as absolute with the <code>abs_thresh=</code> parameter. In general, we would instead recommend using either <code>relq</code> or <code>relm</code> in the <code>type_thresh=</code> parameter in order to account for the added uncertainty of the poverty threshold calculation. This example serves only to show that <code>svyfgt</code> behaves properly as compared to other software.</p>
+<p>Load and prepare the same data set:</p>
+<div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb147-1"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load the convey package</span></span>
+<span id="cb147-2"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
+<span id="cb147-3"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb147-4"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-4" aria-hidden="true" tabindex="-1"></a><span class="co"># load the survey library</span></span>
+<span id="cb147-5"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb147-6"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb147-7"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-7" aria-hidden="true" tabindex="-1"></a><span class="co"># load the foreign library</span></span>
+<span id="cb147-8"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(foreign)</span>
+<span id="cb147-9"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb147-10"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-10" aria-hidden="true" tabindex="-1"></a><span class="co"># create a temporary file on the local disk</span></span>
+<span id="cb147-11"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-11" aria-hidden="true" tabindex="-1"></a>tf <span class="ot">&lt;-</span> <span class="fu">tempfile</span>()</span>
+<span id="cb147-12"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb147-13"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-13" aria-hidden="true" tabindex="-1"></a><span class="co"># store the location of the presentation file</span></span>
+<span id="cb147-14"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-14" aria-hidden="true" tabindex="-1"></a>presentation_zip <span class="ot">&lt;-</span> <span class="st">&quot;http://repec.org/nasug2006/nasug2006_jenkins.zip&quot;</span></span>
+<span id="cb147-15"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb147-16"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-16" aria-hidden="true" tabindex="-1"></a><span class="co"># download jenkins&#39; presentation to the temporary file</span></span>
+<span id="cb147-17"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-17" aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>( presentation_zip , tf , <span class="at">mode =</span> <span class="st">&#39;wb&#39;</span> )</span>
+<span id="cb147-18"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb147-19"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-19" aria-hidden="true" tabindex="-1"></a><span class="co"># unzip the contents of the archive</span></span>
+<span id="cb147-20"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-20" aria-hidden="true" tabindex="-1"></a>presentation_files <span class="ot">&lt;-</span> <span class="fu">unzip</span>( tf , <span class="at">exdir =</span> <span class="fu">tempdir</span>() )</span>
+<span id="cb147-21"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb147-22"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-22" aria-hidden="true" tabindex="-1"></a><span class="co"># load the institute for fiscal studies&#39; 1981, 1985, and 1991 data.frame objects</span></span>
+<span id="cb147-23"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-23" aria-hidden="true" tabindex="-1"></a>x81 <span class="ot">&lt;-</span> <span class="fu">read.dta</span>( <span class="fu">grep</span>( <span class="st">&quot;ifs81&quot;</span> , presentation_files , <span class="at">value =</span> <span class="cn">TRUE</span> ) )</span>
+<span id="cb147-24"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-24" aria-hidden="true" tabindex="-1"></a>x85 <span class="ot">&lt;-</span> <span class="fu">read.dta</span>( <span class="fu">grep</span>( <span class="st">&quot;ifs85&quot;</span> , presentation_files , <span class="at">value =</span> <span class="cn">TRUE</span> ) )</span>
+<span id="cb147-25"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-25" aria-hidden="true" tabindex="-1"></a>x91 <span class="ot">&lt;-</span> <span class="fu">read.dta</span>( <span class="fu">grep</span>( <span class="st">&quot;ifs91&quot;</span> , presentation_files , <span class="at">value =</span> <span class="cn">TRUE</span> ) )</span>
+<span id="cb147-26"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb147-27"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-27" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">NOTE</span><span class="co">: we recommend using ?convey::svyarpt rather than this unweighted calculation #</span></span>
+<span id="cb147-28"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb147-29"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-29" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate 60% of the unweighted median income in 1981</span></span>
+<span id="cb147-30"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-30" aria-hidden="true" tabindex="-1"></a>unwtd_arpt81 <span class="ot">&lt;-</span> <span class="fu">quantile</span>( x81<span class="sc">$</span>eybhc0 , <span class="fl">0.5</span> ) <span class="sc">*</span> .<span class="dv">6</span></span>
+<span id="cb147-31"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb147-32"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-32" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate 60% of the unweighted median income in 1985</span></span>
+<span id="cb147-33"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-33" aria-hidden="true" tabindex="-1"></a>unwtd_arpt85 <span class="ot">&lt;-</span> <span class="fu">quantile</span>( x85<span class="sc">$</span>eybhc0 , <span class="fl">0.5</span> ) <span class="sc">*</span> .<span class="dv">6</span></span>
+<span id="cb147-34"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb147-35"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-35" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate 60% of the unweighted median income in 1991</span></span>
+<span id="cb147-36"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-36" aria-hidden="true" tabindex="-1"></a>unwtd_arpt91 <span class="ot">&lt;-</span> <span class="fu">quantile</span>( x91<span class="sc">$</span>eybhc0 , <span class="fl">0.5</span> ) <span class="sc">*</span> .<span class="dv">6</span></span>
+<span id="cb147-37"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb147-38"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-38" aria-hidden="true" tabindex="-1"></a><span class="co"># stack each of these three years of data into a single data.frame</span></span>
+<span id="cb147-39"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb147-39" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rbind</span>( x81 , x85 , x91 )</span></code></pre></div>
+<p>Replicate the author’s survey design statement from stata code..</p>
+<pre><code>. ge poor = (year==1981)*(x &lt; $z_81) + (year==1985)*(x &lt; $z_85) +  (year==1991)*(x &lt; $z_91)
+. * account for clustering within HHs 
+. svyset hrn [pweight = wgt]</code></pre>
+<p>.. into R code:</p>
+<div class="sourceCode" id="cb149"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb149-1"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb149-1" aria-hidden="true" tabindex="-1"></a><span class="co"># initiate a linearized survey design object</span></span>
+<span id="cb149-2"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb149-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">svydesign</span>( <span class="sc">~</span> hrn , <span class="at">data =</span> x , <span class="at">weights =</span> <span class="sc">~</span> wgt )</span>
+<span id="cb149-3"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb149-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb149-4"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb149-4" aria-hidden="true" tabindex="-1"></a><span class="co"># immediately run the `convey_prep` function on the survey design</span></span>
+<span id="cb149-5"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb149-5" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>( y )</span></code></pre></div>
+<p>Replicate the author’s headcount ratio results with stata..</p>
+<pre><code>. svy: mean poor if year == 1981
+(running mean on estimation sample)
+
+Survey: Mean estimation
+
+Number of strata =       1          Number of obs    =    9772
+Number of PSUs   =    7476          Population size  = 5.5e+07
+                                    Design df        =    7475
+
+--------------------------------------------------------------
+             |             Linearized
+             |       Mean   Std. Err.     [95% Conf. Interval]
+-------------+------------------------------------------------
+        poor |   .1410125   .0044859       .132219     .149806
+--------------------------------------------------------------
+
+. svy: mean poor if year == 1985
+(running mean on estimation sample)
+
+Survey: Mean estimation
+
+Number of strata =       1          Number of obs    =    8991
+Number of PSUs   =    6972          Population size  = 5.5e+07
+                                    Design df        =    6971
+
+--------------------------------------------------------------
+             |             Linearized
+             |       Mean   Std. Err.     [95% Conf. Interval]
+-------------+------------------------------------------------
+        poor |    .137645   .0046531      .1285235    .1467665
+--------------------------------------------------------------
+
+. svy: mean poor if year == 1991
+(running mean on estimation sample)
+
+Survey: Mean estimation
+
+Number of strata =       1          Number of obs    =    6468
+Number of PSUs   =    5254          Population size  = 5.6e+07
+                                    Design df        =    5253
+
+--------------------------------------------------------------
+             |             Linearized
+             |       Mean   Std. Err.     [95% Conf. Interval]
+-------------+------------------------------------------------
+        poor |   .2021312   .0062077      .1899615    .2143009
+--------------------------------------------------------------</code></pre>
+<p>..using R code:</p>
+<div class="sourceCode" id="cb151"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb151-1"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-1" aria-hidden="true" tabindex="-1"></a>headcount_81 <span class="ot">&lt;-</span> </span>
+<span id="cb151-2"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">svyfgt</span>( </span>
+<span id="cb151-3"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-3" aria-hidden="true" tabindex="-1"></a>        <span class="sc">~</span> eybhc0 , </span>
+<span id="cb151-4"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-4" aria-hidden="true" tabindex="-1"></a>        <span class="fu">subset</span>( z , year <span class="sc">==</span> <span class="dv">1981</span> ) , </span>
+<span id="cb151-5"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">g =</span> <span class="dv">0</span> , </span>
+<span id="cb151-6"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">abs_thresh =</span> unwtd_arpt81</span>
+<span id="cb151-7"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-7" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb151-8"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb151-9"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-9" aria-hidden="true" tabindex="-1"></a>headcount_81</span></code></pre></div>
+<pre><code>##           fgt0     SE
+## eybhc0 0.14101 0.0045</code></pre>
+<div class="sourceCode" id="cb153"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb153-1"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>( headcount_81 , <span class="at">df =</span> <span class="fu">degf</span>( <span class="fu">subset</span>( z , year <span class="sc">==</span> <span class="dv">1981</span> ) ) )</span></code></pre></div>
+<pre><code>##            2.5 %    97.5 %
+## eybhc0 0.1322193 0.1498057</code></pre>
+<div class="sourceCode" id="cb155"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb155-1"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb155-1" aria-hidden="true" tabindex="-1"></a>headcount_85 <span class="ot">&lt;-</span> </span>
+<span id="cb155-2"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb155-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">svyfgt</span>( </span>
+<span id="cb155-3"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb155-3" aria-hidden="true" tabindex="-1"></a>        <span class="sc">~</span> eybhc0 , </span>
+<span id="cb155-4"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb155-4" aria-hidden="true" tabindex="-1"></a>        <span class="fu">subset</span>( z , year <span class="sc">==</span> <span class="dv">1985</span> ) , </span>
+<span id="cb155-5"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb155-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">g =</span> <span class="dv">0</span> , </span>
+<span id="cb155-6"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb155-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">abs_thresh =</span> unwtd_arpt85 </span>
+<span id="cb155-7"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb155-7" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb155-8"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb155-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb155-9"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb155-9" aria-hidden="true" tabindex="-1"></a>headcount_85</span></code></pre></div>
+<pre><code>##           fgt0     SE
+## eybhc0 0.13764 0.0047</code></pre>
+<div class="sourceCode" id="cb157"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb157-1"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb157-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>( headcount_85 , <span class="at">df =</span> <span class="fu">degf</span>( <span class="fu">subset</span>( z , year <span class="sc">==</span> <span class="dv">1985</span> ) ) )</span></code></pre></div>
+<pre><code>##            2.5 %    97.5 %
+## eybhc0 0.1285239 0.1467661</code></pre>
+<div class="sourceCode" id="cb159"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb159-1"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb159-1" aria-hidden="true" tabindex="-1"></a>headcount_91 <span class="ot">&lt;-</span> </span>
+<span id="cb159-2"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb159-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">svyfgt</span>( </span>
+<span id="cb159-3"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb159-3" aria-hidden="true" tabindex="-1"></a>        <span class="sc">~</span> eybhc0 , </span>
+<span id="cb159-4"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb159-4" aria-hidden="true" tabindex="-1"></a>        <span class="fu">subset</span>( z , year <span class="sc">==</span> <span class="dv">1991</span> ) , </span>
+<span id="cb159-5"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb159-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">g =</span> <span class="dv">0</span> , </span>
+<span id="cb159-6"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb159-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">abs_thresh =</span> unwtd_arpt91 </span>
+<span id="cb159-7"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb159-7" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb159-8"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb159-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb159-9"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb159-9" aria-hidden="true" tabindex="-1"></a>headcount_91</span></code></pre></div>
+<pre><code>##           fgt0     SE
+## eybhc0 0.20213 0.0062</code></pre>
+<div class="sourceCode" id="cb161"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb161-1"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb161-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>( headcount_91 , <span class="at">df =</span> <span class="fu">degf</span>( <span class="fu">subset</span>( z , year <span class="sc">==</span> <span class="dv">1991</span> ) ) )</span></code></pre></div>
+<pre><code>##            2.5 % 97.5 %
+## eybhc0 0.1899624 0.2143</code></pre>
+<p>Confirm this replication applies for the normalized poverty gap as well, comparing stata code..</p>
+<pre><code>. ge ngap = poor*($z_81- x)/$z_81 if year == 1981
+
+. svy: mean ngap if year == 1981
+(running mean on estimation sample)
+
+Survey: Mean estimation
+
+Number of strata =       1          Number of obs    =    9772
+Number of PSUs   =    7476          Population size  = 5.5e+07
+                                    Design df        =    7475
+
+--------------------------------------------------------------
+             |             Linearized
+             |       Mean   Std. Err.     [95% Conf. Interval]
+-------------+------------------------------------------------
+        ngap |   .0271577   .0013502      .0245109    .0298044
+--------------------------------------------------------------</code></pre>
+<p>..to R code:</p>
+<div class="sourceCode" id="cb164"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb164-1"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb164-1" aria-hidden="true" tabindex="-1"></a>norm_pov_81 <span class="ot">&lt;-</span> </span>
+<span id="cb164-2"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb164-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">svyfgt</span>( </span>
+<span id="cb164-3"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb164-3" aria-hidden="true" tabindex="-1"></a>        <span class="sc">~</span> eybhc0 , </span>
+<span id="cb164-4"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb164-4" aria-hidden="true" tabindex="-1"></a>        <span class="fu">subset</span>( z , year <span class="sc">==</span> <span class="dv">1981</span> ) , </span>
+<span id="cb164-5"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb164-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">g =</span> <span class="dv">1</span> , </span>
+<span id="cb164-6"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb164-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">abs_thresh =</span> unwtd_arpt81</span>
+<span id="cb164-7"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb164-7" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb164-8"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb164-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb164-9"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb164-9" aria-hidden="true" tabindex="-1"></a>norm_pov_81</span></code></pre></div>
+<pre><code>##            fgt1     SE
+## eybhc0 0.027158 0.0014</code></pre>
+<div class="sourceCode" id="cb166"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb166-1"><a href="2.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb166-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>( norm_pov_81 , <span class="at">df =</span> <span class="fu">degf</span>( <span class="fu">subset</span>( z , year <span class="sc">==</span> <span class="dv">1981</span> ) ) )</span></code></pre></div>
+<pre><code>##             2.5 %     97.5 %
+## eybhc0 0.02451106 0.02980428</code></pre>
+<p>For additional usage examples of <code>svyfgt</code>, type <code>?convey::svyfgt</code> in the R console.</p>
+</div>
+<p style="text-align: center;">
+<a href="2.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html"><button class="btn btn-default">Previous</button></a>
+<a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html"><button class="btn btn-default">Next</button></a>
+</p>
+</div>
+</div>
+
+
+
+</body>
+</html>

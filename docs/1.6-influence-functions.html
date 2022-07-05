@@ -5,7 +5,7 @@
 <meta charset="utf-8" />
 <meta name="generator" content="pandoc" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="Chapter 3 Inequality Measurement | Poverty and Inequality with Complex Survey Data" />
+<meta property="og:title" content="1.6 Influence Functions | Poverty and Inequality with Complex Survey Data" />
 <meta property="og:type" content="book" />
 
 <meta property="og:description" content="A book about the R convey package" />
@@ -24,7 +24,7 @@ MathJax.Hub.Config({
 
 <meta name="description" content="A book about the R convey package">
 
-<title>Chapter 3 Inequality Measurement | Poverty and Inequality with Complex Survey Data</title>
+<title>1.6 Influence Functions | Poverty and Inequality with Complex Survey Data</title>
 
 <link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte-background.css" rel="stylesheet" />
@@ -177,15 +177,50 @@ div.csl-indent {
 </div>
 <div class="row">
 <div class="col-sm-12">
-<div id="inequality" class="section level1" number="3">
-<h1><span class="header-section-number">Chapter 3</span> Inequality Measurement</h1>
-<p>Another problem faced by societies is inequality. Economic inequality can have several different meanings: income, education, resources, opportunities, wellbeing, etc. Usually, studies on economic inequality focus on income distribution.</p>
-<p>Most inequality data comes from censuses and household surveys. Therefore, in order to produce reliable estimates from this samples, appropriate procedures are necessary.</p>
-<p>This chapter presents brief presentations on inequality measures, also providing replication examples if possible. It starts with an initial attempt to measure the inequality between two groups of a population; then, it presents ideas of overall inequality indices, moving from the quintile share ratio to the Lorenz curve and measures derived from it; then, it discusses the concept of entropy and presents inequality measures based on it. Finally, it ends with a discussion regarding which inequality measure should be used.</p>
+<div id="influence-functions" class="section level2" number="1.6">
+<h2><span class="header-section-number">1.6</span> Influence Functions</h2>
+<p>Some measures of poverty and income concentration are defined by non-differentiable functions so that it is not possible to use Taylor linearization to estimate their variances. An alternative is to use <strong>Influence functions</strong> as described in <span class="citation">Deville (<label for="tufte-mn-9" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-9" class="margin-toggle">1999<span class="marginnote">Deville, Jean-Claude. 1999. <span>“Variance Estimation for Complex Statistics and Estimators: Linearization and Residual Techniques.”</span> <em>Survey Methodology</em> 25 (2): 193–203. <a href="http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf">http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf</a>.</span>)</span> and <span class="citation">Osier (<label for="tufte-mn-10" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-10" class="margin-toggle">2009<span class="marginnote">Osier, Guillaume. 2009. <span>“Variance Estimation for Complex Indicators of Poverty and Inequality.”</span> <em>Journal of the European Survey Research Association</em> 3 (3): 167–95. <a href="http://ojs.ub.uni-konstanz.de/srm/article/view/369">http://ojs.ub.uni-konstanz.de/srm/article/view/369</a>.</span>)</span>. The convey library implements this methodology to work with <code>survey.design</code> objects and also with <code>svyrep.design</code> objects.</p>
+<p>Some examples of these measures are:</p>
+<ul>
+<li><p>At-risk-of-poverty threshold:
+<span class="math inline">\(arpt=.60q_{.50}\)</span> where <span class="math inline">\(q_{.50}\)</span> is the income median;</p></li>
+<li><p>At-risk-of-poverty rate
+<span class="math inline">\(arpr=\frac{\sum_U 1(y_i \leq arpt)}{N}.100\)</span></p></li>
+<li><p>Quintile share ratio</p></li>
+</ul>
+<p><span class="math inline">\(qsr=\frac{\sum_U 1(y_i&gt;q_{.80})}{\sum_U 1(y_i\leq q_{.20})}\)</span></p>
+<ul>
+<li>Gini coefficient
+<span class="math inline">\(1+G=\frac{2\sum_U (r_i-1)y_i}{N\sum_Uy_i}\)</span>
+where <span class="math inline">\(r_i\)</span> is the rank of <span class="math inline">\(y_i\)</span>.</li>
+</ul>
+<p>Note that it is not possible to use Taylor linearization for these measures because they depend on quantiles and the Gini is defined as a function of ranks. This could be done using the approach proposed by Deville (1999) based upon influence functions.</p>
+<p>Let <span class="math inline">\(U\)</span> be a population of size <span class="math inline">\(N\)</span> and <span class="math inline">\(M\)</span> be a measure that allocates mass one to the set composed by one unit, that is <span class="math inline">\(M(i)=M_i= 1\)</span> if <span class="math inline">\(i\in U\)</span> and <span class="math inline">\(M(i)=0\)</span> if <span class="math inline">\(i\notin U\)</span></p>
+<p>Now, a population parameter <span class="math inline">\(\theta\)</span> can be expressed as a functional of <span class="math inline">\(M\)</span>
+<span class="math inline">\(\theta=T(M)\)</span></p>
+<p>Examples of such parameters are:</p>
+<ul>
+<li><p>Total:
+<span class="math inline">\(Y=\sum_Uy_i=\sum_U y_iM_i=\int ydM=T(M)\)</span></p></li>
+<li><p>Ratio of two totals:
+<span class="math inline">\(R=\frac{Y}{X}=\frac{\int y dM}{\int x dM}=T(M)\)</span></p></li>
+<li><p>Cumulative distribution function:
+<span class="math inline">\(F(x)=\frac{\sum_U 1(y_i\leq x)}{N}=\frac{\int 1(y\leq x)dM}{\int{dM}}=T(M)\)</span></p></li>
+</ul>
+<p>To estimate these parameters from the sample, we replace the measure <span class="math inline">\(M\)</span> by the estimated measure <span class="math inline">\(\hat{M}\)</span> defined by: <span class="math inline">\(\hat{M}(i)=\hat{M}_i= w_i\)</span> if <span class="math inline">\(i\in s\)</span> and <span class="math inline">\(\hat{M}(i)=0\)</span> if <span class="math inline">\(i\notin s\)</span>.</p>
+<p>The estimators of the population parameters can then be expressed as functional of the measure <span class="math inline">\(\hat{M}\)</span>.</p>
+<ul>
+<li><p>Total:
+<span class="math inline">\(\hat{Y}=T(\hat{M})=\int yd\hat{M}=\sum_s w_iy_i\)</span></p></li>
+<li><p>Ratio of totals:
+<span class="math inline">\(\hat{R}=T(\hat{M})=\frac{\int y d\hat{M}}{\int x d\hat{M}}=\frac{\sum_s w_iy_i}{\sum_s w_ix_i}\)</span></p></li>
+<li><p>Cumulative distribution function:
+<span class="math inline">\(\hat{F}(x)=T(\hat{M})=\frac{\int 1(y\leq x)d\hat{M}}{\int{d\hat{M}}}=\frac{\sum_s w_i 1(y_i\leq x)}{\sum_s w_i}\)</span></p></li>
+</ul>
 </div>
 <p style="text-align: center;">
-<a href="2.8-clark-hemming-ulph-class-of-poverty-measures-svychu.html"><button class="btn btn-default">Previous</button></a>
-<a href="3.1-the-gender-pay-gap-svygpg.html"><button class="btn btn-default">Next</button></a>
+<a href="1.5-the-variance-estimator.html"><button class="btn btn-default">Previous</button></a>
+<a href="1.7-influence-function-examples.html"><button class="btn btn-default">Next</button></a>
 </p>
 </div>
 </div>
