@@ -4,14 +4,13 @@
 %
 \documentclass[
 ]{book}
+\usepackage{amsmath,amssymb}
 \usepackage{lmodern}
-\usepackage{amsmath}
-\usepackage{ifxetex,ifluatex}
-\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+\usepackage{iftex}
+\ifPDFTeX
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
   \usepackage{textcomp} % provide euro and other symbols
-  \usepackage{amssymb}
 \else % if luatex or xetex
   \usepackage{unicode-math}
   \defaultfontfeatures{Scale=MatchLowercase}
@@ -34,14 +33,6 @@
   \KOMAoptions{parskip=half}}
 \makeatother
 \usepackage{xcolor}
-\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
-\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
-\hypersetup{
-  pdftitle={Poverty and Inequality with Complex Survey Data},
-  pdfauthor={Guilherme Jacob, Anthony Damico, and Djalma Pessoa},
-  hidelinks,
-  pdfcreator={LaTeX via pandoc}}
-\urlstyle{same} % disable monospaced font for URLs
 \usepackage{color}
 \usepackage{fancyvrb}
 \newcommand{\VerbBar}{|}
@@ -82,7 +73,7 @@
 \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
 \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\usepackage{longtable,booktabs}
+\usepackage{longtable,booktabs,array}
 \usepackage{calc} % for calculating minipage widths
 % Correct order of tables after \paragraph or \subparagraph
 \usepackage{etoolbox}
@@ -110,15 +101,24 @@
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{5}
 \usepackage{booktabs}
-\ifluatex
+\ifLuaTeX
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
-\usepackage[]{natbib}
-\bibliographystyle{apalike}
+\usepackage[style=apa,]{biblatex}
+\addbibresource{book.bib}
+\addbibresource{packages.bib}
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Poverty and Inequality with Complex Survey Data},
+  pdfauthor={Guilherme Jacob, Anthony Damico, and Djalma Pessoa},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
 
 \title{Poverty and Inequality with Complex Survey Data}
 \author{Guilherme Jacob, Anthony Damico, and Djalma Pessoa}
-\date{2021-04-05}
+\date{2022-07-08}
 
 \begin{document}
 \maketitle
@@ -130,7 +130,7 @@
 \hypertarget{introduction}{%
 \chapter{Introduction}\label{introduction}}
 
-The R \texttt{convey} library estimates measures of poverty, inequality, and wellbeing. There are two other R libraries covering this subject, \href{https://CRAN.R-project.org/package=vardpoor}{vardpoor} \citep{R-vardpoor} and \href{https://CRAN.R-project.org/package=laeken}{laeken} \citep{R-laeken}, however, only \texttt{convey} integrates seamlessly with the \href{https://CRAN.R-project.org/package=survey}{R survey package} \citep{R-survey-article, R-survey-book, R-survey}.
+The R \texttt{convey} library estimates measures of poverty, inequality, and wellbeing. There are two other R libraries covering this subject, \href{https://CRAN.R-project.org/package=vardpoor}{vardpoor} \autocite{R-vardpoor} and \href{https://CRAN.R-project.org/package=laeken}{laeken} \autocite{R-laeken}, however, only \texttt{convey} integrates seamlessly with the \href{https://CRAN.R-project.org/package=survey}{R survey package} \autocite{R-survey-article,R-survey-book,R-survey}.
 
 \texttt{convey} is free and open-source software that runs inside the \href{https://www.r-project.org/}{R environment for statistical computing}. Anyone can review and propose changes to \href{https://github.com/DjalmaPessoa/convey}{the source code} for this software. Readers are welcome to \href{https://github.com/guilhermejacob/context/}{propose changes to this book} as well.
 
@@ -159,7 +159,7 @@ In order to work with the \texttt{convey} library, you will need to have R runni
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{devtools}\SpecialCharTok{::}\FunctionTok{install\_github}\NormalTok{(}\StringTok{"djalmapessoa/convey"}\NormalTok{)}
+\NormalTok{remotes}\SpecialCharTok{::}\FunctionTok{install\_github}\NormalTok{(}\StringTok{"djalmapessoa/convey"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -190,7 +190,7 @@ Unlike other software, the R \texttt{convey} package does not require that the u
 \hypertarget{usage-examples}{%
 \section{Usage Examples}\label{usage-examples}}
 
-In the following example, we've loaded the data set \texttt{eusilc} from the R library \href{https://CRAN.R-project.org/package=laeken}{laeken} \citep{R-laeken}.
+In the following example, we've loaded the data set \texttt{eusilc} from the R library \href{https://CRAN.R-project.org/package=laeken}{laeken} \autocite{R-laeken}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -341,8 +341,8 @@ It is also possible to deal with missing values by using the argument \texttt{na
 \end{Shaded}
 
 \begin{verbatim}
-       gini SE
-py010n   NA NA
+       gini  SE
+py010n   NA NaN
 \end{verbatim}
 
 \begin{Shaded}
@@ -386,7 +386,7 @@ In what follows, we often use the linearization method as a tool to produce an a
 
 If \(T\) can be expressed as a function of the population totals \(T = g(Y_1, Y_2, \ldots, Y_n)\), and if \(g\) is linear, the estimation of the variance of \(T = g(Y_1, Y_2, \ldots, Y_n)\) is straightforward. If \(g\) is not linear but is a `smooth' function, then it is possible to approximate the variance of \(g(Y_1, Y_2, \ldots, Y_n)\) by the variance of its first order Taylor expansion. For example, we can use Taylor expansion to linearize the ratio of two totals. However, there are situations where Taylor linearization cannot be immediately possible, either because \(T\) cannot be expressed as functions of the population totals, or because \(g\) is not a \texttt{smooth} function. An example is the case where \(T\) is a quantile.
 
-In these cases, it might work an alternative form of linearization of \(T\), by \texttt{Influence\ Function}, as defined in \eqref{eq:lin}, proposed in \citet{deville1999}. Also, it coud be used replication methods such as \texttt{bootstrap} and \texttt{jackknife}.
+In these cases, it might work an alternative form of linearization of \(T\), by \texttt{Influence\ Function}, as defined in \eqref{eq:lin}, proposed in \textcite{deville1999}. Also, it coud be used replication methods such as \texttt{bootstrap} and \texttt{jackknife}.
 
 In the \texttt{convey} library, there are some basic functions that produce the linearized variables needed to measure income concentration and poverty. For example, looking at the income variable in some complex survey dataset, the \texttt{quantile} of that income variable can be linearized by the function \texttt{convey::svyiqalpha} and the sum total below any quantile of the variable is linearized by the function \texttt{convey::svyisq}.
 
@@ -417,7 +417,7 @@ we linearize the \texttt{rmpg}.
 \hypertarget{the-variance-estimator}{%
 \section{The Variance Estimator}\label{the-variance-estimator}}
 
-Using the notation in \citet{osier2009}, the variance of the estimator \(T(\hat{M})\) can approximated by:
+Using the notation in \textcite{osier2009}, the variance of the estimator \(T(\hat{M})\) can approximated by:
 
 \begin{equation}
 Var\left[T(\hat{M})\right]\cong var\left[\sum_s w_i z_i\right]
@@ -438,7 +438,7 @@ This \textbf{derivative} is called \textbf{Influence Function} and was introduce
 \hypertarget{influence-functions}{%
 \section{Influence Functions}\label{influence-functions}}
 
-Some measures of poverty and income concentration are defined by non-differentiable functions so that it is not possible to use Taylor linearization to estimate their variances. An alternative is to use \textbf{Influence functions} as described in \citet{deville1999} and \citet{osier2009}. The convey library implements this methodology to work with \texttt{survey.design} objects and also with \texttt{svyrep.design} objects.
+Some measures of poverty and income concentration are defined by non-differentiable functions so that it is not possible to use Taylor linearization to estimate their variances. An alternative is to use \textbf{Influence functions} as described in \textcite{deville1999} and \textcite{osier2009}. The convey library implements this methodology to work with \texttt{survey.design} objects and also with \texttt{svyrep.design} objects.
 
 Some examples of these measures are:
 
@@ -510,7 +510,7 @@ The estimators of the population parameters can then be expressed as functional 
   \begin{aligned}
   IT_k(M)&=lim_{t\rightarrow 0}\frac{T(M+t\delta_k)-T(M)}{t}\\
   &=lim_{t\rightarrow 0}\frac{\int y.d(M+t\delta_k)-\int y.dM}{t}\\
-  &=lim_{t\rightarrow 0}\frac{\int yd(t\delta_k)}{t}=y_k	
+  &=lim_{t\rightarrow 0}\frac{\int yd(t\delta_k)}{t}=y_k  
   \end{aligned}
   \]
 \item
@@ -571,9 +571,9 @@ where:
 All major functions in the library convey have S3 methods for the classes: \texttt{survey.design}, \texttt{svyrep.design} and \texttt{DBIdesign}. When the argument \texttt{design} is\\
 a survey design with replicate weights created by the library survey, convey uses the method \texttt{svrepdesign}.
 
-Considering the remarks in \citep{W85}, p.~163, concerning the deficiency of the \texttt{Jackknife} method in estimating the variance of \texttt{quantiles}, we adopted the type bootstrap instead.
+Considering the remarks in \autocite{W85}, p.~163, concerning the deficiency of the \texttt{Jackknife} method in estimating the variance of \texttt{quantiles}, we adopted the type bootstrap instead.
 
-The function \texttt{bootVar} from the library \texttt{laeken} , \citep{R-laeken}, also uses the bootstrap
+The function \texttt{bootVar} from the library \texttt{laeken} , \autocite{R-laeken}, also uses the bootstrap
 method to estimate variances.
 
 \hypertarget{decomposition}{%
@@ -581,7 +581,7 @@ method to estimate variances.
 
 Some inequality and multidimensional poverty measures can be decomposed. As of December 2016, the decomposition methods in \texttt{convey} are limited to group decomposition.
 
-For instance, the generalized entropy index can be decomposed into between and within group components. This sheds light on a very simple question: of the overall inequality, how much can be explained by inequalities between groups and within groups? Since this measure is additive decomposable, one can get estimates of the coefficients, SEs and covariance between components. For a more practical approach, see \citep{lima2013}.
+For instance, the generalized entropy index can be decomposed into between and within group components. This sheds light on a very simple question: of the overall inequality, how much can be explained by inequalities between groups and within groups? Since this measure is additive decomposable, one can get estimates of the coefficients, SEs and covariance between components. For a more practical approach, see \autocite{lima2013}.
 
 The Alkire-Foster class of multidimensional poverty indices can be decomposed by dimension and groups. This shows how much each group (or dimension) contribute to the overall poverty.
 
@@ -590,9 +590,9 @@ This technique can help understand where and who is more affected by inequality 
 \hypertarget{poverty}{%
 \chapter{Poverty Indices}\label{poverty}}
 
-Poverty is an issue discussed since long time ago. As \citet{ravallion2016} points out, Aristotle and Confucius discussed ideas about poverty. In fact, Aristotle's ideas influenced Thomas Aquinas, one of the pillars of Western philosophy. Since then, societies changed, modifying the theories of justice underlying the idea of poverty.
+Poverty is an issue discussed since long time ago. As \textcite{ravallion2016} points out, Aristotle and Confucius discussed ideas about poverty. In fact, Aristotle's ideas influenced Thomas Aquinas, one of the pillars of Western philosophy. Since then, societies changed, modifying the theories of justice underlying the idea of poverty.
 
-As the concept and the ethics towards poverty change, so does its measurement. From basic measures like the headcount rate to more complex metrics, such as the FGT index, poverty measurement evolved. Nowadays, poverty measures estimates are calculated using household surveys and censuses \citep{deaton1997}. Yet, only recently the aspects of statistical inference combining such measures and survey designs were explored\footnote{For instance, see \citet{deville1999}, \citet{berger2003}, \citet{bhat2007}, and \citet{osier2009}.}. These advances become even more important given the recent efforts in poverty mapping, an analytical method that combined poverty analysis and small area estimation, like \citet{elbers2003} and \citet{bedi2007}.
+As the concept and the ethics towards poverty change, so does its measurement. From basic measures like the headcount rate to more complex metrics, such as the FGT index, poverty measurement evolved. Nowadays, poverty measures estimates are calculated using household surveys and censuses \autocite{deaton1997}. Yet, only recently the aspects of statistical inference combining such measures and survey designs were explored\footnote{For instance, see \textcite{deville1999}, \textcite{berger2003}, \textcite{bhat2007}, and \textcite{osier2009}.}. These advances become even more important given the recent efforts in poverty mapping, an analytical method that combined poverty analysis and small area estimation, like \textcite{elbers2003} and \textcite{bedi2007}.
 
 The following subsections shows how poverty estimates and their sampling errors can be estimated using simple commands from the \texttt{convey} package.
 
@@ -606,13 +606,13 @@ This measure is defined as \(0.6\) times the median income for the entire popula
 \[
 arpt = 0.6 \times median(y),
 \]
-where, \(y\) is the income variable and \texttt{median} is estimated for the whole population. The details of the linearization of the \texttt{arpt} are discussed by \citet{deville1999} and \citet{osier2009}.
+where, \(y\) is the income variable and \texttt{median} is estimated for the whole population. The details of the linearization of the \texttt{arpt} are discussed by \textcite{deville1999} and \textcite{osier2009}.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \textbf{A replication example}
 
-The R \texttt{vardpoor} package \citep{vardpoor}, created by researchers at the Central Statistical Bureau of Latvia, includes a arpt coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.
+The R \texttt{vardpoor} package \autocite{vardpoor}, created by researchers at the Central Statistical Bureau of Latvia, includes a arpt coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.
 
 Load and prepare the same data set:
 
@@ -642,51 +642,51 @@ Load and prepare the same data set:
 \CommentTok{\# calculate the arpt coefficient}
 \CommentTok{\# using the R vardpoor library}
 \NormalTok{varpoord\_arpt\_calculation }\OtherTok{\textless{}{-}}
-	\FunctionTok{varpoord}\NormalTok{(}
-	
-		\CommentTok{\# analysis variable}
-		\AttributeTok{Y =} \StringTok{"eqincome"}\NormalTok{, }
-		
-		\CommentTok{\# weights variable}
-		\AttributeTok{w\_final =} \StringTok{"rb050"}\NormalTok{,}
-		
-		\CommentTok{\# row number variable}
-		\AttributeTok{ID\_level1 =} \StringTok{"IDd"}\NormalTok{,}
-		
-		\CommentTok{\# row number variable}
-		\AttributeTok{ID\_level2 =} \StringTok{"IDd"}\NormalTok{,}
-		
-		\CommentTok{\# strata variable}
-		\AttributeTok{H =} \StringTok{"db040"}\NormalTok{, }
-		
-		\AttributeTok{N\_h =} \ConstantTok{NULL}\NormalTok{ ,}
-		
-		\CommentTok{\# clustering variable}
-		\AttributeTok{PSU =} \StringTok{"rb030"}\NormalTok{, }
-		
-		\CommentTok{\# data.table}
-		\AttributeTok{dataset =}\NormalTok{ dati, }
-		
-		\CommentTok{\# arpt coefficient function}
-		\AttributeTok{type =} \StringTok{"linarpt"}\NormalTok{,}
-	  
-	  \CommentTok{\# poverty threshold range}
-	  \AttributeTok{order\_quant =}\NormalTok{ 50L ,}
-	  
-		\CommentTok{\# get linearized variable}
-	  \AttributeTok{outp\_lin =} \ConstantTok{TRUE}
-\NormalTok{	)}
+    \FunctionTok{varpoord}\NormalTok{(}
+    
+        \CommentTok{\# analysis variable}
+        \AttributeTok{Y =} \StringTok{"eqincome"}\NormalTok{, }
+        
+        \CommentTok{\# weights variable}
+        \AttributeTok{w\_final =} \StringTok{"rb050"}\NormalTok{,}
+        
+        \CommentTok{\# row number variable}
+        \AttributeTok{ID\_level1 =} \StringTok{"IDd"}\NormalTok{,}
+        
+        \CommentTok{\# row number variable}
+        \AttributeTok{ID\_level2 =} \StringTok{"IDd"}\NormalTok{,}
+        
+        \CommentTok{\# strata variable}
+        \AttributeTok{H =} \StringTok{"db040"}\NormalTok{, }
+        
+        \AttributeTok{N\_h =} \ConstantTok{NULL}\NormalTok{ ,}
+        
+        \CommentTok{\# clustering variable}
+        \AttributeTok{PSU =} \StringTok{"rb030"}\NormalTok{, }
+        
+        \CommentTok{\# data.table}
+        \AttributeTok{dataset =}\NormalTok{ dati, }
+        
+        \CommentTok{\# arpt coefficient function}
+        \AttributeTok{type =} \StringTok{"linarpt"}\NormalTok{,}
+      
+      \CommentTok{\# poverty threshold range}
+      \AttributeTok{order\_quant =}\NormalTok{ 50L ,}
+      
+        \CommentTok{\# get linearized variable}
+      \AttributeTok{outp\_lin =} \ConstantTok{TRUE}
+\NormalTok{    )}
 
 
 \CommentTok{\# construct a survey.design}
 \CommentTok{\# using our recommended setup}
 \NormalTok{des\_eusilc }\OtherTok{\textless{}{-}} 
-	\FunctionTok{svydesign}\NormalTok{( }
-		\AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
-		\AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
-		\AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
-		\AttributeTok{data =}\NormalTok{ eusilc}
-\NormalTok{	)}
+    \FunctionTok{svydesign}\NormalTok{( }
+        \AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
+        \AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
+        \AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
+        \AttributeTok{data =}\NormalTok{ eusilc}
+\NormalTok{    )}
 
 \CommentTok{\# immediately run the convey\_prep function on it}
 \NormalTok{des\_eusilc }\OtherTok{\textless{}{-}} \FunctionTok{convey\_prep}\NormalTok{( des\_eusilc )}
@@ -790,13 +790,13 @@ However, the measures of uncertainty do not line up, because \texttt{library(var
 \CommentTok{\# construct a survey.design}
 \CommentTok{\# with the fpc using the cluster sum}
 \NormalTok{des\_eusilc\_ultimate\_cluster }\OtherTok{\textless{}{-}} 
-	\FunctionTok{svydesign}\NormalTok{( }
-		\AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
-		\AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
-		\AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
-		\AttributeTok{data =}\NormalTok{ eusilc , }
-		\AttributeTok{fpc =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ cluster\_sum }
-\NormalTok{	)}
+    \FunctionTok{svydesign}\NormalTok{( }
+        \AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
+        \AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
+        \AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
+        \AttributeTok{data =}\NormalTok{ eusilc , }
+        \AttributeTok{fpc =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ cluster\_sum }
+\NormalTok{    )}
 
 \CommentTok{\# again, immediately run the convey\_prep function on the \textasciigrave{}survey.design\textasciigrave{}}
 \NormalTok{des\_eusilc\_ultimate\_cluster }\OtherTok{\textless{}{-}} \FunctionTok{convey\_prep}\NormalTok{( des\_eusilc\_ultimate\_cluster )}
@@ -850,13 +850,13 @@ For additional usage examples of \texttt{svyarpt}, type \texttt{?convey::svyarpt
 
 The at-risk-of-poverty rate (ARPR) is the share of persons with an income below the at-risk-of-poverty threshold (\texttt{arpt}). The logic behind this measure is that although most people below the ARPT cannot be considered ``poor'', they are the ones most vulnerable to becoming poor in the event of a negative economic phenomenon.
 
-The ARPR is a composite estimate, taking into account both the sampling error in the proportion itself and that in the ARPT estimate. The details of the linearization of the \texttt{arpr} and are discussed by \citet{deville1999} and \citet{osier2009}.
+The ARPR is a composite estimate, taking into account both the sampling error in the proportion itself and that in the ARPT estimate. The details of the linearization of the \texttt{arpr} and are discussed by \textcite{deville1999} and \textcite{osier2009}.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \textbf{A replication example}
 
-The R \texttt{vardpoor} package \citep{vardpoor}, created by researchers at the Central Statistical Bureau of Latvia, includes a ARPR coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.
+The R \texttt{vardpoor} package \autocite{vardpoor}, created by researchers at the Central Statistical Bureau of Latvia, includes a ARPR coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.
 
 Load and prepare the same data set:
 
@@ -886,52 +886,52 @@ Load and prepare the same data set:
 \CommentTok{\# calculate the arpr coefficient}
 \CommentTok{\# using the R vardpoor library}
 \NormalTok{varpoord\_arpr\_calculation }\OtherTok{\textless{}{-}}
-	\FunctionTok{varpoord}\NormalTok{(}
-	
-		\CommentTok{\# analysis variable}
-		\AttributeTok{Y =} \StringTok{"eqincome"}\NormalTok{, }
-		
-		\CommentTok{\# weights variable}
-		\AttributeTok{w\_final =} \StringTok{"rb050"}\NormalTok{,}
-		
-		\CommentTok{\# row number variable}
-		\AttributeTok{ID\_level1 =} \StringTok{"IDd"}\NormalTok{,}
-		
-		\CommentTok{\# row number variable}
-		\AttributeTok{ID\_level2 =} \StringTok{"IDd"}\NormalTok{,}
-		
-		\CommentTok{\# strata variable}
-		\AttributeTok{H =} \StringTok{"db040"}\NormalTok{, }
-		
-		\AttributeTok{N\_h =} \ConstantTok{NULL}\NormalTok{ ,}
-		
-		\CommentTok{\# clustering variable}
-		\AttributeTok{PSU =} \StringTok{"rb030"}\NormalTok{, }
-		
-		\CommentTok{\# data.table}
-		\AttributeTok{dataset =}\NormalTok{ dati, }
-		
-		\CommentTok{\# arpr coefficient function}
-		\AttributeTok{type =} \StringTok{"linarpr"}\NormalTok{,}
-	  
-	  \CommentTok{\# poverty threshold range}
-	  \AttributeTok{order\_quant =}\NormalTok{ 50L ,}
-	  	  
-	  \CommentTok{\# get linearized variable}
-	  \AttributeTok{outp\_lin =} \ConstantTok{TRUE}
-		
-\NormalTok{	)}
+    \FunctionTok{varpoord}\NormalTok{(}
+    
+        \CommentTok{\# analysis variable}
+        \AttributeTok{Y =} \StringTok{"eqincome"}\NormalTok{, }
+        
+        \CommentTok{\# weights variable}
+        \AttributeTok{w\_final =} \StringTok{"rb050"}\NormalTok{,}
+        
+        \CommentTok{\# row number variable}
+        \AttributeTok{ID\_level1 =} \StringTok{"IDd"}\NormalTok{,}
+        
+        \CommentTok{\# row number variable}
+        \AttributeTok{ID\_level2 =} \StringTok{"IDd"}\NormalTok{,}
+        
+        \CommentTok{\# strata variable}
+        \AttributeTok{H =} \StringTok{"db040"}\NormalTok{, }
+        
+        \AttributeTok{N\_h =} \ConstantTok{NULL}\NormalTok{ ,}
+        
+        \CommentTok{\# clustering variable}
+        \AttributeTok{PSU =} \StringTok{"rb030"}\NormalTok{, }
+        
+        \CommentTok{\# data.table}
+        \AttributeTok{dataset =}\NormalTok{ dati, }
+        
+        \CommentTok{\# arpr coefficient function}
+        \AttributeTok{type =} \StringTok{"linarpr"}\NormalTok{,}
+      
+      \CommentTok{\# poverty threshold range}
+      \AttributeTok{order\_quant =}\NormalTok{ 50L ,}
+          
+      \CommentTok{\# get linearized variable}
+      \AttributeTok{outp\_lin =} \ConstantTok{TRUE}
+        
+\NormalTok{    )}
 
 
 \CommentTok{\# construct a survey.design}
 \CommentTok{\# using our recommended setup}
 \NormalTok{des\_eusilc }\OtherTok{\textless{}{-}} 
-	\FunctionTok{svydesign}\NormalTok{( }
-		\AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
-		\AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
-		\AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
-		\AttributeTok{data =}\NormalTok{ eusilc}
-\NormalTok{	)}
+    \FunctionTok{svydesign}\NormalTok{( }
+        \AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
+        \AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
+        \AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
+        \AttributeTok{data =}\NormalTok{ eusilc}
+\NormalTok{    )}
 
 \CommentTok{\# immediately run the convey\_prep function on it}
 \NormalTok{des\_eusilc }\OtherTok{\textless{}{-}} \FunctionTok{convey\_prep}\NormalTok{( des\_eusilc )}
@@ -1035,13 +1035,13 @@ However, the measures of uncertainty do not line up, because \texttt{library(var
 \CommentTok{\# construct a survey.design}
 \CommentTok{\# with the fpc using the cluster sum}
 \NormalTok{des\_eusilc\_ultimate\_cluster }\OtherTok{\textless{}{-}} 
-	\FunctionTok{svydesign}\NormalTok{( }
-		\AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
-		\AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
-		\AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
-		\AttributeTok{data =}\NormalTok{ eusilc , }
-		\AttributeTok{fpc =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ cluster\_sum }
-\NormalTok{	)}
+    \FunctionTok{svydesign}\NormalTok{( }
+        \AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
+        \AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
+        \AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
+        \AttributeTok{data =}\NormalTok{ eusilc , }
+        \AttributeTok{fpc =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ cluster\_sum }
+\NormalTok{    )}
 
 \CommentTok{\# again, immediately run the convey\_prep function on the \textasciigrave{}survey.design\textasciigrave{}}
 \NormalTok{des\_eusilc\_ultimate\_cluster }\OtherTok{\textless{}{-}} \FunctionTok{convey\_prep}\NormalTok{( des\_eusilc\_ultimate\_cluster )}
@@ -1099,13 +1099,13 @@ The relative median income ratio (rmir) is the ratio of the median income of peo
 rmir = \frac{median\{y_i; age_i >65 \}}{median\{y_i; age_i \leq 65 \}}.
 \]
 
-The details of the linearization of the \texttt{rmir} and are discussed by \citet{deville1999} and \citet{osier2009}.
+The details of the linearization of the \texttt{rmir} and are discussed by \textcite{deville1999} and \textcite{osier2009}.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \textbf{A replication example}
 
-The R \texttt{vardpoor} package \citep{vardpoor}, created by researchers at the Central Statistical Bureau of Latvia, includes a rmir coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.
+The R \texttt{vardpoor} package \autocite{vardpoor}, created by researchers at the Central Statistical Bureau of Latvia, includes a rmir coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.
 
 Load and prepare the same data set:
 
@@ -1135,56 +1135,56 @@ Load and prepare the same data set:
 \CommentTok{\# calculate the rmir coefficient}
 \CommentTok{\# using the R vardpoor library}
 \NormalTok{varpoord\_rmir\_calculation }\OtherTok{\textless{}{-}}
-	\FunctionTok{varpoord}\NormalTok{(}
-	
-		\CommentTok{\# analysis variable}
-		\AttributeTok{Y =} \StringTok{"eqincome"}\NormalTok{, }
-		
-		\CommentTok{\# weights variable}
-		\AttributeTok{w\_final =} \StringTok{"rb050"}\NormalTok{,}
-		
-		\CommentTok{\# row number variable}
-		\AttributeTok{ID\_level1 =} \StringTok{"IDd"}\NormalTok{,}
-		
-		\CommentTok{\# row number variable}
-		\AttributeTok{ID\_level2 =} \StringTok{"IDd"}\NormalTok{,}
-		
-		\CommentTok{\# strata variable}
-		\AttributeTok{H =} \StringTok{"db040"}\NormalTok{, }
-		
-		\AttributeTok{N\_h =} \ConstantTok{NULL}\NormalTok{ ,}
-		
-		\CommentTok{\# clustering variable}
-		\AttributeTok{PSU =} \StringTok{"rb030"}\NormalTok{, }
-		
-		\CommentTok{\# data.table}
-		\AttributeTok{dataset =}\NormalTok{ dati,}
-	  
-	  \CommentTok{\# age variable}
-	  \AttributeTok{age =} \StringTok{"age"}\NormalTok{,}
-		
-		\CommentTok{\# rmir coefficient function}
-		\AttributeTok{type =} \StringTok{"linrmir"}\NormalTok{,}
-	  
-	  \CommentTok{\# poverty threshold range}
-	  \AttributeTok{order\_quant =}\NormalTok{ 50L ,}
-	  
-	  \CommentTok{\# get linearized variable}
-	  \AttributeTok{outp\_lin =} \ConstantTok{TRUE}
-		
-\NormalTok{	)}
+    \FunctionTok{varpoord}\NormalTok{(}
+    
+        \CommentTok{\# analysis variable}
+        \AttributeTok{Y =} \StringTok{"eqincome"}\NormalTok{, }
+        
+        \CommentTok{\# weights variable}
+        \AttributeTok{w\_final =} \StringTok{"rb050"}\NormalTok{,}
+        
+        \CommentTok{\# row number variable}
+        \AttributeTok{ID\_level1 =} \StringTok{"IDd"}\NormalTok{,}
+        
+        \CommentTok{\# row number variable}
+        \AttributeTok{ID\_level2 =} \StringTok{"IDd"}\NormalTok{,}
+        
+        \CommentTok{\# strata variable}
+        \AttributeTok{H =} \StringTok{"db040"}\NormalTok{, }
+        
+        \AttributeTok{N\_h =} \ConstantTok{NULL}\NormalTok{ ,}
+        
+        \CommentTok{\# clustering variable}
+        \AttributeTok{PSU =} \StringTok{"rb030"}\NormalTok{, }
+        
+        \CommentTok{\# data.table}
+        \AttributeTok{dataset =}\NormalTok{ dati,}
+      
+      \CommentTok{\# age variable}
+      \AttributeTok{age =} \StringTok{"age"}\NormalTok{,}
+        
+        \CommentTok{\# rmir coefficient function}
+        \AttributeTok{type =} \StringTok{"linrmir"}\NormalTok{,}
+      
+      \CommentTok{\# poverty threshold range}
+      \AttributeTok{order\_quant =}\NormalTok{ 50L ,}
+      
+      \CommentTok{\# get linearized variable}
+      \AttributeTok{outp\_lin =} \ConstantTok{TRUE}
+        
+\NormalTok{    )}
 
 
 
 \CommentTok{\# construct a survey.design}
 \CommentTok{\# using our recommended setup}
 \NormalTok{des\_eusilc }\OtherTok{\textless{}{-}} 
-	\FunctionTok{svydesign}\NormalTok{( }
-		\AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
-		\AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
-		\AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
-		\AttributeTok{data =}\NormalTok{ eusilc}
-\NormalTok{	)}
+    \FunctionTok{svydesign}\NormalTok{( }
+        \AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
+        \AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
+        \AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
+        \AttributeTok{data =}\NormalTok{ eusilc}
+\NormalTok{    )}
 
 \CommentTok{\# immediately run the convey\_prep function on it}
 \NormalTok{des\_eusilc }\OtherTok{\textless{}{-}} \FunctionTok{convey\_prep}\NormalTok{( des\_eusilc )}
@@ -1288,13 +1288,13 @@ However, the measures of uncertainty do not line up, because \texttt{library(var
 \CommentTok{\# construct a survey.design}
 \CommentTok{\# with the fpc using the cluster sum}
 \NormalTok{des\_eusilc\_ultimate\_cluster }\OtherTok{\textless{}{-}} 
-	\FunctionTok{svydesign}\NormalTok{( }
-		\AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
-		\AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
-		\AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
-		\AttributeTok{data =}\NormalTok{ eusilc , }
-		\AttributeTok{fpc =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ cluster\_sum }
-\NormalTok{	)}
+    \FunctionTok{svydesign}\NormalTok{( }
+        \AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
+        \AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
+        \AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
+        \AttributeTok{data =}\NormalTok{ eusilc , }
+        \AttributeTok{fpc =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ cluster\_sum }
+\NormalTok{    )}
 
 \CommentTok{\# again, immediately run the convey\_prep function on the \textasciigrave{}survey.design\textasciigrave{}}
 \NormalTok{des\_eusilc\_ultimate\_cluster }\OtherTok{\textless{}{-}} \FunctionTok{convey\_prep}\NormalTok{( des\_eusilc\_ultimate\_cluster )}
@@ -1351,13 +1351,13 @@ The relative median poverty gap (\texttt{rmpg}) is the relative difference betwe
 \[
 rmpg = \frac{median\{y_i, y_i<arpt\}-arpt}{arpt}
 \]
-The details of the linearization of the \texttt{rmpg} are discussed by \citet{deville1999} and \citet{osier2009}.
+The details of the linearization of the \texttt{rmpg} are discussed by \textcite{deville1999} and \textcite{osier2009}.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \textbf{A replication example}
 
-The R \texttt{vardpoor} package \citep{vardpoor}, created by researchers at the Central Statistical Bureau of Latvia, includes a rmpg coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.
+The R \texttt{vardpoor} package \autocite{vardpoor}, created by researchers at the Central Statistical Bureau of Latvia, includes a rmpg coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.
 
 Load and prepare the same data set:
 
@@ -1387,53 +1387,53 @@ Load and prepare the same data set:
 \CommentTok{\# calculate the rmpg coefficient}
 \CommentTok{\# using the R vardpoor library}
 \NormalTok{varpoord\_rmpg\_calculation }\OtherTok{\textless{}{-}}
-	\FunctionTok{varpoord}\NormalTok{(}
-	
-		\CommentTok{\# analysis variable}
-		\AttributeTok{Y =} \StringTok{"eqincome"}\NormalTok{, }
-		
-		\CommentTok{\# weights variable}
-		\AttributeTok{w\_final =} \StringTok{"rb050"}\NormalTok{,}
-		
-		\CommentTok{\# row number variable}
-		\AttributeTok{ID\_level1 =} \StringTok{"IDd"}\NormalTok{,}
+    \FunctionTok{varpoord}\NormalTok{(}
+    
+        \CommentTok{\# analysis variable}
+        \AttributeTok{Y =} \StringTok{"eqincome"}\NormalTok{, }
+        
+        \CommentTok{\# weights variable}
+        \AttributeTok{w\_final =} \StringTok{"rb050"}\NormalTok{,}
+        
+        \CommentTok{\# row number variable}
+        \AttributeTok{ID\_level1 =} \StringTok{"IDd"}\NormalTok{,}
 
-		\CommentTok{\# row number variable}
-		\AttributeTok{ID\_level2 =} \StringTok{"IDd"}\NormalTok{,}
-				
-		\CommentTok{\# strata variable}
-		\AttributeTok{H =} \StringTok{"db040"}\NormalTok{, }
-		
-		\AttributeTok{N\_h =} \ConstantTok{NULL}\NormalTok{ ,}
-		
-		\CommentTok{\# clustering variable}
-		\AttributeTok{PSU =} \StringTok{"rb030"}\NormalTok{, }
-		
-		\CommentTok{\# data.table}
-		\AttributeTok{dataset =}\NormalTok{ dati, }
-		
-		\CommentTok{\# rmpg coefficient function}
-		\AttributeTok{type =} \StringTok{"linrmpg"}\NormalTok{,}
-	  
-	  \CommentTok{\# poverty threshold range}
-	  \AttributeTok{order\_quant =}\NormalTok{ 50L ,}
-	  
-	  \CommentTok{\# get linearized variable}
-	  \AttributeTok{outp\_lin =} \ConstantTok{TRUE}
-		
-\NormalTok{	)}
+        \CommentTok{\# row number variable}
+        \AttributeTok{ID\_level2 =} \StringTok{"IDd"}\NormalTok{,}
+                
+        \CommentTok{\# strata variable}
+        \AttributeTok{H =} \StringTok{"db040"}\NormalTok{, }
+        
+        \AttributeTok{N\_h =} \ConstantTok{NULL}\NormalTok{ ,}
+        
+        \CommentTok{\# clustering variable}
+        \AttributeTok{PSU =} \StringTok{"rb030"}\NormalTok{, }
+        
+        \CommentTok{\# data.table}
+        \AttributeTok{dataset =}\NormalTok{ dati, }
+        
+        \CommentTok{\# rmpg coefficient function}
+        \AttributeTok{type =} \StringTok{"linrmpg"}\NormalTok{,}
+      
+      \CommentTok{\# poverty threshold range}
+      \AttributeTok{order\_quant =}\NormalTok{ 50L ,}
+      
+      \CommentTok{\# get linearized variable}
+      \AttributeTok{outp\_lin =} \ConstantTok{TRUE}
+        
+\NormalTok{    )}
 
 
 
 \CommentTok{\# construct a survey.design}
 \CommentTok{\# using our recommended setup}
 \NormalTok{des\_eusilc }\OtherTok{\textless{}{-}} 
-	\FunctionTok{svydesign}\NormalTok{( }
-		\AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
-		\AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
-		\AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
-		\AttributeTok{data =}\NormalTok{ eusilc}
-\NormalTok{	)}
+    \FunctionTok{svydesign}\NormalTok{( }
+        \AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
+        \AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
+        \AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
+        \AttributeTok{data =}\NormalTok{ eusilc}
+\NormalTok{    )}
 
 \CommentTok{\# immediately run the convey\_prep function on it}
 \NormalTok{des\_eusilc }\OtherTok{\textless{}{-}} \FunctionTok{convey\_prep}\NormalTok{( des\_eusilc )}
@@ -1537,13 +1537,13 @@ However, the measures of uncertainty do not line up, because \texttt{library(var
 \CommentTok{\# construct a survey.design}
 \CommentTok{\# with the fpc using the cluster sum}
 \NormalTok{des\_eusilc\_ultimate\_cluster }\OtherTok{\textless{}{-}} 
-	\FunctionTok{svydesign}\NormalTok{( }
-		\AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
-		\AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
-		\AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
-		\AttributeTok{data =}\NormalTok{ eusilc , }
-		\AttributeTok{fpc =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ cluster\_sum }
-\NormalTok{	)}
+    \FunctionTok{svydesign}\NormalTok{( }
+        \AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
+        \AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
+        \AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
+        \AttributeTok{data =}\NormalTok{ eusilc , }
+        \AttributeTok{fpc =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ cluster\_sum }
+\NormalTok{    )}
 
 \CommentTok{\# again, immediately run the convey\_prep function on the \textasciigrave{}survey.design\textasciigrave{}}
 \NormalTok{des\_eusilc\_ultimate\_cluster }\OtherTok{\textless{}{-}} \FunctionTok{convey\_prep}\NormalTok{( des\_eusilc\_ultimate\_cluster )}
@@ -1600,13 +1600,13 @@ Median income below the at-risk-of-poverty- threshold (poormed) is median of inc
 \[
 poormed = median\{y_i; y_i< arpt\}
 \]
-The details of the linearization of the \texttt{poormed} are discussed by \citet{deville1999} and \citet{osier2009}.
+The details of the linearization of the \texttt{poormed} are discussed by \textcite{deville1999} and \textcite{osier2009}.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \textbf{A replication example}
 
-The R \texttt{vardpoor} package \citep{vardpoor}, created by researchers at the Central Statistical Bureau of Latvia, includes a poormed coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.
+The R \texttt{vardpoor} package \autocite{vardpoor}, created by researchers at the Central Statistical Bureau of Latvia, includes a poormed coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.
 
 Load and prepare the same data set:
 
@@ -1636,53 +1636,53 @@ Load and prepare the same data set:
 \CommentTok{\# calculate the poormed coefficient}
 \CommentTok{\# using the R vardpoor library}
 \NormalTok{varpoord\_poormed\_calculation }\OtherTok{\textless{}{-}}
-	\FunctionTok{varpoord}\NormalTok{(}
-	
-		\CommentTok{\# analysis variable}
-		\AttributeTok{Y =} \StringTok{"eqincome"}\NormalTok{, }
-		
-		\CommentTok{\# weights variable}
-		\AttributeTok{w\_final =} \StringTok{"rb050"}\NormalTok{,}
-		
-		\CommentTok{\# row number variable}
-		\AttributeTok{ID\_level1 =} \StringTok{"IDd"}\NormalTok{,}
+    \FunctionTok{varpoord}\NormalTok{(}
+    
+        \CommentTok{\# analysis variable}
+        \AttributeTok{Y =} \StringTok{"eqincome"}\NormalTok{, }
+        
+        \CommentTok{\# weights variable}
+        \AttributeTok{w\_final =} \StringTok{"rb050"}\NormalTok{,}
+        
+        \CommentTok{\# row number variable}
+        \AttributeTok{ID\_level1 =} \StringTok{"IDd"}\NormalTok{,}
 
-		\CommentTok{\# row number variable}
-		\AttributeTok{ID\_level2 =} \StringTok{"IDd"}\NormalTok{,}
-				
-		\CommentTok{\# strata variable}
-		\AttributeTok{H =} \StringTok{"db040"}\NormalTok{, }
-		
-		\AttributeTok{N\_h =} \ConstantTok{NULL}\NormalTok{ ,}
-		
-		\CommentTok{\# clustering variable}
-		\AttributeTok{PSU =} \StringTok{"rb030"}\NormalTok{, }
-		
-		\CommentTok{\# data.table}
-		\AttributeTok{dataset =}\NormalTok{ dati, }
-		
-		\CommentTok{\# poormed coefficient function}
-		\AttributeTok{type =} \StringTok{"linpoormed"}\NormalTok{,}
-	  
-	  \CommentTok{\# poverty threshold range}
-	  \AttributeTok{order\_quant =}\NormalTok{ 50L ,}
-	  
-	  \CommentTok{\# get linearized variable}
-	  \AttributeTok{outp\_lin =} \ConstantTok{TRUE}
-		
-\NormalTok{	)}
+        \CommentTok{\# row number variable}
+        \AttributeTok{ID\_level2 =} \StringTok{"IDd"}\NormalTok{,}
+                
+        \CommentTok{\# strata variable}
+        \AttributeTok{H =} \StringTok{"db040"}\NormalTok{, }
+        
+        \AttributeTok{N\_h =} \ConstantTok{NULL}\NormalTok{ ,}
+        
+        \CommentTok{\# clustering variable}
+        \AttributeTok{PSU =} \StringTok{"rb030"}\NormalTok{, }
+        
+        \CommentTok{\# data.table}
+        \AttributeTok{dataset =}\NormalTok{ dati, }
+        
+        \CommentTok{\# poormed coefficient function}
+        \AttributeTok{type =} \StringTok{"linpoormed"}\NormalTok{,}
+      
+      \CommentTok{\# poverty threshold range}
+      \AttributeTok{order\_quant =}\NormalTok{ 50L ,}
+      
+      \CommentTok{\# get linearized variable}
+      \AttributeTok{outp\_lin =} \ConstantTok{TRUE}
+        
+\NormalTok{    )}
 
 
 
 \CommentTok{\# construct a survey.design}
 \CommentTok{\# using our recommended setup}
 \NormalTok{des\_eusilc }\OtherTok{\textless{}{-}} 
-	\FunctionTok{svydesign}\NormalTok{( }
-		\AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
-		\AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
-		\AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
-		\AttributeTok{data =}\NormalTok{ eusilc}
-\NormalTok{	)}
+    \FunctionTok{svydesign}\NormalTok{( }
+        \AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
+        \AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
+        \AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
+        \AttributeTok{data =}\NormalTok{ eusilc}
+\NormalTok{    )}
 
 \CommentTok{\# immediately run the convey\_prep function on it}
 \NormalTok{des\_eusilc }\OtherTok{\textless{}{-}} \FunctionTok{convey\_prep}\NormalTok{( des\_eusilc )}
@@ -1786,13 +1786,13 @@ However, the measures of uncertainty do not line up, because \texttt{library(var
 \CommentTok{\# construct a survey.design}
 \CommentTok{\# with the fpc using the cluster sum}
 \NormalTok{des\_eusilc\_ultimate\_cluster }\OtherTok{\textless{}{-}} 
-	\FunctionTok{svydesign}\NormalTok{( }
-		\AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
-		\AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
-		\AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
-		\AttributeTok{data =}\NormalTok{ eusilc , }
-		\AttributeTok{fpc =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ cluster\_sum }
-\NormalTok{	)}
+    \FunctionTok{svydesign}\NormalTok{( }
+        \AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
+        \AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
+        \AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
+        \AttributeTok{data =}\NormalTok{ eusilc , }
+        \AttributeTok{fpc =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ cluster\_sum }
+\NormalTok{    )}
 
 \CommentTok{\# again, immediately run the convey\_prep function on the \textasciigrave{}survey.design\textasciigrave{}}
 \NormalTok{des\_eusilc\_ultimate\_cluster }\OtherTok{\textless{}{-}} \FunctionTok{convey\_prep}\NormalTok{( des\_eusilc\_ultimate\_cluster )}
@@ -1844,7 +1844,7 @@ For additional usage examples of \texttt{svypoormed}, type \texttt{?convey::svyp
 \hypertarget{foster-greer-thorbecke-class-svyfgt-svyfgtdec}{%
 \section{Foster-Greer-Thorbecke class (svyfgt, svyfgtdec)}\label{foster-greer-thorbecke-class-svyfgt-svyfgtdec}}
 
-\citet{foster1984} proposed a family of indicators to measure poverty. This class of \(FGT\) measures, can be defined as
+\textcite{foster1984} proposed a family of indicators to measure poverty. This class of \(FGT\) measures, can be defined as
 
 \[
 p=\frac{1}{N}\sum_{k\in U}h(y_{k},\theta ), 
@@ -1861,7 +1861,7 @@ where: \(\theta\) is the poverty threshold; \(\delta\) the indicator function th
 
 If \(\gamma =0\), the FGT(0) equals the poverty headcount ratio, which accounts for the spread of poverty. If \(\gamma =1\), FGT(1) is the mean of the normalized income shortfall of the poor. By doing so, the measure takes into account both the spread and the intensity of poverty. When \(\gamma =2\), the relative weight of larger shortfalls increases even more, which yields a measure that accounts for poverty severity, i.e., the inequality among the poor. This way, a transfer from a poor person to an even poorer person would reduce the FGT(2).
 
-Although \citet{foster1984} already presented a decomposition for the FGT(2) index, \citet{aristondo2010} provided a general formula that decomposes the FGT(\(\gamma\)) for any \(\gamma \geqslant 2\). Put simply, any such FGT(\(\gamma\)) index can be seen as function of the headcount ratio, the average normalized income gap among the poor and a generalized entropy index of the normalized income gaps among poor. In mathematical terms,
+Although \textcite{foster1984} already presented a decomposition for the FGT(2) index, \textcite{aristondo2010} provided a general formula that decomposes the FGT(\(\gamma\)) for any \(\gamma \geqslant 2\). Put simply, any such FGT(\(\gamma\)) index can be seen as function of the headcount ratio, the average normalized income gap among the poor and a generalized entropy index of the normalized income gaps among poor. In mathematical terms,
 
 \[
 FGT_\gamma = FGT_0 \cdot I^\gamma \cdot \big[ 1 + \big( \gamma^2 -\gamma \big) GEI_\gamma^* \big] , \text{ } \gamma \geq 2
@@ -1886,7 +1886,7 @@ There are three possible choices:
   \texttt{relm} -- a proportion of the mean fixed the argument \texttt{proportion}
 \end{enumerate}
 
-The quantile and the mean involved in the definition of the threshold are estimated for the whole population. When \(\gamma=0\) and \(\theta= .6*MED\) the measure is equal to the indicator \texttt{arpr} computed by the function \texttt{svyarpr}. The linearization of the FGT(0) is presented in \citet{berger2003}.
+The quantile and the mean involved in the definition of the threshold are estimated for the whole population. When \(\gamma=0\) and \(\theta= .6*MED\) the measure is equal to the indicator \texttt{arpr} computed by the function \texttt{svyarpr}. The linearization of the FGT(0) is presented in \textcite{berger2003}.
 
 Next, we give some examples of the function \texttt{svyfgt} to estimate the values of the FGT poverty index.
 
@@ -1959,7 +1959,7 @@ eqincome 0.051187 0.0011
 
 \textbf{A replication example}
 
-In July 2006, \citet{jenkins2006} presented at the North American Stata Users' Group Meetings on the stata Atkinson Index command. The example below reproduces those statistics.
+In July 2006, \textcite{jenkins2006} presented at the North American Stata Users' Group Meetings on the stata Atkinson Index command. The example below reproduces those statistics.
 
 In order to match the presentation's results using the \texttt{svyfgt} function from the convey library, the poverty threshold was considered absolute despite being directly estimated from the survey sample. This effectively treats the variance of the estimated poverty threshold as zero; \texttt{svyfgt} does not account for the uncertainty of the poverty threshold when the level has been stated as absolute with the \texttt{abs\_thresh=} parameter. In general, we would instead recommend using either \texttt{relq} or \texttt{relm} in the \texttt{type\_thresh=} parameter in order to account for the added uncertainty of the poverty threshold calculation. This example serves only to show that \texttt{svyfgt} behaves properly as compared to other software.
 
@@ -2086,12 +2086,12 @@ Number of PSUs   =    5254          Population size  = 5.6e+07
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{headcount\_81 }\OtherTok{\textless{}{-}} 
-	\FunctionTok{svyfgt}\NormalTok{( }
-		\SpecialCharTok{\textasciitilde{}}\NormalTok{ eybhc0 , }
-		\FunctionTok{subset}\NormalTok{( z , year }\SpecialCharTok{==} \DecValTok{1981}\NormalTok{ ) , }
-		\AttributeTok{g =} \DecValTok{0}\NormalTok{ , }
-		\AttributeTok{abs\_thresh =}\NormalTok{ unwtd\_arpt81}
-\NormalTok{	)}
+    \FunctionTok{svyfgt}\NormalTok{( }
+        \SpecialCharTok{\textasciitilde{}}\NormalTok{ eybhc0 , }
+        \FunctionTok{subset}\NormalTok{( z , year }\SpecialCharTok{==} \DecValTok{1981}\NormalTok{ ) , }
+        \AttributeTok{g =} \DecValTok{0}\NormalTok{ , }
+        \AttributeTok{abs\_thresh =}\NormalTok{ unwtd\_arpt81}
+\NormalTok{    )}
 
 \NormalTok{headcount\_81}
 \end{Highlighting}
@@ -2116,13 +2116,13 @@ Number of PSUs   =    5254          Population size  = 5.6e+07
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{headcount\_85 }\OtherTok{\textless{}{-}} 
-	\FunctionTok{svyfgt}\NormalTok{( }
-		\SpecialCharTok{\textasciitilde{}}\NormalTok{ eybhc0 , }
-		\FunctionTok{subset}\NormalTok{( z , year }\SpecialCharTok{==} \DecValTok{1985}\NormalTok{ ) , }
-		\AttributeTok{g =} \DecValTok{0}\NormalTok{ , }
-		\AttributeTok{abs\_thresh =}\NormalTok{ unwtd\_arpt85 }
-\NormalTok{	)}
-	
+    \FunctionTok{svyfgt}\NormalTok{( }
+        \SpecialCharTok{\textasciitilde{}}\NormalTok{ eybhc0 , }
+        \FunctionTok{subset}\NormalTok{( z , year }\SpecialCharTok{==} \DecValTok{1985}\NormalTok{ ) , }
+        \AttributeTok{g =} \DecValTok{0}\NormalTok{ , }
+        \AttributeTok{abs\_thresh =}\NormalTok{ unwtd\_arpt85 }
+\NormalTok{    )}
+    
 \NormalTok{headcount\_85}
 \end{Highlighting}
 \end{Shaded}
@@ -2146,12 +2146,12 @@ Number of PSUs   =    5254          Population size  = 5.6e+07
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{headcount\_91 }\OtherTok{\textless{}{-}} 
-	\FunctionTok{svyfgt}\NormalTok{( }
-		\SpecialCharTok{\textasciitilde{}}\NormalTok{ eybhc0 , }
-		\FunctionTok{subset}\NormalTok{( z , year }\SpecialCharTok{==} \DecValTok{1991}\NormalTok{ ) , }
-		\AttributeTok{g =} \DecValTok{0}\NormalTok{ , }
-		\AttributeTok{abs\_thresh =}\NormalTok{ unwtd\_arpt91 }
-\NormalTok{	)}
+    \FunctionTok{svyfgt}\NormalTok{( }
+        \SpecialCharTok{\textasciitilde{}}\NormalTok{ eybhc0 , }
+        \FunctionTok{subset}\NormalTok{( z , year }\SpecialCharTok{==} \DecValTok{1991}\NormalTok{ ) , }
+        \AttributeTok{g =} \DecValTok{0}\NormalTok{ , }
+        \AttributeTok{abs\_thresh =}\NormalTok{ unwtd\_arpt91 }
+\NormalTok{    )}
 
 \NormalTok{headcount\_91}
 \end{Highlighting}
@@ -2200,13 +2200,13 @@ Number of PSUs   =    7476          Population size  = 5.5e+07
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{norm\_pov\_81 }\OtherTok{\textless{}{-}} 
-	\FunctionTok{svyfgt}\NormalTok{( }
-		\SpecialCharTok{\textasciitilde{}}\NormalTok{ eybhc0 , }
-		\FunctionTok{subset}\NormalTok{( z , year }\SpecialCharTok{==} \DecValTok{1981}\NormalTok{ ) , }
-		\AttributeTok{g =} \DecValTok{1}\NormalTok{ , }
-		\AttributeTok{abs\_thresh =}\NormalTok{ unwtd\_arpt81}
-\NormalTok{	)}
-	
+    \FunctionTok{svyfgt}\NormalTok{( }
+        \SpecialCharTok{\textasciitilde{}}\NormalTok{ eybhc0 , }
+        \FunctionTok{subset}\NormalTok{( z , year }\SpecialCharTok{==} \DecValTok{1981}\NormalTok{ ) , }
+        \AttributeTok{g =} \DecValTok{1}\NormalTok{ , }
+        \AttributeTok{abs\_thresh =}\NormalTok{ unwtd\_arpt81}
+\NormalTok{    )}
+    
 \NormalTok{norm\_pov\_81}
 \end{Highlighting}
 \end{Shaded}
@@ -2232,19 +2232,19 @@ For additional usage examples of \texttt{svyfgt}, type \texttt{?convey::svyfgt} 
 \hypertarget{watts-poverty-measure-svywatts-svywattsdec}{%
 \section{Watts poverty measure (svywatts, svywattsdec)}\label{watts-poverty-measure-svywatts-svywattsdec}}
 
-The measure proposed in \citet{watts1968} satisfies a number of desirable poverty measurement axioms and is known to be one of the first distribution-sensitive poverty measures, as noted by \citet{haughton2009}. It is defined as
+The measure proposed in \textcite{watts1968} satisfies a number of desirable poverty measurement axioms and is known to be one of the first distribution-sensitive poverty measures, as noted by \textcite{haughton2009}. It is defined as
 
 \[
 Watts = \frac{1}{N} \sum_{i \in U} \log{ \bigg( \frac{y_i}{\theta} \bigg) \delta ( y_i \leqslant \theta) }.
 \]
 
-\citet{murdoch1998} points out that the Watts poverty index can provide an estimate of the expected time to exit poverty. Given the expected growth rate of income per capita among the poor, \(g\), the expected time taken to exit poverty \(T_\theta\) would be
+\textcite{murdoch1998} points out that the Watts poverty index can provide an estimate of the expected time to exit poverty. Given the expected growth rate of income per capita among the poor, \(g\), the expected time taken to exit poverty \(T_\theta\) would be
 
 \[
 T_\theta = \frac{Watts}{g}.
 \]
 
-The Watts poverty index also has interesting decomposition properties. \citet{blackburn1989} proposed a decomposition for the Watts poverty index, rewriting it in terms of the headcount ratio, the Watts poverty gap ratio and the mean log deviaton of poor incomes\footnote{The mean log deviation (also known as Theil-L or Bourguignon-Theil index) is an inequality measure of the generalized entropy class. The family of generalized entropy indices is discussed in the next chapter.}. Mathematically,
+The Watts poverty index also has interesting decomposition properties. \textcite{blackburn1989} proposed a decomposition for the Watts poverty index, rewriting it in terms of the headcount ratio, the Watts poverty gap ratio and the mean log deviaton of poor incomes\footnote{The mean log deviation (also known as Theil-L or Bourguignon-Theil index) is an inequality measure of the generalized entropy class. The family of generalized entropy indices is discussed in the next chapter.}. Mathematically,
 
 \[
 Watts = FGT_0 \big( I_w + L_* \big)
@@ -2261,21 +2261,7 @@ T_\theta &= \frac{Watts}{g} \\
 \end{aligned}
 \]
 
-As \citet{murdoch1998} points out, if the income among the poor is equally distributed (i.e., \(L_*=0\)), the time taken to exit poverty is simply \(FGT_0 I_w / g\). Therefore, \(FGT_0 L_* / g\) can be seen as the additional time needed to exit poverty as a result of the inequality among the poor.
-
-\hypertarget{clark-hemming-ulph-class-of-poverty-measures-svychu}{%
-\section{Clark-Hemming-Ulph class of poverty measures (svychu)}\label{clark-hemming-ulph-class-of-poverty-measures-svychu}}
-
-\citet{clark1981} proposes two classes of distribution-sensitive poverty measures. Yet, the poverty measurement literature focuses on the second class\footnote{See \citet{atkinson1987} and \citet{verma2011}, for instance.}, expressed as
-
-\[
-CHU_\alpha = \begin{cases}
-    \frac{1}{\alpha N} \sum_{i \in U} \big[ 1-(y_i/\theta)^\alpha \big] \cdot \delta ( y_i \leqslant \theta ) , & \alpha \leqslant 1 , \alpha \neq 0 \\
-    1 - \bigg( \prod_{i \in U} y_i^{\delta ( y_i \leqslant \theta )} \bigg)^{1/N} \bigg/ \theta , &  \alpha = 0
-\end{cases}
-\]
-
-As an special case, \(CHU_0 = 1 - \exp{(-Watts)}\). The \(\alpha\) parameter defines the sensivity towards regressive income transfers among the poor, such that the lower its value, larger is the regressive transfer impact on the index. When \(\alpha \rightarrow 1\), \(CHU_1 = FGT_0 \cdot I\), a measure insensitive to regressive income transfers among the poor.
+As \textcite{murdoch1998} points out, if the income among the poor is equally distributed (i.e., \(L_*=0\)), the time taken to exit poverty is simply \(FGT_0 I_w / g\). Therefore, \(FGT_0 L_* / g\) can be seen as the additional time needed to exit poverty as a result of the inequality among the poor.
 
 \hypertarget{inequality}{%
 \chapter{Inequality Measurement}\label{inequality}}
@@ -2299,13 +2285,13 @@ which is precisely the estimator used in the package. As we can see from the for
 
 We can also develop a more straightforward idea: for every \$1 raise in men's hourly earnings, women's hourly earnings are expected to increase \$\((1-GPG)\). For instance, assuming \(GPG = 0.8\), for every \$1.00 increase in men's average hourly earnings, women's hourly earnings would increase only \$0.20.
 
-The details of the linearization of the \texttt{GPG} are discussed by \citet{deville1999} and \citet{osier2009}.
+The details of the linearization of the \texttt{GPG} are discussed by \textcite{deville1999} and \textcite{osier2009}.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \textbf{A replication example}
 
-The R \texttt{vardpoor} package \citep{vardpoor}, created by researchers at the Central Statistical Bureau of Latvia, includes a gpg coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.
+The R \texttt{vardpoor} package \autocite{vardpoor}, created by researchers at the Central Statistical Bureau of Latvia, includes a gpg coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.
 
 Load and prepare the same data set:
 
@@ -2338,55 +2324,55 @@ Load and prepare the same data set:
 \CommentTok{\# calculate the gpg coefficient}
 \CommentTok{\# using the R vardpoor library}
 \NormalTok{varpoord\_gpg\_calculation }\OtherTok{\textless{}{-}}
-	\FunctionTok{varpoord}\NormalTok{(}
-	
-		\CommentTok{\# analysis variable}
-		\AttributeTok{Y =} \StringTok{"eqincome"}\NormalTok{, }
-		
-		\CommentTok{\# weights variable}
-		\AttributeTok{w\_final =} \StringTok{"rb050"}\NormalTok{,}
-		
-		\CommentTok{\# row number variable}
-		\AttributeTok{ID\_level1 =} \StringTok{"IDd"}\NormalTok{,}
-		
-		\CommentTok{\# row number variable}
-		\AttributeTok{ID\_level2 =} \StringTok{"IDd"}\NormalTok{,}
-		
-		\CommentTok{\# strata variable}
-		\AttributeTok{H =} \StringTok{"db040"}\NormalTok{, }
-		
-		\AttributeTok{N\_h =} \ConstantTok{NULL}\NormalTok{ ,}
-		
-		\CommentTok{\# clustering variable}
-		\AttributeTok{PSU =} \StringTok{"rb030"}\NormalTok{, }
-		
-		\CommentTok{\# data.table}
-		\AttributeTok{dataset =}\NormalTok{ dati, }
-		
-		\CommentTok{\# gpg coefficient function}
-		\AttributeTok{type =} \StringTok{"lingpg"}\NormalTok{ ,}
-		
-		\CommentTok{\# gender variable}
-		\AttributeTok{gender =} \StringTok{"one\_two"}\NormalTok{,}
-	  
-	  \CommentTok{\# poverty threshold range}
-	  \AttributeTok{order\_quant =}\NormalTok{ 50L ,}
-	  
-	  \CommentTok{\# get linearized variable}
-	  \AttributeTok{outp\_lin =} \ConstantTok{TRUE}
-\NormalTok{	)}
+    \FunctionTok{varpoord}\NormalTok{(}
+    
+        \CommentTok{\# analysis variable}
+        \AttributeTok{Y =} \StringTok{"eqincome"}\NormalTok{, }
+        
+        \CommentTok{\# weights variable}
+        \AttributeTok{w\_final =} \StringTok{"rb050"}\NormalTok{,}
+        
+        \CommentTok{\# row number variable}
+        \AttributeTok{ID\_level1 =} \StringTok{"IDd"}\NormalTok{,}
+        
+        \CommentTok{\# row number variable}
+        \AttributeTok{ID\_level2 =} \StringTok{"IDd"}\NormalTok{,}
+        
+        \CommentTok{\# strata variable}
+        \AttributeTok{H =} \StringTok{"db040"}\NormalTok{, }
+        
+        \AttributeTok{N\_h =} \ConstantTok{NULL}\NormalTok{ ,}
+        
+        \CommentTok{\# clustering variable}
+        \AttributeTok{PSU =} \StringTok{"rb030"}\NormalTok{, }
+        
+        \CommentTok{\# data.table}
+        \AttributeTok{dataset =}\NormalTok{ dati, }
+        
+        \CommentTok{\# gpg coefficient function}
+        \AttributeTok{type =} \StringTok{"lingpg"}\NormalTok{ ,}
+        
+        \CommentTok{\# gender variable}
+        \AttributeTok{gender =} \StringTok{"one\_two"}\NormalTok{,}
+      
+      \CommentTok{\# poverty threshold range}
+      \AttributeTok{order\_quant =}\NormalTok{ 50L ,}
+      
+      \CommentTok{\# get linearized variable}
+      \AttributeTok{outp\_lin =} \ConstantTok{TRUE}
+\NormalTok{    )}
 
 
 
 \CommentTok{\# construct a survey.design}
 \CommentTok{\# using our recommended setup}
 \NormalTok{des\_eusilc }\OtherTok{\textless{}{-}} 
-	\FunctionTok{svydesign}\NormalTok{( }
-		\AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
-		\AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
-		\AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
-		\AttributeTok{data =}\NormalTok{ eusilc}
-\NormalTok{	)}
+    \FunctionTok{svydesign}\NormalTok{( }
+        \AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
+        \AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
+        \AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
+        \AttributeTok{data =}\NormalTok{ eusilc}
+\NormalTok{    )}
 
 \CommentTok{\# immediately run the convey\_prep function on it}
 \NormalTok{des\_eusilc }\OtherTok{\textless{}{-}} \FunctionTok{convey\_prep}\NormalTok{( des\_eusilc )}
@@ -2490,13 +2476,13 @@ However, the measures of uncertainty do not line up, because \texttt{library(var
 \CommentTok{\# construct a survey.design}
 \CommentTok{\# with the fpc using the cluster sum}
 \NormalTok{des\_eusilc\_ultimate\_cluster }\OtherTok{\textless{}{-}} 
-	\FunctionTok{svydesign}\NormalTok{( }
-		\AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
-		\AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
-		\AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
-		\AttributeTok{data =}\NormalTok{ eusilc , }
-		\AttributeTok{fpc =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ cluster\_sum }
-\NormalTok{	)}
+    \FunctionTok{svydesign}\NormalTok{( }
+        \AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
+        \AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
+        \AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
+        \AttributeTok{data =}\NormalTok{ eusilc , }
+        \AttributeTok{fpc =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ cluster\_sum }
+\NormalTok{    )}
 
 \CommentTok{\# again, immediately run the convey\_prep function on the \textasciigrave{}survey.design\textasciigrave{}}
 \NormalTok{des\_eusilc\_ultimate\_cluster }\OtherTok{\textless{}{-}} \FunctionTok{convey\_prep}\NormalTok{( des\_eusilc\_ultimate\_cluster )}
@@ -2552,15 +2538,15 @@ Unlike the previous measure, the quintile share ratio is an inequality measure i
 
 In plain terms, it expresses how many times the wealthier part of the population are richer than the poorest part. For instance, a \(QSR = 4\) implies that the upper class owns 4 times as much of the total income as the poor.
 
-The quintile share ratio can be modified to a more general function of fractile share ratios. For instance, \citet{cobham2015} presents interesting arguments for using the Palma index, defined as the ratio between the share of the 10\% richest over the share held by the poorest 40\%.
+The quintile share ratio can be modified to a more general function of fractile share ratios. For instance, \textcite{cobham2015} presents interesting arguments for using the Palma index, defined as the ratio between the share of the 10\% richest over the share held by the poorest 40\%.
 
-The details of the linearization of the \texttt{QSR} are discussed by \citet{deville1999} and \citet{osier2009}.
+The details of the linearization of the \texttt{QSR} are discussed by \textcite{deville1999} and \textcite{osier2009}.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \textbf{A replication example}
 
-The R \texttt{vardpoor} package \citep{vardpoor}, created by researchers at the Central Statistical Bureau of Latvia, includes a qsr coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.
+The R \texttt{vardpoor} package \autocite{vardpoor}, created by researchers at the Central Statistical Bureau of Latvia, includes a qsr coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.
 
 Load and prepare the same data set:
 
@@ -2590,53 +2576,53 @@ Load and prepare the same data set:
 \CommentTok{\# calculate the qsr coefficient}
 \CommentTok{\# using the R vardpoor library}
 \NormalTok{varpoord\_qsr\_calculation }\OtherTok{\textless{}{-}}
-	\FunctionTok{varpoord}\NormalTok{(}
-	
-		\CommentTok{\# analysis variable}
-		\AttributeTok{Y =} \StringTok{"eqincome"}\NormalTok{, }
-		
-		\CommentTok{\# weights variable}
-		\AttributeTok{w\_final =} \StringTok{"rb050"}\NormalTok{,}
-		
-		\CommentTok{\# row number variable}
-		\AttributeTok{ID\_level1 =} \StringTok{"IDd"}\NormalTok{,}
-		
-		\CommentTok{\# row number variable}
-		\AttributeTok{ID\_level2 =} \StringTok{"IDd"}\NormalTok{,}
-		
-		\CommentTok{\# strata variable}
-		\AttributeTok{H =} \StringTok{"db040"}\NormalTok{, }
-		
-		\AttributeTok{N\_h =} \ConstantTok{NULL}\NormalTok{ ,}
-		
-		\CommentTok{\# clustering variable}
-		\AttributeTok{PSU =} \StringTok{"rb030"}\NormalTok{, }
-		
-		\CommentTok{\# data.table}
-		\AttributeTok{dataset =}\NormalTok{ dati, }
-		
-		\CommentTok{\# qsr coefficient function}
-		\AttributeTok{type =} \StringTok{"linqsr"}\NormalTok{,}
-	  
-	  \CommentTok{\# poverty threshold range}
-	  \AttributeTok{order\_quant =}\NormalTok{ 50L ,}
-	  
-	  \CommentTok{\# get linearized variable}
-	  \AttributeTok{outp\_lin =} \ConstantTok{TRUE}
-		
-\NormalTok{	)}
+    \FunctionTok{varpoord}\NormalTok{(}
+    
+        \CommentTok{\# analysis variable}
+        \AttributeTok{Y =} \StringTok{"eqincome"}\NormalTok{, }
+        
+        \CommentTok{\# weights variable}
+        \AttributeTok{w\_final =} \StringTok{"rb050"}\NormalTok{,}
+        
+        \CommentTok{\# row number variable}
+        \AttributeTok{ID\_level1 =} \StringTok{"IDd"}\NormalTok{,}
+        
+        \CommentTok{\# row number variable}
+        \AttributeTok{ID\_level2 =} \StringTok{"IDd"}\NormalTok{,}
+        
+        \CommentTok{\# strata variable}
+        \AttributeTok{H =} \StringTok{"db040"}\NormalTok{, }
+        
+        \AttributeTok{N\_h =} \ConstantTok{NULL}\NormalTok{ ,}
+        
+        \CommentTok{\# clustering variable}
+        \AttributeTok{PSU =} \StringTok{"rb030"}\NormalTok{, }
+        
+        \CommentTok{\# data.table}
+        \AttributeTok{dataset =}\NormalTok{ dati, }
+        
+        \CommentTok{\# qsr coefficient function}
+        \AttributeTok{type =} \StringTok{"linqsr"}\NormalTok{,}
+      
+      \CommentTok{\# poverty threshold range}
+      \AttributeTok{order\_quant =}\NormalTok{ 50L ,}
+      
+      \CommentTok{\# get linearized variable}
+      \AttributeTok{outp\_lin =} \ConstantTok{TRUE}
+        
+\NormalTok{    )}
 
 
 
 \CommentTok{\# construct a survey.design}
 \CommentTok{\# using our recommended setup}
 \NormalTok{des\_eusilc }\OtherTok{\textless{}{-}} 
-	\FunctionTok{svydesign}\NormalTok{( }
-		\AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
-		\AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
-		\AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
-		\AttributeTok{data =}\NormalTok{ eusilc}
-\NormalTok{	)}
+    \FunctionTok{svydesign}\NormalTok{( }
+        \AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
+        \AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
+        \AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
+        \AttributeTok{data =}\NormalTok{ eusilc}
+\NormalTok{    )}
 
 \CommentTok{\# immediately run the convey\_prep function on it}
 \NormalTok{des\_eusilc }\OtherTok{\textless{}{-}} \FunctionTok{convey\_prep}\NormalTok{( des\_eusilc )}
@@ -2740,13 +2726,13 @@ However, the measures of uncertainty do not line up, because \texttt{library(var
 \CommentTok{\# construct a survey.design}
 \CommentTok{\# with the fpc using the cluster sum}
 \NormalTok{des\_eusilc\_ultimate\_cluster }\OtherTok{\textless{}{-}} 
-	\FunctionTok{svydesign}\NormalTok{( }
-		\AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
-		\AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
-		\AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
-		\AttributeTok{data =}\NormalTok{ eusilc , }
-		\AttributeTok{fpc =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ cluster\_sum }
-\NormalTok{	)}
+    \FunctionTok{svydesign}\NormalTok{( }
+        \AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
+        \AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
+        \AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
+        \AttributeTok{data =}\NormalTok{ eusilc , }
+        \AttributeTok{fpc =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ cluster\_sum }
+\NormalTok{    )}
 
 \CommentTok{\# again, immediately run the convey\_prep function on the \textasciigrave{}survey.design\textasciigrave{}}
 \NormalTok{des\_eusilc\_ultimate\_cluster }\OtherTok{\textless{}{-}} \FunctionTok{convey\_prep}\NormalTok{( des\_eusilc\_ultimate\_cluster )}
@@ -2844,19 +2830,19 @@ L(p)=
 
 In order to evaluate the degree of inequality in a society, the analyst looks at the distance between the real curve and those two reference curves.
 
-The estimator of this function was derived by \citet{kovacevic1997}:
+The estimator of this function was derived by \textcite{kovacevic1997}:
 
 \[
 L(p) = \frac{ \sum_{i \in S} w_i \cdot y_i \cdot \delta \{ y_i \le \widehat{Q}_p \}}{\widehat{Y}}, \text{ } 0 \le p \le 1.
 \]
 
-Yet, this formula is used to calculate specific points of the curve and their respective SEs. The formula to plot an approximation of the continuous empirical curve comes from \citet{lerman1989}.
+Yet, this formula is used to calculate specific points of the curve and their respective SEs. The formula to plot an approximation of the continuous empirical curve comes from \textcite{lerman1989}.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \textbf{A replication example}
 
-In October 2016, \citep{jann2016} released a pre-publication working paper to estimate lorenz and concentration curves using stata. The example below reproduces the statistics presented in his section 4.1.
+In October 2016, \autocite{jann2016} released a pre-publication working paper to estimate lorenz and concentration curves using stata. The example below reproduces the statistics presented in his section 4.1.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -2904,18 +2890,18 @@ In October 2016, \citep{jann2016} released a pre-publication working paper to es
 \CommentTok{\# therefore, while this extended syntax serves to prove a precise replication of stata}
 \CommentTok{\# it is generally not necessary.}
 \NormalTok{section\_four\_one }\OtherTok{\textless{}{-}}
-	\FunctionTok{data.frame}\NormalTok{( }
-		\AttributeTok{estimate =} \FunctionTok{coef}\NormalTok{( result.lin ) , }
-		\AttributeTok{standard\_error =} \FunctionTok{SE}\NormalTok{( result.lin ) , }
-		\AttributeTok{ci\_lower\_bound =} 
-		    \FunctionTok{coef}\NormalTok{( result.lin ) }\SpecialCharTok{+} 
-		    \FunctionTok{SE}\NormalTok{( result.lin ) }\SpecialCharTok{*} 
-		    \FunctionTok{qt}\NormalTok{( }\FloatTok{0.025}\NormalTok{ , }\FunctionTok{degf}\NormalTok{( }\FunctionTok{subset}\NormalTok{( des\_nlsw88 , }\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{( wage ) ) ) ) ,}
-		\AttributeTok{ci\_upper\_bound =} 
-		    \FunctionTok{coef}\NormalTok{( result.lin ) }\SpecialCharTok{+} 
-		    \FunctionTok{SE}\NormalTok{( result.lin ) }\SpecialCharTok{*} 
-		    \FunctionTok{qt}\NormalTok{( }\FloatTok{0.975}\NormalTok{ , }\FunctionTok{degf}\NormalTok{( }\FunctionTok{subset}\NormalTok{( des\_nlsw88 , }\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{( wage ) ) ) )}
-\NormalTok{	)}
+    \FunctionTok{data.frame}\NormalTok{( }
+        \AttributeTok{estimate =} \FunctionTok{coef}\NormalTok{( result.lin ) , }
+        \AttributeTok{standard\_error =} \FunctionTok{SE}\NormalTok{( result.lin ) , }
+        \AttributeTok{ci\_lower\_bound =} 
+            \FunctionTok{coef}\NormalTok{( result.lin ) }\SpecialCharTok{+} 
+            \FunctionTok{SE}\NormalTok{( result.lin ) }\SpecialCharTok{*} 
+            \FunctionTok{qt}\NormalTok{( }\FloatTok{0.025}\NormalTok{ , }\FunctionTok{degf}\NormalTok{( }\FunctionTok{subset}\NormalTok{( des\_nlsw88 , }\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{( wage ) ) ) ) ,}
+        \AttributeTok{ci\_upper\_bound =} 
+            \FunctionTok{coef}\NormalTok{( result.lin ) }\SpecialCharTok{+} 
+            \FunctionTok{SE}\NormalTok{( result.lin ) }\SpecialCharTok{*} 
+            \FunctionTok{qt}\NormalTok{( }\FloatTok{0.975}\NormalTok{ , }\FunctionTok{degf}\NormalTok{( }\FunctionTok{subset}\NormalTok{( des\_nlsw88 , }\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{( wage ) ) ) )}
+\NormalTok{    )}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2967,7 +2953,7 @@ G &= 2 \bigg( \int_{0}^{1} pdp - \int_{0}^{1} L(p)dp \bigg) \\
 
 where \(G=0\) in case of perfect equality and \(G = 1\) in the case of perfect inequality.
 
-The estimator proposed by \citet{osier2009} is defined as:
+The estimator proposed by \textcite{osier2009} is defined as:
 
 \[
 \widehat{G} = \frac{ 2 \sum_{i \in S} w_i r_i y_i - \sum_{i \in S} w_i y_i }{ \hat{Y} }
@@ -2979,7 +2965,7 @@ The linearized formula of \(\widehat{G}\) is used to calculate the SE.
 
 \textbf{A replication example}
 
-The R \texttt{vardpoor} package \citep{vardpoor}, created by researchers at the Central Statistical Bureau of Latvia, includes a gini coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.
+The R \texttt{vardpoor} package \autocite{vardpoor}, created by researchers at the Central Statistical Bureau of Latvia, includes a gini coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.
 
 Load and prepare the same data set:
 
@@ -3009,53 +2995,53 @@ Load and prepare the same data set:
 \CommentTok{\# calculate the gini coefficient}
 \CommentTok{\# using the R vardpoor library}
 \NormalTok{varpoord\_gini\_calculation }\OtherTok{\textless{}{-}}
-	\FunctionTok{varpoord}\NormalTok{(}
-	
-		\CommentTok{\# analysis variable}
-		\AttributeTok{Y =} \StringTok{"eqincome"}\NormalTok{, }
-		
-		\CommentTok{\# weights variable}
-		\AttributeTok{w\_final =} \StringTok{"rb050"}\NormalTok{,}
-		
-		\CommentTok{\# row number variable}
-		\AttributeTok{ID\_level1 =} \StringTok{"IDd"}\NormalTok{,}
-		
-		\CommentTok{\# row number variable}
-		\AttributeTok{ID\_level2 =} \StringTok{"IDd"}\NormalTok{,}
-		
-		\CommentTok{\# strata variable}
-		\AttributeTok{H =} \StringTok{"db040"}\NormalTok{, }
-		
-		\AttributeTok{N\_h =} \ConstantTok{NULL}\NormalTok{ ,}
-		
-		\CommentTok{\# clustering variable}
-		\AttributeTok{PSU =} \StringTok{"rb030"}\NormalTok{, }
-		
-		\CommentTok{\# data.table}
-		\AttributeTok{dataset =}\NormalTok{ dati, }
-		
-		\CommentTok{\# gini coefficient function}
-		\AttributeTok{type =} \StringTok{"lingini"}\NormalTok{,}
-	  
-	  \CommentTok{\# poverty threshold range}
-	  \AttributeTok{order\_quant =}\NormalTok{ 50L ,}
-	  
-	  \CommentTok{\# get linearized variable}
-	  \AttributeTok{outp\_lin =} \ConstantTok{TRUE}
-		
-\NormalTok{	)}
+    \FunctionTok{varpoord}\NormalTok{(}
+    
+        \CommentTok{\# analysis variable}
+        \AttributeTok{Y =} \StringTok{"eqincome"}\NormalTok{, }
+        
+        \CommentTok{\# weights variable}
+        \AttributeTok{w\_final =} \StringTok{"rb050"}\NormalTok{,}
+        
+        \CommentTok{\# row number variable}
+        \AttributeTok{ID\_level1 =} \StringTok{"IDd"}\NormalTok{,}
+        
+        \CommentTok{\# row number variable}
+        \AttributeTok{ID\_level2 =} \StringTok{"IDd"}\NormalTok{,}
+        
+        \CommentTok{\# strata variable}
+        \AttributeTok{H =} \StringTok{"db040"}\NormalTok{, }
+        
+        \AttributeTok{N\_h =} \ConstantTok{NULL}\NormalTok{ ,}
+        
+        \CommentTok{\# clustering variable}
+        \AttributeTok{PSU =} \StringTok{"rb030"}\NormalTok{, }
+        
+        \CommentTok{\# data.table}
+        \AttributeTok{dataset =}\NormalTok{ dati, }
+        
+        \CommentTok{\# gini coefficient function}
+        \AttributeTok{type =} \StringTok{"lingini"}\NormalTok{,}
+      
+      \CommentTok{\# poverty threshold range}
+      \AttributeTok{order\_quant =}\NormalTok{ 50L ,}
+      
+      \CommentTok{\# get linearized variable}
+      \AttributeTok{outp\_lin =} \ConstantTok{TRUE}
+        
+\NormalTok{    )}
 
 
 
 \CommentTok{\# construct a survey.design}
 \CommentTok{\# using our recommended setup}
 \NormalTok{des\_eusilc }\OtherTok{\textless{}{-}} 
-	\FunctionTok{svydesign}\NormalTok{( }
-		\AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
-		\AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
-		\AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
-		\AttributeTok{data =}\NormalTok{ eusilc}
-\NormalTok{	)}
+    \FunctionTok{svydesign}\NormalTok{( }
+        \AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
+        \AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
+        \AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
+        \AttributeTok{data =}\NormalTok{ eusilc}
+\NormalTok{    )}
 
 \CommentTok{\# immediately run the convey\_prep function on it}
 \NormalTok{des\_eusilc }\OtherTok{\textless{}{-}} \FunctionTok{convey\_prep}\NormalTok{( des\_eusilc )}
@@ -3159,13 +3145,13 @@ However, the measures of uncertainty do not line up, because \texttt{library(var
 \CommentTok{\# construct a survey.design}
 \CommentTok{\# with the fpc using the cluster sum}
 \NormalTok{des\_eusilc\_ultimate\_cluster }\OtherTok{\textless{}{-}} 
-	\FunctionTok{svydesign}\NormalTok{( }
-		\AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
-		\AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
-		\AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
-		\AttributeTok{data =}\NormalTok{ eusilc , }
-		\AttributeTok{fpc =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ cluster\_sum }
-\NormalTok{	)}
+    \FunctionTok{svydesign}\NormalTok{( }
+        \AttributeTok{ids =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb030 , }
+        \AttributeTok{strata =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ db040 ,  }
+        \AttributeTok{weights =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ rb050 , }
+        \AttributeTok{data =}\NormalTok{ eusilc , }
+        \AttributeTok{fpc =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ cluster\_sum }
+\NormalTok{    )}
 
 \CommentTok{\# again, immediately run the convey\_prep function on the \textasciigrave{}survey.design\textasciigrave{}}
 \NormalTok{des\_eusilc\_ultimate\_cluster }\OtherTok{\textless{}{-}} \FunctionTok{convey\_prep}\NormalTok{( des\_eusilc\_ultimate\_cluster )}
@@ -3215,7 +3201,7 @@ However, the measures of uncertainty do not line up, because \texttt{library(var
 \hypertarget{entropy-based-measures}{%
 \section{Entropy-based Measures}\label{entropy-based-measures}}
 
-Entropy is a concept derived from information theory, meaning the expected amount of information given the occurrence of an event. Following \citep{shannon1948}, given an event \(y\) with probability density function \(f(\cdot)\), the information content given the occurrence of \(y\) can be defined as \(g(f(y)) \colon= - \log f(y)\). Therefore, the expected information or, put simply, the \emph{entropy} is
+Entropy is a concept derived from information theory, meaning the expected amount of information given the occurrence of an event. Following \autocite{shannon1948}, given an event \(y\) with probability density function \(f(\cdot)\), the information content given the occurrence of \(y\) can be defined as \(g(f(y)) \colon= - \log f(y)\). Therefore, the expected information or, put simply, the \emph{entropy} is
 
 \[
 H(f) \colon = -E \big[ \log f(y) \big] = - \int_{-\infty}^{\infty} f(y) \log f(y) dy
@@ -3229,7 +3215,7 @@ H = - \sum_{k \in K} p_k \log p_k \text{.}
 
 The main idea behind it is that the expected amount of information of an event is inversely proportional to the probability of its occurrence. In other words, the information derived from the observation of a rare event is higher than of the information of more probable events.
 
-Using ideas presented in \citet{cowell2009}, substituting the density function by the income share of an individual \(s(q) = {F}^{-1}(q) / \int_{0}^{1} F^{-1}(t)dt = y/\mu\), the entropy function becomes the Theil\footnote{Also known as Theil-T index.} inequality index
+Using ideas presented in \textcite{cowell2009}, substituting the density function by the income share of an individual \(s(q) = {F}^{-1}(q) / \int_{0}^{1} F^{-1}(t)dt = y/\mu\), the entropy function becomes the Theil\footnote{Also known as Theil-T index.} inequality index
 
 \[
 I_{Theil} = \int_{0}^{\infty} \frac{y}{\mu} \log \bigg( \frac{y}{\mu} \bigg) dF(y) = -H(s)
@@ -3253,7 +3239,7 @@ GE_\alpha = \frac{1}{\alpha^2 - \alpha} \int_{0}^\infty \bigg[ \bigg( \frac{y}{\
 
 The parameter \(\alpha\) also has an economic interpretation: as \(\alpha\) increases, the influence of top incomes upon the index increases. In some cases, this measure takes special forms, such as mean log deviation and the aforementioned Theil index.
 
-In order to estimate it, \citet{biewen2003} proposed the following:
+In order to estimate it, \textcite{biewen2003} proposed the following:
 
 \[
 GE_\alpha =
@@ -3264,7 +3250,7 @@ T_1 U_1^{-1} - \log ( U_1 / U_0 ), & \text{if } \alpha \rightarrow 1
 \end{cases}
 \]
 
-where \(U_\gamma = \sum_{i \in S} w_i \cdot y_i^\gamma\) and \(T_\gamma = \sum_{i \in S} w_i \cdot y_i^\gamma \cdot \log y_i\). Since those are all functions of totals, the linearization of the indices are easily achieved using the theorems described in \citet{deville1999}.
+where \(U_\gamma = \sum_{i \in S} w_i \cdot y_i^\gamma\) and \(T_\gamma = \sum_{i \in S} w_i \cdot y_i^\gamma \cdot \log y_i\). Since those are all functions of totals, the linearization of the indices are easily achieved using the theorems described in \textcite{deville1999}.
 
 This class also has several desirable properties, such as additive decomposition. The additive decomposition allows to compare the effects of inequality within and between population groups on the population inequality. Put simply, an additive decomposable index allows for:
 
@@ -3276,7 +3262,7 @@ I_{Total} = I_{Between} + I_{Within} \text{.}
 
 \textbf{A replication example}
 
-In July 2006, \citet{jenkins2006} presented at the North American Stata Users' Group Meetings on the stata Generalized Entropy Index command. The example below reproduces those statistics.
+In July 2006, \textcite{jenkins2006} presented at the North American Stata Users' Group Meetings on the stata Generalized Entropy Index command. The example below reproduces those statistics.
 
 Load and prepare the same data set:
 
@@ -3347,7 +3333,7 @@ Complex survey estimates of Generalized Entropy inequality indices
 pweight: wgt                                   Number of obs    = 9752
 Strata: <one>                                  Number of strata = 1
 PSU: hrn                                       Number of PSUs   = 7459
-											   Population size  = 54766261
+                                               Population size  = 54766261
 ---------------------------------------------------------------------------
 Index    |  Estimate   Std. Err.      z      P>|z|     [95% Conf. Interval]
 ---------+-----------------------------------------------------------------
@@ -3428,7 +3414,7 @@ Complex survey estimates of Generalized Entropy inequality indices
 pweight: wgt                                   Number of obs    = 8969
 Strata: <one>                                  Number of strata = 1
 PSU: hrn                                       Number of PSUs   = 6950
-											   Population size  = 55042871
+                                               Population size  = 55042871
 ---------------------------------------------------------------------------
 Index    |  Estimate   Std. Err.      z      P>|z|     [95% Conf. Interval]
 ---------+-----------------------------------------------------------------
@@ -3641,7 +3627,7 @@ For additional usage examples of \texttt{svygei} or \texttt{svygeidec}, type \te
 \hypertarget{j-divergence-and-decomposition-svyjdiv-svyjdivdec}{%
 \section{J-Divergence and Decomposition (svyjdiv, svyjdivdec)}\label{j-divergence-and-decomposition-svyjdiv-svyjdivdec}}
 
-The J-divergence measure \citep{rohde2016} can be seen as the sum of \(GE_0\) and \(GE_1\), satisfying axioms that, individually, those two indices do not. Using \(U_\gamma\) and \(T_\gamma\) functions defined in \citet{biewen2003}, the estimator can be defined as:
+The J-divergence measure \autocite{rohde2016} can be seen as the sum of \(GE_0\) and \(GE_1\), satisfying axioms that, individually, those two indices do not. Using \(U_\gamma\) and \(T_\gamma\) functions defined in \textcite{biewen2003}, the estimator can be defined as:
 
 \[
 \begin{aligned}
@@ -3657,7 +3643,7 @@ For additional usage examples of \texttt{svyjdiv} or \texttt{svyjdivdec}, type \
 \hypertarget{atkinson-index-svyatk}{%
 \section{Atkinson index (svyatk)}\label{atkinson-index-svyatk}}
 
-Although the original formula was proposed in \citet{atkinson1970}, the estimator used here comes from \citet{biewen2003}:
+Although the original formula was proposed in \textcite{atkinson1970}, the estimator used here comes from \textcite{biewen2003}:
 
 \[
 \widehat{A}_\epsilon =
@@ -3673,7 +3659,7 @@ The \(\epsilon\) is an inequality aversion parameter: as it approaches infinity,
 
 \textbf{A replication example}
 
-In July 2006, \citet{jenkins2006} presented at the North American Stata Users' Group Meetings on the stata Atkinson Index command. The example below reproduces those statistics.
+In July 2006, \textcite{jenkins2006} presented at the North American Stata Users' Group Meetings on the stata Atkinson Index command. The example below reproduces those statistics.
 
 Load and prepare the same data set:
 
@@ -3903,20 +3889,20 @@ For additional usage examples of \texttt{svyatk}, type \texttt{?convey::svyatk} 
 
 The variety of inequality measures begs a question: which inequality measure shuold be used? In fact, this is a very important question. However, the nature of it is not statistical or mathematical, but ethical. This section aims to clarify and, while not proposing a ``perfect measure'', to provide the reader with an initial guidance about which measure to use.
 
-The most general way to analyze if one distribution is more equally distributed than another is by the Lorenz curve. When \(L_A(p) \geqslant L_B(p), \forall p \in [0,1]\), it is said that \(A\) is more equally distributed than \(B\). Technically, we say that \(A\) \emph{(Lorenz )dominates} \(B\)\footnote{\citet{kramer1998} and \citet{mosler1994} provide helpful insights to how majorization, Lorenz dominance, and inequality measurement are connected. On the topic of majorization, \citet{hardy1934} is still the main reference, while \citet{olkin2011} provide a more modern approach.}. In this case, all inequality measures that satisfy basic properties\footnote{Namely, Schur-convexity, population invariance, and scale invariance.} will agree that \(A\) is more equally distributed than \(B\).
+The most general way to analyze if one distribution is more equally distributed than another is by the Lorenz curve. When \(L_A(p) \geqslant L_B(p), \forall p \in [0,1]\), it is said that \(A\) is more equally distributed than \(B\). Technically, we say that \(A\) \emph{(Lorenz )dominates} \(B\)\footnote{\textcite{kramer1998} and \textcite{mosler1994} provide helpful insights to how majorization, Lorenz dominance, and inequality measurement are connected. On the topic of majorization, \textcite{hardy1934} is still the main reference, while \textcite{olkin2011} provide a more modern approach.}. In this case, all inequality measures that satisfy basic properties\footnote{Namely, Schur-convexity, population invariance, and scale invariance.} will agree that \(A\) is more equally distributed than \(B\).
 
 When this dominance fails, i.e., when Lorenz curves do cross, Lorenz ordering is impossible. Then, under such circumstances, the choice of which inequality measure to use becomes relevant.
 
-Each inequality measure is a result of a subjective understanding of what is a fair distribution. As \citet[p.348]{dalton1920} puts it, ``{[}\ldots{]} the economist is primarily interested, not in the distribution of income as such, but in the effects of the distribution of income upon the distribution and total amount of economic welfare, which may be derived from income.'' The importance of how economic welfare is defined is once again expressed by \citet{atkinson1970}, where an inequality measure is direclty derived from a class of welfare functions. Even when a welfare function is not explicit, such as in the Gini index, we must agree that an implicit, subjective judgement of the impact of inequality on social welfare is assumed.
+Each inequality measure is a result of a subjective understanding of what is a fair distribution. As \textcite[p.348]{dalton1920} puts it, ``{[}\ldots{]} the economist is primarily interested, not in the distribution of income as such, but in the effects of the distribution of income upon the distribution and total amount of economic welfare, which may be derived from income.'' The importance of how economic welfare is defined is once again expressed by \textcite{atkinson1970}, where an inequality measure is direclty derived from a class of welfare functions. Even when a welfare function is not explicit, such as in the Gini index, we must agree that an implicit, subjective judgement of the impact of inequality on social welfare is assumed.
 
-The idea of what is a fair distribution is a matter of Ethics, a discipline within the realm of Philosophy. Yet, as \citet[Ch.1]{fleur1996} proposes, the analyst should match socially supported moral values and theories of justice to the set of technical tools for policy evaluation.
+The idea of what is a fair distribution is a matter of Ethics, a discipline within the realm of Philosophy. Yet, as \textcite[Ch.1]{fleur1996} proposes, the analyst should match socially supported moral values and theories of justice to the set of technical tools for policy evaluation.
 
-Although this can be a useful principle, a more objective answer is needed. By knowing the nature and properties of inequality measures, the analyst can further reduce the set of applicable inequality measures. For instance, choosing from the properties listed in \citet[p.74]{cowell2011}, if we require group-decomposability, scale invariance, population invariance, and that the estimate in \([0,1]\), we must resort to the Atkinson index.
+Although this can be a useful principle, a more objective answer is needed. By knowing the nature and properties of inequality measures, the analyst can further reduce the set of applicable inequality measures. For instance, choosing from the properties listed in \textcite[p.74]{cowell2011}, if we require group-decomposability, scale invariance, population invariance, and that the estimate in \([0,1]\), we must resort to the Atkinson index.
 
 Even though the discussion can go deep in technical and philosophical aspects, this choice also depends on the public. For example, it would not be surprising if a public official doesn't know the Atkinson index; however, he might know the Gini index. The same goes for publications: journalists have been introduced to the Gini index and can find it easier to compare and, therefore, write about it. Also, we must admit that the Gini index is much more straightforward than any other measure.
 
 In the end, the choice is mostly subjective and there is no consensus of which is the ``greatest inequality measure''. We must remember that this choice is only problematic if Lorenz curves cross and, in that case, it is not difficult to justify the use of this or that inequality measure.
 
-  \bibliography{book.bib,packages.bib}
+\printbibliography
 
 \end{document}
