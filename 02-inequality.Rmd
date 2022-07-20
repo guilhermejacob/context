@@ -272,7 +272,17 @@ coef( svyqsr( ~ eqincome , des_eusilc ) )
 # vardpoor
 lin_qsr_varpoord<- varpoord_qsr_calculation$lin_out$lin_qsr
 # convey 
-lin_qsr_convey <- attr(svyqsr( ~ eqincome , des_eusilc ),"lin")
+lin_qsr_convey <- 
+  as.numeric(
+    attr(
+        svyqsr( 
+            ~ eqincome , 
+            des_eusilc , 
+            linearized = TRUE  
+          ) , 
+        "linearized"
+    )
+  )
 
 # check equality
 all.equal(lin_qsr_varpoord, lin_qsr_convey )
