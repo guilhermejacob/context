@@ -609,6 +609,7 @@ Z = 1 - \int_{0}^{1} \frac{L(p)}{p} \cdot \frac{ 1 - p }{ 1 - L(p) } dp
 \]
 
 In practice, `convey` uses the @barabesi2016 estimator, based on the finite population Zenga index, and a variance estimator derived using Deville's [-@deville1999] influence function method.
+
 Alternatively, @langel2011 uses an estimator based on smoothed quantiles and a variance estimator based on @demnati2004 linearization method. However, @barabesi2016 finds that both estimators behave very similarly.
 
 ---
@@ -645,7 +646,7 @@ cns.df <- read.csv( grep( "risfam12" , data_files , value = TRUE ) )
 inc.df <- read.csv( grep( "rper12" , data_files , value = TRUE ) )
 
 # fixes names
-colnames( cns.df )[1] <- janitor::make_clean_names( colnames( cns.df ) )[1]
+colnames( cns.df )[1] <- tolower( colnames( cns.df ) )[1]
 
 # household count should be 8151
 stopifnot( sum( !duplicated( hhr.df$nquest ) ) == 8151 )
@@ -657,18 +658,55 @@ stopifnot( sum( !duplicated( paste0( hhr.df$nquest , "-" , hhr.df$nord ) ) ) == 
 stopifnot( sum( hhr.df$PERC ) == 12986 )
 
 # combine household roster and income datasets
-pop.df <- merge( hhr.df , inc.df , by = c( "nquest" ,"nord" ) , all.x = TRUE , sort = FALSE )
+pop.df <- 
+	merge( 
+		hhr.df , 
+		inc.df , 
+		by = c( "nquest" ,"nord" ) , 
+		all.x = TRUE , 
+		sort = FALSE 
+	)
 
 # compute household-level income
-hinc.df <- pop.df[ pop.df$PERC == 1 , c( "nquest" , "nord" , "PERC" , "Y" , "YL" , "YM" , "YT" , "YC" ) , drop = FALSE ]
-hinc.df <- aggregate( rowSums( hinc.df[ , c( "YL"  , "YM" , "YT"  ) , drop = FALSE ] ) , list( "nquest" = hinc.df$nquest ) , sum , na.rm = TRUE )
-pop.df <- merge( pop.df , hinc.df , by = "nquest" , all.x = TRUE , sort = FALSE )
+hinc.df <- 
+	pop.df[ 
+		pop.df$PERC == 1 , 
+		c( "nquest" , "nord" , "PERC" , "Y" , "YL" , "YM" , "YT" , "YC" ) , 
+		drop = FALSE 
+	]
+	
+hinc.df <- 
+	aggregate( 
+		rowSums( 
+			hinc.df[ , c( "YL"  , "YM" , "YT"  ) , drop = FALSE ] 
+		) , 
+		list( "nquest" = hinc.df$nquest ) , 
+		sum , 
+		na.rm = TRUE 
+	)
+	
+pop.df <- 
+	merge( 
+		pop.df , 
+		hinc.df , 
+		by = "nquest" , 
+		all.x = TRUE , 
+		sort = FALSE 
+	)
 
 # combine with consumption data
-pop.df <- merge( pop.df , cns.df , by = c( "nquest" ) , all.x = TRUE , sort = FALSE )
+pop.df <- 
+	merge( 
+		pop.df , 
+		cns.df , 
+		by = "nquest" , 
+		all.x = TRUE , 
+		sort = FALSE 
+	)
 
 # treat household-level sample as the finite population
-pop.df <- pop.df[ !duplicated( pop.df$nquest ) , , drop = FALSE ]
+pop.df <- 
+	pop.df[ !duplicated( pop.df$nquest ) , , drop = FALSE ]
 ```
 
 For the Monte Carlo experiment, we take `5000` samples of (expected) size `1000` using Poisson sampling and estimate the Zenga index using each sample:
@@ -691,16 +729,36 @@ set.seed( 1997 )
 
 # create list of survey design objects
 # using poisson sampling
-survey.list <- lapply( seq_len( MC.reps ) , function( this.rep ){
-  smp.ind <- which( runif( N.size ) <= pop.df$pik )
-  smp.df <- pop.df[ smp.ind , , drop = FALSE ]
-  svydesign( ids = ~nquest , data = smp.df , fpc = ~pik , nest = FALSE , pps = ppsmat( pikl[ smp.ind , smp.ind ] ) , variance = "HT" )
-} )
+survey.list <- 
+	lapply( 
+		seq_len( MC.reps ) , 
+		function( this.rep ){
+			smp.ind <- which( runif( N.size ) <= pop.df$pik )
+			smp.df <- pop.df[ smp.ind , , drop = FALSE ]
+			svydesign( 
+				ids = ~nquest , 
+				data = smp.df , 
+				fpc = ~pik , 
+				nest = FALSE , 
+				pps = ppsmat( pikl[ smp.ind , smp.ind ] ) , 
+				variance = "HT" 
+			)
+		}
+	)
 
 # estimate zenga index for each sample
 estimate.list <- 
-  lapply( survey.list , 
-          function( this.sample ) svyzenga( ~x , subset( this.sample , x > 0 ) , na.rm = TRUE ) )
+	lapply(
+		survey.list , 
+        function( this.sample ){
+			svyzenga( 
+				~x , 
+				subset( this.sample , x > 0 ) , 
+				na.rm = TRUE 
+			)
+		}
+	)
+	
 ```
 Then, we evaluate the Percentage Relative Bias (PRB) of the Zenga index estimator. Under this scenario, the PRB of the Zenga index estimator is 0.3397%, a good result.
 
