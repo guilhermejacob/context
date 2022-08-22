@@ -602,7 +602,7 @@ SE( svygini( ~ eqincome , des_eusilc_ultimate_cluster ) ) * 100
 
 ## Zenga index (svyzenga)
 
-proposed by @zenga2007, the Zenga index is another inequality measure related to the Lorenz curve with interesting properties. For continuous populations, it is defined as:
+Proposed by @zenga2007, the Zenga index is another inequality measure related to the Lorenz curve with interesting properties. For continuous populations, it is defined as:
 
 \[
 Z = 1 - \int_{0}^{1} \frac{L(p)}{p} \cdot \frac{ 1 - p }{ 1 - L(p) } dp 
@@ -616,7 +616,7 @@ Alternatively, @langel2011 uses an estimator based on smoothed quantiles and a v
 
 **A replication example**
 
-While it is difficult to reproduce the exact results, we can try to reproduce a Monte Carlo experiment similar to the one presented by @barabesi2016.
+While it is not possible to reproduce the exact results because their simulation includes random sampling, we can replicate a Monte Carlo experiment similar to the one presented by @barabesi2016 in Table 2.
 
 Load and prepare the data set:
 
@@ -709,7 +709,7 @@ pop.df <-
 	pop.df[ !duplicated( pop.df$nquest ) , , drop = FALSE ]
 ```
 
-For the Monte Carlo experiment, we take `5000` samples of (expected) size `1000` using Poisson sampling and estimate the Zenga index using each sample:
+For the Monte Carlo experiment, we take `5000` samples of (expected) size `1000` using Poisson sampling (but not Conditional Poisson Sampling) and estimate the Zenga index using each sample:
 
 ```{r}
 # set up monte carlo attributes
@@ -718,7 +718,14 @@ n.size = 1000L
 N.size = nrow( pop.df )
 
 # calculate first order probabilities
-pop.df$pik <- sampling::inclusionprobabilities( abs( pop.df$C ) , n.size )
+pop.df$pik <-
+	n.size * ( abs( pop.df$C ) / sum( abs( pop.df$C ) ) )
+
+# note: if any elements are not between zero and one
+# use the `inclusionprobabilities()` function
+# library(sampling)
+# pop.df$pik <-
+# 	inclusionprobabilities( abs( pop.df$C ) , n.size )
 
 # calculate second order probabilities
 pikl <- pop.df$pik %*% t( pop.df$pik )
@@ -760,7 +767,7 @@ estimate.list <-
 	)
 	
 ```
-Then, we evaluate the Percentage Relative Bias (PRB) of the Zenga index estimator. Under this scenario, the PRB of the Zenga index estimator is 0.3397%, a good result.
+Then, we evaluate the Percentage Relative Bias (PRB) of the Zenga index estimator. Under this scenario, the PRB of the Zenga index estimator is 0.3397%, a result similar to the `0.321` shown in Table 2.
 
 ```{r}
 # compute the (finite population) Zenga index parameter
@@ -773,7 +780,7 @@ theta.exp <- mean( sapply( estimate.list , coef ) )
 # estimate the percentage relative bias
 100 * ( theta.exp/theta.pop - 1 )
 ```
-Then, we evaluate the PRB of the variance estimator of the Zenga index estimator. Under this scenario, the PRB of the Zenga index variance estimator is -0.4954%, another good result.
+Then, we evaluate the PRB of the variance estimator of the Zenga index estimator. Under this scenario, the PRB of the Zenga index variance estimator is -0.4954%, another result similar to the `-0.600` shown in Table 2.
 
 ```{r}
 # estimate the variance of the Zenga index estimator
@@ -798,7 +805,7 @@ est.cis <- t( sapply( estimate.list, function( this.stat ) c( confint( this.stat
 prop.table( table( ( theta.pop > est.cis[,1] ) & ( theta.pop < est.cis[,2] ) ) )
 ```
 
-Our estimated 95% CIs cover the parameter 94.52% of the time, which is very close to the nominal rate.
+Our estimated 95% CIs cover the parameter 94.52% of the time, which is very close to the nominal rate and also similar to the `94.5` PCR shown in Table 2.
 
 ## Entropy-based Measures
 
