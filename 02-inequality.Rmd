@@ -600,6 +600,227 @@ varpoord_gini_calculation$all_result$se
 SE( svygini( ~ eqincome , des_eusilc_ultimate_cluster ) ) * 100
 ```
 
+## Zenga index (svyzenga)
+
+Proposed by @zenga2007, the Zenga index is another inequality measure related to the Lorenz curve with interesting properties. For continuous populations, it is defined as:
+
+\[
+Z = 1 - \int_{0}^{1} \frac{L(p)}{p} \cdot \frac{ 1 - p }{ 1 - L(p) } dp 
+\]
+
+In practice, `convey` uses the @barabesi2016 estimator, based on the finite population Zenga index, and a variance estimator derived using Deville's [-@deville1999] influence function method.
+
+Alternatively, @langel2011 uses an estimator based on smoothed quantiles and a variance estimator based on @demnati2004 linearization method. However, @barabesi2016 finds that both estimators behave very similarly.
+
+The intuition behind the Zenga index is based on argument similar to the Quatile Share Ratio or Palma index.  While the QSR and Palma indices are based on ratios of bottom and upper shares, the Zenga scores (but not the measure itself!) is the ratio of bottom and upper means. The Zenga index is the avreage of those scores.
+
+For a given p, when the mean income of the poorest is not much smaller than the mean income of the richest, the ratio is close to one, resulting in Z(p) close to zero. However, when the bottom mean is much smaller than the upper mean, the ratio goes to 0, resulting in a Z(p) close to one.
+
+Take the poorest 20%: the mean income of the poorest 20%, this is the lower mean. The "complement" is the mean income of the richest 80%: this is the upper mean. If the lower mean is \$100 and the upper mean is \$1,000, then the respective point on the Zenga curve would associate the fraction 20% to 1 - ( \$100 / \$1,000 ) = 0.9.  In other words, Z(20%) = 0.9 or 90%.
+
+In this case, we took a fixed p = 20%; however, the full Zenga curve would be computed varying p from 0% to 100%.  Then, the Zenga index is the integral of this curve in the interval (0,1).
+
+Unlike the relationship between the Gini coefficient and the Lorenz curve, this allows for a more straightforward graphical interpretation (see Figure 1 from @langel2011) of the Zenga index.  In fact, the Zenga index is the mean of the Y axis of the Zenga coordinates.
+
+According to @langel2011, "the Zenga index is significantly less affected by extreme observations than the Gini index.  This is a very important advantage of the Zenga index because inference from income data is often confronted with extreme values."
+
+
+
+
+---
+
+**A replication example**
+
+While it is not possible to reproduce the exact results because their simulation includes random sampling, we can replicate a Monte Carlo experiment similar to the one presented by @barabesi2016 in Table 2.
+
+Load and prepare the data set:
+
+```{r}
+# load the convey package
+library(convey)
+
+# load the survey library
+library(survey)
+
+# create a temporary file on the local disk
+tf <- tempfile()
+
+# store the location of the zip file
+data_zip <- "https://www.bancaditalia.it/statistiche/tematiche/indagini-famiglie-imprese/bilanci-famiglie/distribuzione-microdati/documenti/ind12_ascii.zip"
+
+# download to the temporary file
+download.file( data_zip , tf , mode = 'wb' )
+
+# unzip the contents of the archive to a temporary directory
+td <- file.path( tempdir() , "shiw2012" )
+data_files <- unzip( tf , exdir = td )
+
+# load the household, consumption and income from SHIW (2012) survey data
+hhr.df <- read.csv( grep( "carcom12" , data_files , value = TRUE ) )
+cns.df <- read.csv( grep( "risfam12" , data_files , value = TRUE ) )
+inc.df <- read.csv( grep( "rper12" , data_files , value = TRUE ) )
+
+# fixes names
+colnames( cns.df )[1] <- tolower( colnames( cns.df ) )[1]
+
+# household count should be 8151
+stopifnot( sum( !duplicated( hhr.df$nquest ) ) == 8151 )
+
+# person count should be 20022
+stopifnot( sum( !duplicated( paste0( hhr.df$nquest , "-" , hhr.df$nord ) ) ) == 20022 )
+
+# income recipients: should be 12986
+stopifnot( sum( hhr.df$PERC ) == 12986 )
+
+# combine household roster and income datasets
+pop.df <- 
+	merge( 
+		hhr.df , 
+		inc.df , 
+		by = c( "nquest" ,"nord" ) , 
+		all.x = TRUE , 
+		sort = FALSE 
+	)
+
+# compute household-level income
+hinc.df <- 
+	pop.df[ 
+		pop.df$PERC == 1 , 
+		c( "nquest" , "nord" , "PERC" , "Y" , "YL" , "YM" , "YT" , "YC" ) , 
+		drop = FALSE 
+	]
+	
+hinc.df <- 
+	aggregate( 
+		rowSums( 
+			hinc.df[ , c( "YL"  , "YM" , "YT"  ) , drop = FALSE ] 
+		) , 
+		list( "nquest" = hinc.df$nquest ) , 
+		sum , 
+		na.rm = TRUE 
+	)
+	
+pop.df <- 
+	merge( 
+		pop.df , 
+		hinc.df , 
+		by = "nquest" , 
+		all.x = TRUE , 
+		sort = FALSE 
+	)
+
+# combine with consumption data
+pop.df <- 
+	merge( 
+		pop.df , 
+		cns.df , 
+		by = "nquest" , 
+		all.x = TRUE , 
+		sort = FALSE 
+	)
+
+# treat household-level sample as the finite population
+pop.df <- 
+	pop.df[ !duplicated( pop.df$nquest ) , , drop = FALSE ]
+```
+
+For the Monte Carlo experiment, we take `5000` samples of (expected) size `1000` using Poisson sampling (but not Conditional Poisson Sampling) and estimate the Zenga index using each sample:
+
+```{r}
+# set up monte carlo attributes
+MC.reps <- 5000L
+n.size = 1000L
+N.size = nrow( pop.df )
+
+# calculate first order probabilities
+pop.df$pik <-
+	n.size * ( abs( pop.df$C ) / sum( abs( pop.df$C ) ) )
+
+# note: if any elements are not between zero and one
+# use the `inclusionprobabilities()` function
+# library(sampling)
+# pop.df$pik <-
+# 	inclusionprobabilities( abs( pop.df$C ) , n.size )
+
+# calculate second order probabilities
+pikl <- pop.df$pik %*% t( pop.df$pik )
+diag( pikl ) <- pop.df$pik 
+
+# set random number seed
+set.seed( 1997 )
+
+# create list of survey design objects
+# using poisson sampling
+survey.list <- 
+	lapply( 
+		seq_len( MC.reps ) , 
+		function( this.rep ){
+			smp.ind <- which( runif( N.size ) <= pop.df$pik )
+			smp.df <- pop.df[ smp.ind , , drop = FALSE ]
+			svydesign( 
+				ids = ~nquest , 
+				data = smp.df , 
+				fpc = ~pik , 
+				nest = FALSE , 
+				pps = ppsmat( pikl[ smp.ind , smp.ind ] ) , 
+				variance = "HT" 
+			)
+		}
+	)
+
+# estimate zenga index for each sample
+estimate.list <- 
+	lapply(
+		survey.list , 
+        function( this.sample ){
+			svyzenga( 
+				~x , 
+				subset( this.sample , x > 0 ) , 
+				na.rm = TRUE 
+			)
+		}
+	)
+	
+```
+Then, we evaluate the Percentage Relative Bias (PRB) of the Zenga index estimator. Under this scenario, the PRB of the Zenga index estimator is 0.3397%, a result similar to the `0.321` shown in Table 2.
+
+```{r}
+# compute the (finite population) Zenga index parameter
+theta.pop <- convey:::CalcZenga( pop.df$x , ifelse( pop.df$x > 0 , 1 , 0 ) )
+
+# estimate the expected value of the Zenga index estimator
+# using the average of the estimates
+theta.exp <- mean( sapply( estimate.list , coef ) )
+
+# estimate the percentage relative bias
+100 * ( theta.exp/theta.pop - 1 )
+```
+Then, we evaluate the PRB of the variance estimator of the Zenga index estimator. Under this scenario, the PRB of the Zenga index variance estimator is -0.4954%, another result similar to the `-0.600` shown in Table 2.
+
+```{r}
+# estimate the variance of the Zenga index estimator
+# using the variance of the estimates
+( vartheta.popest <- var( sapply( estimate.list , coef ) ) )
+
+# estimate the expected value of the Zenga index variance estimator
+# using the expected of the variance estimates
+( vartheta.exp <- mean( sapply( estimate.list , vcov ) ) )
+
+# estimate the percentage relative bias
+100 * ( vartheta.exp/vartheta.popest - 1 )
+```
+Next, we evaluate the Percentage Coverage Rate (PCR). In theory, under repeated sampling, the estimated 95% CIs should cover the population parameter 95% of the time. We can evaluate that using:
+
+```{r}
+# estimate confidence intervals of the Zenga index
+# for each of the samples
+est.cis <- t( sapply( estimate.list, function( this.stat ) c( confint( this.stat ) ) ) ) 
+
+# evaluate
+prop.table( table( ( theta.pop > est.cis[,1] ) & ( theta.pop < est.cis[,2] ) ) )
+```
+
+Our estimated 95% CIs cover the parameter 94.52% of the time, which is very close to the nominal rate and also similar to the `94.5` PCR shown in Table 2.
 
 ## Entropy-based Measures
 
