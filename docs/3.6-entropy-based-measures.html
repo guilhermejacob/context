@@ -5,7 +5,7 @@
 <meta charset="utf-8" />
 <meta name="generator" content="pandoc" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="1.10 Decomposition | Poverty and Inequality with Complex Survey Data" />
+<meta property="og:title" content="3.6 Entropy-based Measures | Poverty and Inequality with Complex Survey Data" />
 <meta property="og:type" content="book" />
 
 <meta property="og:description" content="A book about the R convey package" />
@@ -24,7 +24,7 @@ MathJax.Hub.Config({
 
 <meta name="description" content="A book about the R convey package">
 
-<title>1.10 Decomposition | Poverty and Inequality with Complex Survey Data</title>
+<title>3.6 Entropy-based Measures | Poverty and Inequality with Complex Survey Data</title>
 
 <link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte-background.css" rel="stylesheet" />
@@ -177,18 +177,26 @@ div.csl-indent {
 </div>
 <div class="row">
 <div class="col-sm-12">
-<div id="decomposition" class="section level2" number="1.10">
-<h2><span class="header-section-number">1.10</span> Decomposition</h2>
-<p>Some inequality and multidimensional poverty measures can be decomposed. As of December 2016, the decomposition methods in <code>convey</code> are limited to group decomposition.</p>
-<p>For instance, the generalized entropy index can be decomposed into between and within group components. This sheds light on a very simple question: of the overall inequality, how much can be explained by inequalities between groups and within groups? Since this measure is additive decomposable, one can get estimates of the coefficients, SEs and covariance between components. For a more practical approach, see <span class="citation">(<label for="tufte-mn-13" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-13" class="margin-toggle">Lima 2013<span class="marginnote">Lima, Luis Cristovao Ferreira. 2013. <span>“<span class="nocase">The Persistent Inequality in the Great Brazilian Cities: The Case of Brasília</span>.”</span> MPRA Papers 50938. University of Brasília. <a href="https://mpra.ub.uni-muenchen.de/50938/">https://mpra.ub.uni-muenchen.de/50938/</a>.</span>)</span>.</p>
-<p>The Alkire-Foster class of multidimensional poverty indices can be decomposed by dimension and groups. This shows how much each group (or dimension) contribute to the overall poverty.</p>
-<p>This technique can help understand where and who is more affected by inequality and poverty, contributing to more specific policy and economic analysis.</p>
-
+<div id="entropy-based-measures" class="section level2" number="3.6">
+<h2><span class="header-section-number">3.6</span> Entropy-based Measures</h2>
+<p>Entropy is a concept derived from information theory, meaning the expected amount of information given the occurrence of an event. Following <span class="citation">(<label for="tufte-mn-68" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-68" class="margin-toggle">Shannon 1948<span class="marginnote">Shannon, Claude E. 1948. <span>“A Mathematical Theory of Communication.”</span> <em>Bell System Technical Journal</em> 27 (3): 379–423. <a href="https://doi.org/10.1002/j.1538-7305.1948.tb01338.x">https://doi.org/10.1002/j.1538-7305.1948.tb01338.x</a>.</span>)</span>, given an event <span class="math inline">\(y\)</span> with probability density function <span class="math inline">\(f(\cdot)\)</span>, the information content given the occurrence of <span class="math inline">\(y\)</span> can be defined as <span class="math inline">\(g(f(y)) \colon= - \log f(y)\)</span>. Therefore, the expected information or, put simply, the <em>entropy</em> is</p>
+<p><span class="math display">\[
+H(f) \colon = -E \big[ \log f(y) \big] = - \int_{-\infty}^{\infty} f(y) \log f(y) dy
+\]</span></p>
+<p>Assuming a discrete distribution, with <span class="math inline">\(p_k\)</span> as the probability of occurring event <span class="math inline">\(k \in K\)</span>, the entropy formula takes the form:</p>
+<p><span class="math display">\[
+H = - \sum_{k \in K} p_k \log p_k \text{.}
+\]</span></p>
+<p>The main idea behind it is that the expected amount of information of an event is inversely proportional to the probability of its occurrence. In other words, the information derived from the observation of a rare event is higher than of the information of more probable events.</p>
+<p>Using ideas presented in <span class="citation">Frank A. Cowell, Flachaire, and Bandyopadhyay (<label for="tufte-mn-69" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-69" class="margin-toggle">2009<span class="marginnote">Cowell, Frank A., Emmanuel Flachaire, and Sanghamitra Bandyopadhyay. 2009. <span>“Goodness-of-Fit: An Economic Approach.”</span> Economics Series Working Papers 444. University of Oxford, Department of Economics. <a href="https://ideas.repec.org/p/oxf/wpaper/444.html">https://ideas.repec.org/p/oxf/wpaper/444.html</a>.</span>)</span>, substituting the density function by the income share of an individual <span class="math inline">\(s(q) = {F}^{-1}(q) / \int_{0}^{1} F^{-1}(t)dt = y/\mu\)</span>, the entropy function becomes the Theil<label for="tufte-sn-4" class="margin-toggle sidenote-number">4</label><input type="checkbox" id="tufte-sn-4" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">4</span> Also known as Theil-T index.</span> inequality index</p>
+<p><span class="math display">\[
+I_{Theil} = \int_{0}^{\infty} \frac{y}{\mu} \log \bigg( \frac{y}{\mu} \bigg) dF(y) = -H(s)
+\]</span></p>
+<p>Therefore, the entropy-based inequality measure increases as a person’s income <span class="math inline">\(y\)</span> deviates from the mean <span class="math inline">\(\mu\)</span>. This is the basic idea behind entropy-based inequality measures.</p>
 </div>
-<!-- </div> -->
 <p style="text-align: center;">
-<a href="1.9-replication-designs.html"><button class="btn btn-default">Previous</button></a>
-<a href="2-poverty.html"><button class="btn btn-default">Next</button></a>
+<a href="3.5-zenga-index-svyzenga.html"><button class="btn btn-default">Previous</button></a>
+<a href="3.7-generalized-entropy-and-decomposition-svygei-svygeidec.html"><button class="btn btn-default">Next</button></a>
 </p>
 </div>
 </div>
