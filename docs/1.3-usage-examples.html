@@ -13,7 +13,7 @@
 
 <meta name="author" content="Guilherme Jacob, Anthony Damico, and Djalma Pessoa" />
 
-<meta name="date" content="2022-11-22" />
+<meta name="date" content="2022-12-01" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -72,7 +72,7 @@ code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code span.at { color: #7d9029; } /* Attribute */
 code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
+code span.bu { color: #008000; } /* BuiltIn */
 code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
 code span.ch { color: #4070a0; } /* Char */
 code span.cn { color: #880000; } /* Constant */
@@ -85,7 +85,7 @@ code span.er { color: #ff0000; font-weight: bold; } /* Error */
 code span.ex { } /* Extension */
 code span.fl { color: #40a070; } /* Float */
 code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
+code span.im { color: #008000; font-weight: bold; } /* Import */
 code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 code span.kw { color: #007020; font-weight: bold; } /* Keyword */
 code span.op { color: #666666; } /* Operator */
@@ -184,16 +184,28 @@ div.csl-indent {
 <span id="cb3-2"><a href="1.3-usage-examples.html#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(eusilc)</span></code></pre></div>
 <p>Next, we create an object of class <code>survey.design</code> using the function <code>svydesign</code> of the library survey:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="1.3-usage-examples.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
-<span id="cb4-2"><a href="1.3-usage-examples.html#cb4-2" aria-hidden="true" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span> <span class="fu">svydesign</span>(<span class="at">ids =</span> <span class="sc">~</span>rb030, <span class="at">strata =</span><span class="sc">~</span>db040,  <span class="at">weights =</span> <span class="sc">~</span>rb050, <span class="at">data =</span> eusilc)</span></code></pre></div>
+<span id="cb4-2"><a href="1.3-usage-examples.html#cb4-2" aria-hidden="true" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span></span>
+<span id="cb4-3"><a href="1.3-usage-examples.html#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
+<span id="cb4-4"><a href="1.3-usage-examples.html#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030,</span>
+<span id="cb4-5"><a href="1.3-usage-examples.html#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">strata =</span>  <span class="sc">~</span> db040,</span>
+<span id="cb4-6"><a href="1.3-usage-examples.html#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050,</span>
+<span id="cb4-7"><a href="1.3-usage-examples.html#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> eusilc</span>
+<span id="cb4-8"><a href="1.3-usage-examples.html#cb4-8" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
 <p>Right after the creation of the design object <code>des_eusilc</code>, we should use the function <code>convey_prep</code> that adds an attribute to the survey design which saves information on the design object based upon the whole sample, needed to work with subset designs.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="1.3-usage-examples.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
-<span id="cb5-2"><a href="1.3-usage-examples.html#cb5-2" aria-hidden="true" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>( des_eusilc )</span></code></pre></div>
+<span id="cb5-2"><a href="1.3-usage-examples.html#cb5-2" aria-hidden="true" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(des_eusilc)</span></code></pre></div>
 <p>To estimate the at-risk-of-poverty rate, we use the function <code>svyarpt</code>:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="1.3-usage-examples.html#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">svyarpr</span>(<span class="sc">~</span>eqIncome, <span class="at">design=</span>des_eusilc)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="1.3-usage-examples.html#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">svyarpr</span>(<span class="sc">~</span> eqIncome, <span class="at">design =</span> des_eusilc)</span></code></pre></div>
 <pre><code>            arpr     SE
 eqIncome 0.14444 0.0028</code></pre>
 <p>To estimate the at-risk-of-poverty rate across domains defined by the variable <code>db040</code> we use:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="1.3-usage-examples.html#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">svyby</span>(<span class="sc">~</span>eqIncome, <span class="at">by =</span> <span class="sc">~</span>db040, <span class="at">design =</span> des_eusilc, <span class="at">FUN =</span> svyarpr, <span class="at">deff =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="1.3-usage-examples.html#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">svyby</span>(</span>
+<span id="cb8-2"><a href="1.3-usage-examples.html#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span> eqIncome,</span>
+<span id="cb8-3"><a href="1.3-usage-examples.html#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="sc">~</span> db040,</span>
+<span id="cb8-4"><a href="1.3-usage-examples.html#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">design =</span> des_eusilc,</span>
+<span id="cb8-5"><a href="1.3-usage-examples.html#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">FUN =</span> svyarpr,</span>
+<span id="cb8-6"><a href="1.3-usage-examples.html#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">deff =</span> <span class="cn">FALSE</span></span>
+<span id="cb8-7"><a href="1.3-usage-examples.html#cb8-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>                      db040  eqIncome          se
 Burgenland       Burgenland 0.1953984 0.017202852
 Carinthia         Carinthia 0.1308627 0.010606502
@@ -206,12 +218,18 @@ Vienna               Vienna 0.1723468 0.007684540
 Vorarlberg       Vorarlberg 0.1653731 0.013756389</code></pre>
 <p>Using the same data set, we estimate the quintile share ratio:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="1.3-usage-examples.html#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># for the whole population</span></span>
-<span id="cb10-2"><a href="1.3-usage-examples.html#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">svyqsr</span>(<span class="sc">~</span>eqIncome, <span class="at">design=</span>des_eusilc, <span class="at">alpha1=</span> .<span class="dv">20</span>)</span></code></pre></div>
+<span id="cb10-2"><a href="1.3-usage-examples.html#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">svyqsr</span>( <span class="sc">~</span> eqIncome, <span class="at">design =</span> des_eusilc, <span class="at">alpha1 =</span> .<span class="dv">20</span>)</span></code></pre></div>
 <pre><code>          qsr     SE
 eqIncome 3.97 0.0426</code></pre>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="1.3-usage-examples.html#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># for domains</span></span>
-<span id="cb12-2"><a href="1.3-usage-examples.html#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">svyby</span>(<span class="sc">~</span>eqIncome, <span class="at">by =</span> <span class="sc">~</span>db040, <span class="at">design =</span> des_eusilc,</span>
-<span id="cb12-3"><a href="1.3-usage-examples.html#cb12-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">FUN =</span> svyqsr, <span class="at">alpha1=</span> .<span class="dv">20</span>, <span class="at">deff =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<span id="cb12-2"><a href="1.3-usage-examples.html#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">svyby</span>(</span>
+<span id="cb12-3"><a href="1.3-usage-examples.html#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span> eqIncome,</span>
+<span id="cb12-4"><a href="1.3-usage-examples.html#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="sc">~</span> db040,</span>
+<span id="cb12-5"><a href="1.3-usage-examples.html#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">design =</span> des_eusilc,</span>
+<span id="cb12-6"><a href="1.3-usage-examples.html#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">FUN =</span> svyqsr,</span>
+<span id="cb12-7"><a href="1.3-usage-examples.html#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">alpha1 =</span> .<span class="dv">20</span>,</span>
+<span id="cb12-8"><a href="1.3-usage-examples.html#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">deff =</span> <span class="cn">FALSE</span></span>
+<span id="cb12-9"><a href="1.3-usage-examples.html#cb12-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>                      db040 eqIncome         se
 Burgenland       Burgenland 5.008486 0.32755685
 Carinthia         Carinthia 3.562404 0.10909726
@@ -225,12 +243,18 @@ Vorarlberg       Vorarlberg 4.366511 0.20532075</code></pre>
 <p>These functions can be used as S3 methods for the classes <code>survey.design</code> and <code>svyrep.design</code>.</p>
 <p>Let’s create a design object of class <code>svyrep.design</code> and run the function <code>convey_prep</code> on it:</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="1.3-usage-examples.html#cb14-1" aria-hidden="true" tabindex="-1"></a>des_eusilc_rep <span class="ot">&lt;-</span> <span class="fu">as.svrepdesign</span>(des_eusilc, <span class="at">type =</span> <span class="st">&quot;bootstrap&quot;</span>)</span>
-<span id="cb14-2"><a href="1.3-usage-examples.html#cb14-2" aria-hidden="true" tabindex="-1"></a>des_eusilc_rep <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(des_eusilc_rep) </span></code></pre></div>
+<span id="cb14-2"><a href="1.3-usage-examples.html#cb14-2" aria-hidden="true" tabindex="-1"></a>des_eusilc_rep <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(des_eusilc_rep)</span></code></pre></div>
 <p>and then use the function <code>svyarpr</code>:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="1.3-usage-examples.html#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">svyarpr</span>(<span class="sc">~</span>eqIncome, <span class="at">design=</span>des_eusilc_rep)</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="1.3-usage-examples.html#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">svyarpr</span>( <span class="sc">~</span> eqIncome, <span class="at">design =</span> des_eusilc_rep)</span></code></pre></div>
 <pre><code>            arpr     SE
 eqIncome 0.14444 0.0025</code></pre>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="1.3-usage-examples.html#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">svyby</span>(<span class="sc">~</span>eqIncome, <span class="at">by =</span> <span class="sc">~</span>db040, <span class="at">design =</span> des_eusilc_rep, <span class="at">FUN =</span> svyarpr, <span class="at">deff =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="1.3-usage-examples.html#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">svyby</span>(</span>
+<span id="cb17-2"><a href="1.3-usage-examples.html#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span> eqIncome,</span>
+<span id="cb17-3"><a href="1.3-usage-examples.html#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="sc">~</span> db040,</span>
+<span id="cb17-4"><a href="1.3-usage-examples.html#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">design =</span> des_eusilc_rep,</span>
+<span id="cb17-5"><a href="1.3-usage-examples.html#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">FUN =</span> svyarpr,</span>
+<span id="cb17-6"><a href="1.3-usage-examples.html#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">deff =</span> <span class="cn">FALSE</span></span>
+<span id="cb17-7"><a href="1.3-usage-examples.html#cb17-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>                      db040  eqIncome se.eqIncome
 Burgenland       Burgenland 0.1953984 0.016713791
 Carinthia         Carinthia 0.1308627 0.012061625

@@ -45,90 +45,90 @@ library(laeken)
 data(eusilc)
 
 # make all column names lowercase
-names( eusilc ) <- tolower( names( eusilc ) )
+names(eusilc) <- tolower(names(eusilc))
 
 # coerce the gender variable to numeric 1 or 2
-eusilc$one_two <- as.numeric( eusilc$rb090 == "female" ) + 1
+eusilc$one_two <- as.numeric(eusilc$rb090 == "female") + 1
 
 # add a column with the row number
-dati <- data.table::data.table(IDd = 1 : nrow(eusilc), eusilc)
+dati <- data.table::data.table(IDd = 1:nrow(eusilc), eusilc)
 
 # calculate the gpg coefficient
 # using the R vardpoor library
 varpoord_gpg_calculation <-
-	varpoord(
-	
-		# analysis variable
-		Y = "eqincome", 
-		
-		# weights variable
-		w_final = "rb050",
-		
-		# row number variable
-		ID_level1 = "IDd",
-		
-		# row number variable
-		ID_level2 = "IDd",
-		
-		# strata variable
-		H = "db040", 
-		
-		N_h = NULL ,
-		
-		# clustering variable
-		PSU = "rb030", 
-		
-		# data.table
-		dataset = dati, 
-		
-		# gpg coefficient function
-		type = "lingpg" ,
-		
-		# gender variable
-		gender = "one_two",
-	  
-	  # poverty threshold range
-	  order_quant = 50L ,
-	  
-	  # get linearized variable
-	  outp_lin = TRUE
-	)
+  varpoord(
+    # analysis variable
+    Y = "eqincome",
+    
+    # weights variable
+    w_final = "rb050",
+    
+    # row number variable
+    ID_level1 = "IDd",
+    
+    # row number variable
+    ID_level2 = "IDd",
+    
+    # strata variable
+    H = "db040",
+    
+    N_h = NULL ,
+    
+    # clustering variable
+    PSU = "rb030",
+    
+    # data.table
+    dataset = dati,
+    
+    # gpg coefficient function
+    type = "lingpg" ,
+    
+    # gender variable
+    gender = "one_two",
+    
+    # poverty threshold range
+    order_quant = 50L ,
+    
+    # get linearized variable
+    outp_lin = TRUE
+  )
 
 
 
 # construct a survey.design
 # using our recommended setup
-des_eusilc <- 
-	svydesign( 
-		ids = ~ rb030 , 
-		strata = ~ db040 ,  
-		weights = ~ rb050 , 
-		data = eusilc
-	)
+des_eusilc <-
+  svydesign(
+    ids = ~ rb030 ,
+    strata = ~ db040 ,
+    weights = ~ rb050 ,
+    data = eusilc
+  )
 
 # immediately run the convey_prep function on it
-des_eusilc <- convey_prep( des_eusilc )
+des_eusilc <- convey_prep(des_eusilc)
 
 # coefficients do match
 varpoord_gpg_calculation$all_result$value
-coef( svygpg( ~ eqincome , des_eusilc , sex = ~ rb090 ) ) * 100
+coef(svygpg(~ eqincome , des_eusilc , sex = ~ rb090)) * 100
 
 # linearized variables do match
 # vardpoor
-lin_gpg_varpoord<- varpoord_gpg_calculation$lin_out$lin_gpg
-# convey 
-lin_gpg_convey <- attr(svygpg( ~ eqincome , des_eusilc, sex = ~ rb090 ),"lin")
+lin_gpg_varpoord <- varpoord_gpg_calculation$lin_out$lin_gpg
+# convey
+lin_gpg_convey <-
+  attr(svygpg(~ eqincome , des_eusilc, sex = ~ rb090), "lin")
 
 # check equality
-all.equal(lin_gpg_varpoord,100*lin_gpg_convey[,1] )
+all.equal(lin_gpg_varpoord, 100 * lin_gpg_convey[, 1])
 
 # variances do not match exactly
-attr( svygpg( ~ eqincome , des_eusilc , sex = ~ rb090 ) , 'var' ) * 10000
+attr(svygpg(~ eqincome , des_eusilc , sex = ~ rb090) , 'var') * 10000
 varpoord_gpg_calculation$all_result$var
 
 # standard errors do not match exactly
 varpoord_gpg_calculation$all_result$se
-SE( svygpg( ~ eqincome , des_eusilc , sex = ~ rb090 ) ) * 100
+SE(svygpg(~ eqincome , des_eusilc , sex = ~ rb090)) * 100
 ```
 
 The variance estimate is computed by using the approximation defined in \@ref(eq:var), where the linearized variable $z$ is defined by \@ref(eq:lin). The functions `convey::svygpg` and `vardpoor::lingpg` produce the same linearized variable $z$.
@@ -137,35 +137,38 @@ However, the measures of uncertainty do not line up, because `library(vardpoor)`
 
 ```{r}
 # within each strata, sum up the weights
-cluster_sums <- aggregate( eusilc$rb050 , list( eusilc$db040 ) , sum )
+cluster_sums <-
+  aggregate(eusilc$rb050 , list(eusilc$db040) , sum)
 
 # name the within-strata sums of weights the `cluster_sum`
-names( cluster_sums ) <- c( "db040" , "cluster_sum" )
+names(cluster_sums) <- c("db040" , "cluster_sum")
 
 # merge this column back onto the data.frame
-eusilc <- merge( eusilc , cluster_sums )
+eusilc <- merge(eusilc , cluster_sums)
 
 # construct a survey.design
 # with the fpc using the cluster sum
-des_eusilc_ultimate_cluster <- 
-	svydesign( 
-		ids = ~ rb030 , 
-		strata = ~ db040 ,  
-		weights = ~ rb050 , 
-		data = eusilc , 
-		fpc = ~ cluster_sum 
-	)
+des_eusilc_ultimate_cluster <-
+  svydesign(
+    ids = ~ rb030 ,
+    strata = ~ db040 ,
+    weights = ~ rb050 ,
+    data = eusilc ,
+    fpc = ~ cluster_sum
+  )
 
 # again, immediately run the convey_prep function on the `survey.design`
-des_eusilc_ultimate_cluster <- convey_prep( des_eusilc_ultimate_cluster )
+des_eusilc_ultimate_cluster <-
+  convey_prep(des_eusilc_ultimate_cluster)
 
 # matches
-attr( svygpg( ~ eqincome , des_eusilc_ultimate_cluster , sex = ~ rb090 ) , 'var' ) * 10000
+attr(svygpg(~ eqincome , des_eusilc_ultimate_cluster , sex = ~ rb090) ,
+     'var') * 10000
 varpoord_gpg_calculation$all_result$var
 
 # matches
 varpoord_gpg_calculation$all_result$se
-SE( svygpg( ~ eqincome , des_eusilc_ultimate_cluster , sex = ~ rb090 ) ) * 100
+SE(svygpg(~ eqincome , des_eusilc_ultimate_cluster , sex = ~ rb090)) * 100
 ```
 
 For additional usage examples of `svygpg`, type `?convey::svygpg` in the R console.
@@ -205,95 +208,88 @@ library(laeken)
 data(eusilc)
 
 # make all column names lowercase
-names( eusilc ) <- tolower( names( eusilc ) )
+names(eusilc) <- tolower(names(eusilc))
 
 # add a column with the row number
-dati <- data.table::data.table(IDd = 1 : nrow(eusilc), eusilc)
+dati <- data.table::data.table(IDd = 1:nrow(eusilc), eusilc)
 
 # calculate the qsr coefficient
 # using the R vardpoor library
 varpoord_qsr_calculation <-
-	varpoord(
-	
-		# analysis variable
-		Y = "eqincome", 
-		
-		# weights variable
-		w_final = "rb050",
-		
-		# row number variable
-		ID_level1 = "IDd",
-		
-		# row number variable
-		ID_level2 = "IDd",
-		
-		# strata variable
-		H = "db040", 
-		
-		N_h = NULL ,
-		
-		# clustering variable
-		PSU = "rb030", 
-		
-		# data.table
-		dataset = dati, 
-		
-		# qsr coefficient function
-		type = "linqsr",
-	  
-	  # poverty threshold range
-	  order_quant = 50L ,
-	  
-	  # get linearized variable
-	  outp_lin = TRUE
-		
-	)
+  varpoord(
+    # analysis variable
+    Y = "eqincome",
+    
+    # weights variable
+    w_final = "rb050",
+    
+    # row number variable
+    ID_level1 = "IDd",
+    
+    # row number variable
+    ID_level2 = "IDd",
+    
+    # strata variable
+    H = "db040",
+    
+    N_h = NULL ,
+    
+    # clustering variable
+    PSU = "rb030",
+    
+    # data.table
+    dataset = dati,
+    
+    # qsr coefficient function
+    type = "linqsr",
+    
+    # poverty threshold range
+    order_quant = 50L ,
+    
+    # get linearized variable
+    outp_lin = TRUE
+    
+  )
 
 
 
 # construct a survey.design
 # using our recommended setup
-des_eusilc <- 
-	svydesign( 
-		ids = ~ rb030 , 
-		strata = ~ db040 ,  
-		weights = ~ rb050 , 
-		data = eusilc
-	)
+des_eusilc <-
+  svydesign(
+    ids = ~ rb030 ,
+    strata = ~ db040 ,
+    weights = ~ rb050 ,
+    data = eusilc
+  )
 
 # immediately run the convey_prep function on it
-des_eusilc <- convey_prep( des_eusilc )
+des_eusilc <- convey_prep(des_eusilc)
 
 # coefficients do match
 varpoord_qsr_calculation$all_result$value
-coef( svyqsr( ~ eqincome , des_eusilc ) )
+coef(svyqsr(~ eqincome , des_eusilc))
 
 # linearized variables do match
 # vardpoor
-lin_qsr_varpoord<- varpoord_qsr_calculation$lin_out$lin_qsr
-# convey 
-lin_qsr_convey <- 
-  as.numeric(
-    attr(
-        svyqsr( 
-            ~ eqincome , 
-            des_eusilc , 
-            linearized = TRUE  
-          ) , 
-        "linearized"
-    )
-  )
+lin_qsr_varpoord <- varpoord_qsr_calculation$lin_out$lin_qsr
+# convey
+lin_qsr_convey <-
+  as.numeric(attr(svyqsr(~ eqincome ,
+                         des_eusilc ,
+                         linearized = TRUE) ,
+                  "linearized"))
 
 # check equality
-all.equal(lin_qsr_varpoord, lin_qsr_convey )
+all.equal(lin_qsr_varpoord, lin_qsr_convey)
 
 # variances do not match exactly
-attr( svyqsr( ~ eqincome , des_eusilc ) , 'var' )
+attr(svyqsr(~ eqincome , des_eusilc) , 'var')
 varpoord_qsr_calculation$all_result$var
 
 # standard errors do not match exactly
 varpoord_qsr_calculation$all_result$se
-SE( svyqsr( ~ eqincome , des_eusilc ) )
+SE(svyqsr(~ eqincome , des_eusilc))
 ```
 
 The variance estimate is computed by using the approximation defined in \@ref(eq:var), where the linearized variable $z$ is defined by \@ref(eq:lin). The functions `convey::svygpg` and `vardpoor::lingpg` produce the same linearized variable $z$.
@@ -302,35 +298,37 @@ However, the measures of uncertainty do not line up, because `library(vardpoor)`
 
 ```{r}
 # within each strata, sum up the weights
-cluster_sums <- aggregate( eusilc$rb050 , list( eusilc$db040 ) , sum )
+cluster_sums <-
+  aggregate(eusilc$rb050 , list(eusilc$db040) , sum)
 
 # name the within-strata sums of weights the `cluster_sum`
-names( cluster_sums ) <- c( "db040" , "cluster_sum" )
+names(cluster_sums) <- c("db040" , "cluster_sum")
 
 # merge this column back onto the data.frame
-eusilc <- merge( eusilc , cluster_sums )
+eusilc <- merge(eusilc , cluster_sums)
 
 # construct a survey.design
 # with the fpc using the cluster sum
-des_eusilc_ultimate_cluster <- 
-	svydesign( 
-		ids = ~ rb030 , 
-		strata = ~ db040 ,  
-		weights = ~ rb050 , 
-		data = eusilc , 
-		fpc = ~ cluster_sum 
-	)
+des_eusilc_ultimate_cluster <-
+  svydesign(
+    ids = ~ rb030 ,
+    strata = ~ db040 ,
+    weights = ~ rb050 ,
+    data = eusilc ,
+    fpc = ~ cluster_sum
+  )
 
 # again, immediately run the convey_prep function on the `survey.design`
-des_eusilc_ultimate_cluster <- convey_prep( des_eusilc_ultimate_cluster )
+des_eusilc_ultimate_cluster <-
+  convey_prep(des_eusilc_ultimate_cluster)
 
 # matches
-attr( svyqsr( ~ eqincome , des_eusilc_ultimate_cluster ) , 'var' )
+attr(svyqsr(~ eqincome , des_eusilc_ultimate_cluster) , 'var')
 varpoord_qsr_calculation$all_result$var
 
 # matches
 varpoord_qsr_calculation$all_result$se
-SE( svyqsr( ~ eqincome , des_eusilc_ultimate_cluster ) )
+SE(svyqsr(~ eqincome , des_eusilc_ultimate_cluster))
 ```
 
 For additional usage examples of `svyqsr`, type `?convey::svyqsr` in the R console.
@@ -393,16 +391,20 @@ library(webuse)
 webuse("nlsw88")
 
 # coerce that `tbl_df` to a standard R `data.frame`
-nlsw88 <- data.frame( nlsw88 )
+nlsw88 <- data.frame(nlsw88)
 
 # initiate a linearized survey design object
-des_nlsw88 <- svydesign( ids = ~1 , data = nlsw88 )
+des_nlsw88 <- svydesign(ids = ~ 1 , data = nlsw88)
 
 # immediately run the `convey_prep` function on the survey design
 des_nlsw88 <- convey_prep(des_nlsw88)
 
 # estimates lorenz curve
-result.lin <- svylorenz( ~wage, des_nlsw88, quantiles = seq( 0, 1, .05 ), na.rm = TRUE )
+result.lin <-
+  svylorenz(~ wage,
+            des_nlsw88,
+            quantiles = seq(0, 1, .05),
+            na.rm = TRUE)
 
 
 # note: most survey commands in R use Inf degrees of freedom by default
@@ -410,26 +412,27 @@ result.lin <- svylorenz( ~wage, des_nlsw88, quantiles = seq( 0, 1, .05 ), na.rm 
 # therefore, while this extended syntax serves to prove a precise replication of stata
 # it is generally not necessary.
 section_four_one <-
-	data.frame( 
-		estimate = coef( result.lin ) , 
-		standard_error = SE( result.lin ) , 
-		ci_lower_bound = 
-		    coef( result.lin ) + 
-		    SE( result.lin ) * 
-		    qt( 0.025 , degf( subset( des_nlsw88 , !is.na( wage ) ) ) ) ,
-		ci_upper_bound = 
-		    coef( result.lin ) + 
-		    SE( result.lin ) * 
-		    qt( 0.975 , degf( subset( des_nlsw88 , !is.na( wage ) ) ) )
-	)
-	
+  data.frame(
+    estimate = coef(result.lin) ,
+    standard_error = SE(result.lin) ,
+    ci_lower_bound =
+      coef(result.lin) +
+      SE(result.lin) *
+      qt(0.025 , degf(subset(
+        des_nlsw88 ,!is.na(wage)
+      ))) ,
+    ci_upper_bound =
+      coef(result.lin) +
+      SE(result.lin) *
+      qt(0.975 , degf(subset(
+        des_nlsw88 ,!is.na(wage)
+      )))
+  )
 ```
 
 ```{r echo=FALSE}
-knitr::kable(
-  section_four_one ,
-  booktabs = TRUE
-)
+knitr::kable(section_four_one ,
+             booktabs = TRUE)
 ```
 
 
@@ -482,85 +485,85 @@ library(laeken)
 data(eusilc)
 
 # make all column names lowercase
-names( eusilc ) <- tolower( names( eusilc ) )
+names(eusilc) <- tolower(names(eusilc))
 
 # add a column with the row number
-dati <- data.table::data.table(IDd = 1 : nrow(eusilc), eusilc)
+dati <- data.table::data.table(IDd = 1:nrow(eusilc), eusilc)
 
 # calculate the gini coefficient
 # using the R vardpoor library
 varpoord_gini_calculation <-
-	varpoord(
-	
-		# analysis variable
-		Y = "eqincome", 
-		
-		# weights variable
-		w_final = "rb050",
-		
-		# row number variable
-		ID_level1 = "IDd",
-		
-		# row number variable
-		ID_level2 = "IDd",
-		
-		# strata variable
-		H = "db040", 
-		
-		N_h = NULL ,
-		
-		# clustering variable
-		PSU = "rb030", 
-		
-		# data.table
-		dataset = dati, 
-		
-		# gini coefficient function
-		type = "lingini",
-	  
-	  # poverty threshold range
-	  order_quant = 50L ,
-	  
-	  # get linearized variable
-	  outp_lin = TRUE
-		
-	)
+  varpoord(
+    # analysis variable
+    Y = "eqincome",
+    
+    # weights variable
+    w_final = "rb050",
+    
+    # row number variable
+    ID_level1 = "IDd",
+    
+    # row number variable
+    ID_level2 = "IDd",
+    
+    # strata variable
+    H = "db040",
+    
+    N_h = NULL ,
+    
+    # clustering variable
+    PSU = "rb030",
+    
+    # data.table
+    dataset = dati,
+    
+    # gini coefficient function
+    type = "lingini",
+    
+    # poverty threshold range
+    order_quant = 50L ,
+    
+    # get linearized variable
+    outp_lin = TRUE
+    
+  )
 
 
 
 # construct a survey.design
 # using our recommended setup
-des_eusilc <- 
-	svydesign( 
-		ids = ~ rb030 , 
-		strata = ~ db040 ,  
-		weights = ~ rb050 , 
-		data = eusilc
-	)
+des_eusilc <-
+  svydesign(
+    ids = ~ rb030 ,
+    strata = ~ db040 ,
+    weights = ~ rb050 ,
+    data = eusilc
+  )
 
 # immediately run the convey_prep function on it
-des_eusilc <- convey_prep( des_eusilc )
+des_eusilc <- convey_prep(des_eusilc)
 
 # coefficients do match
 varpoord_gini_calculation$all_result$value
-coef( svygini( ~ eqincome , des_eusilc ) ) * 100
+coef(svygini(~ eqincome , des_eusilc)) * 100
 
 # linearized variables do match
 # varpoord
-lin_gini_varpoord<- varpoord_gini_calculation$lin_out$lin_gini
-# convey 
-lin_gini_convey <- attr( svygini( ~ eqincome , des_eusilc , linearized = TRUE ) , "linearized" )
+lin_gini_varpoord <- varpoord_gini_calculation$lin_out$lin_gini
+# convey
+lin_gini_convey <-
+  attr(svygini(~ eqincome , des_eusilc , linearized = TRUE) , "linearized")
 
 # check equality
-all.equal( lin_gini_varpoord , ( 100 * as.numeric( lin_gini_convey ) ) )
+all.equal(lin_gini_varpoord , (100 * as.numeric(lin_gini_convey)))
 
 # variances do not match exactly
-attr( svygini( ~ eqincome , des_eusilc ) , 'var' ) * 10000
+attr(svygini(~ eqincome , des_eusilc) , 'var') * 10000
 varpoord_gini_calculation$all_result$var
 
 # standard errors do not match exactly
 varpoord_gini_calculation$all_result$se
-SE( svygini( ~ eqincome , des_eusilc ) ) * 100
+SE(svygini(~ eqincome , des_eusilc)) * 100
 ```
 
 The variance estimate is computed by using the approximation defined in \@ref(eq:var), where the linearized variable $z$ is defined by \@ref(eq:lin). The functions `convey::svygini` and `vardpoor::lingini` produce the same linearized variable $z$.
@@ -569,35 +572,37 @@ However, the measures of uncertainty do not line up, because `library(vardpoor)`
 
 ```{r}
 # within each strata, sum up the weights
-cluster_sums <- aggregate( eusilc$rb050 , list( eusilc$db040 ) , sum )
+cluster_sums <-
+  aggregate(eusilc$rb050 , list(eusilc$db040) , sum)
 
 # name the within-strata sums of weights the `cluster_sum`
-names( cluster_sums ) <- c( "db040" , "cluster_sum" )
+names(cluster_sums) <- c("db040" , "cluster_sum")
 
 # merge this column back onto the data.frame
-eusilc <- merge( eusilc , cluster_sums )
+eusilc <- merge(eusilc , cluster_sums)
 
 # construct a survey.design
 # with the fpc using the cluster sum
-des_eusilc_ultimate_cluster <- 
-	svydesign( 
-		ids = ~ rb030 , 
-		strata = ~ db040 ,  
-		weights = ~ rb050 , 
-		data = eusilc , 
-		fpc = ~ cluster_sum 
-	)
+des_eusilc_ultimate_cluster <-
+  svydesign(
+    ids = ~ rb030 ,
+    strata = ~ db040 ,
+    weights = ~ rb050 ,
+    data = eusilc ,
+    fpc = ~ cluster_sum
+  )
 
 # again, immediately run the convey_prep function on the `survey.design`
-des_eusilc_ultimate_cluster <- convey_prep( des_eusilc_ultimate_cluster )
+des_eusilc_ultimate_cluster <-
+  convey_prep(des_eusilc_ultimate_cluster)
 
 # matches
-attr( svygini( ~ eqincome , des_eusilc_ultimate_cluster ) , 'var' ) * 10000
+attr(svygini(~ eqincome , des_eusilc_ultimate_cluster) , 'var') * 10000
 varpoord_gini_calculation$all_result$var
 
 # matches
 varpoord_gini_calculation$all_result$se
-SE( svygini( ~ eqincome , des_eusilc_ultimate_cluster ) ) * 100
+SE(svygini(~ eqincome , des_eusilc_ultimate_cluster)) * 100
 ```
 
 ## Zenga index (svyzenga)
@@ -643,82 +648,75 @@ library(survey)
 tf <- tempfile()
 
 # store the location of the zip file
-data_zip <- "https://www.bancaditalia.it/statistiche/tematiche/indagini-famiglie-imprese/bilanci-famiglie/distribuzione-microdati/documenti/ind12_ascii.zip"
+data_zip <-
+  "https://www.bancaditalia.it/statistiche/tematiche/indagini-famiglie-imprese/bilanci-famiglie/distribuzione-microdati/documenti/ind12_ascii.zip"
 
 # download to the temporary file
-download.file( data_zip , tf , mode = 'wb' )
+download.file(data_zip , tf , mode = 'wb')
 
 # unzip the contents of the archive to a temporary directory
-td <- file.path( tempdir() , "shiw2012" )
-data_files <- unzip( tf , exdir = td )
+td <- file.path(tempdir() , "shiw2012")
+data_files <- unzip(tf , exdir = td)
 
 # load the household, consumption and income from SHIW (2012) survey data
-hhr.df <- read.csv( grep( "carcom12" , data_files , value = TRUE ) )
-cns.df <- read.csv( grep( "risfam12" , data_files , value = TRUE ) )
-inc.df <- read.csv( grep( "rper12" , data_files , value = TRUE ) )
+hhr.df <- read.csv(grep("carcom12" , data_files , value = TRUE))
+cns.df <- read.csv(grep("risfam12" , data_files , value = TRUE))
+inc.df <- read.csv(grep("rper12" , data_files , value = TRUE))
 
 # fixes names
-colnames( cns.df )[1] <- tolower( colnames( cns.df ) )[1]
+colnames(cns.df)[1] <- tolower(colnames(cns.df))[1]
 
 # household count should be 8151
-stopifnot( sum( !duplicated( hhr.df$nquest ) ) == 8151 )
+stopifnot(sum(!duplicated(hhr.df$nquest)) == 8151)
 
 # person count should be 20022
-stopifnot( sum( !duplicated( paste0( hhr.df$nquest , "-" , hhr.df$nord ) ) ) == 20022 )
+stopifnot(sum(!duplicated(paste0(
+  hhr.df$nquest , "-" , hhr.df$nord
+))) == 20022)
 
 # income recipients: should be 12986
-stopifnot( sum( hhr.df$PERC ) == 12986 )
+stopifnot(sum(hhr.df$PERC) == 12986)
 
 # combine household roster and income datasets
-pop.df <- 
-	merge( 
-		hhr.df , 
-		inc.df , 
-		by = c( "nquest" ,"nord" ) , 
-		all.x = TRUE , 
-		sort = FALSE 
-	)
+pop.df <-
+  merge(
+    hhr.df ,
+    inc.df ,
+    by = c("nquest" , "nord") ,
+    all.x = TRUE ,
+    sort = FALSE
+  )
 
 # compute household-level income
-hinc.df <- 
-	pop.df[ 
-		pop.df$PERC == 1 , 
-		c( "nquest" , "nord" , "PERC" , "Y" , "YL" , "YM" , "YT" , "YC" ) , 
-		drop = FALSE 
-	]
-	
-hinc.df <- 
-	aggregate( 
-		rowSums( 
-			hinc.df[ , c( "YL"  , "YM" , "YT"  ) , drop = FALSE ] 
-		) , 
-		list( "nquest" = hinc.df$nquest ) , 
-		sum , 
-		na.rm = TRUE 
-	)
-	
-pop.df <- 
-	merge( 
-		pop.df , 
-		hinc.df , 
-		by = "nquest" , 
-		all.x = TRUE , 
-		sort = FALSE 
-	)
+hinc.df <-
+  pop.df[pop.df$PERC == 1 ,
+         c("nquest" , "nord" , "PERC" , "Y" , "YL" , "YM" , "YT" , "YC") ,
+         drop = FALSE]
+
+hinc.df <-
+  aggregate(rowSums(hinc.df[, c("YL"  , "YM" , "YT") , drop = FALSE]) ,
+            list("nquest" = hinc.df$nquest) ,
+            sum ,
+            na.rm = TRUE)
+
+pop.df <-
+  merge(pop.df ,
+        hinc.df ,
+        by = "nquest" ,
+        all.x = TRUE ,
+        sort = FALSE)
 
 # combine with consumption data
-pop.df <- 
-	merge( 
-		pop.df , 
-		cns.df , 
-		by = "nquest" , 
-		all.x = TRUE , 
-		sort = FALSE 
-	)
+pop.df <-
+  merge(pop.df ,
+        cns.df ,
+        by = "nquest" ,
+        all.x = TRUE ,
+        sort = FALSE)
 
 # treat household-level sample as the finite population
-pop.df <- 
-	pop.df[ !duplicated( pop.df$nquest ) , , drop = FALSE ]
+pop.df <-
+  pop.df[!duplicated(pop.df$nquest) , , drop = FALSE]
 ```
 
 For the Monte Carlo experiment, we take `5000` samples of (expected) size `1000` using Poisson sampling^[but not Conditional Poisson Sampling.] and estimate the Zenga index using each sample:
@@ -727,88 +725,85 @@ For the Monte Carlo experiment, we take `5000` samples of (expected) size `1000`
 # set up monte carlo attributes
 MC.reps <- 5000L
 n.size = 1000L
-N.size = nrow( pop.df )
+N.size = nrow(pop.df)
 
 # calculate first order probabilities
 pop.df$pik <-
-	n.size * ( abs( pop.df$C ) / sum( abs( pop.df$C ) ) )
+  n.size * (abs(pop.df$C) / sum(abs(pop.df$C)))
 
 # calculate second order probabilities
-pikl <- pop.df$pik %*% t( pop.df$pik )
-diag( pikl ) <- pop.df$pik 
+pikl <- pop.df$pik %*% t(pop.df$pik)
+diag(pikl) <- pop.df$pik
 
 # set random number seed
-set.seed( 1997 )
+set.seed(1997)
 
 # create list of survey design objects
 # using poisson sampling
-survey.list <- 
-	lapply( 
-		seq_len( MC.reps ) , 
-		function( this.rep ){
-			smp.ind <- which( runif( N.size ) <= pop.df$pik )
-			smp.df <- pop.df[ smp.ind , , drop = FALSE ]
-			svydesign( 
-				ids = ~nquest , 
-				data = smp.df , 
-				fpc = ~pik , 
-				nest = FALSE , 
-				pps = ppsmat( pikl[ smp.ind , smp.ind ] ) , 
-				variance = "HT" 
-			)
-		}
-	)
+survey.list <-
+  lapply(seq_len(MC.reps) ,
+         function(this.rep) {
+           smp.ind <- which(runif(N.size) <= pop.df$pik)
+           smp.df <- pop.df[smp.ind , , drop = FALSE]
+           svydesign(
+             ids = ~ nquest ,
+             data = smp.df ,
+             fpc = ~ pik ,
+             nest = FALSE ,
+             pps = ppsmat(pikl[smp.ind , smp.ind]) ,
+             variance = "HT"
+           )
+         })
 
 # estimate zenga index for each sample
-estimate.list <- 
-	lapply(
-		survey.list , 
-        function( this.sample ){
-			svyzenga( 
-				~x , 
-				subset( this.sample , x > 0 ) , 
-				na.rm = TRUE 
-			)
-		}
-	)
-	
+estimate.list <-
+  lapply(survey.list ,
+         function(this.sample) {
+           svyzenga(~ x ,
+                    subset(this.sample , x > 0) ,
+                    na.rm = TRUE)
+         })
 ```
 Then, we evaluate the Percentage Relative Bias (PRB) of the Zenga index estimator. Under this scenario, the PRB of the Zenga index estimator is 0.3397%, a result similar to the `0.321` shown in Table 2.
 
 ```{r}
 # compute the (finite population) Zenga index parameter
-theta.pop <- convey:::CalcZenga( pop.df$x , ifelse( pop.df$x > 0 , 1 , 0 ) )
+theta.pop <-
+  convey:::CalcZenga(pop.df$x , ifelse(pop.df$x > 0 , 1 , 0))
 
 # estimate the expected value of the Zenga index estimator
 # using the average of the estimates
-theta.exp <- mean( sapply( estimate.list , coef ) )
+theta.exp <- mean(sapply(estimate.list , coef))
 
 # estimate the percentage relative bias
-100 * ( theta.exp/theta.pop - 1 )
+100 * (theta.exp / theta.pop - 1)
 ```
 Then, we evaluate the PRB of the variance estimator of the Zenga index estimator. Under this scenario, the PRB of the Zenga index variance estimator is -0.4954%, another result similar to the `-0.600` shown in Table 2.
 
 ```{r}
 # estimate the variance of the Zenga index estimator
 # using the variance of the estimates
-( vartheta.popest <- var( sapply( estimate.list , coef ) ) )
+(vartheta.popest <- var(sapply(estimate.list , coef)))
 
 # estimate the expected value of the Zenga index variance estimator
 # using the expected of the variance estimates
-( vartheta.exp <- mean( sapply( estimate.list , vcov ) ) )
+(vartheta.exp <- mean(sapply(estimate.list , vcov)))
 
 # estimate the percentage relative bias
-100 * ( vartheta.exp/vartheta.popest - 1 )
+100 * (vartheta.exp / vartheta.popest - 1)
 ```
 Next, we evaluate the Percentage Coverage Rate (PCR). In theory, under repeated sampling, the estimated 95% CIs should cover the population parameter 95% of the time. We can evaluate that using:
 
 ```{r}
 # estimate confidence intervals of the Zenga index
 # for each of the samples
-est.cis <- t( sapply( estimate.list, function( this.stat ) c( confint( this.stat ) ) ) ) 
+est.cis <-
+  t(sapply(estimate.list, function(this.stat)
+    c(confint(this.stat))))
 
 # evaluate
-prop.table( table( ( theta.pop > est.cis[,1] ) & ( theta.pop < est.cis[,2] ) ) )
+prop.table(table((theta.pop > est.cis[, 1]) &
+                   (theta.pop < est.cis[, 2])))
 ```
 
 Our estimated 95% CIs cover the parameter 94.52% of the time, which is very close to the nominal rate and also similar to the `94.5` PCR shown in Table 2.
@@ -896,21 +891,25 @@ library(foreign)
 tf <- tempfile()
 
 # store the location of the presentation file
-presentation_zip <- "http://repec.org/nasug2006/nasug2006_jenkins.zip"
+presentation_zip <-
+  "http://repec.org/nasug2006/nasug2006_jenkins.zip"
 
 # download jenkins' presentation to the temporary file
-download.file( presentation_zip , tf , mode = 'wb' )
+download.file(presentation_zip , tf , mode = 'wb')
 
 # unzip the contents of the archive
-presentation_files <- unzip( tf , exdir = tempdir() )
+presentation_files <- unzip(tf , exdir = tempdir())
 
 # load the institute for fiscal studies' 1981, 1985, and 1991 data.frame objects
-x81 <- read.dta( grep( "ifs81" , presentation_files , value = TRUE ) )
-x85 <- read.dta( grep( "ifs85" , presentation_files , value = TRUE ) )
-x91 <- read.dta( grep( "ifs91" , presentation_files , value = TRUE ) )
+x81 <-
+  read.dta(grep("ifs81" , presentation_files , value = TRUE))
+x85 <-
+  read.dta(grep("ifs85" , presentation_files , value = TRUE))
+x91 <-
+  read.dta(grep("ifs91" , presentation_files , value = TRUE))
 
 # stack each of these three years of data into a single data.frame
-x <- rbind( x81 , x85 , x91 )
+x <- rbind(x81 , x85 , x91)
 ```
 
 Replicate the author's survey design statement from stata code..
@@ -927,10 +926,10 @@ construct an
 
 ```{r}
 # initiate a linearized survey design object
-y <- svydesign( ~ hrn , data = x , weights = ~ wgt )
+y <- svydesign(~ hrn , data = x , weights = ~ wgt)
 
 # immediately run the `convey_prep` function on the survey design
-z <- convey_prep( y )
+z <- convey_prep(y)
 ```
 
 Replicate the author's subset statement and each of his svygei results..
@@ -959,13 +958,13 @@ GE(3)    |  .1739994   .00662015    26.28    0.000      .1610242   .1869747
 ..using R code:
 
 ```{r}
-z81 <- subset( z , year == 1981 )
+z81 <- subset(z , year == 1981)
 
-svygei( ~ eybhc0 , subset( z81 , eybhc0 > 0 ) , epsilon = -1 )
-svygei( ~ eybhc0 , subset( z81 , eybhc0 > 0 ) , epsilon = 0 )
-svygei( ~ eybhc0 , subset( z81 , eybhc0 > 0 ) )
-svygei( ~ eybhc0 , subset( z81 , eybhc0 > 0 ) , epsilon = 2 )
-svygei( ~ eybhc0 , subset( z81 , eybhc0 > 0 ) , epsilon = 3 )
+svygei(~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = -1)
+svygei(~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = 0)
+svygei(~ eybhc0 , subset(z81 , eybhc0 > 0))
+svygei(~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = 2)
+svygei(~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = 3)
 ```	
 
 Confirm this replication applies for subsetted objects as well.  Compare stata output..
@@ -993,43 +992,45 @@ GE(3)    |  .2609507   .01850689    14.10    0.000      .2246779   .2972235
 ..to R code:
 
 ```{r}
-z85 <- subset( z , year == 1985 )
+z85 <- subset(z , year == 1985)
 
-svygei( ~ eybhc0 , subset( z85 , eybhc0 > 1 ) , epsilon = -1 )
-svygei( ~ eybhc0 , subset( z85 , eybhc0 > 1 ) , epsilon = 0 )
-svygei( ~ eybhc0 , subset( z85 , eybhc0 > 1 ) )
-svygei( ~ eybhc0 , subset( z85 , eybhc0 > 1 ) , epsilon = 2 )
-svygei( ~ eybhc0 , subset( z85 , eybhc0 > 1 ) , epsilon = 3 )
+svygei(~ eybhc0 , subset(z85 , eybhc0 > 1) , epsilon = -1)
+svygei(~ eybhc0 , subset(z85 , eybhc0 > 1) , epsilon = 0)
+svygei(~ eybhc0 , subset(z85 , eybhc0 > 1))
+svygei(~ eybhc0 , subset(z85 , eybhc0 > 1) , epsilon = 2)
+svygei(~ eybhc0 , subset(z85 , eybhc0 > 1) , epsilon = 3)
 ```
 
 Replicate the author's decomposition by population subgroup (work status) shown on PDF page 57..
 ```{r}
 
+
 # define work status (PDF page 22)
-z <- update( z , wkstatus = c( 1 , 1 , 1 , 1 , 2 , 3 , 2 , 2 )[ as.numeric( esbu ) ] )
-z <- update( z , wkstatus = factor( wkstatus , labels = c( "1+ ft working" , "no ft working" , "elderly" ) ) )
+z <-
+  update(z , wkstatus = c(1 , 1 , 1 , 1 , 2 , 3 , 2 , 2)[as.numeric(esbu)])
+z <-
+  update(z , wkstatus = factor(wkstatus , labels = c("1+ ft working" , "no ft working" , "elderly")))
 
 # subset to 1991 and remove records with zero income
-z91 <- subset( z , year == 1991 & eybhc0 > 0 )
+z91 <- subset(z , year == 1991 & eybhc0 > 0)
 
 # population share
-svymean( ~wkstatus, z91 )
+svymean(~ wkstatus, z91)
 
 # mean
-svyby( ~eybhc0, ~wkstatus, z91, svymean )
+svyby(~ eybhc0, ~ wkstatus, z91, svymean)
 
 # subgroup indices: ge_k
-svyby( ~ eybhc0 , ~wkstatus , z91 , svygei , epsilon = -1 )
-svyby( ~ eybhc0 , ~wkstatus , z91 , svygei , epsilon = 0 )
-svyby( ~ eybhc0 , ~wkstatus , z91 , svygei , epsilon = 1 )
-svyby( ~ eybhc0 , ~wkstatus , z91 , svygei , epsilon = 2 )
+svyby(~ eybhc0 , ~ wkstatus , z91 , svygei , epsilon = -1)
+svyby(~ eybhc0 , ~ wkstatus , z91 , svygei , epsilon = 0)
+svyby(~ eybhc0 , ~ wkstatus , z91 , svygei , epsilon = 1)
+svyby(~ eybhc0 , ~ wkstatus , z91 , svygei , epsilon = 2)
 
 # GE decomposition
-svygeidec( ~eybhc0, ~wkstatus, z91, epsilon = -1 )
-svygeidec( ~eybhc0, ~wkstatus, z91, epsilon = 0 )
-svygeidec( ~eybhc0, ~wkstatus, z91, epsilon = 1 )
-svygeidec( ~eybhc0, ~wkstatus, z91, epsilon = 2 )
-
+svygeidec(~ eybhc0, ~ wkstatus, z91, epsilon = -1)
+svygeidec(~ eybhc0, ~ wkstatus, z91, epsilon = 0)
+svygeidec(~ eybhc0, ~ wkstatus, z91, epsilon = 1)
+svygeidec(~ eybhc0, ~ wkstatus, z91, epsilon = 2)
 ```
 
 For additional usage examples of `svygei` or `svygeidec`, type `?convey::svygei` or `?convey::svygeidec` in the R console.
@@ -1061,14 +1062,17 @@ First, we should check that the finite-population values make sense. The J-diver
 
 ```{r}
 # compute finite population J-divergence
-( jdivt.pop <- ( convey:::CalcJDiv( pop.df$x , ifelse( pop.df$x > 0 , 1 , 0 ) ) ) )
+(jdivt.pop <-
+   (convey:::CalcJDiv(pop.df$x , ifelse(pop.df$x > 0 , 1 , 0))))
 
 # compute finite population GE indices
-( gei0.pop <- convey:::CalcGEI( pop.df$x , ifelse( pop.df$x > 0 , 1 , 0 ) , 0 ) )
-( gei1.pop <-convey:::CalcGEI( pop.df$x , ifelse( pop.df$x > 0 , 1 , 0 ) , 1 ) )
+(gei0.pop <-
+    convey:::CalcGEI(pop.df$x , ifelse(pop.df$x > 0 , 1 , 0) , 0))
+(gei1.pop <-
+    convey:::CalcGEI(pop.df$x , ifelse(pop.df$x > 0 , 1 , 0) , 1))
 
 # check equality; should be true
-all.equal( jdivt.pop , gei0.pop + gei1.pop )
+all.equal(jdivt.pop , gei0.pop + gei1.pop)
 ```
 As expected, the J-divergence matches the sum of GEs in the finite population. And as we've checked the GE measures before, the J-divergence computation function seems safe.
 
@@ -1076,74 +1080,75 @@ In order to assess the estimators implemented in `svyjdiv` and `svyjdivdec`, we 
 
 ```{r}
 # estimate J-divergence with each sample
-estimate.list <- 
-	lapply(
-		survey.list , 
-        function( this.sample ){
-			svyjdiv( 
-				~x , 
-				subset( this.sample , x > 0 ) , 
-				na.rm = TRUE 
-			)
-		}
-	)
+estimate.list <-
+  lapply(survey.list ,
+         function(this.sample) {
+           svyjdiv(~ x ,
+                   subset(this.sample , x > 0) ,
+                   na.rm = TRUE)
+         })
 
 # compute the (finite population overall) J-divergence
-( theta.pop <- convey:::CalcJDiv( pop.df$x , ifelse( pop.df$x > 0 , 1 , 0 ) ) )
+(theta.pop <-
+    convey:::CalcJDiv(pop.df$x , ifelse(pop.df$x > 0 , 1 , 0)))
 
 # estimate the expected value of the J-divergence estimator
 # using the average of the estimates
-( theta.exp <- mean( sapply( estimate.list , coef ) ) )
+(theta.exp <- mean(sapply(estimate.list , coef)))
 
 # estimate the percentage relative bias
-100 * ( theta.exp/theta.pop - 1 )
+100 * (theta.exp / theta.pop - 1)
 ```
 
 ```{r}
 # estimate the variance of the J-divergence estimator
 # using the variance of the estimates
-( vartheta.popest <- var( sapply( estimate.list , coef ) ) )
+(vartheta.popest <- var(sapply(estimate.list , coef)))
 
 # estimate the expected value of the J-divergence index variance estimator
 # using the expected of the variance estimates
-( vartheta.exp <- mean( sapply( estimate.list , vcov ) ) )
+(vartheta.exp <- mean(sapply(estimate.list , vcov)))
 
 # estimate the percentage relative bias of the variance estimator
-100 * ( vartheta.exp/vartheta.popest - 1 )
+100 * (vartheta.exp / vartheta.popest - 1)
 ```
 
 For the decomposition, we repeat the same procedure:
 
 ```{r}
 # estimate J-divergence decomposition with each sample
-estimate.list <- 
-	lapply(
-		survey.list , 
-        function( this.sample ){
-			svyjdivdec( 
-				~x , 
-				~SEX ,
-				subset( this.sample , x > 0 ) , 
-				na.rm = TRUE 
-			)
-		}
-	)
+estimate.list <-
+  lapply(survey.list ,
+         function(this.sample) {
+           svyjdivdec(~ x ,
+                      ~ SEX ,
+                      subset(this.sample , x > 0) ,
+                      na.rm = TRUE)
+         })
 
 # compute the (finite population) J-divergence decomposition per sex
-jdivt.pop <- convey:::CalcJDiv( pop.df$x , ifelse( pop.df$x > 0 , 1 , 0 ) )
-overall.mean <- mean( pop.df$x[ pop.df$x > 0 ] )
-group.mean <- c( by( pop.df$x[ pop.df$x > 0 ] , list( "SEX" = factor( pop.df$SEX[ pop.df$x > 0 ] ) ) , FUN = mean ) )
-group.pshare <- c( prop.table( by( rep( 1 , sum( pop.df$x > 0 ) ) , list( "SEX" = factor( pop.df$SEX[ pop.df$x > 0 ] ) ) , FUN = sum ) ) ) 
-jdivb.pop <- sum( group.pshare * ( group.mean / overall.mean - 1 ) * log( group.mean / overall.mean ) )
+jdivt.pop <-
+  convey:::CalcJDiv(pop.df$x , ifelse(pop.df$x > 0 , 1 , 0))
+overall.mean <- mean(pop.df$x[pop.df$x > 0])
+group.mean <-
+  c(by(pop.df$x[pop.df$x > 0] , list("SEX" = factor(pop.df$SEX[pop.df$x > 0])) , FUN = mean))
+group.pshare <-
+  c(prop.table(by(rep(1 , sum(
+    pop.df$x > 0
+  )) , list(
+    "SEX" = factor(pop.df$SEX[pop.df$x > 0])
+  ) , FUN = sum)))
+jdivb.pop <-
+  sum(group.pshare * (group.mean / overall.mean - 1) * log(group.mean / overall.mean))
 jdivw.pop <- jdivt.pop - jdivb.pop
-( theta.pop <- c( jdivt.pop , jdivw.pop , jdivb.pop ) )
+(theta.pop <- c(jdivt.pop , jdivw.pop , jdivb.pop))
 
 # estimate the expected value of the J-divergence decomposition estimator
 # using the average of the estimates
-( theta.exp <- rowMeans( sapply( estimate.list , coef ) ) )
+(theta.exp <- rowMeans(sapply(estimate.list , coef)))
 
 # estimate the percentage relative bias
-100 * ( theta.exp/theta.pop - 1 )
+100 * (theta.exp / theta.pop - 1)
 ```
 The estimated PRB for the total is the same as before, so we will focus on the within and between components. While the within component has a small relative bias (-0.21%), the between component PRB is significant, amounting to 8.96%. We will discuss this further.
 
@@ -1152,14 +1157,21 @@ For the variance estimator, we do:
 ```{r}
 # estimate the variance of the J-divergence estimator
 # using the variance of the estimates
-( vartheta.popest <- diag( var( t( sapply( estimate.list , coef ) ) ) ) )
+(vartheta.popest <-
+   diag(var(t(
+     sapply(estimate.list , coef)
+   ))))
 
 # estimate the expected value of the J-divergence index variance estimator
 # using the expected of the variance estimates
-( vartheta.exp <- rowMeans(sapply( estimate.list , function(z) diag(vcov(z)))) )
+(vartheta.exp <-
+    rowMeans(sapply(estimate.list , function(z)
+      diag(vcov(
+        z
+      )))))
 
 # estimate the percentage relative bias of the variance estimator
-100 * ( vartheta.exp/vartheta.popest - 1 )
+100 * (vartheta.exp / vartheta.popest - 1)
 ```
 
 The PRB of the variance estimators for both components are small: -1.95% for the within component and 1.61% for the between component. 
@@ -1167,19 +1179,22 @@ The PRB of the variance estimators for both components are small: -1.95% for the
 Now, how much should we care about the between component bias? Our simulations show that the Squared Bias of this estimator accounts for less than 2% of its Mean Squared Error:
 
 ```{r}
-theta.bias2 <- (theta.exp - theta.pop)^2
+theta.bias2 <- (theta.exp - theta.pop) ^ 2
 theta.mse <- theta.bias2 + vartheta.popest
-100 * ( theta.bias2/theta.mse )
+100 * (theta.bias2 / theta.mse)
 ```
 Next, we evaluate the Percentage Coverage Rate (PCR). In theory, under repeated sampling, the estimated 95% CIs should cover the population parameter 95% of the time. We can evaluate that using:
 
 ```{r}
 # estimate confidence intervals of the Zenga index
 # for each of the samples
-est.coverage <- t( sapply( estimate.list, function( this.stat ) confint( this.stat )[,1] <= theta.pop & confint( this.stat )[,2] >= theta.pop  ) ) 
+est.coverage <-
+  t(sapply(estimate.list, function(this.stat)
+    confint(this.stat)[, 1] <= theta.pop &
+      confint(this.stat)[, 2] >= theta.pop))
 
 # evaluate
-colMeans( est.coverage )
+colMeans(est.coverage)
 ```
 Our coverages are not too far from the nominal coverage level of 95%, however the bias in the between estimator can affect its coverage rate.
 
@@ -1220,21 +1235,25 @@ library(foreign)
 tf <- tempfile()
 
 # store the location of the presentation file
-presentation_zip <- "http://repec.org/nasug2006/nasug2006_jenkins.zip"
+presentation_zip <-
+  "http://repec.org/nasug2006/nasug2006_jenkins.zip"
 
 # download jenkins' presentation to the temporary file
-download.file( presentation_zip , tf , mode = 'wb' )
+download.file(presentation_zip , tf , mode = 'wb')
 
 # unzip the contents of the archive
-presentation_files <- unzip( tf , exdir = tempdir() )
+presentation_files <- unzip(tf , exdir = tempdir())
 
 # load the institute for fiscal studies' 1981, 1985, and 1991 data.frame objects
-x81 <- read.dta( grep( "ifs81" , presentation_files , value = TRUE ) )
-x85 <- read.dta( grep( "ifs85" , presentation_files , value = TRUE ) )
-x91 <- read.dta( grep( "ifs91" , presentation_files , value = TRUE ) )
+x81 <-
+  read.dta(grep("ifs81" , presentation_files , value = TRUE))
+x85 <-
+  read.dta(grep("ifs85" , presentation_files , value = TRUE))
+x91 <-
+  read.dta(grep("ifs91" , presentation_files , value = TRUE))
 
 # stack each of these three years of data into a single data.frame
-x <- rbind( x81 , x85 , x91 )
+x <- rbind(x81 , x85 , x91)
 ```
 
 Replicate the author's survey design statement from stata code..
@@ -1251,10 +1270,10 @@ construct an
 
 ```{r}
 # initiate a linearized survey design object
-y <- svydesign( ~ hrn , data = x , weights = ~ wgt )
+y <- svydesign(~ hrn , data = x , weights = ~ wgt)
 
 # immediately run the `convey_prep` function on the survey design
-z <- convey_prep( y )
+z <- convey_prep(y)
 ```
 
 Replicate the author's subset statement and each of his svyatk results with stata..
@@ -1283,13 +1302,13 @@ A(2.5)   |  .4992701   .06754311     7.39    0.000       .366888   .6316522
 ..using R code:
 
 ```{r}
-z81 <- subset( z , year == 1981 )
+z81 <- subset(z , year == 1981)
 
-svyatk( ~ eybhc0 , subset( z81 , eybhc0 > 0 ) , epsilon = 0.5 )
-svyatk( ~ eybhc0 , subset( z81 , eybhc0 > 0 ) )
-svyatk( ~ eybhc0 , subset( z81 , eybhc0 > 0 ) , epsilon = 1.5 )
-svyatk( ~ eybhc0 , subset( z81 , eybhc0 > 0 ) , epsilon = 2 )
-svyatk( ~ eybhc0 , subset( z81 , eybhc0 > 0 ) , epsilon = 2.5 )
+svyatk(~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = 0.5)
+svyatk(~ eybhc0 , subset(z81 , eybhc0 > 0))
+svyatk(~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = 1.5)
+svyatk(~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = 2)
+svyatk(~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = 2.5)
 ```
 
 Confirm this replication applies for subsetted objects as well, comparing stata code..
@@ -1316,13 +1335,13 @@ A(2.5)   |   .394787   .04155221     9.50    0.000      .3133461   .4762278
 ..to R code:
 
 ```{r}
-z81_two <- subset( z , year == 1981 & eybhc0 > 1 )
+z81_two <- subset(z , year == 1981 & eybhc0 > 1)
 
-svyatk( ~ eybhc0 , z81_two , epsilon = 0.5 )
-svyatk( ~ eybhc0 , z81_two )
-svyatk( ~ eybhc0 , z81_two , epsilon = 1.5 )
-svyatk( ~ eybhc0 , z81_two , epsilon = 2 )
-svyatk( ~ eybhc0 , z81_two , epsilon = 2.5 )
+svyatk(~ eybhc0 , z81_two , epsilon = 0.5)
+svyatk(~ eybhc0 , z81_two)
+svyatk(~ eybhc0 , z81_two , epsilon = 1.5)
+svyatk(~ eybhc0 , z81_two , epsilon = 2)
+svyatk(~ eybhc0 , z81_two , epsilon = 2.5)
 ```
 
 For additional usage examples of `svyatk`, type `?convey::svyatk` in the R console.

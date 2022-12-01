@@ -47,83 +47,82 @@ library(laeken)
 data(eusilc)
 
 # make all column names lowercase
-names( eusilc ) <- tolower( names( eusilc ) )
+names(eusilc) <- tolower(names(eusilc))
 
 # add a column with the row number
-dati <- data.table::data.table(IDd = 1 : nrow(eusilc), eusilc)
+dati <- data.table::data.table(IDd = 1:nrow(eusilc), eusilc)
 
 # calculate the arpt coefficient
 # using the R vardpoor library
 varpoord_arpt_calculation <-
-	varpoord(
-	
-		# analysis variable
-		Y = "eqincome", 
-		
-		# weights variable
-		w_final = "rb050",
-		
-		# row number variable
-		ID_level1 = "IDd",
-		
-		# row number variable
-		ID_level2 = "IDd",
-		
-		# strata variable
-		H = "db040", 
-		
-		N_h = NULL ,
-		
-		# clustering variable
-		PSU = "rb030", 
-		
-		# data.table
-		dataset = dati, 
-		
-		# arpt coefficient function
-		type = "linarpt",
-	  
-	  # poverty threshold range
-	  order_quant = 50L ,
-	  
-		# get linearized variable
-	  outp_lin = TRUE
-	)
+  varpoord(
+    # analysis variable
+    Y = "eqincome",
+    
+    # weights variable
+    w_final = "rb050",
+    
+    # row number variable
+    ID_level1 = "IDd",
+    
+    # row number variable
+    ID_level2 = "IDd",
+    
+    # strata variable
+    H = "db040",
+    
+    N_h = NULL ,
+    
+    # clustering variable
+    PSU = "rb030",
+    
+    # data.table
+    dataset = dati,
+    
+    # arpt coefficient function
+    type = "linarpt",
+    
+    # poverty threshold range
+    order_quant = 50L ,
+    
+    # get linearized variable
+    outp_lin = TRUE
+  )
 
 
 # construct a survey.design
 # using our recommended setup
-des_eusilc <- 
-	svydesign( 
-		ids = ~ rb030 , 
-		strata = ~ db040 ,  
-		weights = ~ rb050 , 
-		data = eusilc
-	)
+des_eusilc <-
+  svydesign(
+    ids = ~ rb030 ,
+    strata = ~ db040 ,
+    weights = ~ rb050 ,
+    data = eusilc
+  )
 
 # immediately run the convey_prep function on it
-des_eusilc <- convey_prep( des_eusilc )
+des_eusilc <- convey_prep(des_eusilc)
 
 # coefficients do match
 varpoord_arpt_calculation$all_result$value
-coef( svyarpt( ~ eqincome , des_eusilc ) )
+coef(svyarpt( ~ eqincome , des_eusilc))
 
 # linearized variables do match
 # vardpoor
-lin_arpt_varpoord<- varpoord_arpt_calculation$lin_out$lin_arpt
-# convey 
-lin_arpt_convey <- attr(svyarpt( ~ eqincome , des_eusilc ),"lin")
+lin_arpt_varpoord <- varpoord_arpt_calculation$lin_out$lin_arpt
+# convey
+lin_arpt_convey <- attr(svyarpt( ~ eqincome , des_eusilc), "lin")
 
 # check equality
-all.equal(lin_arpt_varpoord, lin_arpt_convey )
+all.equal(lin_arpt_varpoord, lin_arpt_convey)
 
 # variances do not match exactly
-attr( svyarpt( ~ eqincome , des_eusilc ) , 'var' )
+attr(svyarpt( ~ eqincome , des_eusilc) , 'var')
 varpoord_arpt_calculation$all_result$var
 
 # standard errors do not match exactly
 varpoord_arpt_calculation$all_result$se
-SE( svyarpt( ~ eqincome , des_eusilc ) )
+SE(svyarpt( ~ eqincome , des_eusilc))
 ```
 
 The variance estimate is computed by using the approximation defined in \@ref(eq:var), where the linearized variable $z$ is defined by \@ref(eq:lin). The functions `convey::svyarpt` and `vardpoor::linarpt` produce the same linearized variable $z$.
@@ -132,35 +131,37 @@ However, the measures of uncertainty do not line up, because `library(vardpoor)`
 
 ```{r}
 # within each strata, sum up the weights
-cluster_sums <- aggregate( eusilc$rb050 , list( eusilc$db040 ) , sum )
+cluster_sums <-
+  aggregate(eusilc$rb050 , list(eusilc$db040) , sum)
 
 # name the within-strata sums of weights the `cluster_sum`
-names( cluster_sums ) <- c( "db040" , "cluster_sum" )
+names(cluster_sums) <- c("db040" , "cluster_sum")
 
 # merge this column back onto the data.frame
-eusilc <- merge( eusilc , cluster_sums )
+eusilc <- merge(eusilc , cluster_sums)
 
 # construct a survey.design
 # with the fpc using the cluster sum
-des_eusilc_ultimate_cluster <- 
-	svydesign( 
-		ids = ~ rb030 , 
-		strata = ~ db040 ,  
-		weights = ~ rb050 , 
-		data = eusilc , 
-		fpc = ~ cluster_sum 
-	)
+des_eusilc_ultimate_cluster <-
+  svydesign(
+    ids = ~ rb030 ,
+    strata = ~ db040 ,
+    weights = ~ rb050 ,
+    data = eusilc ,
+    fpc = ~ cluster_sum
+  )
 
 # again, immediately run the convey_prep function on the `survey.design`
-des_eusilc_ultimate_cluster <- convey_prep( des_eusilc_ultimate_cluster )
+des_eusilc_ultimate_cluster <-
+  convey_prep(des_eusilc_ultimate_cluster)
 
 # matches
-attr( svyarpt( ~ eqincome , des_eusilc_ultimate_cluster ) , 'var' )
+attr(svyarpt(~ eqincome , des_eusilc_ultimate_cluster) , 'var')
 varpoord_arpt_calculation$all_result$var
 
 # matches
 varpoord_arpt_calculation$all_result$se
-SE( svyarpt( ~ eqincome , des_eusilc_ultimate_cluster ) )
+SE(svyarpt(~ eqincome , des_eusilc_ultimate_cluster))
 ```
 
 For additional usage examples of `svyarpt`, type `?convey::svyarpt` in the R console.
@@ -196,86 +197,85 @@ library(laeken)
 data(eusilc)
 
 # make all column names lowercase
-names( eusilc ) <- tolower( names( eusilc ) )
+names(eusilc) <- tolower(names(eusilc))
 
 # add a column with the row number
-dati <- data.table::data.table(IDd = 1 : nrow(eusilc), eusilc)
+dati <- data.table::data.table(IDd = 1:nrow(eusilc), eusilc)
 
 # calculate the arpr coefficient
 # using the R vardpoor library
 varpoord_arpr_calculation <-
-	varpoord(
-	
-		# analysis variable
-		Y = "eqincome", 
-		
-		# weights variable
-		w_final = "rb050",
-		
-		# row number variable
-		ID_level1 = "IDd",
-		
-		# row number variable
-		ID_level2 = "IDd",
-		
-		# strata variable
-		H = "db040", 
-		
-		N_h = NULL ,
-		
-		# clustering variable
-		PSU = "rb030", 
-		
-		# data.table
-		dataset = dati, 
-		
-		# arpr coefficient function
-		type = "linarpr",
-	  
-	  # poverty threshold range
-	  order_quant = 50L ,
-	  	  
-	  # get linearized variable
-	  outp_lin = TRUE
-		
-	)
+  varpoord(
+    # analysis variable
+    Y = "eqincome",
+    
+    # weights variable
+    w_final = "rb050",
+    
+    # row number variable
+    ID_level1 = "IDd",
+    
+    # row number variable
+    ID_level2 = "IDd",
+    
+    # strata variable
+    H = "db040",
+    
+    N_h = NULL ,
+    
+    # clustering variable
+    PSU = "rb030",
+    
+    # data.table
+    dataset = dati,
+    
+    # arpr coefficient function
+    type = "linarpr",
+    
+    # poverty threshold range
+    order_quant = 50L ,
+    
+    # get linearized variable
+    outp_lin = TRUE
+    
+  )
 
 
 # construct a survey.design
 # using our recommended setup
-des_eusilc <- 
-	svydesign( 
-		ids = ~ rb030 , 
-		strata = ~ db040 ,  
-		weights = ~ rb050 , 
-		data = eusilc
-	)
+des_eusilc <-
+  svydesign(
+    ids = ~ rb030 ,
+    strata = ~ db040 ,
+    weights = ~ rb050 ,
+    data = eusilc
+  )
 
 # immediately run the convey_prep function on it
-des_eusilc <- convey_prep( des_eusilc )
+des_eusilc <- convey_prep(des_eusilc)
 
 # coefficients do match
 varpoord_arpr_calculation$all_result$value
-coef( svyarpr( ~ eqincome , des_eusilc ) ) * 100
+coef(svyarpr(~ eqincome , des_eusilc)) * 100
 
 # linearized variables do match
 # vardpoor
-lin_arpr_varpoord<- varpoord_arpr_calculation$lin_out$lin_arpr
-# convey 
-lin_arpr_convey <- attr(svyarpr( ~ eqincome , des_eusilc ),"lin")
+lin_arpr_varpoord <- varpoord_arpr_calculation$lin_out$lin_arpr
+# convey
+lin_arpr_convey <- attr(svyarpr(~ eqincome , des_eusilc), "lin")
 
 # check equality
-all.equal(lin_arpr_varpoord,100*lin_arpr_convey )
+all.equal(lin_arpr_varpoord, 100 * lin_arpr_convey)
 
 
 
 # variances do not match exactly
-attr( svyarpr( ~ eqincome , des_eusilc ) , 'var' ) * 10000
+attr(svyarpr(~ eqincome , des_eusilc) , 'var') * 10000
 varpoord_arpr_calculation$all_result$var
 
 # standard errors do not match exactly
 varpoord_arpr_calculation$all_result$se
-SE( svyarpr( ~ eqincome , des_eusilc ) ) * 100
+SE(svyarpr(~ eqincome , des_eusilc)) * 100
 ```
 The variance estimate is computed by using the approximation defined in \@ref(eq:var), where the linearized variable $z$ is defined by \@ref(eq:lin). The functions `convey::svyarpr` and `vardpoor::linarpr` produce the same linearized variable $z$.
 
@@ -283,35 +283,37 @@ However, the measures of uncertainty do not line up, because `library(vardpoor)`
 
 ```{r}
 # within each strata, sum up the weights
-cluster_sums <- aggregate( eusilc$rb050 , list( eusilc$db040 ) , sum )
+cluster_sums <-
+  aggregate(eusilc$rb050 , list(eusilc$db040) , sum)
 
 # name the within-strata sums of weights the `cluster_sum`
-names( cluster_sums ) <- c( "db040" , "cluster_sum" )
+names(cluster_sums) <- c("db040" , "cluster_sum")
 
 # merge this column back onto the data.frame
-eusilc <- merge( eusilc , cluster_sums )
+eusilc <- merge(eusilc , cluster_sums)
 
 # construct a survey.design
 # with the fpc using the cluster sum
-des_eusilc_ultimate_cluster <- 
-	svydesign( 
-		ids = ~ rb030 , 
-		strata = ~ db040 ,  
-		weights = ~ rb050 , 
-		data = eusilc , 
-		fpc = ~ cluster_sum 
-	)
+des_eusilc_ultimate_cluster <-
+  svydesign(
+    ids = ~ rb030 ,
+    strata = ~ db040 ,
+    weights = ~ rb050 ,
+    data = eusilc ,
+    fpc = ~ cluster_sum
+  )
 
 # again, immediately run the convey_prep function on the `survey.design`
-des_eusilc_ultimate_cluster <- convey_prep( des_eusilc_ultimate_cluster )
+des_eusilc_ultimate_cluster <-
+  convey_prep(des_eusilc_ultimate_cluster)
 
 # matches
-attr( svyarpr( ~ eqincome , des_eusilc_ultimate_cluster ) , 'var' ) * 10000
+attr(svyarpr(~ eqincome , des_eusilc_ultimate_cluster) , 'var') * 10000
 varpoord_arpr_calculation$all_result$var
 
 # matches
 varpoord_arpr_calculation$all_result$se
-SE( svyarpr( ~ eqincome , des_eusilc_ultimate_cluster ) ) * 100
+SE(svyarpr(~ eqincome , des_eusilc_ultimate_cluster)) * 100
 ```
 
 For additional usage examples of `svyarpr`, type `?convey::svyarpr` in the R console.
@@ -351,88 +353,88 @@ library(laeken)
 data(eusilc)
 
 # make all column names lowercase
-names( eusilc ) <- tolower( names( eusilc ) )
+names(eusilc) <- tolower(names(eusilc))
 
 # add a column with the row number
-dati <- data.table::data.table(IDd = 1 : nrow(eusilc), eusilc)
+dati <- data.table::data.table(IDd = 1:nrow(eusilc), eusilc)
 
 # calculate the rmir coefficient
 # using the R vardpoor library
 varpoord_rmir_calculation <-
-	varpoord(
-	
-		# analysis variable
-		Y = "eqincome", 
-		
-		# weights variable
-		w_final = "rb050",
-		
-		# row number variable
-		ID_level1 = "IDd",
-		
-		# row number variable
-		ID_level2 = "IDd",
-		
-		# strata variable
-		H = "db040", 
-		
-		N_h = NULL ,
-		
-		# clustering variable
-		PSU = "rb030", 
-		
-		# data.table
-		dataset = dati,
-	  
-	  # age variable
-	  age = "age",
-		
-		# rmir coefficient function
-		type = "linrmir",
-	  
-	  # poverty threshold range
-	  order_quant = 50L ,
-	  
-	  # get linearized variable
-	  outp_lin = TRUE
-		
-	)
+  varpoord(
+    # analysis variable
+    Y = "eqincome",
+    
+    # weights variable
+    w_final = "rb050",
+    
+    # row number variable
+    ID_level1 = "IDd",
+    
+    # row number variable
+    ID_level2 = "IDd",
+    
+    # strata variable
+    H = "db040",
+    
+    N_h = NULL ,
+    
+    # clustering variable
+    PSU = "rb030",
+    
+    # data.table
+    dataset = dati,
+    
+    # age variable
+    age = "age",
+    
+    # rmir coefficient function
+    type = "linrmir",
+    
+    # poverty threshold range
+    order_quant = 50L ,
+    
+    # get linearized variable
+    outp_lin = TRUE
+    
+  )
 
 
 
 # construct a survey.design
 # using our recommended setup
-des_eusilc <- 
-	svydesign( 
-		ids = ~ rb030 , 
-		strata = ~ db040 ,  
-		weights = ~ rb050 , 
-		data = eusilc
-	)
+des_eusilc <-
+  svydesign(
+    ids = ~ rb030 ,
+    strata = ~ db040 ,
+    weights = ~ rb050 ,
+    data = eusilc
+  )
 
 # immediately run the convey_prep function on it
-des_eusilc <- convey_prep( des_eusilc )
+des_eusilc <- convey_prep(des_eusilc)
 
 # coefficients do match
 varpoord_rmir_calculation$all_result$value
-coef( svyrmir( ~ eqincome , des_eusilc, age = ~age ) ) 
+coef(svyrmir(~ eqincome , des_eusilc, age = ~ age))
 
 # linearized variables do match
 # vardpoor
-lin_rmir_varpoord<- varpoord_rmir_calculation$lin_out$lin_rmir
-# convey 
-lin_rmir_convey <- attr(svyrmir( ~ eqincome , des_eusilc, age = ~age ),"lin")
+lin_rmir_varpoord <- varpoord_rmir_calculation$lin_out$lin_rmir
+# convey
+lin_rmir_convey <-
+  attr(svyrmir(~ eqincome , des_eusilc, age = ~ age), "lin")
 
 # check equality
-all.equal(lin_rmir_varpoord, lin_rmir_convey[,1] )
+all.equal(lin_rmir_varpoord, lin_rmir_convey[, 1])
 
 # variances do not match exactly
-attr( svyrmir( ~ eqincome , des_eusilc, age = ~age ) , 'var' ) 
+attr(svyrmir(~ eqincome , des_eusilc, age = ~ age) , 'var')
 varpoord_rmir_calculation$all_result$var
 
 # standard errors do not match exactly
 varpoord_rmir_calculation$all_result$se
-SE( svyrmir( ~ eqincome , des_eusilc , age = ~age) ) 
+SE(svyrmir(~ eqincome , des_eusilc , age = ~ age)) 
 ```
 
 The variance estimate is computed by using the approximation defined in \@ref(eq:var), where the linearized variable $z$ is defined by \@ref(eq:lin). The functions `convey::svyrmir` and `vardpoor::linrmir` produce the same linearized variable $z$.
@@ -441,35 +443,38 @@ However, the measures of uncertainty do not line up, because `library(vardpoor)`
 
 ```{r}
 # within each strata, sum up the weights
-cluster_sums <- aggregate( eusilc$rb050 , list( eusilc$db040 ) , sum )
+cluster_sums <-
+  aggregate(eusilc$rb050 , list(eusilc$db040) , sum)
 
 # name the within-strata sums of weights the `cluster_sum`
-names( cluster_sums ) <- c( "db040" , "cluster_sum" )
+names(cluster_sums) <- c("db040" , "cluster_sum")
 
 # merge this column back onto the data.frame
-eusilc <- merge( eusilc , cluster_sums )
+eusilc <- merge(eusilc , cluster_sums)
 
 # construct a survey.design
 # with the fpc using the cluster sum
-des_eusilc_ultimate_cluster <- 
-	svydesign( 
-		ids = ~ rb030 , 
-		strata = ~ db040 ,  
-		weights = ~ rb050 , 
-		data = eusilc , 
-		fpc = ~ cluster_sum 
-	)
+des_eusilc_ultimate_cluster <-
+  svydesign(
+    ids = ~ rb030 ,
+    strata = ~ db040 ,
+    weights = ~ rb050 ,
+    data = eusilc ,
+    fpc = ~ cluster_sum
+  )
 
 # again, immediately run the convey_prep function on the `survey.design`
-des_eusilc_ultimate_cluster <- convey_prep( des_eusilc_ultimate_cluster )
+des_eusilc_ultimate_cluster <-
+  convey_prep(des_eusilc_ultimate_cluster)
 
 # matches
-attr( svyrmir( ~ eqincome , des_eusilc_ultimate_cluster , age = ~age ) , 'var' ) 
+attr(svyrmir( ~ eqincome , des_eusilc_ultimate_cluster , age = ~ age) ,
+     'var')
 varpoord_rmir_calculation$all_result$var
 
 # matches
 varpoord_rmir_calculation$all_result$se
-SE( svyrmir( ~ eqincome , des_eusilc_ultimate_cluster, age = ~age ) ) 
+SE(svyrmir( ~ eqincome , des_eusilc_ultimate_cluster, age = ~ age)) 
 ```
 
 For additional usage examples of `svyrmir`, type `?convey::svyrmir` in the R console.
@@ -508,85 +513,84 @@ library(laeken)
 data(eusilc)
 
 # make all column names lowercase
-names( eusilc ) <- tolower( names( eusilc ) )
+names(eusilc) <- tolower(names(eusilc))
 
 # add a column with the row number
-dati <- data.table::data.table(IDd = 1 : nrow(eusilc), eusilc)
+dati <- data.table::data.table(IDd = 1:nrow(eusilc), eusilc)
 
 # calculate the rmpg coefficient
 # using the R vardpoor library
 varpoord_rmpg_calculation <-
-	varpoord(
-	
-		# analysis variable
-		Y = "eqincome", 
-		
-		# weights variable
-		w_final = "rb050",
-		
-		# row number variable
-		ID_level1 = "IDd",
-
-		# row number variable
-		ID_level2 = "IDd",
-				
-		# strata variable
-		H = "db040", 
-		
-		N_h = NULL ,
-		
-		# clustering variable
-		PSU = "rb030", 
-		
-		# data.table
-		dataset = dati, 
-		
-		# rmpg coefficient function
-		type = "linrmpg",
-	  
-	  # poverty threshold range
-	  order_quant = 50L ,
-	  
-	  # get linearized variable
-	  outp_lin = TRUE
-		
-	)
+  varpoord(
+    # analysis variable
+    Y = "eqincome",
+    
+    # weights variable
+    w_final = "rb050",
+    
+    # row number variable
+    ID_level1 = "IDd",
+    
+    # row number variable
+    ID_level2 = "IDd",
+    
+    # strata variable
+    H = "db040",
+    
+    N_h = NULL ,
+    
+    # clustering variable
+    PSU = "rb030",
+    
+    # data.table
+    dataset = dati,
+    
+    # rmpg coefficient function
+    type = "linrmpg",
+    
+    # poverty threshold range
+    order_quant = 50L ,
+    
+    # get linearized variable
+    outp_lin = TRUE
+    
+  )
 
 
 
 # construct a survey.design
 # using our recommended setup
-des_eusilc <- 
-	svydesign( 
-		ids = ~ rb030 , 
-		strata = ~ db040 ,  
-		weights = ~ rb050 , 
-		data = eusilc
-	)
+des_eusilc <-
+  svydesign(
+    ids = ~ rb030 ,
+    strata = ~ db040 ,
+    weights = ~ rb050 ,
+    data = eusilc
+  )
 
 # immediately run the convey_prep function on it
-des_eusilc <- convey_prep( des_eusilc )
+des_eusilc <- convey_prep(des_eusilc)
 
 # coefficients do match
 varpoord_rmpg_calculation$all_result$value
-coef( svyrmpg( ~ eqincome , des_eusilc ) ) * 100
+coef(svyrmpg(~ eqincome , des_eusilc)) * 100
 
 # linearized variables do match
 # vardpoor
-lin_rmpg_varpoord<- varpoord_rmpg_calculation$lin_out$lin_rmpg
-# convey 
-lin_rmpg_convey <- attr(svyrmpg( ~ eqincome , des_eusilc ),"lin")
+lin_rmpg_varpoord <- varpoord_rmpg_calculation$lin_out$lin_rmpg
+# convey
+lin_rmpg_convey <- attr(svyrmpg(~ eqincome , des_eusilc), "lin")
 
 # check equality
-all.equal(lin_rmpg_varpoord, 100*lin_rmpg_convey[,1] )
+all.equal(lin_rmpg_varpoord, 100 * lin_rmpg_convey[, 1])
 
 # variances do not match exactly
-attr( svyrmpg( ~ eqincome , des_eusilc ) , 'var' ) * 10000
+attr(svyrmpg(~ eqincome , des_eusilc) , 'var') * 10000
 varpoord_rmpg_calculation$all_result$var
 
 # standard errors do not match exactly
 varpoord_rmpg_calculation$all_result$se
-SE( svyrmpg( ~ eqincome , des_eusilc ) ) * 100
+SE(svyrmpg(~ eqincome , des_eusilc)) * 100
 ```
 
 The variance estimate is computed by using the approximation defined in \@ref(eq:var), where the linearized variable $z$ is defined by \@ref(eq:lin). The functions `convey::svyrmpg` and `vardpoor::linrmpg` produce the same linearized variable $z$.
@@ -595,35 +599,37 @@ However, the measures of uncertainty do not line up, because `library(vardpoor)`
 
 ```{r}
 # within each strata, sum up the weights
-cluster_sums <- aggregate( eusilc$rb050 , list( eusilc$db040 ) , sum )
+cluster_sums <-
+  aggregate(eusilc$rb050 , list(eusilc$db040) , sum)
 
 # name the within-strata sums of weights the `cluster_sum`
-names( cluster_sums ) <- c( "db040" , "cluster_sum" )
+names(cluster_sums) <- c("db040" , "cluster_sum")
 
 # merge this column back onto the data.frame
-eusilc <- merge( eusilc , cluster_sums )
+eusilc <- merge(eusilc , cluster_sums)
 
 # construct a survey.design
 # with the fpc using the cluster sum
-des_eusilc_ultimate_cluster <- 
-	svydesign( 
-		ids = ~ rb030 , 
-		strata = ~ db040 ,  
-		weights = ~ rb050 , 
-		data = eusilc , 
-		fpc = ~ cluster_sum 
-	)
+des_eusilc_ultimate_cluster <-
+  svydesign(
+    ids = ~ rb030 ,
+    strata = ~ db040 ,
+    weights = ~ rb050 ,
+    data = eusilc ,
+    fpc = ~ cluster_sum
+  )
 
 # again, immediately run the convey_prep function on the `survey.design`
-des_eusilc_ultimate_cluster <- convey_prep( des_eusilc_ultimate_cluster )
+des_eusilc_ultimate_cluster <-
+  convey_prep(des_eusilc_ultimate_cluster)
 
 # matches
-attr( svyrmpg( ~ eqincome , des_eusilc_ultimate_cluster ) , 'var' ) * 10000
+attr(svyrmpg(~ eqincome , des_eusilc_ultimate_cluster) , 'var') * 10000
 varpoord_rmpg_calculation$all_result$var
 
 # matches
 varpoord_rmpg_calculation$all_result$se
-SE( svyrmpg( ~ eqincome , des_eusilc_ultimate_cluster ) ) * 100
+SE(svyrmpg(~ eqincome , des_eusilc_ultimate_cluster)) * 100
 ```
 
 For additional usage examples of `svyrmpg`, type `?convey::svyrmpg` in the R console.
@@ -662,85 +668,86 @@ library(laeken)
 data(eusilc)
 
 # make all column names lowercase
-names( eusilc ) <- tolower( names( eusilc ) )
+names(eusilc) <- tolower(names(eusilc))
 
 # add a column with the row number
-dati <- data.table::data.table(IDd = 1 : nrow(eusilc), eusilc)
+dati <- data.table::data.table(IDd = 1:nrow(eusilc), eusilc)
 
 # calculate the poormed coefficient
 # using the R vardpoor library
 varpoord_poormed_calculation <-
-	varpoord(
-	
-		# analysis variable
-		Y = "eqincome", 
-		
-		# weights variable
-		w_final = "rb050",
-		
-		# row number variable
-		ID_level1 = "IDd",
-
-		# row number variable
-		ID_level2 = "IDd",
-				
-		# strata variable
-		H = "db040", 
-		
-		N_h = NULL ,
-		
-		# clustering variable
-		PSU = "rb030", 
-		
-		# data.table
-		dataset = dati, 
-		
-		# poormed coefficient function
-		type = "linpoormed",
-	  
-	  # poverty threshold range
-	  order_quant = 50L ,
-	  
-	  # get linearized variable
-	  outp_lin = TRUE
-		
-	)
+  varpoord(
+    # analysis variable
+    Y = "eqincome",
+    
+    # weights variable
+    w_final = "rb050",
+    
+    # row number variable
+    ID_level1 = "IDd",
+    
+    # row number variable
+    ID_level2 = "IDd",
+    
+    # strata variable
+    H = "db040",
+    
+    N_h = NULL ,
+    
+    # clustering variable
+    PSU = "rb030",
+    
+    # data.table
+    dataset = dati,
+    
+    # poormed coefficient function
+    type = "linpoormed",
+    
+    # poverty threshold range
+    order_quant = 50L ,
+    
+    # get linearized variable
+    outp_lin = TRUE
+    
+  )
 
 
 
 # construct a survey.design
 # using our recommended setup
-des_eusilc <- 
-	svydesign( 
-		ids = ~ rb030 , 
-		strata = ~ db040 ,  
-		weights = ~ rb050 , 
-		data = eusilc
-	)
+des_eusilc <-
+  svydesign(
+    ids = ~ rb030 ,
+    strata = ~ db040 ,
+    weights = ~ rb050 ,
+    data = eusilc
+  )
 
 # immediately run the convey_prep function on it
-des_eusilc <- convey_prep( des_eusilc )
+des_eusilc <- convey_prep(des_eusilc)
 
 # coefficients do match
 varpoord_poormed_calculation$all_result$value
-coef( svypoormed( ~ eqincome , des_eusilc ) )
+coef(svypoormed(~ eqincome , des_eusilc))
 
 # linearized variables do match
 # vardpoor
-lin_poormed_varpoord<- varpoord_poormed_calculation$lin_out$lin_poormed
-# convey 
-lin_poormed_convey <- attr(svypoormed( ~ eqincome , des_eusilc ),"lin")
+lin_poormed_varpoord <-
+  varpoord_poormed_calculation$lin_out$lin_poormed
+# convey
+lin_poormed_convey <-
+  attr(svypoormed(~ eqincome , des_eusilc), "lin")
 
 # check equality
-all.equal(lin_poormed_varpoord, lin_poormed_convey )
+all.equal(lin_poormed_varpoord, lin_poormed_convey)
 
 # variances do not match exactly
-attr( svypoormed( ~ eqincome , des_eusilc ) , 'var' )
+attr(svypoormed(~ eqincome , des_eusilc) , 'var')
 varpoord_poormed_calculation$all_result$var
 
 # standard errors do not match exactly
 varpoord_poormed_calculation$all_result$se
-SE( svypoormed( ~ eqincome , des_eusilc ) )
+SE(svypoormed(~ eqincome , des_eusilc))
 ```
 
 The variance estimate is computed by using the approximation defined in \@ref(eq:var), where the linearized variable $z$ is defined by \@ref(eq:lin). The functions `convey::svypoormed` and `vardpoor::linpoormed` produce the same linearized variable $z$.
@@ -749,35 +756,37 @@ However, the measures of uncertainty do not line up, because `library(vardpoor)`
 
 ```{r}
 # within each strata, sum up the weights
-cluster_sums <- aggregate( eusilc$rb050 , list( eusilc$db040 ) , sum )
+cluster_sums <-
+  aggregate(eusilc$rb050 , list(eusilc$db040) , sum)
 
 # name the within-strata sums of weights the `cluster_sum`
-names( cluster_sums ) <- c( "db040" , "cluster_sum" )
+names(cluster_sums) <- c("db040" , "cluster_sum")
 
 # merge this column back onto the data.frame
-eusilc <- merge( eusilc , cluster_sums )
+eusilc <- merge(eusilc , cluster_sums)
 
 # construct a survey.design
 # with the fpc using the cluster sum
-des_eusilc_ultimate_cluster <- 
-	svydesign( 
-		ids = ~ rb030 , 
-		strata = ~ db040 ,  
-		weights = ~ rb050 , 
-		data = eusilc , 
-		fpc = ~ cluster_sum 
-	)
+des_eusilc_ultimate_cluster <-
+  svydesign(
+    ids = ~ rb030 ,
+    strata = ~ db040 ,
+    weights = ~ rb050 ,
+    data = eusilc ,
+    fpc = ~ cluster_sum
+  )
 
 # again, immediately run the convey_prep function on the `survey.design`
-des_eusilc_ultimate_cluster <- convey_prep( des_eusilc_ultimate_cluster )
+des_eusilc_ultimate_cluster <-
+  convey_prep(des_eusilc_ultimate_cluster)
 
 # matches
-attr( svypoormed( ~ eqincome , des_eusilc_ultimate_cluster ) , 'var' )
+attr(svypoormed(~ eqincome , des_eusilc_ultimate_cluster) , 'var')
 varpoord_poormed_calculation$all_result$var
 
 # matches
 varpoord_poormed_calculation$all_result$se
-SE( svypoormed( ~ eqincome , des_eusilc_ultimate_cluster ) )
+SE(svypoormed(~ eqincome , des_eusilc_ultimate_cluster))
 ```
 
 For additional usage examples of `svypoormed`, type `?convey::svypoormed` in the R console.
@@ -826,29 +835,29 @@ Next, we give some examples of the function `svyfgt` to estimate the values of t
 Consider first the poverty threshold fixed ($\gamma=0$) in the value $10000$. The headcount ratio (FGT0) is
 
 ```{r comment=NA}
-svyfgt(~eqincome, des_eusilc, g=0, abs_thresh=10000)
+svyfgt(~ eqincome, des_eusilc, g = 0, abs_thresh = 10000)
 ```
 
 The poverty gap ratio (FGT(1)) ($\gamma=1$) index for the poverty threshold fixed at the same value is
 
 ```{r comment=NA}
-svyfgt(~eqincome, des_eusilc, g=1, abs_thresh=10000)
+svyfgt(~ eqincome, des_eusilc, g = 1, abs_thresh = 10000)
 ```
 
 To estimate the FGT(0) with the poverty threshold fixed at $0.6* MED$ we fix the argument `type_thresh="relq"` and use the default values for `percent` and `order`:
 
 ```{r comment=NA}
-svyfgt(~eqincome, des_eusilc, g=0, type_thresh= "relq")
+svyfgt(~ eqincome, des_eusilc, g = 0, type_thresh = "relq")
 ```
 that matches the estimate obtained by
 
 ```{r comment=NA}
-svyarpr(~eqincome, design=des_eusilc, .5, .6)
+svyarpr(~ eqincome, design = des_eusilc, .5, .6)
 ```
 To estimate the poverty gap ratio with the poverty threshold equal to $0.6*MEAN$, we use:
 
 ```{r comment=NA}
-svyfgt(~eqincome, des_eusilc, g=1, type_thresh= "relm")
+svyfgt(~ eqincome, des_eusilc, g = 1, type_thresh = "relm")
 ```
 
 ---
@@ -874,32 +883,36 @@ library(foreign)
 tf <- tempfile()
 
 # store the location of the presentation file
-presentation_zip <- "http://repec.org/nasug2006/nasug2006_jenkins.zip"
+presentation_zip <-
+  "http://repec.org/nasug2006/nasug2006_jenkins.zip"
 
 # download jenkins' presentation to the temporary file
-download.file( presentation_zip , tf , mode = 'wb' )
+download.file(presentation_zip , tf , mode = 'wb')
 
 # unzip the contents of the archive
-presentation_files <- unzip( tf , exdir = tempdir() )
+presentation_files <- unzip(tf , exdir = tempdir())
 
 # load the institute for fiscal studies' 1981, 1985, and 1991 data.frame objects
-x81 <- read.dta( grep( "ifs81" , presentation_files , value = TRUE ) )
-x85 <- read.dta( grep( "ifs85" , presentation_files , value = TRUE ) )
-x91 <- read.dta( grep( "ifs91" , presentation_files , value = TRUE ) )
+x81 <-
+  read.dta(grep("ifs81" , presentation_files , value = TRUE))
+x85 <-
+  read.dta(grep("ifs85" , presentation_files , value = TRUE))
+x91 <-
+  read.dta(grep("ifs91" , presentation_files , value = TRUE))
 
 # NOTE: we recommend using ?convey::svyarpt rather than this unweighted calculation #
 
 # calculate 60% of the unweighted median income in 1981
-unwtd_arpt81 <- quantile( x81$eybhc0 , 0.5 ) * .6
+unwtd_arpt81 <- quantile(x81$eybhc0 , 0.5) * .6
 
 # calculate 60% of the unweighted median income in 1985
-unwtd_arpt85 <- quantile( x85$eybhc0 , 0.5 ) * .6
+unwtd_arpt85 <- quantile(x85$eybhc0 , 0.5) * .6
 
 # calculate 60% of the unweighted median income in 1991
-unwtd_arpt91 <- quantile( x91$eybhc0 , 0.5 ) * .6
+unwtd_arpt91 <- quantile(x91$eybhc0 , 0.5) * .6
 
 # stack each of these three years of data into a single data.frame
-x <- rbind( x81 , x85 , x91 )
+x <- rbind(x81 , x85 , x91)
 ```
 
 Replicate the author's survey design statement from stata code..
@@ -913,10 +926,10 @@ Replicate the author's survey design statement from stata code..
 
 ```{r}
 # initiate a linearized survey design object
-y <- svydesign( ~ hrn , data = x , weights = ~ wgt )
+y <- svydesign(~ hrn , data = x , weights = ~ wgt)
 
 # immediately run the `convey_prep` function on the survey design
-z <- convey_prep( y )
+z <- convey_prep(y)
 ```
 
 Replicate the author's headcount ratio results with stata..
@@ -973,41 +986,35 @@ Number of PSUs   =    5254          Population size  = 5.6e+07
 ..using R code:
 
 ```{r}
-headcount_81 <- 
-	svyfgt( 
-		~ eybhc0 , 
-		subset( z , year == 1981 ) , 
-		g = 0 , 
-		abs_thresh = unwtd_arpt81
-	)
+headcount_81 <-
+  svyfgt(~ eybhc0 ,
+         subset(z , year == 1981) ,
+         g = 0 ,
+         abs_thresh = unwtd_arpt81)
 
 headcount_81
 
-confint( headcount_81 , df = degf( subset( z , year == 1981 ) ) )
+confint(headcount_81 , df = degf(subset(z , year == 1981)))
 
-headcount_85 <- 
-	svyfgt( 
-		~ eybhc0 , 
-		subset( z , year == 1985 ) , 
-		g = 0 , 
-		abs_thresh = unwtd_arpt85 
-	)
-	
+headcount_85 <-
+  svyfgt(~ eybhc0 ,
+         subset(z , year == 1985) ,
+         g = 0 ,
+         abs_thresh = unwtd_arpt85)
+
 headcount_85
 
-confint( headcount_85 , df = degf( subset( z , year == 1985 ) ) )
+confint(headcount_85 , df = degf(subset(z , year == 1985)))
 
-headcount_91 <- 
-	svyfgt( 
-		~ eybhc0 , 
-		subset( z , year == 1991 ) , 
-		g = 0 , 
-		abs_thresh = unwtd_arpt91 
-	)
+headcount_91 <-
+  svyfgt(~ eybhc0 ,
+         subset(z , year == 1991) ,
+         g = 0 ,
+         abs_thresh = unwtd_arpt91)
 
 headcount_91
-	
-confint( headcount_91 , df = degf( subset( z , year == 1991 ) ) )
+
+confint(headcount_91 , df = degf(subset(z , year == 1991)))
 ```
 
 Confirm this replication applies for the normalized poverty gap as well, comparing stata code..
@@ -1034,17 +1041,15 @@ Number of PSUs   =    7476          Population size  = 5.5e+07
 ..to R code:
 
 ```{r}
-norm_pov_81 <- 
-	svyfgt( 
-		~ eybhc0 , 
-		subset( z , year == 1981 ) , 
-		g = 1 , 
-		abs_thresh = unwtd_arpt81
-	)
-	
+norm_pov_81 <-
+  svyfgt(~ eybhc0 ,
+         subset(z , year == 1981) ,
+         g = 1 ,
+         abs_thresh = unwtd_arpt81)
+
 norm_pov_81
 
-confint( norm_pov_81 , df = degf( subset( z , year == 1981 ) ) )
+confint(norm_pov_81 , df = degf(subset(z , year == 1981)))
 ```
 
 For additional usage examples of `svyfgt`, type `?convey::svyfgt` in the R console.
