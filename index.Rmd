@@ -38,7 +38,7 @@ Individuals getting started in the field of poverty and inequality statistics mi
 
 ## Installation {#install}
 
-In order to work with the `convey` library, you will need to have R running on your machine.  If you have never used R before, you will need to [install that software](https://www.r-project.org/) before `convey` can be accessed.  Check out [FlowingData](http://flowingdata.com/2012/06/04/resources-for-getting-started-with-r/) for a concise list of resources for new R users.  Once you have R loaded on your machine, you can install..
+In order to work with the `convey` library, you will need to have R running on your machine.  If you have never used R before, you will need to [install that software](https://www.r-project.org/) before `convey` can be accessed.  Once you have R loaded on your machine, you can install..
 
 * the latest released version from [CRAN](https://CRAN.R-project.org/package=convey) with
 
@@ -79,7 +79,7 @@ In the following example, we've loaded the data set `eusilc` from the R library 
 library(laeken)
 data(eusilc)
 ```
-Next, we create an object of class `survey.design` using the function `svydesign` of the library survey:
+Next, we create an object of class `survey.design` using the function `svydesign` of the `survey` library:
 
 ```{r results='hide', message=FALSE, warning=FALSE}
 library(survey)
@@ -140,7 +140,7 @@ des_eusilc_rep <- as.svrepdesign(des_eusilc, type = "bootstrap")
 des_eusilc_rep <- convey_prep(des_eusilc_rep)
 ```
 
-and then use the function `svyarpr`:
+The function `svyarpr` produces matching coefficients and near-identical standard errors on the replication design:
 
 ```{r comment=NA}
 svyarpr( ~ eqIncome, design = des_eusilc_rep)
@@ -153,7 +153,7 @@ svyby(
   deff = FALSE
 )
 ```
-The functions of the library convey are called in a similar way  to the functions in library survey.
+The functions of the convey `library` are called in a similar way  to the functions in `survey` library.
 
 It is also possible to deal with missing values by using the argument `na.rm`.
 
@@ -169,93 +169,91 @@ svygini( ~ py010n , design = des_eusilc_rep , na.rm = TRUE )
 
 
 
-## Underlying Calculations
+## Underlying Calculations {#lin}
 
-In what follows, we often use the linearization method as a tool to produce an approximation for the variance of an estimator. From the linearized variable $z$ of an estimator $T$, we get from the expression \@ref(eq:var) an estimate of the variance of $T$
+In what follows, we often use the linearization method as a tool to produce an approximation for the variance of an estimator. From the linearized variable $z$ of an estimator $T$, we get from the expression \@ref(var) an estimate of the variance of $T$.
 
-If $T$ can be expressed as a function of the population totals $T = g(Y_1, Y_2, \ldots, Y_n)$, and if $g$ is linear,  the estimation of the variance of $T = g(Y_1, Y_2, \ldots, Y_n)$ is straightforward. If $g$ is not linear but is a 'smooth' function, then it is possible to approximate the variance of $g(Y_1, Y_2, \ldots, Y_n)$ by the variance of its first order Taylor expansion. For example, we can use Taylor expansion to linearize the ratio of two totals. However, there are situations where Taylor linearization cannot be immediately possible, either because $T$ cannot be expressed as functions of the population totals, or because $g$ is not  a `smooth` function. An example is the case where $T$ is a quantile.
+If $T$ can be expressed as a function of the population totals $T = g(Y_1, Y_2, \ldots, Y_n)$, and if $g$ is linear,  the estimation of the variance of $T = g(Y_1, Y_2, \ldots, Y_n)$ is straightforward. If $g$ is not linear but is a 'smooth' function, then it is possible to approximate the variance of $g(Y_1, Y_2, \ldots, Y_n)$ by the variance of its first order Taylor expansion. For example, we can use Taylor expansion to linearize the ratio of two totals. However, there are situations where Taylor linearization cannot be immediately computed, either because $T$ cannot be expressed as functions of the population totals, or because $g$ is not  a `smooth` function.  A common example is the case where $T$ is a quantile.
 
-In these cases, it might work an alternative form of linearization of $T$,  by `Influence Function`, as defined in \@ref(eq:lin), proposed in @deville1999. Also, it coud be used replication methods such as `bootstrap` and `jackknife`.
+In these cases, an alternative form of linearization of $T$ might suffice: the `Influence Function`, as defined in \@ref(lin), proposed in @deville1999.  Separately, replication methods such as `bootstrap` and `jackknife` also work.
 
 In the `convey` library, there are some basic functions that produce the linearized variables needed to measure income concentration and poverty.  For example, looking at the income variable in some complex survey dataset, the `quantile` of that income variable can be linearized by the function `convey::svyiqalpha` and the sum total below any quantile of the variable is linearized by the function `convey::svyisq`.
 
-From the linearized variables of these basic estimates, it is possible by using rules of composition, valid for influence functions, to derive the influence function of more complex estimates. By definition the influence function is a Gateaux derivative and the rules rules of composition valid for Gateaux derivatives also hold for Influence Functions.
+From the linearized variables of these basic estimates, it is possible by using rules of composition, valid for influence functions, to derive the influence function of more complex estimates. By definition, the influence function is a Gateaux derivative and the rules of composition valid for Gateaux derivatives also hold for Influence Functions.
 
-The following property of Gateaux derivatives was often used in the library convey. Let $g$ be a differentiable function of $m$ variables. Suppose we want to compute the influence function of the estimator $g(T_1, T_2,\ldots, T_m)$, knowing the Influence function of the estimators $T_i, i=1,\ldots, m$. Then the following holds:
+The following property of Gateaux derivatives is commonly used in the `convey` library:  Let $g$ be a differentiable function of $m$ variables. Suppose we want to compute the influence function of the estimator $g(T_1, T_2,\ldots, T_m)$, knowing the influence function of the estimators $T_i, i=1,\ldots, m$. Then the following holds:
 
 $$
 I(g(T_1, T_2,\ldots, T_m)) = \sum_{i=1}^m \frac{\partial g}{\partial T_i}I(T_i)
 $$
 
-In the library convey this rule is implemented by the function `contrastinf` which uses the R function `deriv` to compute the formal partial derivatives $\frac{\partial g}{\partial T_i}$. 
+In the `convey` library, this rule is implemented by the function `contrastinf`, which uses the base R function `deriv` to compute the formal partial derivatives $\frac{\partial g}{\partial T_i}$. 
 
-For example, suppose we want to linearize the `Relative median poverty gap`(rmpg), defined as the difference between the at-risk-of-poverty threshold (`arpt`) and the median of incomes less than the `arpt` relative to the `arprt`: 
+For example, suppose we want to linearize the relative median poverty gap (RMPG), defined as the difference between the at-risk-of-poverty threshold (ARPT) and the median of incomes less than the ARPT, relative to the ARPT itself.  Let's say that this median income below the at-risk-of-poverty-threshold (POORMED) is the median of incomes less than ARPT:
+
 
 $$
-rmpg= \frac{arpt-medpoor} {arpt}
+rmpg= \frac{(arpt-poormed)} {arpt}
 $$
 
-where `medpoor` is the median of incomes less than `arpt`.
 
-Suppose we know how to linearize `arpt` and `medpoor`, then by applying the function `contrastinf` with 
+If we know how to linearize ARPT and POORMED, then by applying the function `contrastinf` with 
 $$
 g(T_1,T_2)= \frac{(T_1 - T_2)}{T_1}
 $$
-we linearize the `rmpg`.
+we are also able to linearize the RMPG.
 
 
 
-## The Variance Estimator
+## The Variance Estimator {#var}
 
 
 Using the notation in @osier2009, the variance of the estimator $T(\hat{M})$ can approximated by:
 
 \begin{equation}
 Var\left[T(\hat{M})\right]\cong var\left[\sum_s w_i z_i\right]
-(\#eq:var)
+(\#var)
 \end{equation}
 
 The  `linearized` variable $z$  is given by the derivative of the functional:
 
 \begin{equation}
 z_k=lim_{t\rightarrow0}\frac{T(M+t\delta_k)-T(M)}{t}=IT_k(M)
-(\#eq:lin)
+(\#lin)
 \end{equation}
 
 where, $\delta_k$ is the Dirac measure in $k$: $\delta_k(i)=1$ if and only if $i=k$.
 
-This **derivative** is called  **Influence Function** and was introduced in the area of **Robust Statistics**. 
+This **derivative** is called the **Influence Function** and was introduced in the area of **Robust Statistics**. 
 
 
 
 ## Influence Functions
 
-Some measures of poverty and income concentration are defined by non-differentiable functions so that it is not possible to use Taylor linearization to estimate their variances. An alternative is to use **Influence functions** as described in @deville1999 and @osier2009. The convey library implements this methodology to work with `survey.design` objects and also with `svyrep.design` objects.
+Some measures of poverty and income concentration are defined by non-differentiable functions, so that it is not always possible to use Taylor linearization to estimate variances. An alternative is to use **influence functions** as described in @deville1999 and @osier2009. The `convey` library implements this methodology to work with `survey.design` objects and also with `svyrep.design` objects.
 
 Some examples of these measures are:
 
 - At-risk-of-poverty threshold:
-$arpt=.60q_{.50}$ where $q_{.50}$ is the income median;
+$arpt=.60q_{.50}$ where $q_{.50}$ is the median income;
 
-- At-risk-of-poverty rate
+- At-risk-of-poverty rate:
 $arpr=\frac{\sum_U 1(y_i \leq arpt)}{N}.100$
 
-- Quintile share ratio
-
+- Quintile share ratio:
 $qsr=\frac{\sum_U 1(y_i>q_{.80})}{\sum_U 1(y_i\leq q_{.20})}$
 
 - Gini coefficient
 $1+G=\frac{2\sum_U (r_i-1)y_i}{N\sum_Uy_i}$
 where $r_i$ is the rank of $y_i$.
 
-Note that it is not possible to use Taylor linearization for these measures because they depend on quantiles and the Gini is defined as a function of ranks. This could be done using the approach proposed by Deville (1999) based upon influence functions. 
+Note that it is not possible to use Taylor linearization for these measures because they rely on quantiles or, in the case of the Gini coefficient, a function of ranks.  Therefore, we instead follow the approach proposed by Deville (1999) based upon influence functions.
 
 
-
-Let $U$ be a population of size $N$ and $M$ be a measure that allocates mass one to the set composed by one unit, that is $M(i)=M_i= 1$ if $i\in U$ and $M(i)=0$ if $i\notin U$ 
+Let $U$ be a population of size $N$ and $M$ be a measure that allocates mass one to the set composed by one unit, that is $M(i)=M_i= 1$ if $i\in U$ and $M(i)=0$ if $i\notin U$.
 
 Now, a population parameter $\theta$ can be expressed as a functional of $M$
-$\theta=T(M)$
+$\theta=T(M)$.
 
 Examples of such parameters are:
 
@@ -342,20 +340,16 @@ $f$ - income density function;
 
 ## Replication Designs
 
-All major functions in the library convey have S3 methods  for the classes: `survey.design`, `svyrep.design` and `DBIdesign`. When the argument `design` is  
-a survey design with replicate weights created by the library survey, convey uses the method `svrepdesign`. 
+All major functions in the `convey` library have S3 methods  for the classes: `survey.design`, `svyrep.design` and `DBIdesign`. When the argument `design` is  a survey design with replicate weights created by the `survey` library, `convey` uses the method `svrepdesign`. 
 
-Considering the remarks in [@W85],  p. 163, concerning the deficiency of the `Jackknife` method in estimating the variance of `quantiles`, we adopted the type bootstrap instead. 
+Considering the remarks in [@W85],  p. 163, concerning the deficiency of the `Jackknife` method in estimating the variance of `quantiles`, we adopted the bootstrap method instead. 
 
-The function `bootVar` from the library  `laeken` , [@R-laeken], also uses the bootstrap
-method to estimate variances. 
+The function `bootVar` from the `laeken` library [@R-laeken], also uses the bootstrap method to estimate variances. 
 
 ## Decomposition
 
-Some inequality and multidimensional poverty measures can be decomposed. As of December 2016, the decomposition methods in `convey` are limited to group decomposition.
+Some inequality and multidimensional poverty measures can be decomposed. The decomposition methods in the `convey` library are limited to group decomposition.
 
-For instance, the generalized entropy index can be decomposed into between and within group components. This sheds light on a very simple question: of the overall inequality, how much can be explained by inequalities between groups and within groups? Since this measure is additive decomposable, one can get estimates of the coefficients, SEs and covariance between components. For a more practical approach, see [@lima2013].
+For instance, the generalized entropy index can be decomposed into between and within group components. This sheds light on a very simple question: _of the overall inequality, how much can be explained by inequalities between groups and within groups?_ Since this measure is additively decomposable, one can get estimates of the coefficients, SEs and covariance between components. For a more practical approach, see [@lima2013].
 
-The Alkire-Foster class of multidimensional poverty indices can be decomposed by dimension and groups. This shows how much each group (or dimension) contribute to the overall poverty.
-
-This technique can help understand where and who is more affected by inequality and poverty, contributing to more specific policy and economic analysis.
+The Alkire-Foster class of multidimensional poverty indices (not implemented in the `convey` library) can be decomposed by both dimensions and by groups, showing how much each group and each dimension contributes to poverty overall.  Multidimensional poverty techniques can sometimes help economic and policy analysts understand more precisely who is more affected by inequality and poverty, and how those disparities manifest.

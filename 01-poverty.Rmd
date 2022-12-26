@@ -5,28 +5,28 @@ output:
 ---
 # Poverty Indices {#poverty}
 
-Poverty is an issue discussed since long time ago. As @ravallion2016 points out, Aristotle and Confucius discussed ideas about poverty. In fact, Aristotle's ideas influenced Thomas Aquinas, one of the pillars of Western philosophy. Since then, societies changed, modifying the theories of justice underlying the idea of poverty.
+Poverty has been a topic of conversation throughout human history. As @ravallion2016 points out, Aristotle and Confucius discussed ideas about poverty. In fact, Aristotle's ideas influenced Thomas Aquinas, one of the pillars of Western philosophy. Since then, societies changed, modifying the theories of justice underlying the idea of poverty.
 
-As the concept and the ethics towards poverty change, so does its measurement. From basic measures like the headcount rate to more complex metrics, such as the FGT index, poverty measurement evolved. Nowadays, poverty measures estimates are calculated using household surveys and censuses [@deaton1997]. Yet, only recently the aspects of statistical inference combining such measures and survey designs were explored^[For instance, see @deville1999, @berger2003, @bhat2007, and @osier2009.]. These advances become even more important given the recent efforts in poverty mapping, an analytical method that combined poverty analysis and small area estimation, like @elbers2003 and @bedi2007.
+As the concept and the ethics towards poverty change, so does its measurement. From basic measures like the headcount rate to more complex metrics, such as the Foster-Greer-Thorbecke (FGT) index, poverty measurement has evolved. Nowadays, poverty estimates are calculated using household surveys and censuses [@deaton1997]. However, only recently have the aspects of statistical inference combining such measures and complex sample survey designs been explored (for more discussion on this topic, see @deville1999, @berger2003, @bhat2007, and @osier2009).  These advances became even more important given the recent efforts in poverty mapping, an analytical method that combines poverty analysis and small area estimation, like @elbers2003 and @bedi2007.
 
-The following subsections shows how poverty estimates and their sampling errors can be estimated using simple commands from the `convey` package.
+This chapter shows how poverty estimates and their sampling errors can be estimated using simple commands from the `convey` package.
 
 ## At Risk of Poverty Threshold (svyarpt)
 
-The at-risk-of-poverty threshold (ARPT) is a measure used to define the people whose incomes imply a low standard of living in comparison to the general living standards. I.e., even though some people are not below the effective poverty line, those below the ARPT can be considered "almost deprived".
+The at-risk-of-poverty threshold (ARPT) is a measure used to define the people whose incomes imply a low standard of living in comparison to the general living standards.  Even though some people are not below the effective poverty line, those below the ARPT can be considered "almost deprived".
 
 This measure is defined as $0.6$ times the median income for the entire population:
 
 $$
 arpt = 0.6 \times median(y),
 $$
-where, $y$ is the income variable and `median` is estimated for the whole population. The details of the linearization of the `arpt` are discussed by @deville1999 and @osier2009.
+where $y$ is the income variable and `median` is estimated for the whole population. The details of the linearization of the ARPT are discussed by @deville1999 and @osier2009.
 
 ---
 
 **A replication example**
 
-The R `vardpoor` package [@vardpoor], created by researchers at the Central Statistical Bureau of Latvia, includes a arpt coefficient calculation using the ultimate cluster method.  The example below reproduces those statistics.
+The R `vardpoor` package [@vardpoor], created by researchers at the Central Statistical Bureau of Latvia, includes an ARPT coefficient calculation using the ultimate cluster method.  The example below reproduces those statistics.
 
 Load and prepare the same data set:
 
@@ -82,9 +82,6 @@ varpoord_arpt_calculation <-
     # arpt coefficient function
     type = "linarpt",
     
-    # poverty threshold range
-    order_quant = 50L ,
-    
     # get linearized variable
     outp_lin = TRUE
   )
@@ -125,7 +122,7 @@ varpoord_arpt_calculation$all_result$se
 SE(svyarpt( ~ eqincome , des_eusilc))
 ```
 
-The variance estimate is computed by using the approximation defined in \@ref(eq:var), where the linearized variable $z$ is defined by \@ref(eq:lin). The functions `convey::svyarpt` and `vardpoor::linarpt` produce the same linearized variable $z$.
+The variance estimate is computed by using the approximation defined in \@ref(var), while the linearized variable $z$ is defined by \@ref(lin). The functions `convey::svyarpt` and `vardpoor::linarpt` produce the same linearized variable $z$.
 
 However, the measures of uncertainty do not line up, because `library(vardpoor)` defaults to an ultimate cluster method that can be replicated with an alternative setup of the `survey.design` object.
 
@@ -168,9 +165,9 @@ For additional usage examples of `svyarpt`, type `?convey::svyarpt` in the R con
 
 ## At Risk of Poverty Ratio (svyarpr)
 
-The at-risk-of-poverty rate (ARPR) is the share of persons with an income below the at-risk-of-poverty threshold (`arpt`). The logic behind this measure is that although most people below the ARPT cannot be considered "poor", they are the ones most vulnerable to becoming poor in the event of a negative economic phenomenon.
+The at-risk-of-poverty rate (ARPR) is the share of persons with an income below the at-risk-of-poverty threshold (ARPT). The logic behind this measure is that although most people below the ARPT cannot be considered "poor", they are the ones most vulnerable to becoming poor in the event of a negative economic phenomenon like a recession.
 
-The ARPR is a composite estimate, taking into account both the sampling error in the proportion itself and that in the ARPT estimate. The details of the linearization of the `arpr` and are discussed by @deville1999 and @osier2009.
+The ARPR is a composite estimate, taking into account both the sampling error in the proportion itself and that in the ARPT estimate. The details of the linearization of the ARPR are discussed by @deville1999 and @osier2009.
 
 ---
 
@@ -232,9 +229,6 @@ varpoord_arpr_calculation <-
     # arpr coefficient function
     type = "linarpr",
     
-    # poverty threshold range
-    order_quant = 50L ,
-    
     # get linearized variable
     outp_lin = TRUE
     
@@ -277,7 +271,7 @@ varpoord_arpr_calculation$all_result$var
 varpoord_arpr_calculation$all_result$se
 SE(svyarpr(~ eqincome , des_eusilc)) * 100
 ```
-The variance estimate is computed by using the approximation defined in \@ref(eq:var), where the linearized variable $z$ is defined by \@ref(eq:lin). The functions `convey::svyarpr` and `vardpoor::linarpr` produce the same linearized variable $z$.
+The variance estimate is computed by using the approximation defined in \@ref(var), while the linearized variable $z$ is defined by \@ref(lin). The functions `convey::svyarpr` and `vardpoor::linarpr` produce the same linearized variable $z$.
 
 However, the measures of uncertainty do not line up, because `library(vardpoor)` defaults to an ultimate cluster method that can be replicated with an alternative setup of the `survey.design` object.
 
@@ -320,19 +314,19 @@ For additional usage examples of `svyarpr`, type `?convey::svyarpr` in the R con
 
 ## Relative Median Income Ratio (svyrmir)
 
-The relative median income ratio (rmir) is the ratio of the median income of people aged above a value (65) to the median of people aged below the same value. In mathematical terms,
+The relative median income ratio (RMIR) is the ratio of the median income of people aged above a value (65) to the median of people aged below the same value. In mathematical terms,
 
 $$
 rmir = \frac{median\{y_i; age_i >65 \}}{median\{y_i; age_i \leq 65 \}}.
 $$
 
-The details of the linearization of the `rmir` and are discussed by @deville1999 and @osier2009. 
+The details of the linearization of the RMIR and are discussed by @deville1999 and @osier2009. 
 
 ---
 
 **A replication example**
 
-The R `vardpoor` package [@vardpoor], created by researchers at the Central Statistical Bureau of Latvia, includes a rmir coefficient calculation using the ultimate cluster method.  The example below reproduces those statistics.
+The R `vardpoor` package [@vardpoor], created by researchers at the Central Statistical Bureau of Latvia, includes a RMIR coefficient calculation using the ultimate cluster method.  The example below reproduces those statistics.
 
 Load and prepare the same data set:
 
@@ -391,9 +385,6 @@ varpoord_rmir_calculation <-
     # rmir coefficient function
     type = "linrmir",
     
-    # poverty threshold range
-    order_quant = 50L ,
-    
     # get linearized variable
     outp_lin = TRUE
     
@@ -437,7 +428,7 @@ varpoord_rmir_calculation$all_result$se
 SE(svyrmir(~ eqincome , des_eusilc , age = ~ age)) 
 ```
 
-The variance estimate is computed by using the approximation defined in \@ref(eq:var), where the linearized variable $z$ is defined by \@ref(eq:lin). The functions `convey::svyrmir` and `vardpoor::linrmir` produce the same linearized variable $z$.
+The variance estimate is computed by using the approximation defined in \@ref(var), while the linearized variable $z$ is defined by \@ref(lin). The functions `convey::svyrmir` and `vardpoor::linrmir` produce the same linearized variable $z$.
 
 However, the measures of uncertainty do not line up, because `library(vardpoor)` defaults to an ultimate cluster method that can be replicated with an alternative setup of the `survey.design` object.
 
@@ -481,18 +472,18 @@ For additional usage examples of `svyrmir`, type `?convey::svyrmir` in the R con
 
 ## Relative Median Poverty Gap (svyrmpg)
 
-The relative median poverty gap (`rmpg`) is the relative difference between the median income of people having income below the `arpt` and the `arpt` itself:
+The relative median poverty gap (RMPG) is the relative difference between the median income of people having income below the ARPT and the ARPT itself:
 
 $$
 rmpg = \frac{median\{y_i, y_i<arpt\}-arpt}{arpt}
 $$
-The details of the linearization of the `rmpg` are discussed by @deville1999 and @osier2009.
+The details of the linearization of the RMPG are discussed by @deville1999 and @osier2009.
 
 ---
 
 **A replication example**
 
-The R `vardpoor` package [@vardpoor], created by researchers at the Central Statistical Bureau of Latvia, includes a rmpg coefficient calculation using the ultimate cluster method.  The example below reproduces those statistics.
+The R `vardpoor` package [@vardpoor], created by researchers at the Central Statistical Bureau of Latvia, includes a RMPG coefficient calculation using the ultimate cluster method.  The example below reproduces those statistics.
 
 Load and prepare the same data set:
 
@@ -548,9 +539,6 @@ varpoord_rmpg_calculation <-
     # rmpg coefficient function
     type = "linrmpg",
     
-    # poverty threshold range
-    order_quant = 50L ,
-    
     # get linearized variable
     outp_lin = TRUE
     
@@ -593,7 +581,7 @@ varpoord_rmpg_calculation$all_result$se
 SE(svyrmpg(~ eqincome , des_eusilc)) * 100
 ```
 
-The variance estimate is computed by using the approximation defined in \@ref(eq:var), where the linearized variable $z$ is defined by \@ref(eq:lin). The functions `convey::svyrmpg` and `vardpoor::linrmpg` produce the same linearized variable $z$.
+The variance estimate is computed by using the approximation defined in \@ref(var), while the linearized variable $z$ is defined by \@ref(lin). The functions `convey::svyrmpg` and `vardpoor::linrmpg` produce the same linearized variable $z$.
 
 However, the measures of uncertainty do not line up, because `library(vardpoor)` defaults to an ultimate cluster method that can be replicated with an alternative setup of the `survey.design` object.
 
@@ -636,18 +624,18 @@ For additional usage examples of `svyrmpg`, type `?convey::svyrmpg` in the R con
 
 ## Median Income Below the At Risk of Poverty Threshold  (svypoormed)
 
-Median income below the at-risk-of-poverty- threshold (poormed) is median of incomes of people having the income below the `arpt`:
+Median income below the at-risk-of-poverty-threshold (POORMED) is median of incomes of people having the income below the ARPT:
 
 $$
 poormed = median\{y_i; y_i< arpt\}
 $$
-The details of the linearization of the `poormed` are discussed by @deville1999 and @osier2009.
+The details of the linearization of the POORMED are discussed by @deville1999 and @osier2009.
 
 ---
 
 **A replication example**
 
-The R `vardpoor` package [@vardpoor], created by researchers at the Central Statistical Bureau of Latvia, includes a poormed coefficient calculation using the ultimate cluster method.  The example below reproduces those statistics.
+The R `vardpoor` package [@vardpoor], created by researchers at the Central Statistical Bureau of Latvia, includes a POORMED coefficient calculation using the ultimate cluster method.  The example below reproduces those statistics.
 
 Load and prepare the same data set:
 
@@ -703,9 +691,6 @@ varpoord_poormed_calculation <-
     # poormed coefficient function
     type = "linpoormed",
     
-    # poverty threshold range
-    order_quant = 50L ,
-    
     # get linearized variable
     outp_lin = TRUE
     
@@ -750,7 +735,7 @@ varpoord_poormed_calculation$all_result$se
 SE(svypoormed(~ eqincome , des_eusilc))
 ```
 
-The variance estimate is computed by using the approximation defined in \@ref(eq:var), where the linearized variable $z$ is defined by \@ref(eq:lin). The functions `convey::svypoormed` and `vardpoor::linpoormed` produce the same linearized variable $z$.
+The variance estimate is computed by using the approximation defined in \@ref(var), while the linearized variable $z$ is defined by \@ref(lin). The functions `convey::svypoormed` and `vardpoor::linpoormed` produce the same linearized variable $z$.
 
 However, the measures of uncertainty do not line up, because `library(vardpoor)` defaults to an ultimate cluster method that can be replicated with an alternative setup of the `survey.design` object.
 
@@ -810,7 +795,7 @@ where: $\theta$ is the poverty threshold; $\delta$ the indicator function that a
 
 If $\gamma =0$, the FGT(0) equals the poverty headcount ratio, which accounts for the spread of poverty. If $\gamma =1$, FGT(1) is the mean of the normalized income shortfall of the poor. By doing so, the measure takes into account both the spread and the intensity of poverty. When $\gamma =2$, the relative weight of larger shortfalls increases even more, which yields a measure that accounts for poverty severity, i.e., the inequality among the poor. This way, a transfer from a poor person to an even poorer person would reduce the FGT(2).
 
-Although @foster1984 already presented a decomposition for the FGT(2) index, @aristondo2010 provided a general formula that decomposes the FGT($\gamma$) for any $\gamma \geqslant 2$. Put simply, any such FGT($\gamma$) index can be seen as function of the headcount ratio, the average normalized income gap among the poor and a generalized entropy index of the normalized income gaps among poor. In mathematical terms,
+Although @foster1984 already presented a decomposition for the FGT(2) index, @aristondo2010 provided a general formula that decomposes the FGT($\gamma$) for any $\gamma \geqslant 2$. Put simply, any such FGT($\gamma$) index can be seen as function of the headcount ratio, the average normalized income gap among the poor, and a generalized entropy index of the normalized income gaps among poor. In mathematical terms,
 
 \[
 FGT_\gamma = FGT_0 \cdot I^\gamma \cdot \big[ 1 + \big( \gamma^2 -\gamma \big) GEI_\gamma^* \big] , \text{ } \gamma \geq 2
@@ -818,17 +803,17 @@ FGT_\gamma = FGT_0 \cdot I^\gamma \cdot \big[ 1 + \big( \gamma^2 -\gamma \big) G
 
 where $I$ is the average normalized income gap among the poor and $GEI_\gamma^*$ is a generalized entropy index of such income gaps among the poor.
 
-This result is particularly useful, as one can attribute cross-sectional differences of a FGT index to differences in the spread, depth and inequality of poverty.
+This result is particularly useful, as one can attribute cross-sectional differences of a FGT index to differences in the spread, depth, and inequality of poverty.
 
-The FGT poverty class and its decomposition is implemented in the library convey by the function `svyfgt` and `svyfgtdec`, respectively.
+The FGT poverty class and its decomposition is implemented in the `convey` library by the function `svyfgt` and `svyfgtdec`, respectively.
 The argument `thresh_type` of this function defines the type of poverty threshold adopted.
 There are three possible choices:
 
-1. `abs` -- fixed and given by the argument thresh_value
+1. `abs` -- fixed and given by the argument thresh_value.
 2. `relq` -- a proportion of a quantile fixed by the argument `proportion` and the quantile is defined by the argument `order`.
-3. `relm` -- a proportion of the mean fixed the argument `proportion`
+3. `relm` -- a proportion of the mean fixed the argument `proportion`.
 
-The quantile and the mean involved in the definition of the threshold are estimated for the whole population. When $\gamma=0$ and $\theta= .6*MED$ the measure is equal to the indicator `arpr` computed by the function  `svyarpr`. The linearization of the FGT(0) is presented in @berger2003.
+The quantile and the mean involved in the definition of the threshold are estimated for the whole population. When $\gamma=0$ and $\theta= .6*MED$, this measure is equal to the indicator ARPR computed by the function  `svyarpr`. The linearization of the FGT(0) is presented in @berger2003.
 
 Next, we give some examples of the function `svyfgt` to estimate the values of the FGT poverty index.
 
@@ -844,12 +829,12 @@ The poverty gap ratio (FGT(1)) ($\gamma=1$) index for the poverty threshold fixe
 svyfgt(~ eqincome, des_eusilc, g = 1, abs_thresh = 10000)
 ```
 
-To estimate the FGT(0) with the poverty threshold fixed at $0.6* MED$ we fix the argument `type_thresh="relq"` and use the default values for `percent` and `order`:
+To estimate the FGT(0) with the poverty threshold fixed at $0.6* MED$, we first fix the argument `type_thresh="relq"` and then use the default values for `percent` and `order`:
 
 ```{r comment=NA}
 svyfgt(~ eqincome, des_eusilc, g = 0, type_thresh = "relq")
 ```
-that matches the estimate obtained by
+This matches the estimate obtained by:
 
 ```{r comment=NA}
 svyarpr(~ eqincome, design = des_eusilc, .5, .6)
@@ -866,7 +851,7 @@ svyfgt(~ eqincome, des_eusilc, g = 1, type_thresh = "relm")
 
 In July 2006, @jenkins2006 presented at the North American Stata Users' Group Meetings on the stata Atkinson Index command.  The example below reproduces those statistics.
 
-In order to match the presentation's results using the `svyfgt` function from the convey library, the poverty threshold was considered absolute despite being directly estimated from the survey sample.  This effectively treats the variance of the estimated poverty threshold as zero; `svyfgt` does not account for the uncertainty of the poverty threshold when the level has been stated as absolute with the `abs_thresh=` parameter.  In general, we would instead recommend using either `relq` or `relm` in the `type_thresh=` parameter in order to account for the added uncertainty of the poverty threshold calculation.  This example serves only to show that `svyfgt` behaves properly as compared to other software.
+In order to match the presentation's results using the `svyfgt` function from the `convey` library, the poverty threshold was considered absolute despite being directly estimated from the survey sample.  This effectively treats the variance of the estimated poverty threshold as zero; `svyfgt` does not account for the uncertainty of the poverty threshold when the level has been stated as absolute with the `abs_thresh=` parameter.  In general, we would instead recommend using either `relq` or `relm` in the `type_thresh=` parameter in order to account for the added uncertainty of the poverty threshold calculation.  This example serves only to show that `svyfgt` behaves properly as compared to other software.
 
 Load and prepare the same data set:
 ```{r}
@@ -917,7 +902,7 @@ x <- rbind(x81 , x85 , x91)
 
 Replicate the author's survey design statement from stata code..
 ```
-. ge poor = (year==1981)*(x < $z_81) + (year==1985)*(x < $z_85) +  (year==1991)*(x < $z_91)
+. ge poor = (year==1981)*(x < $z_81)+(year==1985)*(x < $z_85)+(year==1991)*(x < $z_91)
 . * account for clustering within HHs 
 . svyset hrn [pweight = wgt]
 ```
@@ -1056,13 +1041,13 @@ For additional usage examples of `svyfgt`, type `?convey::svyfgt` in the R conso
 
 ## Watts poverty measure (svywatts, svywattsdec)
 
-The measure proposed in @watts1968 satisfies a number of desirable poverty measurement axioms and is known to be one of the first distribution-sensitive poverty measures, as noted by @haughton2009. It is defined as
+The measure proposed in @watts1968 satisfies a number of desirable poverty measurement axioms and is known to be one of the first distribution-sensitive poverty measures, as noted by @haughton2009. It is defined as:
 
 \[
 Watts = \frac{1}{N} \sum_{i \in U} \log{ \bigg( \frac{y_i}{\theta} \bigg) \delta ( y_i \leqslant \theta) }.
 \]
 
-@murdoch1998 points out that the Watts poverty index can provide an estimate of the expected time to exit poverty. Given the expected growth rate of income per capita among the poor, $g$, the expected time taken to exit poverty $T_\theta$ would be
+@murdoch1998 points out that the Watts poverty index can provide an estimate of the expected time to exit poverty. Given the expected growth rate of income per capita among the poor, $g$, the expected time taken to exit poverty $T_\theta$ would be:
 
 \[
 T_\theta = \frac{Watts}{g}.
