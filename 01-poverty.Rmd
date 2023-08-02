@@ -273,7 +273,7 @@ SE(svyarpr(~ eqincome , des_eusilc)) * 100
 ```
 The variance estimate is computed by using the approximation defined in \@ref(var), while the linearized variable $z$ is defined by \@ref(lin). The functions `convey::svyarpr` and `vardpoor::linarpr` produce the same linearized variable $z$.
 
-However, the measures of uncertainty do not line up, because `library(vardpoor)` defaults to an ultimate cluster method that can be replicated with an alternative setup of the `survey.design` object.
+However, the measures of uncertainty do not line up. One of the reasons is that `library(vardpoor)` defaults to an ultimate cluster method that can be replicated with an alternative setup of the `survey.design` object.
 
 ```{r}
 # within each strata, sum up the weights
@@ -301,14 +301,130 @@ des_eusilc_ultimate_cluster <-
 des_eusilc_ultimate_cluster <-
   convey_prep(des_eusilc_ultimate_cluster)
 
-# matches
+# does not match
 attr(svyarpr(~ eqincome , des_eusilc_ultimate_cluster) , 'var') * 10000
 varpoord_arpr_calculation$all_result$var
 
-# matches
+# does not match
 varpoord_arpr_calculation$all_result$se
 SE(svyarpr(~ eqincome , des_eusilc_ultimate_cluster)) * 100
 ```
+
+Still, there is a difference in the estimates. This is discussed in detail in [this issue](https://github.com/ajdamico/convey/issues/372). 
+In order to still provide additional examples for our code, we proceed with a Monte Carlo experiment. 
+
+Using the `eusilcP` data from the `simPop` package [@R-simPop], we can compute the actual value of the at risk of poverty rate for that population:
+
+```{r}
+# load libraries
+library( sampling )
+library( survey )
+library( convey )
+
+# load pseudo population data
+data( "eusilcP" , package = "simPop" )
+
+# compute population median
+q50.pop <- convey:::computeQuantiles( eusilcP$eqIncome , rep( 1 , length( eusilcP$eqIncome ) ) , .50 )
+
+# compute population poverty threshold
+# as 60% of the median
+thresh.pop <- .60 * q50.pop
+
+# compute population at risk of poverty rate
+( theta.pop <- mean( eusilcP$eqIncome <= thresh.pop , na.rm = TRUE ) )
+
+```
+
+Now, to study the distribution of the estimator under a particular sampling design, we select 5000 samples under one-stage cluster sampling of 100 households using the `cluster` function from the `sampling` package [@R-sampling], nad use the `svyarpr` function to estimate the ARPR in each of those samples:
+
+```{r}
+# compute size-like variable for PPS sampling design
+eusilcP$aux <- log( ifelse( eusilcP$eqIncome >= 1000 , eusilcP$eqIncome , 1000 ) )
+
+# define the number of monte carlo replicates
+mc.rep <- 5000L
+
+# simulation function
+fun.sim1 <- function( this.iter ) {
+  
+  # select sample
+  tt <- 
+    sampling::cluster( data = eusilcP[ sample.int( nrow( eusilcP ) , nrow( eusilcP ) , replace = FALSE ) , ] , 
+                      clustername = "hid" , 
+                      size = 1000L , method = "systematic" , pik = eusilcP$aux )
+  
+  # collect data
+  this.sample <- getdata( eusilcP , tt )
+  
+  # create survey design object
+  this.desobj <- svydesign( ids = ~hid , probs = ~Prob , data = this.sample , nest = FALSE )
+  
+  # prepare for convey functions
+  this.desobj <- convey_prep( this.desobj )
+  
+  # compute estimates
+  svyarpr( ~eqIncome , this.desobj )
+  
+}
+
+# set seed for reproducible results
+set.seed( 1998 )
+
+# run replications
+estimate.list <- lapply( seq_len( mc.rep ) , function( zz ) fun.sim1( zz ) )
+```
+
+Then, we evaluate the Percentage Relative Bias (PRB) of the ARPR estimator. Under this scenario, the PRB of the ARPR estimator is -0.1450%.
+
+```{r}
+# estimate the expected value of the ARPR estimator
+# using the average of the estimates
+( theta.exp <- mean( sapply( estimate.list , coef ) ) )
+
+# estimate the percentage relative bias
+100 * ( theta.exp / theta.pop - 1)
+```
+
+For the variance estimator, we have:
+
+```{r}
+# estimate the variance of the ARPR estimator
+# using the empirical variance of the estimates
+( vartheta.popest <- var( sapply( estimate.list , coef ) ) )
+
+# estimate the expected value of the ARPR variance estimator
+# using the (estimated) expected value of the variance estimates
+( vartheta.exp <- mean( sapply( estimate.list , vcov ) ) )
+
+# estimate the percentage relative bias of the variance estimator
+100 *  (vartheta.exp / vartheta.popest - 1 )
+```
+
+Under this scenario, the PRB of the ARPR variance estimator is -1.8873%.
+
+Our simulations show that the Squared Bias of this estimator accounts for less than 0.1% of its Mean Squared Error:
+
+```{r}
+theta.bias2 <- ( theta.exp - theta.pop )^2
+theta.mse <- theta.bias2 + vartheta.popest
+100 * (theta.bias2 / theta.mse)
+```
+
+Next, we evaluate the Percentage Coverage Rate (PCR). In theory, under repeated sampling, the estimated 95% CIs should cover the population parameter approximately 95% of the time. We can evaluate that using:
+
+```{r}
+# estimate confidence intervals of the ARPR
+# for each of the samples
+est.coverage <-
+  sapply(estimate.list, function(this.stat)
+    confint(this.stat)[, 1] <= theta.pop &
+      confint(this.stat)[, 2] >= theta.pop)
+
+# evaluate empirical coverage
+mean( est.coverage )
+```
+Our coverages are not too far from the nominal coverage level of 95%.
 
 For additional usage examples of `svyarpr`, type `?convey::svyarpr` in the R console.
 
