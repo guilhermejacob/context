@@ -338,7 +338,7 @@ thresh.pop <- .60 * q50.pop
 
 Now, to study the distribution of the estimator under a particular sampling design, we select 5000 samples under one-stage cluster sampling of 100 households using the `cluster` function from the `sampling` package [@R-sampling], and use the `svyarpr` function to estimate the ARPR for each of those samples:
 
-```{r}
+```{r , cache=TRUE}
 # compute size-like variable for PPS sampling design
 eusilcP$aux <- log( ifelse( eusilcP$eqIncome >= 1000 , eusilcP$eqIncome , 1000 ) )
 
@@ -1206,16 +1206,15 @@ library( convey )
 # load pseudo population data
 data( "eusilcP" , package = "simPop" )
 
-# compute population value of the Watts index
-( theta.pop <- 
-    mean( ifelse( eusilcP$eqIncome <= 10000 , log( 10000 /  eusilcP$eqIncome ) , 0 )[ eusilcP$eqIncome > 0] , 
-          na.rm = TRUE ) )
+# compute population value of the Watts index decomposition
+inc.pos <- eusilcP$eqIncome[ eusilcP$eqIncome > 0 ]
+( theta.pop <- mean( ifelse( inc.pos <= 10000 , log( 10000 /  inc.pos ) , 0 ) , na.rm = TRUE ) )
 
 ```
 
 Now, to study the distribution of the estimator under a particular sampling design, we select 5000 samples under one-stage cluster sampling of 100 households using the `cluster` function from the `sampling` package [@R-sampling], and use the `svywatts` function to estimate the Watts index for each of those samples:
 
-```{r}
+```{r, cache=TRUE}
 # compute size-like variable for PPS sampling design
 eusilcP$aux <- log( ifelse( eusilcP$eqIncome >= 1000 , eusilcP$eqIncome , 1000 ) )
 
@@ -1306,4 +1305,124 @@ mean( est.coverage )
 ```
 Our coverages are not too far from the nominal coverage level of 95%.
 
-For additional usage examples of `svywatts`, type `?convey::svywatts` in the R console.
+For the Watts index decomposition, we start by computing the (true) population values of the components:
+
+```{r}
+# compute population value of the Watts index decomposition
+inc.pos <- eusilcP$eqIncome[ eusilcP$eqIncome > 0 ]
+wdec1 <- mean( ifelse( inc.pos <= 10000 , log( 10000 /  inc.pos ) , 0 ) , na.rm = TRUE )
+wdec2 <- mean( inc.pos <= 10000 , na.rm = TRUE )
+mu.poor <- mean( inc.pos [ inc.pos <= 10000 ] )
+wdec3 <- log( 10000 / mu.poor )
+wdec4 <- - mean( log( inc.pos[ inc.pos <= 10000 ] / mu.poor ) , na.rm = TRUE )
+theta.pop <- 
+  c( "watts" = wdec1 , 
+     "fgt0" =  wdec2 , 
+     "watts pov. gap ratio" = wdec3 , 
+     "theil(poor)" =  wdec4 )
+theta.pop
+```
+
+Then, using the same sampling strategy of the `svywatts`, we compute the `svywattsdec` for each sample:
+
+```{r, cache=TRUE}
+# simulation function
+fun.sim2 <- function( this.iter ) {
+  
+  # select sample
+  tt <- 
+    sampling::cluster( data = eusilcP[ sample.int( nrow( eusilcP ) , nrow( eusilcP ) , replace = FALSE ) , ] , 
+                       clustername = "hid" , 
+                       size = 1000L , method = "systematic" , pik = eusilcP$aux )
+  
+  # collect data
+  this.sample <- getdata( eusilcP , tt )
+  
+  # create survey design object
+  this.desobj <- svydesign( ids = ~hid , probs = ~Prob , data = this.sample , nest = FALSE )
+  
+  # prepare for convey functions
+  this.desobj <- convey_prep( this.desobj )
+  
+  # filter positive incomes
+  this.desobj <- subset( this.desobj , eqIncome > 0 )
+  
+  # compute estimates
+  svywattsdec( ~eqIncome , this.desobj , abs_thresh = 10000 )
+  
+}
+
+# set seed for reproducible results
+set.seed( 1998 )
+
+# run replications
+estimate.list <- lapply( seq_len( mc.rep ) , function( zz ) fun.sim2( zz ) )
+```
+
+The PRB of each component is estimated using the code below. Notice that PRBs are relatively small, with absolute values below 1%, with the largest bias in the Theil index component.
+
+```{r}
+# repeat true population values
+( theta.pop )
+
+# estimate the expected values of the components estimators
+# using the average of the estimates
+( theta.exp <- rowMeans( sapply( estimate.list , coef ) ) )
+
+# estimate the percentage relative bias
+( 100 * ( theta.exp / theta.pop - 1) )
+```
+
+For the variance estimators, we estimate the PRB using the code below. 
+Note that the bias is still relatively small, with absolute values of the PRB below 2%.
+
+```{r}
+# estimate the variance of the components estimators
+# using the empirical variance of the estimates
+( vartheta.popest <- diag( var( t( sapply( estimate.list , coef ) ) ) ) )
+
+# estimate the expected value of the Watts index variance estimator
+# using the (estimated) expected value of the variance estimates
+( vartheta.exp <- rowMeans( sapply( estimate.list , function(z) diag( vcov( z ) ) ) ) )
+
+# estimate the percentage relative bias of the variance estimators
+( 100 *  (vartheta.exp / vartheta.popest - 1 ) )
+```
+
+Regarding the MSE, the squared bias accounts for less than 0.1% of the MSE. 
+This means that, with a good estimate of the variance, we should be able to have a good approximation for the MSE.
+
+```{r}
+# estimate MSE
+theta.bias2 <- ( theta.exp - theta.pop )^2
+( theta.mse <- theta.bias2 + vartheta.popest )
+
+# squared bias component of the MSE
+100 * ( theta.bias2 / theta.mse )
+```
+
+However, the CIs based on the normal approximation might not work very well for some components. The code below shows that coverage rate for the Theil index component differs significatly from the 95% nominal coverage rate.
+
+```{r}
+# estimate confidence intervals of the Watts index
+# for each of the samples
+est.coverage <-
+  sapply(estimate.list, function(this.stat)
+    confint(this.stat)[, 1] <= theta.pop &
+      confint(this.stat)[, 2] >= theta.pop)
+
+# evaluate empirical coverage
+rowMeans( est.coverage )
+```
+
+One of the reasons for this is that the sample might not be large enough for the CLT to hold. The distribution of the estimator shows substantial asymmetry, which would be a problem for the normal approximation.
+
+```{r}
+hist( sapply( estimate.list , coef )[4,] ,
+      main = "Histogram of Theil component estimator" ,
+      xlim = c(0,.30) , 
+      ylim = c(0 , 1500) , xlab = "Estimate" )
+```
+
+
+For additional usage examples of `svywatts` and `svywattsdec`, type `?convey::svywatts` or `?convey::svywattsdec` in the R console.
