@@ -269,16 +269,16 @@ div.csl-indent {
 <span id="cb53-6"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb53-6" tabindex="-1"></a></span>
 <span id="cb53-7"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb53-7" tabindex="-1"></a><span class="co"># check equality</span></span>
 <span id="cb53-8"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb53-8" tabindex="-1"></a><span class="fu">all.equal</span>(lin_arpr_varpoord, <span class="dv">100</span> <span class="sc">*</span> lin_arpr_convey)</span></code></pre></div>
-<pre><code>## [1] &quot;Mean relative difference: 0.2264738&quot;</code></pre>
+<pre><code>## [1] TRUE</code></pre>
 <div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb55-1" tabindex="-1"></a><span class="co"># variances do not match exactly</span></span>
 <span id="cb55-2"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb55-2" tabindex="-1"></a><span class="fu">attr</span>(<span class="fu">svyarpr</span>(<span class="sc">~</span> eqincome , des_eusilc) , <span class="st">&#39;var&#39;</span>) <span class="sc">*</span> <span class="dv">10000</span></span></code></pre></div>
 <pre><code>##            eqincome
 ## eqincome 0.07599778</code></pre>
 <div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb57-1" tabindex="-1"></a>varpoord_arpr_calculation<span class="sc">$</span>all_result<span class="sc">$</span>var</span></code></pre></div>
-<pre><code>## [1] 0.08718569</code></pre>
+<pre><code>## [1] 0.07586194</code></pre>
 <div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb59-1" tabindex="-1"></a><span class="co"># standard errors do not match exactly</span></span>
 <span id="cb59-2"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb59-2" tabindex="-1"></a>varpoord_arpr_calculation<span class="sc">$</span>all_result<span class="sc">$</span>se</span></code></pre></div>
-<pre><code>## [1] 0.2952722</code></pre>
+<pre><code>## [1] 0.2754305</code></pre>
 <div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb61-1" tabindex="-1"></a><span class="fu">SE</span>(<span class="fu">svyarpr</span>(<span class="sc">~</span> eqincome , des_eusilc)) <span class="sc">*</span> <span class="dv">100</span></span></code></pre></div>
 <pre><code>##           eqincome
 ## eqincome 0.2756769</code></pre>
@@ -314,10 +314,10 @@ div.csl-indent {
 <pre><code>##            eqincome
 ## eqincome 0.07586194</code></pre>
 <div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb65-1" tabindex="-1"></a>varpoord_arpr_calculation<span class="sc">$</span>all_result<span class="sc">$</span>var</span></code></pre></div>
-<pre><code>## [1] 0.08718569</code></pre>
+<pre><code>## [1] 0.07586194</code></pre>
 <div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb67-1" tabindex="-1"></a><span class="co"># does not match</span></span>
 <span id="cb67-2"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb67-2" tabindex="-1"></a>varpoord_arpr_calculation<span class="sc">$</span>all_result<span class="sc">$</span>se</span></code></pre></div>
-<pre><code>## [1] 0.2952722</code></pre>
+<pre><code>## [1] 0.2754305</code></pre>
 <div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-1" tabindex="-1"></a><span class="fu">SE</span>(<span class="fu">svyarpr</span>(<span class="sc">~</span> eqincome , des_eusilc_ultimate_cluster)) <span class="sc">*</span> <span class="dv">100</span></span></code></pre></div>
 <pre><code>##           eqincome
 ## eqincome 0.2754305</code></pre>
@@ -347,7 +347,7 @@ In order to still provide additional examples for our code, we proceed with a Mo
 <span id="cb74-14"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb74-14" tabindex="-1"></a><span class="co"># compute population at risk of poverty rate</span></span>
 <span id="cb74-15"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb74-15" tabindex="-1"></a>( theta.pop <span class="ot">&lt;-</span> <span class="fu">mean</span>( eusilcP<span class="sc">$</span>eqIncome <span class="sc">&lt;=</span> thresh.pop , <span class="at">na.rm =</span> <span class="cn">TRUE</span> ) )</span></code></pre></div>
 <pre><code>## [1] 0.1469295</code></pre>
-<p>Now, to study the distribution of the estimator under a particular sampling design, we select 5000 samples under one-stage cluster sampling of 100 households using the <code>cluster</code> function from the <code>sampling</code> package <span class="citation">(<label for="tufte-mn-29" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-29" class="margin-toggle">Tillé and Matei 2021<span class="marginnote">Tillé, Yves, and Alina Matei. 2021. <em>Sampling: Survey Sampling</em>. <a href="https://CRAN.R-project.org/package=sampling">https://CRAN.R-project.org/package=sampling</a>.</span>)</span>, and use the <code>svyarpr</code> function to estimate the ARPR in each of those samples:</p>
+<p>Now, to study the distribution of the estimator under a particular sampling design, we select 5000 samples under one-stage cluster sampling of 100 households using the <code>cluster</code> function from the <code>sampling</code> package <span class="citation">(<label for="tufte-mn-29" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-29" class="margin-toggle">Tillé and Matei 2021<span class="marginnote">Tillé, Yves, and Alina Matei. 2021. <em>Sampling: Survey Sampling</em>. <a href="https://CRAN.R-project.org/package=sampling">https://CRAN.R-project.org/package=sampling</a>.</span>)</span>, and use the <code>svyarpr</code> function to estimate the ARPR for each of those samples:</p>
 <div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb76-1" tabindex="-1"></a><span class="co"># compute size-like variable for PPS sampling design</span></span>
 <span id="cb76-2"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb76-2" tabindex="-1"></a>eusilcP<span class="sc">$</span>aux <span class="ot">&lt;-</span> <span class="fu">log</span>( <span class="fu">ifelse</span>( eusilcP<span class="sc">$</span>eqIncome <span class="sc">&gt;=</span> <span class="dv">1000</span> , eusilcP<span class="sc">$</span>eqIncome , <span class="dv">1000</span> ) )</span>
 <span id="cb76-3"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb76-3" tabindex="-1"></a></span>
