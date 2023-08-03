@@ -1187,3 +1187,123 @@ T_\theta &= \frac{Watts}{g} \\
 \]
 
 As @murdoch1998 points out, if the income among the poor is equally distributed (i.e., $L_*=0$), the time taken to exit poverty is simply $FGT_0 I_w / g$. Therefore, $FGT_0 L_* / g$ can be seen as the additional time needed to exit poverty as a result of the inequality among the poor.
+
+---
+
+**A replication example**
+
+
+To provide a example for our code, we proceed with a Monte Carlo experiment. 
+
+Using the `eusilcP` data from the `simPop` package [@R-simPop], we can compute the actual value of the Watts index for that population:
+
+```{r}
+# load libraries
+library( sampling )
+library( survey )
+library( convey )
+
+# load pseudo population data
+data( "eusilcP" , package = "simPop" )
+
+# compute population value of the Watts index
+( theta.pop <- 
+    mean( ifelse( eusilcP$eqIncome <= 10000 , log( 10000 /  eusilcP$eqIncome ) , 0 )[ eusilcP$eqIncome > 0] , 
+          na.rm = TRUE ) )
+
+```
+
+Now, to study the distribution of the estimator under a particular sampling design, we select 5000 samples under one-stage cluster sampling of 100 households using the `cluster` function from the `sampling` package [@R-sampling], and use the `svywatts` function to estimate the Watts index for each of those samples:
+
+```{r}
+# compute size-like variable for PPS sampling design
+eusilcP$aux <- log( ifelse( eusilcP$eqIncome >= 1000 , eusilcP$eqIncome , 1000 ) )
+
+# define the number of monte carlo replicates
+mc.rep <- 5000L
+
+# simulation function
+fun.sim1 <- function( this.iter ) {
+  
+  # select sample
+  tt <- 
+    sampling::cluster( data = eusilcP[ sample.int( nrow( eusilcP ) , nrow( eusilcP ) , replace = FALSE ) , ] , 
+                      clustername = "hid" , 
+                      size = 1000L , method = "systematic" , pik = eusilcP$aux )
+  
+  # collect data
+  this.sample <- getdata( eusilcP , tt )
+  
+  # create survey design object
+  this.desobj <- svydesign( ids = ~hid , probs = ~Prob , data = this.sample , nest = FALSE )
+  
+  # prepare for convey functions
+  this.desobj <- convey_prep( this.desobj )
+  
+  # filter positive incomes
+  this.desobj <- subset( this.desobj , eqIncome > 0 )
+  
+  # compute estimates
+  svywatts( ~eqIncome , this.desobj , abs_thresh = 10000 )
+  
+}
+
+# set seed for reproducible results
+set.seed( 1998 )
+
+# run replications
+estimate.list <- lapply( seq_len( mc.rep ) , function( zz ) fun.sim1( zz ) )
+```
+
+Then, we evaluate the Percentage Relative Bias (PRB) of the Watts index estimator. Under this scenario, the PRB of the Watts index estimator is -0.0666%.
+
+```{r}
+# estimate the expected value of the Watts index estimator
+# using the average of the estimates
+( theta.exp <- mean( sapply( estimate.list , coef ) ) )
+
+# estimate the percentage relative bias
+100 * ( theta.exp / theta.pop - 1)
+```
+
+For the variance estimator, we have:
+
+```{r}
+# estimate the variance of the Watts index estimator
+# using the empirical variance of the estimates
+( vartheta.popest <- var( sapply( estimate.list , coef ) ) )
+
+# estimate the expected value of the Watts index variance estimator
+# using the (estimated) expected value of the variance estimates
+( vartheta.exp <- mean( sapply( estimate.list , vcov ) ) )
+
+# estimate the percentage relative bias of the variance estimator
+100 *  (vartheta.exp / vartheta.popest - 1 )
+```
+
+Under this scenario, the PRB of the Watts index variance estimator is 0.5921%.
+
+Our simulations show that the Squared Bias of this estimator accounts for less than 0.01% of its Mean Squared Error:
+
+```{r}
+theta.bias2 <- ( theta.exp - theta.pop )^2
+theta.mse <- theta.bias2 + vartheta.popest
+100 * (theta.bias2 / theta.mse)
+```
+
+Next, we evaluate the Percentage Coverage Rate (PCR). In theory, under repeated sampling, the estimated 95% CIs should cover the population parameter approximately 95% of the time. We can evaluate that using:
+
+```{r}
+# estimate confidence intervals of the Watts index
+# for each of the samples
+est.coverage <-
+  sapply(estimate.list, function(this.stat)
+    confint(this.stat)[, 1] <= theta.pop &
+      confint(this.stat)[, 2] >= theta.pop)
+
+# evaluate empirical coverage
+mean( est.coverage )
+```
+Our coverages are not too far from the nominal coverage level of 95%.
+
+For additional usage examples of `svywatts`, type `?convey::svywatts` in the R console.
