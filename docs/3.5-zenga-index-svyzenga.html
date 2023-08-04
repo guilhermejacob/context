@@ -274,9 +274,9 @@ Z = 1 - \int_{0}^{1} \frac{L(p)}{p} \cdot \frac{ 1 - p }{ 1 - L(p) } dp
 <span id="cb319-77"><a href="3.5-zenga-index-svyzenga.html#cb319-77" tabindex="-1"></a><span class="co"># treat household-level sample as the finite population</span></span>
 <span id="cb319-78"><a href="3.5-zenga-index-svyzenga.html#cb319-78" tabindex="-1"></a>pop.df <span class="ot">&lt;-</span></span>
 <span id="cb319-79"><a href="3.5-zenga-index-svyzenga.html#cb319-79" tabindex="-1"></a>  pop.df[<span class="sc">!</span><span class="fu">duplicated</span>(pop.df<span class="sc">$</span>nquest) , , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span></code></pre></div>
-<p>For the Monte Carlo experiment, we take <code>5000</code> samples of (expected) size <code>1000</code> using Poisson sampling<label for="tufte-sn-3" class="margin-toggle sidenote-number">3</label><input type="checkbox" id="tufte-sn-3" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">3</span> but not Conditional Poisson Sampling.</span> and estimate the Zenga index using each sample:</p>
+<p>For the Monte Carlo experiment, we take <code>5000</code> samples of (expected) size <code>1000</code> using Poisson sampling<label for="tufte-sn-3" class="margin-toggle sidenote-number">3</label><input type="checkbox" id="tufte-sn-3" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">3</span> but not Conditional Poisson Sampling.</span>:</p>
 <div class="sourceCode" id="cb320"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb320-1"><a href="3.5-zenga-index-svyzenga.html#cb320-1" tabindex="-1"></a><span class="co"># set up monte carlo attributes</span></span>
-<span id="cb320-2"><a href="3.5-zenga-index-svyzenga.html#cb320-2" tabindex="-1"></a>MC.reps <span class="ot">&lt;-</span> 5000L</span>
+<span id="cb320-2"><a href="3.5-zenga-index-svyzenga.html#cb320-2" tabindex="-1"></a>mc.rep <span class="ot">&lt;-</span> 5000L</span>
 <span id="cb320-3"><a href="3.5-zenga-index-svyzenga.html#cb320-3" tabindex="-1"></a>n.size <span class="ot">=</span> 1000L</span>
 <span id="cb320-4"><a href="3.5-zenga-index-svyzenga.html#cb320-4" tabindex="-1"></a>N.size <span class="ot">=</span> <span class="fu">nrow</span>(pop.df)</span>
 <span id="cb320-5"><a href="3.5-zenga-index-svyzenga.html#cb320-5" tabindex="-1"></a></span>
@@ -294,7 +294,7 @@ Z = 1 - \int_{0}^{1} \frac{L(p)}{p} \cdot \frac{ 1 - p }{ 1 - L(p) } dp
 <span id="cb320-17"><a href="3.5-zenga-index-svyzenga.html#cb320-17" tabindex="-1"></a><span class="co"># create list of survey design objects</span></span>
 <span id="cb320-18"><a href="3.5-zenga-index-svyzenga.html#cb320-18" tabindex="-1"></a><span class="co"># using poisson sampling</span></span>
 <span id="cb320-19"><a href="3.5-zenga-index-svyzenga.html#cb320-19" tabindex="-1"></a>survey.list <span class="ot">&lt;-</span></span>
-<span id="cb320-20"><a href="3.5-zenga-index-svyzenga.html#cb320-20" tabindex="-1"></a>  <span class="fu">lapply</span>(<span class="fu">seq_len</span>(MC.reps) ,</span>
+<span id="cb320-20"><a href="3.5-zenga-index-svyzenga.html#cb320-20" tabindex="-1"></a>  <span class="fu">lapply</span>(<span class="fu">seq_len</span>(mc.rep) ,</span>
 <span id="cb320-21"><a href="3.5-zenga-index-svyzenga.html#cb320-21" tabindex="-1"></a>         <span class="cf">function</span>(this.rep) {</span>
 <span id="cb320-22"><a href="3.5-zenga-index-svyzenga.html#cb320-22" tabindex="-1"></a>           smp.ind <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">runif</span>(N.size) <span class="sc">&lt;=</span> pop.df<span class="sc">$</span>pik)</span>
 <span id="cb320-23"><a href="3.5-zenga-index-svyzenga.html#cb320-23" tabindex="-1"></a>           smp.df <span class="ot">&lt;-</span> pop.df[smp.ind , , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
@@ -306,50 +306,50 @@ Z = 1 - \int_{0}^{1} \frac{L(p)}{p} \cdot \frac{ 1 - p }{ 1 - L(p) } dp
 <span id="cb320-29"><a href="3.5-zenga-index-svyzenga.html#cb320-29" tabindex="-1"></a>             <span class="at">pps =</span> <span class="fu">ppsmat</span>(pikl[smp.ind , smp.ind]) ,</span>
 <span id="cb320-30"><a href="3.5-zenga-index-svyzenga.html#cb320-30" tabindex="-1"></a>             <span class="at">variance =</span> <span class="st">&quot;HT&quot;</span></span>
 <span id="cb320-31"><a href="3.5-zenga-index-svyzenga.html#cb320-31" tabindex="-1"></a>           )</span>
-<span id="cb320-32"><a href="3.5-zenga-index-svyzenga.html#cb320-32" tabindex="-1"></a>         })</span>
-<span id="cb320-33"><a href="3.5-zenga-index-svyzenga.html#cb320-33" tabindex="-1"></a></span>
-<span id="cb320-34"><a href="3.5-zenga-index-svyzenga.html#cb320-34" tabindex="-1"></a><span class="co"># estimate zenga index for each sample</span></span>
-<span id="cb320-35"><a href="3.5-zenga-index-svyzenga.html#cb320-35" tabindex="-1"></a>estimate.list <span class="ot">&lt;-</span></span>
-<span id="cb320-36"><a href="3.5-zenga-index-svyzenga.html#cb320-36" tabindex="-1"></a>  <span class="fu">lapply</span>(survey.list ,</span>
-<span id="cb320-37"><a href="3.5-zenga-index-svyzenga.html#cb320-37" tabindex="-1"></a>         <span class="cf">function</span>(this.sample) {</span>
-<span id="cb320-38"><a href="3.5-zenga-index-svyzenga.html#cb320-38" tabindex="-1"></a>           <span class="fu">svyzenga</span>(<span class="sc">~</span> x ,</span>
-<span id="cb320-39"><a href="3.5-zenga-index-svyzenga.html#cb320-39" tabindex="-1"></a>                    <span class="fu">subset</span>(this.sample , x <span class="sc">&gt;</span> <span class="dv">0</span>) ,</span>
-<span id="cb320-40"><a href="3.5-zenga-index-svyzenga.html#cb320-40" tabindex="-1"></a>                    <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb320-41"><a href="3.5-zenga-index-svyzenga.html#cb320-41" tabindex="-1"></a>         })</span></code></pre></div>
+<span id="cb320-32"><a href="3.5-zenga-index-svyzenga.html#cb320-32" tabindex="-1"></a>         })</span></code></pre></div>
+<p>… and estimate the Zenga index using each sample:</p>
+<div class="sourceCode" id="cb321"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb321-1"><a href="3.5-zenga-index-svyzenga.html#cb321-1" tabindex="-1"></a><span class="co"># estimate zenga index for each sample</span></span>
+<span id="cb321-2"><a href="3.5-zenga-index-svyzenga.html#cb321-2" tabindex="-1"></a>estimate.list <span class="ot">&lt;-</span></span>
+<span id="cb321-3"><a href="3.5-zenga-index-svyzenga.html#cb321-3" tabindex="-1"></a>  <span class="fu">lapply</span>(survey.list ,</span>
+<span id="cb321-4"><a href="3.5-zenga-index-svyzenga.html#cb321-4" tabindex="-1"></a>         <span class="cf">function</span>(this.sample) {</span>
+<span id="cb321-5"><a href="3.5-zenga-index-svyzenga.html#cb321-5" tabindex="-1"></a>           <span class="fu">svyzenga</span>(<span class="sc">~</span> x ,</span>
+<span id="cb321-6"><a href="3.5-zenga-index-svyzenga.html#cb321-6" tabindex="-1"></a>                    <span class="fu">subset</span>(this.sample , x <span class="sc">&gt;</span> <span class="dv">0</span>) ,</span>
+<span id="cb321-7"><a href="3.5-zenga-index-svyzenga.html#cb321-7" tabindex="-1"></a>                    <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb321-8"><a href="3.5-zenga-index-svyzenga.html#cb321-8" tabindex="-1"></a>         })</span></code></pre></div>
 <p>Then, we evaluate the Percentage Relative Bias (PRB) of the Zenga index estimator. Under this scenario, the PRB of the Zenga index estimator is 0.3397%, a result similar to the <code>0.321</code> shown in Table 2.</p>
-<div class="sourceCode" id="cb321"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb321-1"><a href="3.5-zenga-index-svyzenga.html#cb321-1" tabindex="-1"></a><span class="co"># compute the (finite population) Zenga index parameter</span></span>
-<span id="cb321-2"><a href="3.5-zenga-index-svyzenga.html#cb321-2" tabindex="-1"></a>theta.pop <span class="ot">&lt;-</span></span>
-<span id="cb321-3"><a href="3.5-zenga-index-svyzenga.html#cb321-3" tabindex="-1"></a>  convey<span class="sc">:::</span><span class="fu">CalcZenga</span>(pop.df<span class="sc">$</span>x , <span class="fu">ifelse</span>(pop.df<span class="sc">$</span>x <span class="sc">&gt;</span> <span class="dv">0</span> , <span class="dv">1</span> , <span class="dv">0</span>))</span>
-<span id="cb321-4"><a href="3.5-zenga-index-svyzenga.html#cb321-4" tabindex="-1"></a></span>
-<span id="cb321-5"><a href="3.5-zenga-index-svyzenga.html#cb321-5" tabindex="-1"></a><span class="co"># estimate the expected value of the Zenga index estimator</span></span>
-<span id="cb321-6"><a href="3.5-zenga-index-svyzenga.html#cb321-6" tabindex="-1"></a><span class="co"># using the average of the estimates</span></span>
-<span id="cb321-7"><a href="3.5-zenga-index-svyzenga.html#cb321-7" tabindex="-1"></a>theta.exp <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">sapply</span>(estimate.list , coef))</span>
-<span id="cb321-8"><a href="3.5-zenga-index-svyzenga.html#cb321-8" tabindex="-1"></a></span>
-<span id="cb321-9"><a href="3.5-zenga-index-svyzenga.html#cb321-9" tabindex="-1"></a><span class="co"># estimate the percentage relative bias</span></span>
-<span id="cb321-10"><a href="3.5-zenga-index-svyzenga.html#cb321-10" tabindex="-1"></a><span class="dv">100</span> <span class="sc">*</span> (theta.exp <span class="sc">/</span> theta.pop <span class="sc">-</span> <span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb322"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb322-1"><a href="3.5-zenga-index-svyzenga.html#cb322-1" tabindex="-1"></a><span class="co"># compute the (finite population) Zenga index parameter</span></span>
+<span id="cb322-2"><a href="3.5-zenga-index-svyzenga.html#cb322-2" tabindex="-1"></a>theta.pop <span class="ot">&lt;-</span></span>
+<span id="cb322-3"><a href="3.5-zenga-index-svyzenga.html#cb322-3" tabindex="-1"></a>  convey<span class="sc">:::</span><span class="fu">CalcZenga</span>(pop.df<span class="sc">$</span>x , <span class="fu">ifelse</span>(pop.df<span class="sc">$</span>x <span class="sc">&gt;</span> <span class="dv">0</span> , <span class="dv">1</span> , <span class="dv">0</span>))</span>
+<span id="cb322-4"><a href="3.5-zenga-index-svyzenga.html#cb322-4" tabindex="-1"></a></span>
+<span id="cb322-5"><a href="3.5-zenga-index-svyzenga.html#cb322-5" tabindex="-1"></a><span class="co"># estimate the expected value of the Zenga index estimator</span></span>
+<span id="cb322-6"><a href="3.5-zenga-index-svyzenga.html#cb322-6" tabindex="-1"></a><span class="co"># using the average of the estimates</span></span>
+<span id="cb322-7"><a href="3.5-zenga-index-svyzenga.html#cb322-7" tabindex="-1"></a>theta.exp <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">sapply</span>(estimate.list , coef))</span>
+<span id="cb322-8"><a href="3.5-zenga-index-svyzenga.html#cb322-8" tabindex="-1"></a></span>
+<span id="cb322-9"><a href="3.5-zenga-index-svyzenga.html#cb322-9" tabindex="-1"></a><span class="co"># estimate the percentage relative bias</span></span>
+<span id="cb322-10"><a href="3.5-zenga-index-svyzenga.html#cb322-10" tabindex="-1"></a><span class="dv">100</span> <span class="sc">*</span> (theta.exp <span class="sc">/</span> theta.pop <span class="sc">-</span> <span class="dv">1</span>)</span></code></pre></div>
 <pre><code>## [1] 0.3396837</code></pre>
 <p>Then, we evaluate the PRB of the variance estimator of the Zenga index estimator. Under this scenario, the PRB of the Zenga index variance estimator is -0.4954%, another result similar to the <code>-0.600</code> shown in Table 2.</p>
-<div class="sourceCode" id="cb323"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb323-1"><a href="3.5-zenga-index-svyzenga.html#cb323-1" tabindex="-1"></a><span class="co"># estimate the variance of the Zenga index estimator</span></span>
-<span id="cb323-2"><a href="3.5-zenga-index-svyzenga.html#cb323-2" tabindex="-1"></a><span class="co"># using the variance of the estimates</span></span>
-<span id="cb323-3"><a href="3.5-zenga-index-svyzenga.html#cb323-3" tabindex="-1"></a>(vartheta.popest <span class="ot">&lt;-</span> <span class="fu">var</span>(<span class="fu">sapply</span>(estimate.list , coef)))</span></code></pre></div>
+<div class="sourceCode" id="cb324"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb324-1"><a href="3.5-zenga-index-svyzenga.html#cb324-1" tabindex="-1"></a><span class="co"># estimate the variance of the Zenga index estimator</span></span>
+<span id="cb324-2"><a href="3.5-zenga-index-svyzenga.html#cb324-2" tabindex="-1"></a><span class="co"># using the variance of the estimates</span></span>
+<span id="cb324-3"><a href="3.5-zenga-index-svyzenga.html#cb324-3" tabindex="-1"></a>(vartheta.popest <span class="ot">&lt;-</span> <span class="fu">var</span>(<span class="fu">sapply</span>(estimate.list , coef)))</span></code></pre></div>
 <pre><code>## [1] 9.47244e-05</code></pre>
-<div class="sourceCode" id="cb325"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb325-1"><a href="3.5-zenga-index-svyzenga.html#cb325-1" tabindex="-1"></a><span class="co"># estimate the expected value of the Zenga index variance estimator</span></span>
-<span id="cb325-2"><a href="3.5-zenga-index-svyzenga.html#cb325-2" tabindex="-1"></a><span class="co"># using the expected of the variance estimates</span></span>
-<span id="cb325-3"><a href="3.5-zenga-index-svyzenga.html#cb325-3" tabindex="-1"></a>(vartheta.exp <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">sapply</span>(estimate.list , vcov)))</span></code></pre></div>
+<div class="sourceCode" id="cb326"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb326-1"><a href="3.5-zenga-index-svyzenga.html#cb326-1" tabindex="-1"></a><span class="co"># estimate the expected value of the Zenga index variance estimator</span></span>
+<span id="cb326-2"><a href="3.5-zenga-index-svyzenga.html#cb326-2" tabindex="-1"></a><span class="co"># using the expected of the variance estimates</span></span>
+<span id="cb326-3"><a href="3.5-zenga-index-svyzenga.html#cb326-3" tabindex="-1"></a>(vartheta.exp <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">sapply</span>(estimate.list , vcov)))</span></code></pre></div>
 <pre><code>## [1] 9.425515e-05</code></pre>
-<div class="sourceCode" id="cb327"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb327-1"><a href="3.5-zenga-index-svyzenga.html#cb327-1" tabindex="-1"></a><span class="co"># estimate the percentage relative bias</span></span>
-<span id="cb327-2"><a href="3.5-zenga-index-svyzenga.html#cb327-2" tabindex="-1"></a><span class="dv">100</span> <span class="sc">*</span> (vartheta.exp <span class="sc">/</span> vartheta.popest <span class="sc">-</span> <span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb328"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb328-1"><a href="3.5-zenga-index-svyzenga.html#cb328-1" tabindex="-1"></a><span class="co"># estimate the percentage relative bias</span></span>
+<span id="cb328-2"><a href="3.5-zenga-index-svyzenga.html#cb328-2" tabindex="-1"></a><span class="dv">100</span> <span class="sc">*</span> (vartheta.exp <span class="sc">/</span> vartheta.popest <span class="sc">-</span> <span class="dv">1</span>)</span></code></pre></div>
 <pre><code>## [1] -0.4953863</code></pre>
 <p>Next, we evaluate the Percentage Coverage Rate (PCR). In theory, under repeated sampling, the estimated 95% CIs should cover the population parameter 95% of the time. We can evaluate that using:</p>
-<div class="sourceCode" id="cb329"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb329-1"><a href="3.5-zenga-index-svyzenga.html#cb329-1" tabindex="-1"></a><span class="co"># estimate confidence intervals of the Zenga index</span></span>
-<span id="cb329-2"><a href="3.5-zenga-index-svyzenga.html#cb329-2" tabindex="-1"></a><span class="co"># for each of the samples</span></span>
-<span id="cb329-3"><a href="3.5-zenga-index-svyzenga.html#cb329-3" tabindex="-1"></a>est.cis <span class="ot">&lt;-</span></span>
-<span id="cb329-4"><a href="3.5-zenga-index-svyzenga.html#cb329-4" tabindex="-1"></a>  <span class="fu">t</span>(<span class="fu">sapply</span>(estimate.list, <span class="cf">function</span>(this.stat)</span>
-<span id="cb329-5"><a href="3.5-zenga-index-svyzenga.html#cb329-5" tabindex="-1"></a>    <span class="fu">c</span>(<span class="fu">confint</span>(this.stat))))</span>
-<span id="cb329-6"><a href="3.5-zenga-index-svyzenga.html#cb329-6" tabindex="-1"></a></span>
-<span id="cb329-7"><a href="3.5-zenga-index-svyzenga.html#cb329-7" tabindex="-1"></a><span class="co"># evaluate</span></span>
-<span id="cb329-8"><a href="3.5-zenga-index-svyzenga.html#cb329-8" tabindex="-1"></a><span class="fu">prop.table</span>(<span class="fu">table</span>((theta.pop <span class="sc">&gt;</span> est.cis[, <span class="dv">1</span>]) <span class="sc">&amp;</span></span>
-<span id="cb329-9"><a href="3.5-zenga-index-svyzenga.html#cb329-9" tabindex="-1"></a>                   (theta.pop <span class="sc">&lt;</span> est.cis[, <span class="dv">2</span>])))</span></code></pre></div>
+<div class="sourceCode" id="cb330"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb330-1"><a href="3.5-zenga-index-svyzenga.html#cb330-1" tabindex="-1"></a><span class="co"># estimate confidence intervals of the Zenga index</span></span>
+<span id="cb330-2"><a href="3.5-zenga-index-svyzenga.html#cb330-2" tabindex="-1"></a><span class="co"># for each of the samples</span></span>
+<span id="cb330-3"><a href="3.5-zenga-index-svyzenga.html#cb330-3" tabindex="-1"></a>est.cis <span class="ot">&lt;-</span></span>
+<span id="cb330-4"><a href="3.5-zenga-index-svyzenga.html#cb330-4" tabindex="-1"></a>  <span class="fu">t</span>(<span class="fu">sapply</span>(estimate.list, <span class="cf">function</span>(this.stat)</span>
+<span id="cb330-5"><a href="3.5-zenga-index-svyzenga.html#cb330-5" tabindex="-1"></a>    <span class="fu">c</span>(<span class="fu">confint</span>(this.stat))))</span>
+<span id="cb330-6"><a href="3.5-zenga-index-svyzenga.html#cb330-6" tabindex="-1"></a></span>
+<span id="cb330-7"><a href="3.5-zenga-index-svyzenga.html#cb330-7" tabindex="-1"></a><span class="co"># evaluate</span></span>
+<span id="cb330-8"><a href="3.5-zenga-index-svyzenga.html#cb330-8" tabindex="-1"></a><span class="fu">prop.table</span>(<span class="fu">table</span>((theta.pop <span class="sc">&gt;</span> est.cis[, <span class="dv">1</span>]) <span class="sc">&amp;</span></span>
+<span id="cb330-9"><a href="3.5-zenga-index-svyzenga.html#cb330-9" tabindex="-1"></a>                   (theta.pop <span class="sc">&lt;</span> est.cis[, <span class="dv">2</span>])))</span></code></pre></div>
 <pre><code>## 
 ##  FALSE   TRUE 
 ## 0.0548 0.9452</code></pre>

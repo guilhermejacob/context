@@ -19150,12 +19150,12 @@ Load and prepare the data set:
 \end{Highlighting}
 \end{Shaded}
 
-For the Monte Carlo experiment, we take \texttt{5000} samples of (expected) size \texttt{1000} using Poisson sampling\footnote{but not Conditional Poisson Sampling.} and estimate the Zenga index using each sample:
+For the Monte Carlo experiment, we take \texttt{5000} samples of (expected) size \texttt{1000} using Poisson sampling\footnote{but not Conditional Poisson Sampling.}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{\# set up monte carlo attributes}
-\NormalTok{MC.reps }\OtherTok{\textless{}{-}}\NormalTok{ 5000L}
+\NormalTok{mc.rep }\OtherTok{\textless{}{-}}\NormalTok{ 5000L}
 \NormalTok{n.size }\OtherTok{=}\NormalTok{ 1000L}
 \NormalTok{N.size }\OtherTok{=} \FunctionTok{nrow}\NormalTok{(pop.df)}
 
@@ -19173,7 +19173,7 @@ For the Monte Carlo experiment, we take \texttt{5000} samples of (expected) size
 \CommentTok{\# create list of survey design objects}
 \CommentTok{\# using poisson sampling}
 \NormalTok{survey.list }\OtherTok{\textless{}{-}}
-  \FunctionTok{lapply}\NormalTok{(}\FunctionTok{seq\_len}\NormalTok{(MC.reps) ,}
+  \FunctionTok{lapply}\NormalTok{(}\FunctionTok{seq\_len}\NormalTok{(mc.rep) ,}
          \ControlFlowTok{function}\NormalTok{(this.rep) \{}
 \NormalTok{           smp.ind }\OtherTok{\textless{}{-}} \FunctionTok{which}\NormalTok{(}\FunctionTok{runif}\NormalTok{(N.size) }\SpecialCharTok{\textless{}=}\NormalTok{ pop.df}\SpecialCharTok{$}\NormalTok{pik)}
 \NormalTok{           smp.df }\OtherTok{\textless{}{-}}\NormalTok{ pop.df[smp.ind , , drop }\OtherTok{=} \ConstantTok{FALSE}\NormalTok{]}
@@ -19186,7 +19186,13 @@ For the Monte Carlo experiment, we take \texttt{5000} samples of (expected) size
              \AttributeTok{variance =} \StringTok{"HT"}
 \NormalTok{           )}
 \NormalTok{         \})}
+\end{Highlighting}
+\end{Shaded}
 
+\ldots{} and estimate the Zenga index using each sample:
+
+\begin{Shaded}
+\begin{Highlighting}[]
 \CommentTok{\# estimate zenga index for each sample}
 \NormalTok{estimate.list }\OtherTok{\textless{}{-}}
   \FunctionTok{lapply}\NormalTok{(survey.list ,}
