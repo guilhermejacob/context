@@ -336,9 +336,9 @@ thresh.pop <- .60 * q50.pop
 
 ```
 
-Now, to study the distribution of the estimator under a particular sampling design, we select 5000 samples under one-stage cluster sampling of 100 households using the `cluster` function from the `sampling` package [@R-sampling], and use the `svyarpr` function to estimate the ARPR in each of those samples:
+Now, to study the distribution of the estimator under a particular sampling design, we select 5000 samples under one-stage cluster sampling of 100 households using the `cluster` function from the `sampling` package [@R-sampling], and use the `svyarpr` function to estimate the ARPR for each of those samples:
 
-```{r}
+```{r , cache=TRUE}
 # compute size-like variable for PPS sampling design
 eusilcP$aux <- log( ifelse( eusilcP$eqIncome >= 1000 , eusilcP$eqIncome , 1000 ) )
 
@@ -1153,7 +1153,133 @@ norm_pov_81
 confint(norm_pov_81 , df = degf(subset(z , year == 1981)))
 ```
 
-For additional usage examples of `svyfgt`, type `?convey::svyfgt` in the R console.
+To provide a example for our code, we proceed with a Monte Carlo experiment. 
+Using the `eusilcP` data from the `simPop` package [@R-simPop], we can compute the actual values of the FGT components for that population:
+
+```{r}
+# load libraries
+library( sampling )
+library( survey )
+library( convey )
+
+# load pseudo population data
+data( "eusilcP" , package = "simPop" )
+
+# compute population value of the FGT(2) index decomposition
+inc.all <- eusilcP$eqIncome
+gfun <- function(y , thresh) (thresh - y) / thresh
+hfun <- function(y , thresh , g) (((thresh - y) / thresh) ^ g) * (y <= thresh)
+fgt2 <- mean( hfun( inc.all , 10000 , 2 ) , na.rm = TRUE )
+fgt1 <- mean( hfun( inc.all , 10000 , 1 ) , na.rm = TRUE )
+fgt0 <- mean( hfun( inc.all , 10000 , 0 ) , na.rm = TRUE )
+igr.fgt <- mean( hfun( inc.all , 10000 , 1 )[ inc.all <= 10000 ] , na.rm = TRUE )
+gei.poor <- convey:::CalcGEI( gfun( inc.all , 10000 ) , ifelse( inc.all < 10000 , 1 , 0 ) , 2 )
+theta.pop <- 
+  c( "fgt2" = fgt2 , 
+     "fgt0" =  fgt0 , 
+     "fgt1" =  fgt1 , 
+     "igr" = igr.fgt , 
+     "gei(poor;epsilon=2)" =  gei.poor )
+theta.pop
+
+```
+
+Now, to study the distribution of the estimator under a particular sampling design, we select 5000 samples under one-stage cluster sampling of 100 households using the `cluster` function from the `sampling` package [@R-sampling], and use the `svyfgtdec` function to estimate the FGT components for each of those samples:
+
+```{r, cache=TRUE}
+# compute size-like variable for PPS sampling design
+eusilcP$aux <- log( ifelse( eusilcP$eqIncome >= 1000 , eusilcP$eqIncome , 1000 ) )
+
+# define the number of monte carlo replicates
+mc.rep <- 5000L
+
+# simulation function
+fun.sim1 <- function( this.iter ) {
+  
+  # select sample
+  tt <- 
+    sampling::cluster( data = eusilcP[ sample.int( nrow( eusilcP ) , nrow( eusilcP ) , replace = FALSE ) , ] , 
+                       clustername = "hid" , 
+                       size = 1000L , method = "systematic" , pik = eusilcP$aux )
+  
+  # collect data
+  this.sample <- getdata( eusilcP , tt )
+  
+  # create survey design object
+  this.desobj <- svydesign( ids = ~hid , probs = ~Prob , data = this.sample , nest = FALSE )
+  
+  # prepare for convey functions
+  this.desobj <- convey_prep( this.desobj )
+  
+  # compute estimates
+  svyfgtdec( ~eqIncome , this.desobj , abs_thresh = 10000 , g= 2 )
+  
+}
+
+# set seed for reproducible results
+set.seed( 1998 )
+
+# run replications
+estimate.list <- lapply( seq_len( mc.rep ) , function( zz ) fun.sim1( zz ) )
+```
+
+The PRB of each component is estimated using the code below. Notice that PRBs are relatively small, with absolute values below 1%, with the largest bias in the GEI index component.
+
+```{r}
+# repeat true population values
+( theta.pop )
+
+# estimate the expected values of the components estimators
+# using the average of the estimates
+( theta.exp <- rowMeans( sapply( estimate.list , coef ) ) )
+
+# estimate the percentage relative bias
+( 100 * ( theta.exp / theta.pop - 1) )
+```
+
+For the variance estimators, we estimate the PRB using the code below. 
+Note that the bias is still relatively small, with absolute values of the PRB below 5%.
+
+```{r}
+# estimate the variance of the components estimators
+# using the empirical variance of the estimates
+( vartheta.popest <- diag( var( t( sapply( estimate.list , coef ) ) ) ) )
+
+# estimate the expected value of the Watts index variance estimator
+# using the (estimated) expected value of the variance estimates
+( vartheta.exp <- rowMeans( sapply( estimate.list , function(z) diag( vcov( z ) ) ) ) )
+
+# estimate the percentage relative bias of the variance estimators
+( 100 *  (vartheta.exp / vartheta.popest - 1 ) )
+```
+
+Regarding the MSE, the squared bias accounts for less than 1% of the MSE. 
+This means that, with a good estimate of the variance, we should be able to have a good approximation for the MSE.
+
+```{r}
+# estimate MSE
+theta.bias2 <- ( theta.exp - theta.pop )^2
+( theta.mse <- theta.bias2 + vartheta.popest )
+
+# squared bias component of the MSE
+100 * ( theta.bias2 / theta.mse )
+```
+
+The CIs based on the normal approximation work reasonably well for all components. The code below shows that the coverage rates are close to the 95% nominal coverage rate.
+
+```{r}
+# estimate confidence intervals of the Watts index
+# for each of the samples
+est.coverage <-
+  sapply(estimate.list, function(this.stat)
+    confint(this.stat)[, 1] <= theta.pop &
+      confint(this.stat)[, 2] >= theta.pop)
+
+# evaluate empirical coverage
+rowMeans( est.coverage )
+```
+
+For additional usage examples of `svyfgt` and `svyfgtdec`, type `?convey::svyfgt` or `?convey::svyfgtdec` in the R console.
 
 ## Watts poverty measure (svywatts, svywattsdec)
 
@@ -1187,3 +1313,240 @@ T_\theta &= \frac{Watts}{g} \\
 \]
 
 As @murdoch1998 points out, if the income among the poor is equally distributed (i.e., $L_*=0$), the time taken to exit poverty is simply $FGT_0 I_w / g$. Therefore, $FGT_0 L_* / g$ can be seen as the additional time needed to exit poverty as a result of the inequality among the poor.
+
+---
+
+**A replication example**
+
+To provide a example for our code, we proceed with a Monte Carlo experiment. 
+Using the `eusilcP` data from the `simPop` package [@R-simPop], we can compute the actual value of the Watts index for that population:
+
+```{r}
+# load libraries
+library( sampling )
+library( survey )
+library( convey )
+
+# load pseudo population data
+data( "eusilcP" , package = "simPop" )
+
+# compute population value of the Watts index decomposition
+inc.pos <- eusilcP$eqIncome[ eusilcP$eqIncome > 0 ]
+( theta.pop <- mean( ifelse( inc.pos <= 10000 , log( 10000 /  inc.pos ) , 0 ) , na.rm = TRUE ) )
+
+```
+
+Now, to study the distribution of the estimator under a particular sampling design, we select 5000 samples under one-stage cluster sampling of 100 households using the `cluster` function from the `sampling` package [@R-sampling], and use the `svywatts` function to estimate the Watts index for each of those samples:
+
+```{r, cache=TRUE}
+# compute size-like variable for PPS sampling design
+eusilcP$aux <- log( ifelse( eusilcP$eqIncome >= 1000 , eusilcP$eqIncome , 1000 ) )
+
+# define the number of monte carlo replicates
+mc.rep <- 5000L
+
+# simulation function
+fun.sim1 <- function( this.iter ) {
+  
+  # select sample
+  tt <- 
+    sampling::cluster( data = eusilcP[ sample.int( nrow( eusilcP ) , nrow( eusilcP ) , replace = FALSE ) , ] , 
+                      clustername = "hid" , 
+                      size = 1000L , method = "systematic" , pik = eusilcP$aux )
+  
+  # collect data
+  this.sample <- getdata( eusilcP , tt )
+  
+  # create survey design object
+  this.desobj <- svydesign( ids = ~hid , probs = ~Prob , data = this.sample , nest = FALSE )
+  
+  # prepare for convey functions
+  this.desobj <- convey_prep( this.desobj )
+  
+  # filter positive incomes
+  this.desobj <- subset( this.desobj , eqIncome > 0 )
+  
+  # compute estimates
+  svywatts( ~eqIncome , this.desobj , abs_thresh = 10000 )
+  
+}
+
+# set seed for reproducible results
+set.seed( 1998 )
+
+# run replications
+estimate.list <- lapply( seq_len( mc.rep ) , function( zz ) fun.sim1( zz ) )
+```
+
+Then, we evaluate the Percentage Relative Bias (PRB) of the Watts index estimator. Under this scenario, the PRB of the Watts index estimator is -0.0666%.
+
+```{r}
+# estimate the expected value of the Watts index estimator
+# using the average of the estimates
+( theta.exp <- mean( sapply( estimate.list , coef ) ) )
+
+# estimate the percentage relative bias
+100 * ( theta.exp / theta.pop - 1)
+```
+
+For the variance estimator, we have:
+
+```{r}
+# estimate the variance of the Watts index estimator
+# using the empirical variance of the estimates
+( vartheta.popest <- var( sapply( estimate.list , coef ) ) )
+
+# estimate the expected value of the Watts index variance estimator
+# using the (estimated) expected value of the variance estimates
+( vartheta.exp <- mean( sapply( estimate.list , vcov ) ) )
+
+# estimate the percentage relative bias of the variance estimator
+100 *  (vartheta.exp / vartheta.popest - 1 )
+```
+
+Under this scenario, the PRB of the Watts index variance estimator is 0.5921%.
+
+Our simulations show that the Squared Bias of this estimator accounts for less than 0.01% of its Mean Squared Error:
+
+```{r}
+theta.bias2 <- ( theta.exp - theta.pop )^2
+theta.mse <- theta.bias2 + vartheta.popest
+100 * (theta.bias2 / theta.mse)
+```
+
+Next, we evaluate the Percentage Coverage Rate (PCR). In theory, under repeated sampling, the estimated 95% CIs should cover the population parameter approximately 95% of the time. We can evaluate that using:
+
+```{r}
+# estimate confidence intervals of the Watts index
+# for each of the samples
+est.coverage <-
+  sapply(estimate.list, function(this.stat)
+    confint(this.stat)[, 1] <= theta.pop &
+      confint(this.stat)[, 2] >= theta.pop)
+
+# evaluate empirical coverage
+mean( est.coverage )
+```
+Our coverages are not too far from the nominal coverage level of 95%.
+
+For the Watts index decomposition, we start by computing the (true) population values of the components:
+
+```{r}
+# compute population value of the Watts index decomposition
+inc.pos <- eusilcP$eqIncome[ eusilcP$eqIncome > 0 ]
+wdec1 <- mean( ifelse( inc.pos <= 10000 , log( 10000 /  inc.pos ) , 0 ) , na.rm = TRUE )
+wdec2 <- mean( inc.pos <= 10000 , na.rm = TRUE )
+mu.poor <- mean( inc.pos [ inc.pos <= 10000 ] )
+wdec3 <- log( 10000 / mu.poor )
+wdec4 <- - mean( log( inc.pos[ inc.pos <= 10000 ] / mu.poor ) , na.rm = TRUE )
+theta.pop <- 
+  c( "watts" = wdec1 , 
+     "fgt0" =  wdec2 , 
+     "watts pov. gap ratio" = wdec3 , 
+     "theil(poor)" =  wdec4 )
+theta.pop
+```
+
+Then, using the same sampling strategy of the `svywatts`, we compute the `svywattsdec` for each sample:
+
+```{r, cache=TRUE}
+# simulation function
+fun.sim2 <- function( this.iter ) {
+  
+  # select sample
+  tt <- 
+    sampling::cluster( data = eusilcP[ sample.int( nrow( eusilcP ) , nrow( eusilcP ) , replace = FALSE ) , ] , 
+                       clustername = "hid" , 
+                       size = 1000L , method = "systematic" , pik = eusilcP$aux )
+  
+  # collect data
+  this.sample <- getdata( eusilcP , tt )
+  
+  # create survey design object
+  this.desobj <- svydesign( ids = ~hid , probs = ~Prob , data = this.sample , nest = FALSE )
+  
+  # prepare for convey functions
+  this.desobj <- convey_prep( this.desobj )
+  
+  # filter positive incomes
+  this.desobj <- subset( this.desobj , eqIncome > 0 )
+  
+  # compute estimates
+  svywattsdec( ~eqIncome , this.desobj , abs_thresh = 10000 )
+  
+}
+
+# set seed for reproducible results
+set.seed( 1998 )
+
+# run replications
+estimate.list <- lapply( seq_len( mc.rep ) , function( zz ) fun.sim2( zz ) )
+```
+
+The PRB of each component is estimated using the code below. Notice that PRBs are relatively small, with absolute values below 1%, with the largest bias in the Theil index component.
+
+```{r}
+# repeat true population values
+( theta.pop )
+
+# estimate the expected values of the components estimators
+# using the average of the estimates
+( theta.exp <- rowMeans( sapply( estimate.list , coef ) ) )
+
+# estimate the percentage relative bias
+( 100 * ( theta.exp / theta.pop - 1) )
+```
+
+For the variance estimators, we estimate the PRB using the code below. 
+Note that the bias is still relatively small, with absolute values of the PRB below 2%.
+
+```{r}
+# estimate the variance of the components estimators
+# using the empirical variance of the estimates
+( vartheta.popest <- diag( var( t( sapply( estimate.list , coef ) ) ) ) )
+
+# estimate the expected value of the Watts index variance estimator
+# using the (estimated) expected value of the variance estimates
+( vartheta.exp <- rowMeans( sapply( estimate.list , function(z) diag( vcov( z ) ) ) ) )
+
+# estimate the percentage relative bias of the variance estimators
+( 100 *  (vartheta.exp / vartheta.popest - 1 ) )
+```
+
+Regarding the MSE, the squared bias accounts for less than 0.1% of the MSE. 
+This means that, with a good estimate of the variance, we should be able to have a good approximation for the MSE.
+
+```{r}
+# estimate MSE
+theta.bias2 <- ( theta.exp - theta.pop )^2
+( theta.mse <- theta.bias2 + vartheta.popest )
+
+# squared bias component of the MSE
+100 * ( theta.bias2 / theta.mse )
+```
+
+However, the CIs based on the normal approximation might not work very well for some components. The code below shows that coverage rate for the Theil index component differs significatly from the 95% nominal coverage rate.
+
+```{r}
+# estimate confidence intervals of the Watts index
+# for each of the samples
+est.coverage <-
+  sapply(estimate.list, function(this.stat)
+    confint(this.stat)[, 1] <= theta.pop &
+      confint(this.stat)[, 2] >= theta.pop)
+
+# evaluate empirical coverage
+rowMeans( est.coverage )
+```
+
+One of the reasons for this is that the sample might not be large enough for the CLT to hold. The distribution of the estimator shows substantial asymmetry, which would be a problem for the normal approximation.
+
+```{r}
+hist( sapply( estimate.list , coef )[4,] ,
+      main = "Histogram of Theil component estimator" ,
+      xlim = c(0,.30) , 
+      ylim = c(0 , 1500) , xlab = "Estimate" )
+```
+
+
+For additional usage examples of `svywatts` and `svywattsdec`, type `?convey::svywatts` or `?convey::svywattsdec` in the R console.

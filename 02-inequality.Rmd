@@ -714,11 +714,11 @@ pop.df <-
   pop.df[!duplicated(pop.df$nquest) , , drop = FALSE]
 ```
 
-For the Monte Carlo experiment, we take `5000` samples of (expected) size `1000` using Poisson sampling^[but not Conditional Poisson Sampling.] and estimate the Zenga index using each sample:
+For the Monte Carlo experiment, we take `5000` samples of (expected) size `1000` using Poisson sampling^[but not Conditional Poisson Sampling.]:
 
-```{r}
+```{r, cache = FALSE}
 # set up monte carlo attributes
-MC.reps <- 5000L
+mc.rep <- 5000L
 n.size = 1000L
 N.size = nrow(pop.df)
 
@@ -736,7 +736,7 @@ set.seed(1997)
 # create list of survey design objects
 # using poisson sampling
 survey.list <-
-  lapply(seq_len(MC.reps) ,
+  lapply(seq_len(mc.rep) ,
          function(this.rep) {
            smp.ind <- which(runif(N.size) <= pop.df$pik)
            smp.df <- pop.df[smp.ind , , drop = FALSE]
@@ -749,7 +749,11 @@ survey.list <-
              variance = "HT"
            )
          })
+```
 
+... and estimate the Zenga index using each sample:
+
+```{r, cache = FALSE}
 # estimate zenga index for each sample
 estimate.list <-
   lapply(survey.list ,
@@ -759,6 +763,8 @@ estimate.list <-
                     na.rm = TRUE)
          })
 ```
+
+
 Then, we evaluate the Percentage Relative Bias (PRB) of the Zenga index estimator. Under this scenario, the PRB of the Zenga index estimator is 0.3397%, a result similar to the `0.321` shown in Table 2.
 
 ```{r}
@@ -1123,7 +1129,7 @@ estimate.list <-
 
 For the decomposition, we repeat the same procedure:
 
-```{r}
+```{r }
 # estimate J-divergence decomposition with each sample
 estimate.list <-
   lapply(survey.list ,
