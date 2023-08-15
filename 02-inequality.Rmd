@@ -107,25 +107,25 @@ des_eusilc <- convey_prep(des_eusilc)
 
 # coefficients do match
 varpoord_gpg_calculation$all_result$value
-coef(svygpg(~ eqincome , des_eusilc , sex = ~ rb090)) * 100
+coef(svygpg( ~ eqincome , des_eusilc , sex = ~ rb090)) * 100
 
 # linearized variables do match
 # vardpoor
 lin_gpg_varpoord <- varpoord_gpg_calculation$lin_out$lin_gpg
 # convey
 lin_gpg_convey <-
-  attr(svygpg(~ eqincome , des_eusilc, sex = ~ rb090), "lin")
+  attr(svygpg( ~ eqincome , des_eusilc, sex = ~ rb090), "lin")
 
 # check equality
 all.equal(lin_gpg_varpoord, 100 * lin_gpg_convey[, 1])
 
 # variances do not match exactly
-attr(svygpg(~ eqincome , des_eusilc , sex = ~ rb090) , 'var') * 10000
+attr(svygpg( ~ eqincome , des_eusilc , sex = ~ rb090) , 'var') * 10000
 varpoord_gpg_calculation$all_result$var
 
 # standard errors do not match exactly
 varpoord_gpg_calculation$all_result$se
-SE(svygpg(~ eqincome , des_eusilc , sex = ~ rb090)) * 100
+SE(svygpg( ~ eqincome , des_eusilc , sex = ~ rb090)) * 100
 ```
 
 The variance estimate is computed by using the approximation defined in \@ref(var), while the linearized variable $z$ is defined by \@ref(lin). The functions `convey::svygpg` and `vardpoor::lingpg` produce the same linearized variable $z$.
@@ -159,13 +159,13 @@ des_eusilc_ultimate_cluster <-
   convey_prep(des_eusilc_ultimate_cluster)
 
 # matches
-attr(svygpg(~ eqincome , des_eusilc_ultimate_cluster , sex = ~ rb090) ,
+attr(svygpg( ~ eqincome , des_eusilc_ultimate_cluster , sex = ~ rb090) ,
      'var') * 10000
 varpoord_gpg_calculation$all_result$var
 
 # matches
 varpoord_gpg_calculation$all_result$se
-SE(svygpg(~ eqincome , des_eusilc_ultimate_cluster , sex = ~ rb090)) * 100
+SE(svygpg( ~ eqincome , des_eusilc_ultimate_cluster , sex = ~ rb090)) * 100
 ```
 
 For additional usage examples of `svygpg`, type `?convey::svygpg` in the R console.
@@ -265,28 +265,28 @@ des_eusilc <- convey_prep(des_eusilc)
 
 # coefficients do match
 varpoord_qsr_calculation$all_result$value
-coef(svyqsr(~ eqincome , des_eusilc))
+coef(svyqsr( ~ eqincome , des_eusilc))
 
 # linearized variables do match
 # vardpoor
 lin_qsr_varpoord <- varpoord_qsr_calculation$lin_out$lin_qsr
 # convey
 lin_qsr_convey <-
-  as.numeric(attr(svyqsr(~ eqincome ,
-                         des_eusilc ,
-                         linearized = TRUE) ,
+  as.numeric(attr(svyqsr( ~ eqincome ,
+                          des_eusilc ,
+                          linearized = TRUE) ,
                   "linearized"))
 
 # check equality
 all.equal(lin_qsr_varpoord, lin_qsr_convey)
 
 # variances do not match exactly
-attr(svyqsr(~ eqincome , des_eusilc) , 'var')
+attr(svyqsr( ~ eqincome , des_eusilc) , 'var')
 varpoord_qsr_calculation$all_result$var
 
 # standard errors do not match exactly
 varpoord_qsr_calculation$all_result$se
-SE(svyqsr(~ eqincome , des_eusilc))
+SE(svyqsr( ~ eqincome , des_eusilc))
 ```
 
 The variance estimate is computed by using the approximation defined in \@ref(var), while the linearized variable $z$ is defined by \@ref(lin). The functions `convey::svyqsr` and `vardpoor::linqsr` produce the same linearized variable $z$.
@@ -320,12 +320,12 @@ des_eusilc_ultimate_cluster <-
   convey_prep(des_eusilc_ultimate_cluster)
 
 # matches
-attr(svyqsr(~ eqincome , des_eusilc_ultimate_cluster) , 'var')
+attr(svyqsr( ~ eqincome , des_eusilc_ultimate_cluster) , 'var')
 varpoord_qsr_calculation$all_result$var
 
 # matches
 varpoord_qsr_calculation$all_result$se
-SE(svyqsr(~ eqincome , des_eusilc_ultimate_cluster))
+SE(svyqsr( ~ eqincome , des_eusilc_ultimate_cluster))
 ```
 
 For additional usage examples of `svyqsr`, type `?convey::svyqsr` in the R console.
@@ -398,10 +398,10 @@ des_nlsw88 <- convey_prep(des_nlsw88)
 
 # estimates lorenz curve
 result.lin <-
-  svylorenz(~ wage,
-            des_nlsw88,
-            quantiles = seq(0, 1, .05),
-            na.rm = TRUE)
+  svylorenz( ~ wage,
+             des_nlsw88,
+             quantiles = seq(0, 1, .05),
+             na.rm = TRUE)
 
 
 # note: most survey commands in R use Inf degrees of freedom by default
@@ -417,13 +417,13 @@ section_four_one <-
       coef(result.lin) +
       SE(result.lin) *
       qt(0.025 , degf(subset(
-        des_nlsw88 ,!is.na(wage)
+        des_nlsw88 , !is.na(wage)
       ))) ,
     ci_upper_bound =
       coef(result.lin) +
       SE(result.lin) *
       qt(0.975 , degf(subset(
-        des_nlsw88 ,!is.na(wage)
+        des_nlsw88 , !is.na(wage)
       )))
   )
 ```
@@ -540,25 +540,25 @@ des_eusilc <- convey_prep(des_eusilc)
 
 # coefficients do match
 varpoord_gini_calculation$all_result$value
-coef(svygini(~ eqincome , des_eusilc)) * 100
+coef(svygini( ~ eqincome , des_eusilc)) * 100
 
 # linearized variables do match
 # varpoord
 lin_gini_varpoord <- varpoord_gini_calculation$lin_out$lin_gini
 # convey
 lin_gini_convey <-
-  attr(svygini(~ eqincome , des_eusilc , linearized = TRUE) , "linearized")
+  attr(svygini( ~ eqincome , des_eusilc , linearized = TRUE) , "linearized")
 
 # check equality
 all.equal(lin_gini_varpoord , (100 * as.numeric(lin_gini_convey)))
 
 # variances do not match exactly
-attr(svygini(~ eqincome , des_eusilc) , 'var') * 10000
+attr(svygini( ~ eqincome , des_eusilc) , 'var') * 10000
 varpoord_gini_calculation$all_result$var
 
 # standard errors do not match exactly
 varpoord_gini_calculation$all_result$se
-SE(svygini(~ eqincome , des_eusilc)) * 100
+SE(svygini( ~ eqincome , des_eusilc)) * 100
 ```
 
 The variance estimate is computed by using the approximation defined in \@ref(var), while the linearized variable $z$ is defined by \@ref(lin). The functions `convey::svygini` and `vardpoor::lingini` produce the same linearized variable $z$.
@@ -592,12 +592,12 @@ des_eusilc_ultimate_cluster <-
   convey_prep(des_eusilc_ultimate_cluster)
 
 # matches
-attr(svygini(~ eqincome , des_eusilc_ultimate_cluster) , 'var') * 10000
+attr(svygini( ~ eqincome , des_eusilc_ultimate_cluster) , 'var') * 10000
 varpoord_gini_calculation$all_result$var
 
 # matches
 varpoord_gini_calculation$all_result$se
-SE(svygini(~ eqincome , des_eusilc_ultimate_cluster)) * 100
+SE(svygini( ~ eqincome , des_eusilc_ultimate_cluster)) * 100
 ```
 
 ## Zenga index (svyzenga)
@@ -758,9 +758,9 @@ survey.list <-
 estimate.list <-
   lapply(survey.list ,
          function(this.sample) {
-           svyzenga(~ x ,
-                    subset(this.sample , x > 0) ,
-                    na.rm = TRUE)
+           svyzenga( ~ x ,
+                     subset(this.sample , x > 0) ,
+                     na.rm = TRUE)
          })
 ```
 
@@ -940,7 +940,7 @@ construct an
 
 ```{r}
 # initiate a linearized survey design object
-y <- svydesign(~ hrn , data = x , weights = ~ wgt)
+y <- svydesign( ~ hrn , data = x , weights = ~ wgt)
 
 # immediately run the `convey_prep` function on the survey design
 z <- convey_prep(y)
@@ -974,11 +974,11 @@ GE(3)    |  .1739994   .00662015    26.28    0.000      .1610242   .1869747
 ```{r}
 z81 <- subset(z , year == 1981)
 
-svygei(~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = -1)
-svygei(~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = 0)
-svygei(~ eybhc0 , subset(z81 , eybhc0 > 0))
-svygei(~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = 2)
-svygei(~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = 3)
+svygei( ~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = -1)
+svygei( ~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = 0)
+svygei( ~ eybhc0 , subset(z81 , eybhc0 > 0))
+svygei( ~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = 2)
+svygei( ~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = 3)
 ```	
 
 Confirm this replication applies for subsetted objects as well.  Compare stata output..
@@ -1008,15 +1008,16 @@ GE(3)    |  .2609507   .01850689    14.10    0.000      .2246779   .2972235
 ```{r}
 z85 <- subset(z , year == 1985)
 
-svygei(~ eybhc0 , subset(z85 , eybhc0 > 1) , epsilon = -1)
-svygei(~ eybhc0 , subset(z85 , eybhc0 > 1) , epsilon = 0)
-svygei(~ eybhc0 , subset(z85 , eybhc0 > 1))
-svygei(~ eybhc0 , subset(z85 , eybhc0 > 1) , epsilon = 2)
-svygei(~ eybhc0 , subset(z85 , eybhc0 > 1) , epsilon = 3)
+svygei( ~ eybhc0 , subset(z85 , eybhc0 > 1) , epsilon = -1)
+svygei( ~ eybhc0 , subset(z85 , eybhc0 > 1) , epsilon = 0)
+svygei( ~ eybhc0 , subset(z85 , eybhc0 > 1))
+svygei( ~ eybhc0 , subset(z85 , eybhc0 > 1) , epsilon = 2)
+svygei( ~ eybhc0 , subset(z85 , eybhc0 > 1) , epsilon = 3)
 ```
 
 Replicate the author's decomposition by population subgroup (work status) shown on PDF page 57..
 ```{r}
+
 
 
 # define work status (PDF page 22)
@@ -1029,22 +1030,22 @@ z <-
 z91 <- subset(z , year == 1991 & eybhc0 > 0)
 
 # population share
-svymean(~ wkstatus, z91)
+svymean( ~ wkstatus, z91)
 
 # mean
-svyby(~ eybhc0, ~ wkstatus, z91, svymean)
+svyby( ~ eybhc0, ~ wkstatus, z91, svymean)
 
 # subgroup indices: ge_k
-svyby(~ eybhc0 , ~ wkstatus , z91 , svygei , epsilon = -1)
-svyby(~ eybhc0 , ~ wkstatus , z91 , svygei , epsilon = 0)
-svyby(~ eybhc0 , ~ wkstatus , z91 , svygei , epsilon = 1)
-svyby(~ eybhc0 , ~ wkstatus , z91 , svygei , epsilon = 2)
+svyby( ~ eybhc0 , ~ wkstatus , z91 , svygei , epsilon = -1)
+svyby( ~ eybhc0 , ~ wkstatus , z91 , svygei , epsilon = 0)
+svyby( ~ eybhc0 , ~ wkstatus , z91 , svygei , epsilon = 1)
+svyby( ~ eybhc0 , ~ wkstatus , z91 , svygei , epsilon = 2)
 
 # GE decomposition
-svygeidec(~ eybhc0, ~ wkstatus, z91, epsilon = -1)
-svygeidec(~ eybhc0, ~ wkstatus, z91, epsilon = 0)
-svygeidec(~ eybhc0, ~ wkstatus, z91, epsilon = 1)
-svygeidec(~ eybhc0, ~ wkstatus, z91, epsilon = 2)
+svygeidec( ~ eybhc0, ~ wkstatus, z91, epsilon = -1)
+svygeidec( ~ eybhc0, ~ wkstatus, z91, epsilon = 0)
+svygeidec( ~ eybhc0, ~ wkstatus, z91, epsilon = 1)
+svygeidec( ~ eybhc0, ~ wkstatus, z91, epsilon = 2)
 ```
 
 For additional usage examples of `svygei` or `svygeidec`, type `?convey::svygei` or `?convey::svygeidec` in the R console.
@@ -1097,9 +1098,9 @@ In order to assess the estimators implemented in `svyjdiv` and `svyjdivdec`, we 
 estimate.list <-
   lapply(survey.list ,
          function(this.sample) {
-           svyjdiv(~ x ,
-                   subset(this.sample , x > 0) ,
-                   na.rm = TRUE)
+           svyjdiv( ~ x ,
+                    subset(this.sample , x > 0) ,
+                    na.rm = TRUE)
          })
 
 # compute the (finite population overall) J-divergence
@@ -1134,10 +1135,10 @@ For the decomposition, we repeat the same procedure:
 estimate.list <-
   lapply(survey.list ,
          function(this.sample) {
-           svyjdivdec(~ x ,
-                      ~ SEX ,
-                      subset(this.sample , x > 0) ,
-                      na.rm = TRUE)
+           svyjdivdec( ~ x ,
+                       ~ SEX ,
+                       subset(this.sample , x > 0) ,
+                       na.rm = TRUE)
          })
 
 # compute the (finite population) J-divergence decomposition per sex
@@ -1290,7 +1291,7 @@ construct an
 
 ```{r}
 # initiate a linearized survey design object
-y <- svydesign(~ hrn , data = x , weights = ~ wgt)
+y <- svydesign( ~ hrn , data = x , weights = ~ wgt)
 
 # immediately run the `convey_prep` function on the survey design
 z <- convey_prep(y)
@@ -1324,11 +1325,11 @@ A(2.5)   |  .4992701   .06754311     7.39    0.000       .366888   .6316522
 ```{r}
 z81 <- subset(z , year == 1981)
 
-svyatk(~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = 0.5)
-svyatk(~ eybhc0 , subset(z81 , eybhc0 > 0))
-svyatk(~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = 1.5)
-svyatk(~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = 2)
-svyatk(~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = 2.5)
+svyatk( ~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = 0.5)
+svyatk( ~ eybhc0 , subset(z81 , eybhc0 > 0))
+svyatk( ~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = 1.5)
+svyatk( ~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = 2)
+svyatk( ~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = 2.5)
 ```
 
 Confirm this replication applies for subsetted objects as well, comparing stata code..
@@ -1357,11 +1358,11 @@ A(2.5)   |   .394787   .04155221     9.50    0.000      .3133461   .4762278
 ```{r}
 z81_two <- subset(z , year == 1981 & eybhc0 > 1)
 
-svyatk(~ eybhc0 , z81_two , epsilon = 0.5)
-svyatk(~ eybhc0 , z81_two)
-svyatk(~ eybhc0 , z81_two , epsilon = 1.5)
-svyatk(~ eybhc0 , z81_two , epsilon = 2)
-svyatk(~ eybhc0 , z81_two , epsilon = 2.5)
+svyatk( ~ eybhc0 , z81_two , epsilon = 0.5)
+svyatk( ~ eybhc0 , z81_two)
+svyatk( ~ eybhc0 , z81_two , epsilon = 1.5)
+svyatk( ~ eybhc0 , z81_two , epsilon = 2)
+svyatk( ~ eybhc0 , z81_two , epsilon = 2.5)
 ```
 
 For additional usage examples of `svyatk`, type `?convey::svyatk` in the R console.
