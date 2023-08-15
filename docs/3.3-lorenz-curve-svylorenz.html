@@ -13,7 +13,7 @@
 
 <meta name="author" content="Guilherme Jacob, Anthony Damico, and Djalma Pessoa" />
 
-<meta name="date" content="2023-08-12" />
+<meta name="date" content="2023-08-15" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -239,11 +239,11 @@ L(p) = \frac{ \sum_{i \in S} w_i \cdot y_i \cdot \delta \{ y_i \le \widehat{Q}_p
 <span id="cb295-3"><a href="3.3-lorenz-curve-svylorenz.html#cb295-3" tabindex="-1"></a></span>
 <span id="cb295-4"><a href="3.3-lorenz-curve-svylorenz.html#cb295-4" tabindex="-1"></a><span class="co"># estimates lorenz curve</span></span>
 <span id="cb295-5"><a href="3.3-lorenz-curve-svylorenz.html#cb295-5" tabindex="-1"></a>result.lin <span class="ot">&lt;-</span></span>
-<span id="cb295-6"><a href="3.3-lorenz-curve-svylorenz.html#cb295-6" tabindex="-1"></a>  <span class="fu">svylorenz</span>(<span class="sc">~</span> wage,</span>
-<span id="cb295-7"><a href="3.3-lorenz-curve-svylorenz.html#cb295-7" tabindex="-1"></a>            des_nlsw88,</span>
-<span id="cb295-8"><a href="3.3-lorenz-curve-svylorenz.html#cb295-8" tabindex="-1"></a>            <span class="at">quantiles =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, .<span class="dv">05</span>),</span>
-<span id="cb295-9"><a href="3.3-lorenz-curve-svylorenz.html#cb295-9" tabindex="-1"></a>            <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
-<p><img src="context_files/figure-html/unnamed-chunk-59-1.png" width="672"  /></p>
+<span id="cb295-6"><a href="3.3-lorenz-curve-svylorenz.html#cb295-6" tabindex="-1"></a>  <span class="fu">svylorenz</span>( <span class="sc">~</span> wage,</span>
+<span id="cb295-7"><a href="3.3-lorenz-curve-svylorenz.html#cb295-7" tabindex="-1"></a>             des_nlsw88,</span>
+<span id="cb295-8"><a href="3.3-lorenz-curve-svylorenz.html#cb295-8" tabindex="-1"></a>             <span class="at">quantiles =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, .<span class="dv">05</span>),</span>
+<span id="cb295-9"><a href="3.3-lorenz-curve-svylorenz.html#cb295-9" tabindex="-1"></a>             <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p><img src="context_files/figure-html/unnamed-chunk-60-1.png" width="672"  /></p>
 <div class="sourceCode" id="cb296"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb296-1"><a href="3.3-lorenz-curve-svylorenz.html#cb296-1" tabindex="-1"></a><span class="co"># note: most survey commands in R use Inf degrees of freedom by default</span></span>
 <span id="cb296-2"><a href="3.3-lorenz-curve-svylorenz.html#cb296-2" tabindex="-1"></a><span class="co"># stata generally uses the degrees of freedom of the survey design.</span></span>
 <span id="cb296-3"><a href="3.3-lorenz-curve-svylorenz.html#cb296-3" tabindex="-1"></a><span class="co"># therefore, while the degf() parameters passed to qt()</span></span>
@@ -257,13 +257,13 @@ L(p) = \frac{ \sum_{i \in S} w_i \cdot y_i \cdot \delta \{ y_i \le \widehat{Q}_p
 <span id="cb296-11"><a href="3.3-lorenz-curve-svylorenz.html#cb296-11" tabindex="-1"></a>      <span class="fu">coef</span>(result.lin) <span class="sc">+</span></span>
 <span id="cb296-12"><a href="3.3-lorenz-curve-svylorenz.html#cb296-12" tabindex="-1"></a>      <span class="fu">SE</span>(result.lin) <span class="sc">*</span></span>
 <span id="cb296-13"><a href="3.3-lorenz-curve-svylorenz.html#cb296-13" tabindex="-1"></a>      <span class="fu">qt</span>(<span class="fl">0.025</span> , <span class="fu">degf</span>(<span class="fu">subset</span>(</span>
-<span id="cb296-14"><a href="3.3-lorenz-curve-svylorenz.html#cb296-14" tabindex="-1"></a>        des_nlsw88 ,<span class="sc">!</span><span class="fu">is.na</span>(wage)</span>
+<span id="cb296-14"><a href="3.3-lorenz-curve-svylorenz.html#cb296-14" tabindex="-1"></a>        des_nlsw88 , <span class="sc">!</span><span class="fu">is.na</span>(wage)</span>
 <span id="cb296-15"><a href="3.3-lorenz-curve-svylorenz.html#cb296-15" tabindex="-1"></a>      ))) ,</span>
 <span id="cb296-16"><a href="3.3-lorenz-curve-svylorenz.html#cb296-16" tabindex="-1"></a>    <span class="at">ci_upper_bound =</span></span>
 <span id="cb296-17"><a href="3.3-lorenz-curve-svylorenz.html#cb296-17" tabindex="-1"></a>      <span class="fu">coef</span>(result.lin) <span class="sc">+</span></span>
 <span id="cb296-18"><a href="3.3-lorenz-curve-svylorenz.html#cb296-18" tabindex="-1"></a>      <span class="fu">SE</span>(result.lin) <span class="sc">*</span></span>
 <span id="cb296-19"><a href="3.3-lorenz-curve-svylorenz.html#cb296-19" tabindex="-1"></a>      <span class="fu">qt</span>(<span class="fl">0.975</span> , <span class="fu">degf</span>(<span class="fu">subset</span>(</span>
-<span id="cb296-20"><a href="3.3-lorenz-curve-svylorenz.html#cb296-20" tabindex="-1"></a>        des_nlsw88 ,<span class="sc">!</span><span class="fu">is.na</span>(wage)</span>
+<span id="cb296-20"><a href="3.3-lorenz-curve-svylorenz.html#cb296-20" tabindex="-1"></a>        des_nlsw88 , <span class="sc">!</span><span class="fu">is.na</span>(wage)</span>
 <span id="cb296-21"><a href="3.3-lorenz-curve-svylorenz.html#cb296-21" tabindex="-1"></a>      )))</span>
 <span id="cb296-22"><a href="3.3-lorenz-curve-svylorenz.html#cb296-22" tabindex="-1"></a>  )</span></code></pre></div>
 <table>
