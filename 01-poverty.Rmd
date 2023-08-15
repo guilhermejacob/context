@@ -153,12 +153,12 @@ des_eusilc_ultimate_cluster <-
   convey_prep(des_eusilc_ultimate_cluster)
 
 # matches
-attr(svyarpt(~ eqincome , des_eusilc_ultimate_cluster) , 'var')
+attr(svyarpt( ~ eqincome , des_eusilc_ultimate_cluster) , 'var')
 varpoord_arpt_calculation$all_result$var
 
 # matches
 varpoord_arpt_calculation$all_result$se
-SE(svyarpt(~ eqincome , des_eusilc_ultimate_cluster))
+SE(svyarpt( ~ eqincome , des_eusilc_ultimate_cluster))
 ```
 
 For additional usage examples of `svyarpt`, type `?convey::svyarpt` in the R console.
@@ -250,13 +250,13 @@ des_eusilc <- convey_prep(des_eusilc)
 
 # coefficients do match
 varpoord_arpr_calculation$all_result$value
-coef(svyarpr(~ eqincome , des_eusilc)) * 100
+coef(svyarpr( ~ eqincome , des_eusilc)) * 100
 
 # linearized variables do match
 # vardpoor
 lin_arpr_varpoord <- varpoord_arpr_calculation$lin_out$lin_arpr
 # convey
-lin_arpr_convey <- attr(svyarpr(~ eqincome , des_eusilc), "lin")
+lin_arpr_convey <- attr(svyarpr( ~ eqincome , des_eusilc), "lin")
 
 # check equality
 all.equal(lin_arpr_varpoord, 100 * lin_arpr_convey)
@@ -264,12 +264,12 @@ all.equal(lin_arpr_varpoord, 100 * lin_arpr_convey)
 
 
 # variances do not match exactly
-attr(svyarpr(~ eqincome , des_eusilc) , 'var') * 10000
+attr(svyarpr( ~ eqincome , des_eusilc) , 'var') * 10000
 varpoord_arpr_calculation$all_result$var
 
 # standard errors do not match exactly
 varpoord_arpr_calculation$all_result$se
-SE(svyarpr(~ eqincome , des_eusilc)) * 100
+SE(svyarpr( ~ eqincome , des_eusilc)) * 100
 ```
 The variance estimate is computed by using the approximation defined in \@ref(var), while the linearized variable $z$ is defined by \@ref(lin). The functions `convey::svyarpr` and `vardpoor::linarpr` produce the same linearized variable $z$.
 
@@ -302,12 +302,12 @@ des_eusilc_ultimate_cluster <-
   convey_prep(des_eusilc_ultimate_cluster)
 
 # does not match
-attr(svyarpr(~ eqincome , des_eusilc_ultimate_cluster) , 'var') * 10000
+attr(svyarpr( ~ eqincome , des_eusilc_ultimate_cluster) , 'var') * 10000
 varpoord_arpr_calculation$all_result$var
 
 # does not match
 varpoord_arpr_calculation$all_result$se
-SE(svyarpr(~ eqincome , des_eusilc_ultimate_cluster)) * 100
+SE(svyarpr( ~ eqincome , des_eusilc_ultimate_cluster)) * 100
 ```
 
 Still, there is a difference in the estimates. This is discussed in detail in [this issue](https://github.com/ajdamico/convey/issues/372). 
@@ -317,22 +317,24 @@ Using the `eusilcP` data from the `simPop` package [@R-simPop], we can compute t
 
 ```{r}
 # load libraries
-library( sampling )
-library( survey )
-library( convey )
+library(sampling)
+library(survey)
+library(convey)
 
 # load pseudo population data
-data( "eusilcP" , package = "simPop" )
+data("eusilcP" , package = "simPop")
 
 # compute population median
-q50.pop <- convey:::computeQuantiles( eusilcP$eqIncome , rep( 1 , length( eusilcP$eqIncome ) ) , .50 )
+q50.pop <-
+  convey:::computeQuantiles(eusilcP$eqIncome , rep(1 , length(eusilcP$eqIncome)) , .50)
 
 # compute population poverty threshold
 # as 60% of the median
 thresh.pop <- .60 * q50.pop
 
 # compute population at risk of poverty rate
-( theta.pop <- mean( eusilcP$eqIncome <= thresh.pop , na.rm = TRUE ) )
+(theta.pop <-
+    mean(eusilcP$eqIncome <= thresh.pop , na.rm = TRUE))
 
 ```
 
@@ -340,39 +342,51 @@ Now, to study the distribution of the estimator under a particular sampling desi
 
 ```{r , cache=TRUE}
 # compute size-like variable for PPS sampling design
-eusilcP$aux <- log( ifelse( eusilcP$eqIncome >= 1000 , eusilcP$eqIncome , 1000 ) )
+eusilcP$aux <-
+  log(ifelse(eusilcP$eqIncome >= 1000 , eusilcP$eqIncome , 1000))
 
 # define the number of monte carlo replicates
 mc.rep <- 5000L
 
 # simulation function
-fun.sim1 <- function( this.iter ) {
-  
+fun.sim1 <- function(this.iter) {
   # select sample
-  tt <- 
-    sampling::cluster( data = eusilcP[ sample.int( nrow( eusilcP ) , nrow( eusilcP ) , replace = FALSE ) , ] , 
-                      clustername = "hid" , 
-                      size = 1000L , method = "systematic" , pik = eusilcP$aux )
+  tt <-
+    sampling::cluster(
+      data = eusilcP[sample.int(nrow(eusilcP) , nrow(eusilcP) , replace = FALSE) ,] ,
+      clustername = "hid" ,
+      size = 1000L ,
+      method = "systematic" ,
+      pik = eusilcP$aux
+    )
   
   # collect data
-  this.sample <- getdata( eusilcP , tt )
+  this.sample <- getdata(eusilcP , tt)
   
   # create survey design object
-  this.desobj <- svydesign( ids = ~hid , probs = ~Prob , data = this.sample , nest = FALSE )
+  this.desobj <-
+    svydesign(
+      ids = ~ hid ,
+      probs = ~ Prob ,
+      data = this.sample ,
+      nest = FALSE
+    )
   
   # prepare for convey functions
-  this.desobj <- convey_prep( this.desobj )
+  this.desobj <- convey_prep(this.desobj)
   
   # compute estimates
-  svyarpr( ~eqIncome , this.desobj )
+  svyarpr(~ eqIncome , this.desobj)
   
 }
 
 # set seed for reproducible results
-set.seed( 1998 )
+set.seed(1998)
 
 # run replications
-estimate.list <- lapply( seq_len( mc.rep ) , function( zz ) fun.sim1( zz ) )
+estimate.list <-
+  lapply(seq_len(mc.rep) , function(zz)
+    fun.sim1(zz))
 ```
 
 Then, we evaluate the Percentage Relative Bias (PRB) of the ARPR estimator. Under this scenario, the PRB of the ARPR estimator is -0.1450%.
@@ -380,10 +394,10 @@ Then, we evaluate the Percentage Relative Bias (PRB) of the ARPR estimator. Unde
 ```{r}
 # estimate the expected value of the ARPR estimator
 # using the average of the estimates
-( theta.exp <- mean( sapply( estimate.list , coef ) ) )
+(theta.exp <- mean(sapply(estimate.list , coef)))
 
 # estimate the percentage relative bias
-100 * ( theta.exp / theta.pop - 1)
+100 * (theta.exp / theta.pop - 1)
 ```
 
 For the variance estimator, we have:
@@ -391,14 +405,14 @@ For the variance estimator, we have:
 ```{r}
 # estimate the variance of the ARPR estimator
 # using the empirical variance of the estimates
-( vartheta.popest <- var( sapply( estimate.list , coef ) ) )
+(vartheta.popest <- var(sapply(estimate.list , coef)))
 
 # estimate the expected value of the ARPR variance estimator
 # using the (estimated) expected value of the variance estimates
-( vartheta.exp <- mean( sapply( estimate.list , vcov ) ) )
+(vartheta.exp <- mean(sapply(estimate.list , vcov)))
 
 # estimate the percentage relative bias of the variance estimator
-100 *  (vartheta.exp / vartheta.popest - 1 )
+100 *  (vartheta.exp / vartheta.popest - 1)
 ```
 
 Under this scenario, the PRB of the ARPR variance estimator is -1.8873%.
@@ -406,7 +420,7 @@ Under this scenario, the PRB of the ARPR variance estimator is -1.8873%.
 Our simulations show that the Squared Bias of this estimator accounts for less than 0.1% of its Mean Squared Error:
 
 ```{r}
-theta.bias2 <- ( theta.exp - theta.pop )^2
+theta.bias2 <- (theta.exp - theta.pop) ^ 2
 theta.mse <- theta.bias2 + vartheta.popest
 100 * (theta.bias2 / theta.mse)
 ```
@@ -422,7 +436,7 @@ est.coverage <-
       confint(this.stat)[, 2] >= theta.pop)
 
 # evaluate empirical coverage
-mean( est.coverage )
+mean(est.coverage)
 ```
 Our coverages are not too far from the nominal coverage level of 95%.
 
@@ -523,25 +537,25 @@ des_eusilc <- convey_prep(des_eusilc)
 
 # coefficients do match
 varpoord_rmir_calculation$all_result$value
-coef(svyrmir(~ eqincome , des_eusilc, age = ~ age))
+coef(svyrmir( ~ eqincome , des_eusilc, age = ~ age))
 
 # linearized variables do match
 # vardpoor
 lin_rmir_varpoord <- varpoord_rmir_calculation$lin_out$lin_rmir
 # convey
 lin_rmir_convey <-
-  attr(svyrmir(~ eqincome , des_eusilc, age = ~ age), "lin")
+  attr(svyrmir( ~ eqincome , des_eusilc, age = ~ age), "lin")
 
 # check equality
 all.equal(lin_rmir_varpoord, lin_rmir_convey[, 1])
 
 # variances do not match exactly
-attr(svyrmir(~ eqincome , des_eusilc, age = ~ age) , 'var')
+attr(svyrmir( ~ eqincome , des_eusilc, age = ~ age) , 'var')
 varpoord_rmir_calculation$all_result$var
 
 # standard errors do not match exactly
 varpoord_rmir_calculation$all_result$se
-SE(svyrmir(~ eqincome , des_eusilc , age = ~ age)) 
+SE(svyrmir( ~ eqincome , des_eusilc , age = ~ age)) 
 ```
 
 The variance estimate is computed by using the approximation defined in \@ref(var), while the linearized variable $z$ is defined by \@ref(lin). The functions `convey::svyrmir` and `vardpoor::linrmir` produce the same linearized variable $z$.
@@ -677,24 +691,24 @@ des_eusilc <- convey_prep(des_eusilc)
 
 # coefficients do match
 varpoord_rmpg_calculation$all_result$value
-coef(svyrmpg(~ eqincome , des_eusilc)) * 100
+coef(svyrmpg( ~ eqincome , des_eusilc)) * 100
 
 # linearized variables do match
 # vardpoor
 lin_rmpg_varpoord <- varpoord_rmpg_calculation$lin_out$lin_rmpg
 # convey
-lin_rmpg_convey <- attr(svyrmpg(~ eqincome , des_eusilc), "lin")
+lin_rmpg_convey <- attr(svyrmpg( ~ eqincome , des_eusilc), "lin")
 
 # check equality
 all.equal(lin_rmpg_varpoord, 100 * lin_rmpg_convey[, 1])
 
 # variances do not match exactly
-attr(svyrmpg(~ eqincome , des_eusilc) , 'var') * 10000
+attr(svyrmpg( ~ eqincome , des_eusilc) , 'var') * 10000
 varpoord_rmpg_calculation$all_result$var
 
 # standard errors do not match exactly
 varpoord_rmpg_calculation$all_result$se
-SE(svyrmpg(~ eqincome , des_eusilc)) * 100
+SE(svyrmpg( ~ eqincome , des_eusilc)) * 100
 ```
 
 The variance estimate is computed by using the approximation defined in \@ref(var), while the linearized variable $z$ is defined by \@ref(lin). The functions `convey::svyrmpg` and `vardpoor::linrmpg` produce the same linearized variable $z$.
@@ -728,12 +742,12 @@ des_eusilc_ultimate_cluster <-
   convey_prep(des_eusilc_ultimate_cluster)
 
 # matches
-attr(svyrmpg(~ eqincome , des_eusilc_ultimate_cluster) , 'var') * 10000
+attr(svyrmpg( ~ eqincome , des_eusilc_ultimate_cluster) , 'var') * 10000
 varpoord_rmpg_calculation$all_result$var
 
 # matches
 varpoord_rmpg_calculation$all_result$se
-SE(svyrmpg(~ eqincome , des_eusilc_ultimate_cluster)) * 100
+SE(svyrmpg( ~ eqincome , des_eusilc_ultimate_cluster)) * 100
 ```
 
 For additional usage examples of `svyrmpg`, type `?convey::svyrmpg` in the R console.
@@ -829,7 +843,7 @@ des_eusilc <- convey_prep(des_eusilc)
 
 # coefficients do match
 varpoord_poormed_calculation$all_result$value
-coef(svypoormed(~ eqincome , des_eusilc))
+coef(svypoormed( ~ eqincome , des_eusilc))
 
 # linearized variables do match
 # vardpoor
@@ -837,18 +851,18 @@ lin_poormed_varpoord <-
   varpoord_poormed_calculation$lin_out$lin_poormed
 # convey
 lin_poormed_convey <-
-  attr(svypoormed(~ eqincome , des_eusilc), "lin")
+  attr(svypoormed( ~ eqincome , des_eusilc), "lin")
 
 # check equality
 all.equal(lin_poormed_varpoord, lin_poormed_convey)
 
 # variances do not match exactly
-attr(svypoormed(~ eqincome , des_eusilc) , 'var')
+attr(svypoormed( ~ eqincome , des_eusilc) , 'var')
 varpoord_poormed_calculation$all_result$var
 
 # standard errors do not match exactly
 varpoord_poormed_calculation$all_result$se
-SE(svypoormed(~ eqincome , des_eusilc))
+SE(svypoormed( ~ eqincome , des_eusilc))
 ```
 
 The variance estimate is computed by using the approximation defined in \@ref(var), while the linearized variable $z$ is defined by \@ref(lin). The functions `convey::svypoormed` and `vardpoor::linpoormed` produce the same linearized variable $z$.
@@ -882,12 +896,12 @@ des_eusilc_ultimate_cluster <-
   convey_prep(des_eusilc_ultimate_cluster)
 
 # matches
-attr(svypoormed(~ eqincome , des_eusilc_ultimate_cluster) , 'var')
+attr(svypoormed( ~ eqincome , des_eusilc_ultimate_cluster) , 'var')
 varpoord_poormed_calculation$all_result$var
 
 # matches
 varpoord_poormed_calculation$all_result$se
-SE(svypoormed(~ eqincome , des_eusilc_ultimate_cluster))
+SE(svypoormed( ~ eqincome , des_eusilc_ultimate_cluster))
 ```
 
 For additional usage examples of `svypoormed`, type `?convey::svypoormed` in the R console.
@@ -936,29 +950,29 @@ Next, we give some examples of the function `svyfgt` to estimate the values of t
 Consider first the poverty threshold fixed ($\gamma=0$) in the value $10000$. The headcount ratio (FGT0) is
 
 ```{r comment=NA}
-svyfgt(~ eqincome, des_eusilc, g = 0, abs_thresh = 10000)
+svyfgt( ~ eqincome, des_eusilc, g = 0, abs_thresh = 10000)
 ```
 
 The poverty gap ratio (FGT(1)) ($\gamma=1$) index for the poverty threshold fixed at the same value is
 
 ```{r comment=NA}
-svyfgt(~ eqincome, des_eusilc, g = 1, abs_thresh = 10000)
+svyfgt( ~ eqincome, des_eusilc, g = 1, abs_thresh = 10000)
 ```
 
 To estimate the FGT(0) with the poverty threshold fixed at $0.6* MED$, we first fix the argument `type_thresh="relq"` and then use the default values for `percent` and `order`:
 
 ```{r comment=NA}
-svyfgt(~ eqincome, des_eusilc, g = 0, type_thresh = "relq")
+svyfgt( ~ eqincome, des_eusilc, g = 0, type_thresh = "relq")
 ```
 This matches the estimate obtained by:
 
 ```{r comment=NA}
-svyarpr(~ eqincome, design = des_eusilc, .5, .6)
+svyarpr( ~ eqincome, design = des_eusilc, .5, .6)
 ```
 To estimate the poverty gap ratio with the poverty threshold equal to $0.6*MEAN$, we use:
 
 ```{r comment=NA}
-svyfgt(~ eqincome, des_eusilc, g = 1, type_thresh = "relm")
+svyfgt( ~ eqincome, des_eusilc, g = 1, type_thresh = "relm")
 ```
 
 ---
@@ -1027,7 +1041,7 @@ Replicate the author's survey design statement from stata code..
 
 ```{r}
 # initiate a linearized survey design object
-y <- svydesign(~ hrn , data = x , weights = ~ wgt)
+y <- svydesign( ~ hrn , data = x , weights = ~ wgt)
 
 # immediately run the `convey_prep` function on the survey design
 z <- convey_prep(y)
@@ -1088,30 +1102,30 @@ Number of PSUs   =    5254          Population size  = 5.6e+07
 
 ```{r}
 headcount_81 <-
-  svyfgt(~ eybhc0 ,
-         subset(z , year == 1981) ,
-         g = 0 ,
-         abs_thresh = unwtd_arpt81)
+  svyfgt( ~ eybhc0 ,
+          subset(z , year == 1981) ,
+          g = 0 ,
+          abs_thresh = unwtd_arpt81)
 
 headcount_81
 
 confint(headcount_81 , df = degf(subset(z , year == 1981)))
 
 headcount_85 <-
-  svyfgt(~ eybhc0 ,
-         subset(z , year == 1985) ,
-         g = 0 ,
-         abs_thresh = unwtd_arpt85)
+  svyfgt( ~ eybhc0 ,
+          subset(z , year == 1985) ,
+          g = 0 ,
+          abs_thresh = unwtd_arpt85)
 
 headcount_85
 
 confint(headcount_85 , df = degf(subset(z , year == 1985)))
 
 headcount_91 <-
-  svyfgt(~ eybhc0 ,
-         subset(z , year == 1991) ,
-         g = 0 ,
-         abs_thresh = unwtd_arpt91)
+  svyfgt( ~ eybhc0 ,
+          subset(z , year == 1991) ,
+          g = 0 ,
+          abs_thresh = unwtd_arpt91)
 
 headcount_91
 
@@ -1143,10 +1157,10 @@ Number of PSUs   =    7476          Population size  = 5.5e+07
 
 ```{r}
 norm_pov_81 <-
-  svyfgt(~ eybhc0 ,
-         subset(z , year == 1981) ,
-         g = 1 ,
-         abs_thresh = unwtd_arpt81)
+  svyfgt( ~ eybhc0 ,
+          subset(z , year == 1981) ,
+          g = 1 ,
+          abs_thresh = unwtd_arpt81)
 
 norm_pov_81
 
@@ -1158,28 +1172,35 @@ Using the `eusilcP` data from the `simPop` package [@R-simPop], we can compute t
 
 ```{r}
 # load libraries
-library( sampling )
-library( survey )
-library( convey )
+library(sampling)
+library(survey)
+library(convey)
 
 # load pseudo population data
-data( "eusilcP" , package = "simPop" )
+data("eusilcP" , package = "simPop")
 
 # compute population value of the FGT(2) index decomposition
 inc.all <- eusilcP$eqIncome
-gfun <- function(y , thresh) (thresh - y) / thresh
-hfun <- function(y , thresh , g) (((thresh - y) / thresh) ^ g) * (y <= thresh)
-fgt2 <- mean( hfun( inc.all , 10000 , 2 ) , na.rm = TRUE )
-fgt1 <- mean( hfun( inc.all , 10000 , 1 ) , na.rm = TRUE )
-fgt0 <- mean( hfun( inc.all , 10000 , 0 ) , na.rm = TRUE )
-igr.fgt <- mean( hfun( inc.all , 10000 , 1 )[ inc.all <= 10000 ] , na.rm = TRUE )
-gei.poor <- convey:::CalcGEI( gfun( inc.all , 10000 ) , ifelse( inc.all < 10000 , 1 , 0 ) , 2 )
-theta.pop <- 
-  c( "fgt2" = fgt2 , 
-     "fgt0" =  fgt0 , 
-     "fgt1" =  fgt1 , 
-     "igr" = igr.fgt , 
-     "gei(poor;epsilon=2)" =  gei.poor )
+gfun <- function(y , thresh)
+  (thresh - y) / thresh
+hfun <-
+  function(y , thresh , g)
+    (((thresh - y) / thresh) ^ g) * (y <= thresh)
+fgt2 <- mean(hfun(inc.all , 10000 , 2) , na.rm = TRUE)
+fgt1 <- mean(hfun(inc.all , 10000 , 1) , na.rm = TRUE)
+fgt0 <- mean(hfun(inc.all , 10000 , 0) , na.rm = TRUE)
+igr.fgt <-
+  mean(hfun(inc.all , 10000 , 1)[inc.all <= 10000] , na.rm = TRUE)
+gei.poor <-
+  convey:::CalcGEI(gfun(inc.all , 10000) , ifelse(inc.all < 10000 , 1 , 0) , 2)
+theta.pop <-
+  c(
+    "fgt2" = fgt2 ,
+    "fgt0" =  fgt0 ,
+    "fgt1" =  fgt1 ,
+    "igr" = igr.fgt ,
+    "gei(poor;epsilon=2)" =  gei.poor
+  )
 theta.pop
 
 ```
@@ -1188,53 +1209,65 @@ Now, to study the distribution of the estimator under a particular sampling desi
 
 ```{r, cache=TRUE}
 # compute size-like variable for PPS sampling design
-eusilcP$aux <- log( ifelse( eusilcP$eqIncome >= 1000 , eusilcP$eqIncome , 1000 ) )
+eusilcP$aux <-
+  log(ifelse(eusilcP$eqIncome >= 1000 , eusilcP$eqIncome , 1000))
 
 # define the number of monte carlo replicates
 mc.rep <- 5000L
 
 # simulation function
-fun.sim1 <- function( this.iter ) {
-  
+fun.sim1 <- function(this.iter) {
   # select sample
-  tt <- 
-    sampling::cluster( data = eusilcP[ sample.int( nrow( eusilcP ) , nrow( eusilcP ) , replace = FALSE ) , ] , 
-                       clustername = "hid" , 
-                       size = 1000L , method = "systematic" , pik = eusilcP$aux )
+  tt <-
+    sampling::cluster(
+      data = eusilcP[sample.int(nrow(eusilcP) , nrow(eusilcP) , replace = FALSE) , ] ,
+      clustername = "hid" ,
+      size = 1000L ,
+      method = "systematic" ,
+      pik = eusilcP$aux
+    )
   
   # collect data
-  this.sample <- getdata( eusilcP , tt )
+  this.sample <- getdata(eusilcP , tt)
   
   # create survey design object
-  this.desobj <- svydesign( ids = ~hid , probs = ~Prob , data = this.sample , nest = FALSE )
+  this.desobj <-
+    svydesign(
+      ids = ~ hid ,
+      probs = ~ Prob ,
+      data = this.sample ,
+      nest = FALSE
+    )
   
   # prepare for convey functions
-  this.desobj <- convey_prep( this.desobj )
+  this.desobj <- convey_prep(this.desobj)
   
   # compute estimates
-  svyfgtdec( ~eqIncome , this.desobj , abs_thresh = 10000 , g= 2 )
+  svyfgtdec( ~ eqIncome , this.desobj , abs_thresh = 10000 , g = 2)
   
 }
 
 # set seed for reproducible results
-set.seed( 1998 )
+set.seed(1998)
 
 # run replications
-estimate.list <- lapply( seq_len( mc.rep ) , function( zz ) fun.sim1( zz ) )
+estimate.list <-
+  lapply(seq_len(mc.rep) , function(zz)
+    fun.sim1(zz))
 ```
 
 The PRB of each component is estimated using the code below. Notice that PRBs are relatively small, with absolute values below 1%, with the largest bias in the GEI index component.
 
 ```{r}
 # repeat true population values
-( theta.pop )
+(theta.pop)
 
 # estimate the expected values of the components estimators
 # using the average of the estimates
-( theta.exp <- rowMeans( sapply( estimate.list , coef ) ) )
+(theta.exp <- rowMeans(sapply(estimate.list , coef)))
 
 # estimate the percentage relative bias
-( 100 * ( theta.exp / theta.pop - 1) )
+(100 * (theta.exp / theta.pop - 1))
 ```
 
 For the variance estimators, we estimate the PRB using the code below. 
@@ -1243,14 +1276,21 @@ Note that the bias is still relatively small, with absolute values of the PRB be
 ```{r}
 # estimate the variance of the components estimators
 # using the empirical variance of the estimates
-( vartheta.popest <- diag( var( t( sapply( estimate.list , coef ) ) ) ) )
+(vartheta.popest <-
+   diag(var(t(
+     sapply(estimate.list , coef)
+   ))))
 
 # estimate the expected value of the Watts index variance estimator
 # using the (estimated) expected value of the variance estimates
-( vartheta.exp <- rowMeans( sapply( estimate.list , function(z) diag( vcov( z ) ) ) ) )
+(vartheta.exp <-
+    rowMeans(sapply(estimate.list , function(z)
+      diag(vcov(
+        z
+      )))))
 
 # estimate the percentage relative bias of the variance estimators
-( 100 *  (vartheta.exp / vartheta.popest - 1 ) )
+(100 *  (vartheta.exp / vartheta.popest - 1))
 ```
 
 Regarding the MSE, the squared bias accounts for less than 1% of the MSE. 
@@ -1258,11 +1298,11 @@ This means that, with a good estimate of the variance, we should be able to have
 
 ```{r}
 # estimate MSE
-theta.bias2 <- ( theta.exp - theta.pop )^2
-( theta.mse <- theta.bias2 + vartheta.popest )
+theta.bias2 <- (theta.exp - theta.pop) ^ 2
+(theta.mse <- theta.bias2 + vartheta.popest)
 
 # squared bias component of the MSE
-100 * ( theta.bias2 / theta.mse )
+100 * (theta.bias2 / theta.mse)
 ```
 
 The CIs based on the normal approximation work reasonably well for all components. The code below shows that the coverage rates are close to the 95% nominal coverage rate.
@@ -1276,7 +1316,7 @@ est.coverage <-
       confint(this.stat)[, 2] >= theta.pop)
 
 # evaluate empirical coverage
-rowMeans( est.coverage )
+rowMeans(est.coverage)
 ```
 
 For additional usage examples of `svyfgt` and `svyfgtdec`, type `?convey::svyfgt` or `?convey::svyfgtdec` in the R console.
@@ -1323,16 +1363,17 @@ Using the `eusilcP` data from the `simPop` package [@R-simPop], we can compute t
 
 ```{r}
 # load libraries
-library( sampling )
-library( survey )
-library( convey )
+library(sampling)
+library(survey)
+library(convey)
 
 # load pseudo population data
-data( "eusilcP" , package = "simPop" )
+data("eusilcP" , package = "simPop")
 
 # compute population value of the Watts index decomposition
-inc.pos <- eusilcP$eqIncome[ eusilcP$eqIncome > 0 ]
-( theta.pop <- mean( ifelse( inc.pos <= 10000 , log( 10000 /  inc.pos ) , 0 ) , na.rm = TRUE ) )
+inc.pos <- eusilcP$eqIncome[eusilcP$eqIncome > 0]
+(theta.pop <-
+    mean(ifelse(inc.pos <= 10000 , log(10000 /  inc.pos) , 0) , na.rm = TRUE))
 
 ```
 
@@ -1340,42 +1381,54 @@ Now, to study the distribution of the estimator under a particular sampling desi
 
 ```{r, cache=TRUE}
 # compute size-like variable for PPS sampling design
-eusilcP$aux <- log( ifelse( eusilcP$eqIncome >= 1000 , eusilcP$eqIncome , 1000 ) )
+eusilcP$aux <-
+  log(ifelse(eusilcP$eqIncome >= 1000 , eusilcP$eqIncome , 1000))
 
 # define the number of monte carlo replicates
 mc.rep <- 5000L
 
 # simulation function
-fun.sim1 <- function( this.iter ) {
-  
+fun.sim1 <- function(this.iter) {
   # select sample
-  tt <- 
-    sampling::cluster( data = eusilcP[ sample.int( nrow( eusilcP ) , nrow( eusilcP ) , replace = FALSE ) , ] , 
-                      clustername = "hid" , 
-                      size = 1000L , method = "systematic" , pik = eusilcP$aux )
+  tt <-
+    sampling::cluster(
+      data = eusilcP[sample.int(nrow(eusilcP) , nrow(eusilcP) , replace = FALSE) ,] ,
+      clustername = "hid" ,
+      size = 1000L ,
+      method = "systematic" ,
+      pik = eusilcP$aux
+    )
   
   # collect data
-  this.sample <- getdata( eusilcP , tt )
+  this.sample <- getdata(eusilcP , tt)
   
   # create survey design object
-  this.desobj <- svydesign( ids = ~hid , probs = ~Prob , data = this.sample , nest = FALSE )
+  this.desobj <-
+    svydesign(
+      ids = ~ hid ,
+      probs = ~ Prob ,
+      data = this.sample ,
+      nest = FALSE
+    )
   
   # prepare for convey functions
-  this.desobj <- convey_prep( this.desobj )
+  this.desobj <- convey_prep(this.desobj)
   
   # filter positive incomes
-  this.desobj <- subset( this.desobj , eqIncome > 0 )
+  this.desobj <- subset(this.desobj , eqIncome > 0)
   
   # compute estimates
-  svywatts( ~eqIncome , this.desobj , abs_thresh = 10000 )
+  svywatts(~ eqIncome , this.desobj , abs_thresh = 10000)
   
 }
 
 # set seed for reproducible results
-set.seed( 1998 )
+set.seed(1998)
 
 # run replications
-estimate.list <- lapply( seq_len( mc.rep ) , function( zz ) fun.sim1( zz ) )
+estimate.list <-
+  lapply(seq_len(mc.rep) , function(zz)
+    fun.sim1(zz))
 ```
 
 Then, we evaluate the Percentage Relative Bias (PRB) of the Watts index estimator. Under this scenario, the PRB of the Watts index estimator is -0.0666%.
@@ -1383,10 +1436,10 @@ Then, we evaluate the Percentage Relative Bias (PRB) of the Watts index estimato
 ```{r}
 # estimate the expected value of the Watts index estimator
 # using the average of the estimates
-( theta.exp <- mean( sapply( estimate.list , coef ) ) )
+(theta.exp <- mean(sapply(estimate.list , coef)))
 
 # estimate the percentage relative bias
-100 * ( theta.exp / theta.pop - 1)
+100 * (theta.exp / theta.pop - 1)
 ```
 
 For the variance estimator, we have:
@@ -1394,14 +1447,14 @@ For the variance estimator, we have:
 ```{r}
 # estimate the variance of the Watts index estimator
 # using the empirical variance of the estimates
-( vartheta.popest <- var( sapply( estimate.list , coef ) ) )
+(vartheta.popest <- var(sapply(estimate.list , coef)))
 
 # estimate the expected value of the Watts index variance estimator
 # using the (estimated) expected value of the variance estimates
-( vartheta.exp <- mean( sapply( estimate.list , vcov ) ) )
+(vartheta.exp <- mean(sapply(estimate.list , vcov)))
 
 # estimate the percentage relative bias of the variance estimator
-100 *  (vartheta.exp / vartheta.popest - 1 )
+100 *  (vartheta.exp / vartheta.popest - 1)
 ```
 
 Under this scenario, the PRB of the Watts index variance estimator is 0.5921%.
@@ -1409,7 +1462,7 @@ Under this scenario, the PRB of the Watts index variance estimator is 0.5921%.
 Our simulations show that the Squared Bias of this estimator accounts for less than 0.01% of its Mean Squared Error:
 
 ```{r}
-theta.bias2 <- ( theta.exp - theta.pop )^2
+theta.bias2 <- (theta.exp - theta.pop) ^ 2
 theta.mse <- theta.bias2 + vartheta.popest
 100 * (theta.bias2 / theta.mse)
 ```
@@ -1425,7 +1478,7 @@ est.coverage <-
       confint(this.stat)[, 2] >= theta.pop)
 
 # evaluate empirical coverage
-mean( est.coverage )
+mean(est.coverage)
 ```
 Our coverages are not too far from the nominal coverage level of 95%.
 
@@ -1433,17 +1486,21 @@ For the Watts index decomposition, we start by computing the (true) population v
 
 ```{r}
 # compute population value of the Watts index decomposition
-inc.pos <- eusilcP$eqIncome[ eusilcP$eqIncome > 0 ]
-wdec1 <- mean( ifelse( inc.pos <= 10000 , log( 10000 /  inc.pos ) , 0 ) , na.rm = TRUE )
-wdec2 <- mean( inc.pos <= 10000 , na.rm = TRUE )
-mu.poor <- mean( inc.pos [ inc.pos <= 10000 ] )
-wdec3 <- log( 10000 / mu.poor )
-wdec4 <- - mean( log( inc.pos[ inc.pos <= 10000 ] / mu.poor ) , na.rm = TRUE )
-theta.pop <- 
-  c( "watts" = wdec1 , 
-     "fgt0" =  wdec2 , 
-     "watts pov. gap ratio" = wdec3 , 
-     "theil(poor)" =  wdec4 )
+inc.pos <- eusilcP$eqIncome[eusilcP$eqIncome > 0]
+wdec1 <-
+  mean(ifelse(inc.pos <= 10000 , log(10000 /  inc.pos) , 0) , na.rm = TRUE)
+wdec2 <- mean(inc.pos <= 10000 , na.rm = TRUE)
+mu.poor <- mean(inc.pos [inc.pos <= 10000])
+wdec3 <- log(10000 / mu.poor)
+wdec4 <-
+  -mean(log(inc.pos[inc.pos <= 10000] / mu.poor) , na.rm = TRUE)
+theta.pop <-
+  c(
+    "watts" = wdec1 ,
+    "fgt0" =  wdec2 ,
+    "watts pov. gap ratio" = wdec3 ,
+    "theil(poor)" =  wdec4
+  )
 theta.pop
 ```
 
@@ -1451,50 +1508,61 @@ Then, using the same sampling strategy of the `svywatts`, we compute the `svywat
 
 ```{r, cache=TRUE}
 # simulation function
-fun.sim2 <- function( this.iter ) {
-  
+fun.sim2 <- function(this.iter) {
   # select sample
-  tt <- 
-    sampling::cluster( data = eusilcP[ sample.int( nrow( eusilcP ) , nrow( eusilcP ) , replace = FALSE ) , ] , 
-                       clustername = "hid" , 
-                       size = 1000L , method = "systematic" , pik = eusilcP$aux )
+  tt <-
+    sampling::cluster(
+      data = eusilcP[sample.int(nrow(eusilcP) , nrow(eusilcP) , replace = FALSE) , ] ,
+      clustername = "hid" ,
+      size = 1000L ,
+      method = "systematic" ,
+      pik = eusilcP$aux
+    )
   
   # collect data
-  this.sample <- getdata( eusilcP , tt )
+  this.sample <- getdata(eusilcP , tt)
   
   # create survey design object
-  this.desobj <- svydesign( ids = ~hid , probs = ~Prob , data = this.sample , nest = FALSE )
+  this.desobj <-
+    svydesign(
+      ids = ~ hid ,
+      probs = ~ Prob ,
+      data = this.sample ,
+      nest = FALSE
+    )
   
   # prepare for convey functions
-  this.desobj <- convey_prep( this.desobj )
+  this.desobj <- convey_prep(this.desobj)
   
   # filter positive incomes
-  this.desobj <- subset( this.desobj , eqIncome > 0 )
+  this.desobj <- subset(this.desobj , eqIncome > 0)
   
   # compute estimates
-  svywattsdec( ~eqIncome , this.desobj , abs_thresh = 10000 )
+  svywattsdec( ~ eqIncome , this.desobj , abs_thresh = 10000)
   
 }
 
 # set seed for reproducible results
-set.seed( 1998 )
+set.seed(1998)
 
 # run replications
-estimate.list <- lapply( seq_len( mc.rep ) , function( zz ) fun.sim2( zz ) )
+estimate.list <-
+  lapply(seq_len(mc.rep) , function(zz)
+    fun.sim2(zz))
 ```
 
 The PRB of each component is estimated using the code below. Notice that PRBs are relatively small, with absolute values below 1%, with the largest bias in the Theil index component.
 
 ```{r}
 # repeat true population values
-( theta.pop )
+(theta.pop)
 
 # estimate the expected values of the components estimators
 # using the average of the estimates
-( theta.exp <- rowMeans( sapply( estimate.list , coef ) ) )
+(theta.exp <- rowMeans(sapply(estimate.list , coef)))
 
 # estimate the percentage relative bias
-( 100 * ( theta.exp / theta.pop - 1) )
+(100 * (theta.exp / theta.pop - 1))
 ```
 
 For the variance estimators, we estimate the PRB using the code below. 
@@ -1503,14 +1571,21 @@ Note that the bias is still relatively small, with absolute values of the PRB be
 ```{r}
 # estimate the variance of the components estimators
 # using the empirical variance of the estimates
-( vartheta.popest <- diag( var( t( sapply( estimate.list , coef ) ) ) ) )
+(vartheta.popest <-
+   diag(var(t(
+     sapply(estimate.list , coef)
+   ))))
 
 # estimate the expected value of the Watts index variance estimator
 # using the (estimated) expected value of the variance estimates
-( vartheta.exp <- rowMeans( sapply( estimate.list , function(z) diag( vcov( z ) ) ) ) )
+(vartheta.exp <-
+    rowMeans(sapply(estimate.list , function(z)
+      diag(vcov(
+        z
+      )))))
 
 # estimate the percentage relative bias of the variance estimators
-( 100 *  (vartheta.exp / vartheta.popest - 1 ) )
+(100 *  (vartheta.exp / vartheta.popest - 1))
 ```
 
 Regarding the MSE, the squared bias accounts for less than 0.1% of the MSE. 
@@ -1518,11 +1593,11 @@ This means that, with a good estimate of the variance, we should be able to have
 
 ```{r}
 # estimate MSE
-theta.bias2 <- ( theta.exp - theta.pop )^2
-( theta.mse <- theta.bias2 + vartheta.popest )
+theta.bias2 <- (theta.exp - theta.pop) ^ 2
+(theta.mse <- theta.bias2 + vartheta.popest)
 
 # squared bias component of the MSE
-100 * ( theta.bias2 / theta.mse )
+100 * (theta.bias2 / theta.mse)
 ```
 
 However, the CIs based on the normal approximation might not work very well for some components. The code below shows that coverage rate for the Theil index component differs significatly from the 95% nominal coverage rate.
@@ -1536,16 +1611,19 @@ est.coverage <-
       confint(this.stat)[, 2] >= theta.pop)
 
 # evaluate empirical coverage
-rowMeans( est.coverage )
+rowMeans(est.coverage)
 ```
 
 One of the reasons for this is that the sample might not be large enough for the CLT to hold. The distribution of the estimator shows substantial asymmetry, which would be a problem for the normal approximation.
 
 ```{r}
-hist( sapply( estimate.list , coef )[4,] ,
-      main = "Histogram of Theil component estimator" ,
-      xlim = c(0,.30) , 
-      ylim = c(0 , 1500) , xlab = "Estimate" )
+hist(
+  sapply(estimate.list , coef)[4, ] ,
+  main = "Histogram of Theil component estimator" ,
+  xlim = c(0, .30) ,
+  ylim = c(0 , 1500) ,
+  xlab = "Estimate"
+)
 ```
 
 

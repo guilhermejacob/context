@@ -83,36 +83,41 @@ using the same distribution from @brz2014:
 
 ```{r results='hide', message=FALSE, warning=FALSE}
 # load libraries
-library( survey )
-library( convey )
-library( sampling )
-library( VGAM )
+library(survey)
+library(convey)
+library(sampling)
+library(VGAM)
 
 # set random seed
-set.seed( 2023 )
+set.seed(2023)
 
 # superpopulation parameters
 scale.x0 <- 1
 shape.theta <- 2
 cha.beta <- 2
 fgt.alpha <- 1.5
-n.pop <- as.integer( 10^5 )
+n.pop <- as.integer(10 ^ 5)
 
 # generate finite population
-pop.df <- data.frame( y1 = rparetoI( n.pop  ,  scale.x0 , shape.theta ) )
+pop.df <-
+  data.frame(y1 = rparetoI(n.pop  ,  scale.x0 , shape.theta))
 ```
 
 Then, we compute the finite population parameters using the simulated population:
 
 ```{r}
 # richness measures: finite population parameters
-cha.scores <-  function( y , b , rho ) ifelse( y > rho , ( 1 - ( rho / y )^b ) , 0 )
-fgtt2.scores <-  function( y , g , rho ) ifelse( y > rho , ( y / rho - 1 )^a , 0 )
-median.fp <- quantile( pop.df$y1 , .50 )
+cha.scores <-
+  function(y , b , rho)
+    ifelse(y > rho , (1 - (rho / y) ^ b) , 0)
+fgtt2.scores <-
+  function(y , g , rho)
+    ifelse(y > rho , (y / rho - 1) ^ a , 0)
+median.fp <- quantile(pop.df$y1 , .50)
 rho.fp <- 3 * median.fp
-rHC.fp <- mean( pop.df$y1 > rho.fp )
-rCha.fp <- mean( cha.scores( pop.df$y1  , cha.beta , rho.fp ) )
-rFGTT2.fp <- mean( cha.scores( pop.df$y1  , fgt.alpha , rho.fp ) )
+rHC.fp <- mean(pop.df$y1 > rho.fp)
+rCha.fp <- mean(cha.scores(pop.df$y1  , cha.beta , rho.fp))
+rFGTT2.fp <- mean(cha.scores(pop.df$y1  , fgt.alpha , rho.fp))
 ```
 
 For our sampling design, we select $n = 1000$ units using multinomial sampling, 
@@ -134,24 +139,57 @@ We run the procedure N and store the estimate objects using the code below:
 mc.reps <- 5000L
 
 # simulation runs
-rep.list <- lapply( seq_len( mc.reps ) , function( this.iter ) {
-  
+rep.list <- lapply(seq_len(mc.reps) , function(this.iter) {
   # multinomial sampling
-  this.sample <- sampling::UPmultinomial( pop.df$pi1 )
-  this.sample <- rep(1:n.pop , this.sample )
-  sample.df <- pop.df[ this.sample , ]
-  sample.df$weights <- 1/sample.df$pi1
-  des.obj <- svydesign( ids = ~1 , weights = ~weights , data = sample.df , nest = FALSE )
+  this.sample <- sampling::UPmultinomial(pop.df$pi1)
+  this.sample <- rep(1:n.pop , this.sample)
+  sample.df <- pop.df[this.sample ,]
+  sample.df$weights <- 1 / sample.df$pi1
+  des.obj <-
+    svydesign(
+      ids = ~ 1 ,
+      weights = ~ weights ,
+      data = sample.df ,
+      nest = FALSE
+    )
   
   # run estimation
-  des.obj <- convey_prep( des.obj )
-  rCha.hat <- svyrich( ~y1 ,  des.obj , type_measure = "Cha" , g = cha.beta , type_thresh = "relq" , percent = 3 )
-  suppressWarnings( rHC.hat <- svyrich( ~y1 ,  des.obj , type_measure = "FGTT1" , g = 0 , type_thresh = "relq"  , percent = 3 ) )
-  suppressWarnings( rFGTT2.hat <- svyrich( ~y1 ,  des.obj , type_measure = "FGTT2" , g = fgt.alpha , type_thresh = "relq"  , percent = 3 ) )
-  est.list <- list( rHC.hat , rCha.hat , rFGTT2.hat )
+  des.obj <- convey_prep(des.obj)
+  rCha.hat <-
+    svyrich(
+      ~ y1 ,
+      des.obj ,
+      type_measure = "Cha" ,
+      g = cha.beta ,
+      type_thresh = "relq" ,
+      percent = 3
+    )
+  suppressWarnings(
+    rHC.hat <-
+      svyrich(
+        ~ y1 ,
+        des.obj ,
+        type_measure = "FGTT1" ,
+        g = 0 ,
+        type_thresh = "relq"  ,
+        percent = 3
+      )
+  )
+  suppressWarnings(
+    rFGTT2.hat <-
+      svyrich(
+        ~ y1 ,
+        des.obj ,
+        type_measure = "FGTT2" ,
+        g = fgt.alpha ,
+        type_thresh = "relq"  ,
+        percent = 3
+      )
+  )
+  est.list <- list(rHC.hat , rCha.hat , rFGTT2.hat)
   est.list
   
-} )
+})
 ```
 
 To study the behavior of the estimators, we estimate their expected values, empirical 
@@ -160,51 +198,56 @@ of the normal approximation, we also estimate the percent coverage rate of the n
 95% confidence interval. This is done using the function below:
 
 ```{r}
-sim.compile <- function( ll , pv , level = .95 , na.rm = FALSE ) {
-  
+sim.compile <- function(ll ,
+                        pv ,
+                        level = .95 ,
+                        na.rm = FALSE) {
   # collect estimates
-  mhat.vec <- sapply( ll , coef )
-  vhat.vec <- sapply( ll , vcov )
+  mhat.vec <- sapply(ll , coef)
+  vhat.vec <- sapply(ll , vcov)
   
   # estimate expected value
-  mhat.exp <- mean( mhat.vec , na.rm = na.rm )
-  vhat.exp <- mean( vhat.vec , na.rm = na.rm )
+  mhat.exp <- mean(mhat.vec , na.rm = na.rm)
+  vhat.exp <- mean(vhat.vec , na.rm = na.rm)
   
   # calculate empirical variance
-  mhat.empvar <- var( mhat.vec , na.rm = na.rm )
+  mhat.empvar <- var(mhat.vec , na.rm = na.rm)
   
   # estimate squared bias
-  mhat.bias2 <- ( mhat.exp - pv )^2
-  vhat.bias2 <- ( vhat.exp - mhat.empvar )^2
+  mhat.bias2 <- (mhat.exp - pv) ^ 2
+  vhat.bias2 <- (vhat.exp - mhat.empvar) ^ 2
   
   # estimate mse
   mhat.mse <- mhat.bias2 + mhat.empvar
   
   # estimate coverage rate
-  ci.hats <- t( sapply( ll , confint ) )
-  ci.check <- matrix( as.logical( NA ) , nrow = nrow( ci.hats ) , ncol = 3 )  
-  ci.check[,1] <- ci.hats[,1] <= pv 
-  ci.check[,2] <- ci.hats[,2] >= pv
-  ci.check[,3] <- apply( ci.check[,1:2] , 1 , all )
-  pcr.emp <- mean( ci.check[,3] , na.rm = na.rm )
+  ci.hats <- t(sapply(ll , confint))
+  ci.check <-
+    matrix(as.logical(NA) , nrow = nrow(ci.hats) , ncol = 3)
+  ci.check[, 1] <- ci.hats[, 1] <= pv
+  ci.check[, 2] <- ci.hats[, 2] >= pv
+  ci.check[, 3] <- apply(ci.check[, 1:2] , 1 , all)
+  pcr.emp <- mean(ci.check[, 3] , na.rm = na.rm)
   
   # setup final table
-  data.frame( "mc.reps" = length( ll ) , 
-              "theta" = pv ,
-              "theta.hat" = mhat.exp ,
-              "theta.bias2" = mhat.bias2 ,
-              "theta.empvar" = mhat.empvar ,
-              "theta.hat.mse" = mhat.mse ,
-              "theta.varhat" = vhat.exp ,
-              "pcr" = pcr.emp )
+  data.frame(
+    "mc.reps" = length(ll) ,
+    "theta" = pv ,
+    "theta.hat" = mhat.exp ,
+    "theta.bias2" = mhat.bias2 ,
+    "theta.empvar" = mhat.empvar ,
+    "theta.hat.mse" = mhat.mse ,
+    "theta.varhat" = vhat.exp ,
+    "pcr" = pcr.emp
+  )
 }
 ```
 
 For the Headcount Richness Ratio (computed using the concave FGT measure), we have:
 
 ```{r}
-rhc.list <- lapply( rep.list , `[[` , 1 )
-sim.compile( rhc.list, rHC.fp )
+rhc.list <- lapply(rep.list , `[[` , 1)
+sim.compile(rhc.list, rHC.fp)
 ```
 
 Under this approach, the squared bias accounts for approx. 0.07% of the MSE, indicating 
@@ -218,8 +261,8 @@ level of 95%, indicating that the confidence intervals are approximately valid.
 For the Chakravarty measure, we have:
 
 ```{r}
-rcha.list <- lapply( rep.list , `[[` , 2 )
-sim.compile( rcha.list, rCha.fp )
+rcha.list <- lapply(rep.list , `[[` , 2)
+sim.compile(rcha.list, rCha.fp)
 ```
 
 Under this approach, the squared bias is approx 0.03% of the MSE, indicating that
@@ -233,8 +276,8 @@ confidence intervals are approximately valid.
 For the convex FGT measure, we have:
 
 ```{r}
-rfgtt2.list <- lapply( rep.list , `[[` , 3 )
-sim.compile( rfgtt2.list, rFGTT2.fp )
+rfgtt2.list <- lapply(rep.list , `[[` , 3)
+sim.compile(rfgtt2.list, rFGTT2.fp)
 ```
 
 Under this approach, the squared bias is approx 26% of the MSE, indicating that 
