@@ -633,11 +633,9 @@ While it is not possible to reproduce the exact results because their simulation
 Load and prepare the data set:
 
 ```{r}
-# load the convey package
 library(convey)
-
-# load the survey library
 library(survey)
+library(parallel)
 
 # create a temporary file on the local disk
 tf <- tempfile()
@@ -755,7 +753,7 @@ survey.list <-
 
 ```{r}
 # estimate zenga index for each sample
-estimate.list <-
+zenga.estimate.list <-
   lapply(survey.list ,
          function(this.sample) {
            svyzenga( ~ x ,
@@ -774,7 +772,7 @@ theta.pop <-
 
 # estimate the expected value of the Zenga index estimator
 # using the average of the estimates
-theta.exp <- mean(sapply(estimate.list , coef))
+theta.exp <- mean(sapply(zenga.estimate.list , coef))
 
 # estimate the percentage relative bias
 100 * (theta.exp / theta.pop - 1)
@@ -784,11 +782,11 @@ Then, we evaluate the PRB of the variance estimator of the Zenga index estimator
 ```{r}
 # estimate the variance of the Zenga index estimator
 # using the variance of the estimates
-(vartheta.popest <- var(sapply(estimate.list , coef)))
+(vartheta.popest <- var(sapply(zenga.estimate.list , coef)))
 
 # estimate the expected value of the Zenga index variance estimator
 # using the expected of the variance estimates
-(vartheta.exp <- mean(sapply(estimate.list , vcov)))
+(vartheta.exp <- mean(sapply(zenga.estimate.list , vcov)))
 
 # estimate the percentage relative bias
 100 * (vartheta.exp / vartheta.popest - 1)
@@ -799,7 +797,7 @@ Next, we evaluate the Percentage Coverage Rate (PCR). In theory, under repeated 
 # estimate confidence intervals of the Zenga index
 # for each of the samples
 est.cis <-
-  t(sapply(estimate.list, function(this.stat)
+  t(sapply(zenga.estimate.list, function(this.stat)
     c(confint(this.stat))))
 
 # evaluate
@@ -1095,7 +1093,7 @@ In order to assess the estimators implemented in `svyjdiv` and `svyjdivdec`, we 
 
 ```{r}
 # estimate J-divergence with each sample
-estimate.list <-
+jdiv.estimate.list <-
   lapply(survey.list ,
          function(this.sample) {
            svyjdiv( ~ x ,
@@ -1109,7 +1107,7 @@ estimate.list <-
 
 # estimate the expected value of the J-divergence estimator
 # using the average of the estimates
-(theta.exp <- mean(sapply(estimate.list , coef)))
+(theta.exp <- mean(sapply(jdiv.estimate.list , coef)))
 
 # estimate the percentage relative bias
 100 * (theta.exp / theta.pop - 1)
@@ -1118,11 +1116,11 @@ estimate.list <-
 ```{r}
 # estimate the variance of the J-divergence estimator
 # using the variance of the estimates
-(vartheta.popest <- var(sapply(estimate.list , coef)))
+(vartheta.popest <- var(sapply(jdiv.estimate.list , coef)))
 
 # estimate the expected value of the J-divergence index variance estimator
 # using the expected of the variance estimates
-(vartheta.exp <- mean(sapply(estimate.list , vcov)))
+(vartheta.exp <- mean(sapply(jdiv.estimate.list , vcov)))
 
 # estimate the percentage relative bias of the variance estimator
 100 * (vartheta.exp / vartheta.popest - 1)
@@ -1132,7 +1130,7 @@ For the decomposition, we repeat the same procedure:
 
 ```{r}
 # estimate J-divergence decomposition with each sample
-estimate.list <-
+jdivdec.estimate.list <-
   lapply(survey.list ,
          function(this.sample) {
            svyjdivdec( ~ x ,
@@ -1166,7 +1164,7 @@ jdivw.pop <- jdivt.pop - jdivb.pop
 
 # estimate the expected value of the J-divergence decomposition estimator
 # using the average of the estimates
-(theta.exp <- rowMeans(sapply(estimate.list , coef)))
+(theta.exp <- rowMeans(sapply(jdivdec.estimate.list , coef)))
 
 # estimate the percentage relative bias
 100 * (theta.exp / theta.pop - 1)
@@ -1180,13 +1178,13 @@ For the variance estimator, we do:
 # using the variance of the estimates
 (vartheta.popest <-
    diag(var(t(
-     sapply(estimate.list , coef)
+     sapply(jdivdec.estimate.list , coef)
    ))))
 
 # estimate the expected value of the J-divergence index variance estimator
 # using the expected of the variance estimates
 (vartheta.exp <-
-    rowMeans(sapply(estimate.list , function(z)
+    rowMeans(sapply(jdivdec.estimate.list , function(z)
       diag(vcov(
         z
       )))))
@@ -1210,7 +1208,7 @@ Next, we evaluate the Percentage Coverage Rate (PCR). In theory, under repeated 
 # estimate confidence intervals of the Zenga index
 # for each of the samples
 est.coverage <-
-  t(sapply(estimate.list, function(this.stat)
+  t(sapply(jdivdec.estimate.list, function(this.stat)
     confint(this.stat)[, 1] <= theta.pop &
       confint(this.stat)[, 2] >= theta.pop))
 

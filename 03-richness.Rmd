@@ -244,6 +244,18 @@ For the Headcount Richness Ratio (computed using the concave FGT measure), we ha
 ```{r}
 rhc.list <- lapply(rep.list , `[[` , 1)
 sim.compile(rhc.list, rHC.fp)
+
+stopifnot(round(
+  sim.compile(rhc.list, rHC.fp)["theta.bias2"] / sim.compile(rhc.list, rHC.fp)["theta.hat.mse"] ,
+  4
+) == 0.0007)
+
+stopifnot(round(
+  sim.compile(rhc.list, rHC.fp)["theta.varhat"] / sim.compile(rhc.list, rHC.fp)["theta.empvar"] ,
+  2
+) == 1.05)
+
+stopifnot(round(sim.compile(rhc.list, rHC.fp)["pcr"] , 4) == 0.9524)
 ```
 
 Under this approach, the squared bias accounts for approx. 0.07% of the MSE, indicating 
@@ -259,6 +271,18 @@ For the Chakravarty measure, we have:
 ```{r}
 rcha.list <- lapply(rep.list , `[[` , 2)
 sim.compile(rcha.list, rCha.fp)
+
+stopifnot(round(
+  sim.compile(rcha.list, rCha.fp)["theta.bias2"] / sim.compile(rcha.list, rCha.fp)["theta.hat.mse"] ,
+  4
+) == 0.0003)
+
+stopifnot(round(
+  sim.compile(rcha.list, rCha.fp)["theta.varhat"] / sim.compile(rcha.list, rCha.fp)["theta.empvar"] ,
+  2
+) == 0.98)
+
+stopifnot(round(sim.compile(rcha.list, rCha.fp)["pcr"] , 4) == 0.9428)
 ```
 
 Under this approach, the squared bias is approx 0.03% of the MSE, indicating that
@@ -274,6 +298,18 @@ For the convex FGT measure, we have:
 ```{r}
 rfgtt2.list <- lapply(rep.list , `[[` , 3)
 sim.compile(rfgtt2.list, rFGTT2.fp)
+
+stopifnot(round(
+  sim.compile(rfgtt2.list, rFGTT2.fp)["theta.bias2"] / sim.compile(rfgtt2.list, rFGTT2.fp)["theta.hat.mse"] ,
+  2
+) == 0.26)
+
+stopifnot(round(
+  sim.compile(rfgtt2.list, rFGTT2.fp)["theta.varhat"] / sim.compile(rfgtt2.list, rFGTT2.fp)["theta.empvar"] ,
+  2
+) == 1)
+
+stopifnot(round(sim.compile(rfgtt2.list, rFGTT2.fp)["pcr"] , 4) == 0.5212)
 ```
 
 Under this approach, the squared bias is approx 26% of the MSE, indicating that 
