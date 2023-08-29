@@ -121,7 +121,7 @@
 
 \title{Poverty and Inequality with Complex Survey Data}
 \author{Guilherme Jacob, Anthony Damico, and Djalma Pessoa}
-\date{2023-08-16}
+\date{2023-08-29}
 
 \begin{document}
 \maketitle
@@ -946,7 +946,12 @@ Load and prepare the same data set:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{\# linearized variables do match}
+\CommentTok{\# linearized variables do not match}
+\CommentTok{\# because Fprime is the derivative wrt}
+\CommentTok{\# to the estimated threshold, not the estimated quantile}
+\CommentTok{\# for more details, see}
+\CommentTok{\# https://github.com/ajdamico/convey/issues/372\#issuecomment{-}1656264143}
+\CommentTok{\#}
 \CommentTok{\# vardpoor}
 \NormalTok{lin\_arpr\_varpoord }\OtherTok{\textless{}{-}}\NormalTok{ varpoord\_arpr\_calculation}\SpecialCharTok{$}\NormalTok{lin\_out}\SpecialCharTok{$}\NormalTok{lin\_arpr}
 \CommentTok{\# convey}
@@ -3149,7 +3154,7 @@ This chapter presents the inequality measures available in the \texttt{convey} l
 \hypertarget{the-gender-pay-gap-svygpg}{%
 \section{The Gender Pay Gap (svygpg)}\label{the-gender-pay-gap-svygpg}}
 
-Although the Gender Pay Gap (GPG) is not an inequality measure in the usual sense, it can still be a useful instrument to evaluate the effects of gender discrimination. Put simply, it expresses the relative difference between the average hourly earnings of men and women, presenting this difference as a percentage of the average of hourly earnings of men.
+Although the Gender Pay Gap (GPG) is not an inequality measure in the usual sense, it can still be a useful instrument to evaluate the effects of gender discrimination. Put simply, it expresses the relative difference between the average hourly earnings of men and women, presenting this difference as a percentage of the average of hourly earnings of men. Like some other functions described in this text, the GPG can also be calculated using wealth or assets in place of earnings.
 
 In mathematical terms, this index can be described as,
 
@@ -3412,7 +3417,7 @@ Unlike the previous measure, the Quintile Share Ratio (QSR) is an inequality mea
 
 In plain terms, it expresses how many times the wealthier part of the population are richer than the poorest part. For instance, a \(QSR = 4\) implies that the upper class takes home 4 times as much of the total income as the poor.
 
-The QSR can be modified to a more general function of percentile share ratios. For instance, \textcite{cobham2015} argues for using the Palma index, defined as the ratio between the share of the 10\% richest over the share held by the poorest 40\%.
+The QSR can be modified to a more general function of percentile share ratios. For instance, \textcite{cobham2015} argues for using the Palma index, defined as the ratio between the share of the 10\% richest over the share held by the poorest 40\%. There are actually two ways to compute the Palma ratio with the \texttt{convey} package. One is using \texttt{convey::svyqsr} and the other is using \texttt{convey::svylorenz} - they won't match exactly because of different estimators, but are asymptotically equal. Since the Palma ratio is the top 10\% divided by the bottom 40\%, in \texttt{convey::svyqsr} this could be achieved using \texttt{alpha1\ =\ .40} and \texttt{alpha2\ =\ .90}. Note that the \texttt{vardpoor::linqsr} function only accepts a single \texttt{alpha} parameter (defaulting to \texttt{0.2} and \texttt{1\ -\ 0.2}), meaning the Palma index cannot presently be computed using that function.
 
 The details of the linearization of the QSR are discussed by \textcite{deville1999} and \textcite{osier2009}.
 

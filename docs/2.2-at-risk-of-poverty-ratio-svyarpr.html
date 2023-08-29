@@ -13,7 +13,7 @@
 
 <meta name="author" content="Guilherme Jacob, Anthony Damico, and Djalma Pessoa" />
 
-<meta name="date" content="2023-08-16" />
+<meta name="date" content="2023-08-29" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -262,14 +262,19 @@ div.csl-indent {
 <div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb44-1" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">svyarpr</span>( <span class="sc">~</span> eqincome , des_eusilc)) <span class="sc">*</span> <span class="dv">100</span></span></code></pre></div>
 <pre><code>## eqincome 
 ## 14.44422</code></pre>
-<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb46-1" tabindex="-1"></a><span class="co"># linearized variables do match</span></span>
-<span id="cb46-2"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb46-2" tabindex="-1"></a><span class="co"># vardpoor</span></span>
-<span id="cb46-3"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb46-3" tabindex="-1"></a>lin_arpr_varpoord <span class="ot">&lt;-</span> varpoord_arpr_calculation<span class="sc">$</span>lin_out<span class="sc">$</span>lin_arpr</span>
-<span id="cb46-4"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb46-4" tabindex="-1"></a><span class="co"># convey</span></span>
-<span id="cb46-5"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb46-5" tabindex="-1"></a>lin_arpr_convey <span class="ot">&lt;-</span> <span class="fu">attr</span>(<span class="fu">svyarpr</span>( <span class="sc">~</span> eqincome , des_eusilc), <span class="st">&quot;lin&quot;</span>)</span>
-<span id="cb46-6"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb46-6" tabindex="-1"></a></span>
-<span id="cb46-7"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb46-7" tabindex="-1"></a><span class="co"># check equality</span></span>
-<span id="cb46-8"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb46-8" tabindex="-1"></a><span class="fu">all.equal</span>(lin_arpr_varpoord, <span class="dv">100</span> <span class="sc">*</span> lin_arpr_convey)</span></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb46-1" tabindex="-1"></a><span class="co"># linearized variables do not match</span></span>
+<span id="cb46-2"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb46-2" tabindex="-1"></a><span class="co"># because Fprime is the derivative wrt</span></span>
+<span id="cb46-3"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb46-3" tabindex="-1"></a><span class="co"># to the estimated threshold, not the estimated quantile</span></span>
+<span id="cb46-4"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb46-4" tabindex="-1"></a><span class="co"># for more details, see</span></span>
+<span id="cb46-5"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb46-5" tabindex="-1"></a><span class="co"># https://github.com/ajdamico/convey/issues/372#issuecomment-1656264143</span></span>
+<span id="cb46-6"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb46-6" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb46-7"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb46-7" tabindex="-1"></a><span class="co"># vardpoor</span></span>
+<span id="cb46-8"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb46-8" tabindex="-1"></a>lin_arpr_varpoord <span class="ot">&lt;-</span> varpoord_arpr_calculation<span class="sc">$</span>lin_out<span class="sc">$</span>lin_arpr</span>
+<span id="cb46-9"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb46-9" tabindex="-1"></a><span class="co"># convey</span></span>
+<span id="cb46-10"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb46-10" tabindex="-1"></a>lin_arpr_convey <span class="ot">&lt;-</span> <span class="fu">attr</span>(<span class="fu">svyarpr</span>( <span class="sc">~</span> eqincome , des_eusilc), <span class="st">&quot;lin&quot;</span>)</span>
+<span id="cb46-11"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb46-11" tabindex="-1"></a></span>
+<span id="cb46-12"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb46-12" tabindex="-1"></a><span class="co"># check equality</span></span>
+<span id="cb46-13"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb46-13" tabindex="-1"></a><span class="fu">all.equal</span>(lin_arpr_varpoord, <span class="dv">100</span> <span class="sc">*</span> lin_arpr_convey)</span></code></pre></div>
 <pre><code>## [1] &quot;Mean relative difference: 0.2264738&quot;</code></pre>
 <div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb48-1" tabindex="-1"></a><span class="co"># variances do not match exactly</span></span>
 <span id="cb48-2"><a href="2.2-at-risk-of-poverty-ratio-svyarpr.html#cb48-2" tabindex="-1"></a><span class="fu">attr</span>(<span class="fu">svyarpr</span>( <span class="sc">~</span> eqincome , des_eusilc) , <span class="st">&#39;var&#39;</span>) <span class="sc">*</span> <span class="dv">10000</span></span></code></pre></div>
