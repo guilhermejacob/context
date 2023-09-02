@@ -13,7 +13,7 @@
 
 <meta name="author" content="Guilherme Jacob, Anthony Damico, and Djalma Pessoa" />
 
-<meta name="date" content="2023-08-29" />
+<meta name="date" content="2023-09-02" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -239,167 +239,167 @@ on each and compare them to the finite population parameter (not the model-based
 parameter!).</p>
 <p>For the sake of similarity, we start by simulating a large finite population (<span class="math inline">\(N = 10^5\)</span>)
 using the same distribution from <span class="citation">Brzezinski (<label for="tufte-mn-99" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-99" class="margin-toggle">2014<span class="marginnote">Brzezinski, Michal. 2014. <span>“Statistical Inference for Richness Measures.”</span> <em>Applied Economics</em> 46 (14): 1599–1608. <a href="https://doi.org/10.1080/00036846.2014.880106">https://doi.org/10.1080/00036846.2014.880106</a>.</span>)</span>:</p>
-<div class="sourceCode" id="cb406"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb406-1"><a href="4-richness-measures.html#cb406-1" tabindex="-1"></a><span class="co"># load libraries</span></span>
-<span id="cb406-2"><a href="4-richness-measures.html#cb406-2" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
-<span id="cb406-3"><a href="4-richness-measures.html#cb406-3" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
-<span id="cb406-4"><a href="4-richness-measures.html#cb406-4" tabindex="-1"></a><span class="fu">library</span>(sampling)</span>
-<span id="cb406-5"><a href="4-richness-measures.html#cb406-5" tabindex="-1"></a><span class="fu">library</span>(VGAM)</span>
-<span id="cb406-6"><a href="4-richness-measures.html#cb406-6" tabindex="-1"></a></span>
-<span id="cb406-7"><a href="4-richness-measures.html#cb406-7" tabindex="-1"></a><span class="co"># set random seed</span></span>
-<span id="cb406-8"><a href="4-richness-measures.html#cb406-8" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2023</span>)</span>
-<span id="cb406-9"><a href="4-richness-measures.html#cb406-9" tabindex="-1"></a></span>
-<span id="cb406-10"><a href="4-richness-measures.html#cb406-10" tabindex="-1"></a><span class="co"># superpopulation parameters</span></span>
-<span id="cb406-11"><a href="4-richness-measures.html#cb406-11" tabindex="-1"></a>scale.x0 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb406-12"><a href="4-richness-measures.html#cb406-12" tabindex="-1"></a>shape.theta <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb406-13"><a href="4-richness-measures.html#cb406-13" tabindex="-1"></a>cha.beta <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb406-14"><a href="4-richness-measures.html#cb406-14" tabindex="-1"></a>fgt.alpha <span class="ot">&lt;-</span> <span class="fl">1.5</span></span>
-<span id="cb406-15"><a href="4-richness-measures.html#cb406-15" tabindex="-1"></a>n.pop <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(<span class="dv">10</span> <span class="sc">^</span> <span class="dv">5</span>)</span>
-<span id="cb406-16"><a href="4-richness-measures.html#cb406-16" tabindex="-1"></a></span>
-<span id="cb406-17"><a href="4-richness-measures.html#cb406-17" tabindex="-1"></a><span class="co"># generate finite population</span></span>
-<span id="cb406-18"><a href="4-richness-measures.html#cb406-18" tabindex="-1"></a>pop.df <span class="ot">&lt;-</span></span>
-<span id="cb406-19"><a href="4-richness-measures.html#cb406-19" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">y1 =</span> <span class="fu">rparetoI</span>(n.pop  ,  scale.x0 , shape.theta))</span></code></pre></div>
+<div class="sourceCode" id="cb409"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb409-1"><a href="4-richness-measures.html#cb409-1" tabindex="-1"></a><span class="co"># load libraries</span></span>
+<span id="cb409-2"><a href="4-richness-measures.html#cb409-2" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb409-3"><a href="4-richness-measures.html#cb409-3" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
+<span id="cb409-4"><a href="4-richness-measures.html#cb409-4" tabindex="-1"></a><span class="fu">library</span>(sampling)</span>
+<span id="cb409-5"><a href="4-richness-measures.html#cb409-5" tabindex="-1"></a><span class="fu">library</span>(VGAM)</span>
+<span id="cb409-6"><a href="4-richness-measures.html#cb409-6" tabindex="-1"></a></span>
+<span id="cb409-7"><a href="4-richness-measures.html#cb409-7" tabindex="-1"></a><span class="co"># set random seed</span></span>
+<span id="cb409-8"><a href="4-richness-measures.html#cb409-8" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2023</span>)</span>
+<span id="cb409-9"><a href="4-richness-measures.html#cb409-9" tabindex="-1"></a></span>
+<span id="cb409-10"><a href="4-richness-measures.html#cb409-10" tabindex="-1"></a><span class="co"># superpopulation parameters</span></span>
+<span id="cb409-11"><a href="4-richness-measures.html#cb409-11" tabindex="-1"></a>scale.x0 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb409-12"><a href="4-richness-measures.html#cb409-12" tabindex="-1"></a>shape.theta <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb409-13"><a href="4-richness-measures.html#cb409-13" tabindex="-1"></a>cha.beta <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb409-14"><a href="4-richness-measures.html#cb409-14" tabindex="-1"></a>fgt.alpha <span class="ot">&lt;-</span> <span class="fl">1.5</span></span>
+<span id="cb409-15"><a href="4-richness-measures.html#cb409-15" tabindex="-1"></a>n.pop <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(<span class="dv">10</span> <span class="sc">^</span> <span class="dv">5</span>)</span>
+<span id="cb409-16"><a href="4-richness-measures.html#cb409-16" tabindex="-1"></a></span>
+<span id="cb409-17"><a href="4-richness-measures.html#cb409-17" tabindex="-1"></a><span class="co"># generate finite population</span></span>
+<span id="cb409-18"><a href="4-richness-measures.html#cb409-18" tabindex="-1"></a>pop.df <span class="ot">&lt;-</span></span>
+<span id="cb409-19"><a href="4-richness-measures.html#cb409-19" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">y1 =</span> <span class="fu">rparetoI</span>(n.pop  ,  scale.x0 , shape.theta))</span></code></pre></div>
 <p>Then, we compute the finite population parameters using the simulated population:</p>
-<div class="sourceCode" id="cb407"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb407-1"><a href="4-richness-measures.html#cb407-1" tabindex="-1"></a><span class="co"># richness measures: finite population parameters</span></span>
-<span id="cb407-2"><a href="4-richness-measures.html#cb407-2" tabindex="-1"></a>cha.scores <span class="ot">&lt;-</span></span>
-<span id="cb407-3"><a href="4-richness-measures.html#cb407-3" tabindex="-1"></a>  <span class="cf">function</span>(y , b , rho)</span>
-<span id="cb407-4"><a href="4-richness-measures.html#cb407-4" tabindex="-1"></a>    <span class="fu">ifelse</span>(y <span class="sc">&gt;</span> rho , (<span class="dv">1</span> <span class="sc">-</span> (rho <span class="sc">/</span> y) <span class="sc">^</span> b) , <span class="dv">0</span>)</span>
-<span id="cb407-5"><a href="4-richness-measures.html#cb407-5" tabindex="-1"></a>fgtt2.scores <span class="ot">&lt;-</span></span>
-<span id="cb407-6"><a href="4-richness-measures.html#cb407-6" tabindex="-1"></a>  <span class="cf">function</span>(y , g , rho)</span>
-<span id="cb407-7"><a href="4-richness-measures.html#cb407-7" tabindex="-1"></a>    <span class="fu">ifelse</span>(y <span class="sc">&gt;</span> rho , (y <span class="sc">/</span> rho <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">^</span> a , <span class="dv">0</span>)</span>
-<span id="cb407-8"><a href="4-richness-measures.html#cb407-8" tabindex="-1"></a>median.fp <span class="ot">&lt;-</span> <span class="fu">quantile</span>(pop.df<span class="sc">$</span>y1 , .<span class="dv">50</span>)</span>
-<span id="cb407-9"><a href="4-richness-measures.html#cb407-9" tabindex="-1"></a>rho.fp <span class="ot">&lt;-</span> <span class="dv">3</span> <span class="sc">*</span> median.fp</span>
-<span id="cb407-10"><a href="4-richness-measures.html#cb407-10" tabindex="-1"></a>rHC.fp <span class="ot">&lt;-</span> <span class="fu">mean</span>(pop.df<span class="sc">$</span>y1 <span class="sc">&gt;</span> rho.fp)</span>
-<span id="cb407-11"><a href="4-richness-measures.html#cb407-11" tabindex="-1"></a>rCha.fp <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">cha.scores</span>(pop.df<span class="sc">$</span>y1  , cha.beta , rho.fp))</span>
-<span id="cb407-12"><a href="4-richness-measures.html#cb407-12" tabindex="-1"></a>rFGTT2.fp <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">cha.scores</span>(pop.df<span class="sc">$</span>y1  , fgt.alpha , rho.fp))</span></code></pre></div>
+<div class="sourceCode" id="cb410"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb410-1"><a href="4-richness-measures.html#cb410-1" tabindex="-1"></a><span class="co"># richness measures: finite population parameters</span></span>
+<span id="cb410-2"><a href="4-richness-measures.html#cb410-2" tabindex="-1"></a>cha.scores <span class="ot">&lt;-</span></span>
+<span id="cb410-3"><a href="4-richness-measures.html#cb410-3" tabindex="-1"></a>  <span class="cf">function</span>(y , b , rho)</span>
+<span id="cb410-4"><a href="4-richness-measures.html#cb410-4" tabindex="-1"></a>    <span class="fu">ifelse</span>(y <span class="sc">&gt;</span> rho , (<span class="dv">1</span> <span class="sc">-</span> (rho <span class="sc">/</span> y) <span class="sc">^</span> b) , <span class="dv">0</span>)</span>
+<span id="cb410-5"><a href="4-richness-measures.html#cb410-5" tabindex="-1"></a>fgtt2.scores <span class="ot">&lt;-</span></span>
+<span id="cb410-6"><a href="4-richness-measures.html#cb410-6" tabindex="-1"></a>  <span class="cf">function</span>(y , g , rho)</span>
+<span id="cb410-7"><a href="4-richness-measures.html#cb410-7" tabindex="-1"></a>    <span class="fu">ifelse</span>(y <span class="sc">&gt;</span> rho , (y <span class="sc">/</span> rho <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">^</span> a , <span class="dv">0</span>)</span>
+<span id="cb410-8"><a href="4-richness-measures.html#cb410-8" tabindex="-1"></a>median.fp <span class="ot">&lt;-</span> <span class="fu">quantile</span>(pop.df<span class="sc">$</span>y1 , .<span class="dv">50</span>)</span>
+<span id="cb410-9"><a href="4-richness-measures.html#cb410-9" tabindex="-1"></a>rho.fp <span class="ot">&lt;-</span> <span class="dv">3</span> <span class="sc">*</span> median.fp</span>
+<span id="cb410-10"><a href="4-richness-measures.html#cb410-10" tabindex="-1"></a>rHC.fp <span class="ot">&lt;-</span> <span class="fu">mean</span>(pop.df<span class="sc">$</span>y1 <span class="sc">&gt;</span> rho.fp)</span>
+<span id="cb410-11"><a href="4-richness-measures.html#cb410-11" tabindex="-1"></a>rCha.fp <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">cha.scores</span>(pop.df<span class="sc">$</span>y1  , cha.beta , rho.fp))</span>
+<span id="cb410-12"><a href="4-richness-measures.html#cb410-12" tabindex="-1"></a>rFGTT2.fp <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">cha.scores</span>(pop.df<span class="sc">$</span>y1  , fgt.alpha , rho.fp))</span></code></pre></div>
 <p>For our sampling design, we select <span class="math inline">\(n = 1000\)</span> units using multinomial sampling,
 with the variable <code>x.aux</code> as the size variable for the inclusion probabilities:</p>
-<div class="sourceCode" id="cb408"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb408-1"><a href="4-richness-measures.html#cb408-1" tabindex="-1"></a><span class="co"># define sample size</span></span>
-<span id="cb408-2"><a href="4-richness-measures.html#cb408-2" tabindex="-1"></a>n.sample <span class="ot">&lt;-</span> 1000L</span>
-<span id="cb408-3"><a href="4-richness-measures.html#cb408-3" tabindex="-1"></a></span>
-<span id="cb408-4"><a href="4-richness-measures.html#cb408-4" tabindex="-1"></a><span class="co"># inclusion probability</span></span>
-<span id="cb408-5"><a href="4-richness-measures.html#cb408-5" tabindex="-1"></a>pop.df<span class="sc">$</span>x.aux <span class="ot">&lt;-</span> <span class="fu">plogis</span>( pop.df<span class="sc">$</span>y1 ) <span class="sc">/</span> <span class="fl">1.1</span></span>
-<span id="cb408-6"><a href="4-richness-measures.html#cb408-6" tabindex="-1"></a>pop.df<span class="sc">$</span>pi1 <span class="ot">&lt;-</span> sampling<span class="sc">::</span><span class="fu">inclusionprobabilities</span>( pop.df<span class="sc">$</span>x.aux , n.sample )</span></code></pre></div>
+<div class="sourceCode" id="cb411"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb411-1"><a href="4-richness-measures.html#cb411-1" tabindex="-1"></a><span class="co"># define sample size</span></span>
+<span id="cb411-2"><a href="4-richness-measures.html#cb411-2" tabindex="-1"></a>n.sample <span class="ot">&lt;-</span> 1000L</span>
+<span id="cb411-3"><a href="4-richness-measures.html#cb411-3" tabindex="-1"></a></span>
+<span id="cb411-4"><a href="4-richness-measures.html#cb411-4" tabindex="-1"></a><span class="co"># inclusion probability</span></span>
+<span id="cb411-5"><a href="4-richness-measures.html#cb411-5" tabindex="-1"></a>pop.df<span class="sc">$</span>x.aux <span class="ot">&lt;-</span> <span class="fu">plogis</span>( pop.df<span class="sc">$</span>y1 ) <span class="sc">/</span> <span class="fl">1.1</span></span>
+<span id="cb411-6"><a href="4-richness-measures.html#cb411-6" tabindex="-1"></a>pop.df<span class="sc">$</span>pi1 <span class="ot">&lt;-</span> sampling<span class="sc">::</span><span class="fu">inclusionprobabilities</span>( pop.df<span class="sc">$</span>x.aux , n.sample )</span></code></pre></div>
 <p>We run the procedure N and store the estimate objects using the code below:</p>
-<div class="sourceCode" id="cb409"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb409-1"><a href="4-richness-measures.html#cb409-1" tabindex="-1"></a><span class="co"># define the number of simulation runs</span></span>
-<span id="cb409-2"><a href="4-richness-measures.html#cb409-2" tabindex="-1"></a>mc.reps <span class="ot">&lt;-</span> 5000L</span>
-<span id="cb409-3"><a href="4-richness-measures.html#cb409-3" tabindex="-1"></a></span>
-<span id="cb409-4"><a href="4-richness-measures.html#cb409-4" tabindex="-1"></a><span class="co"># simulation runs</span></span>
-<span id="cb409-5"><a href="4-richness-measures.html#cb409-5" tabindex="-1"></a>rep.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="fu">seq_len</span>(mc.reps) , <span class="cf">function</span>(this.iter) {</span>
-<span id="cb409-6"><a href="4-richness-measures.html#cb409-6" tabindex="-1"></a>  <span class="co"># multinomial sampling</span></span>
-<span id="cb409-7"><a href="4-richness-measures.html#cb409-7" tabindex="-1"></a>  this.sample <span class="ot">&lt;-</span> sampling<span class="sc">::</span><span class="fu">UPmultinomial</span>(pop.df<span class="sc">$</span>pi1)</span>
-<span id="cb409-8"><a href="4-richness-measures.html#cb409-8" tabindex="-1"></a>  this.sample <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>n.pop , this.sample)</span>
-<span id="cb409-9"><a href="4-richness-measures.html#cb409-9" tabindex="-1"></a>  sample.df <span class="ot">&lt;-</span> pop.df[this.sample ,]</span>
-<span id="cb409-10"><a href="4-richness-measures.html#cb409-10" tabindex="-1"></a>  sample.df<span class="sc">$</span>weights <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> sample.df<span class="sc">$</span>pi1</span>
-<span id="cb409-11"><a href="4-richness-measures.html#cb409-11" tabindex="-1"></a>  des.obj <span class="ot">&lt;-</span></span>
-<span id="cb409-12"><a href="4-richness-measures.html#cb409-12" tabindex="-1"></a>    <span class="fu">svydesign</span>(</span>
-<span id="cb409-13"><a href="4-richness-measures.html#cb409-13" tabindex="-1"></a>      <span class="at">ids =</span> <span class="sc">~</span> <span class="dv">1</span> ,</span>
-<span id="cb409-14"><a href="4-richness-measures.html#cb409-14" tabindex="-1"></a>      <span class="at">weights =</span> <span class="sc">~</span> weights ,</span>
-<span id="cb409-15"><a href="4-richness-measures.html#cb409-15" tabindex="-1"></a>      <span class="at">data =</span> sample.df ,</span>
-<span id="cb409-16"><a href="4-richness-measures.html#cb409-16" tabindex="-1"></a>      <span class="at">nest =</span> <span class="cn">FALSE</span></span>
-<span id="cb409-17"><a href="4-richness-measures.html#cb409-17" tabindex="-1"></a>    )</span>
-<span id="cb409-18"><a href="4-richness-measures.html#cb409-18" tabindex="-1"></a>  </span>
-<span id="cb409-19"><a href="4-richness-measures.html#cb409-19" tabindex="-1"></a>  <span class="co"># run estimation</span></span>
-<span id="cb409-20"><a href="4-richness-measures.html#cb409-20" tabindex="-1"></a>  des.obj <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(des.obj)</span>
-<span id="cb409-21"><a href="4-richness-measures.html#cb409-21" tabindex="-1"></a>  rCha.hat <span class="ot">&lt;-</span></span>
-<span id="cb409-22"><a href="4-richness-measures.html#cb409-22" tabindex="-1"></a>    <span class="fu">svyrich</span>(</span>
-<span id="cb409-23"><a href="4-richness-measures.html#cb409-23" tabindex="-1"></a>      <span class="sc">~</span> y1 ,</span>
-<span id="cb409-24"><a href="4-richness-measures.html#cb409-24" tabindex="-1"></a>      des.obj ,</span>
-<span id="cb409-25"><a href="4-richness-measures.html#cb409-25" tabindex="-1"></a>      <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
-<span id="cb409-26"><a href="4-richness-measures.html#cb409-26" tabindex="-1"></a>      <span class="at">g =</span> cha.beta ,</span>
-<span id="cb409-27"><a href="4-richness-measures.html#cb409-27" tabindex="-1"></a>      <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span> ,</span>
-<span id="cb409-28"><a href="4-richness-measures.html#cb409-28" tabindex="-1"></a>      <span class="at">percent =</span> <span class="dv">3</span></span>
-<span id="cb409-29"><a href="4-richness-measures.html#cb409-29" tabindex="-1"></a>    )</span>
-<span id="cb409-30"><a href="4-richness-measures.html#cb409-30" tabindex="-1"></a>  <span class="fu">suppressWarnings</span>(</span>
-<span id="cb409-31"><a href="4-richness-measures.html#cb409-31" tabindex="-1"></a>    rHC.hat <span class="ot">&lt;-</span></span>
-<span id="cb409-32"><a href="4-richness-measures.html#cb409-32" tabindex="-1"></a>      <span class="fu">svyrich</span>(</span>
-<span id="cb409-33"><a href="4-richness-measures.html#cb409-33" tabindex="-1"></a>        <span class="sc">~</span> y1 ,</span>
-<span id="cb409-34"><a href="4-richness-measures.html#cb409-34" tabindex="-1"></a>        des.obj ,</span>
-<span id="cb409-35"><a href="4-richness-measures.html#cb409-35" tabindex="-1"></a>        <span class="at">type_measure =</span> <span class="st">&quot;FGTT1&quot;</span> ,</span>
-<span id="cb409-36"><a href="4-richness-measures.html#cb409-36" tabindex="-1"></a>        <span class="at">g =</span> <span class="dv">0</span> ,</span>
-<span id="cb409-37"><a href="4-richness-measures.html#cb409-37" tabindex="-1"></a>        <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span>  ,</span>
-<span id="cb409-38"><a href="4-richness-measures.html#cb409-38" tabindex="-1"></a>        <span class="at">percent =</span> <span class="dv">3</span></span>
-<span id="cb409-39"><a href="4-richness-measures.html#cb409-39" tabindex="-1"></a>      )</span>
-<span id="cb409-40"><a href="4-richness-measures.html#cb409-40" tabindex="-1"></a>  )</span>
-<span id="cb409-41"><a href="4-richness-measures.html#cb409-41" tabindex="-1"></a>  <span class="fu">suppressWarnings</span>(</span>
-<span id="cb409-42"><a href="4-richness-measures.html#cb409-42" tabindex="-1"></a>    rFGTT2.hat <span class="ot">&lt;-</span></span>
-<span id="cb409-43"><a href="4-richness-measures.html#cb409-43" tabindex="-1"></a>      <span class="fu">svyrich</span>(</span>
-<span id="cb409-44"><a href="4-richness-measures.html#cb409-44" tabindex="-1"></a>        <span class="sc">~</span> y1 ,</span>
-<span id="cb409-45"><a href="4-richness-measures.html#cb409-45" tabindex="-1"></a>        des.obj ,</span>
-<span id="cb409-46"><a href="4-richness-measures.html#cb409-46" tabindex="-1"></a>        <span class="at">type_measure =</span> <span class="st">&quot;FGTT2&quot;</span> ,</span>
-<span id="cb409-47"><a href="4-richness-measures.html#cb409-47" tabindex="-1"></a>        <span class="at">g =</span> fgt.alpha ,</span>
-<span id="cb409-48"><a href="4-richness-measures.html#cb409-48" tabindex="-1"></a>        <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span>  ,</span>
-<span id="cb409-49"><a href="4-richness-measures.html#cb409-49" tabindex="-1"></a>        <span class="at">percent =</span> <span class="dv">3</span></span>
-<span id="cb409-50"><a href="4-richness-measures.html#cb409-50" tabindex="-1"></a>      )</span>
-<span id="cb409-51"><a href="4-richness-measures.html#cb409-51" tabindex="-1"></a>  )</span>
-<span id="cb409-52"><a href="4-richness-measures.html#cb409-52" tabindex="-1"></a>  est.list <span class="ot">&lt;-</span> <span class="fu">list</span>(rHC.hat , rCha.hat , rFGTT2.hat)</span>
-<span id="cb409-53"><a href="4-richness-measures.html#cb409-53" tabindex="-1"></a>  est.list</span>
-<span id="cb409-54"><a href="4-richness-measures.html#cb409-54" tabindex="-1"></a>  </span>
-<span id="cb409-55"><a href="4-richness-measures.html#cb409-55" tabindex="-1"></a>})</span></code></pre></div>
+<div class="sourceCode" id="cb412"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb412-1"><a href="4-richness-measures.html#cb412-1" tabindex="-1"></a><span class="co"># define the number of simulation runs</span></span>
+<span id="cb412-2"><a href="4-richness-measures.html#cb412-2" tabindex="-1"></a>mc.reps <span class="ot">&lt;-</span> 5000L</span>
+<span id="cb412-3"><a href="4-richness-measures.html#cb412-3" tabindex="-1"></a></span>
+<span id="cb412-4"><a href="4-richness-measures.html#cb412-4" tabindex="-1"></a><span class="co"># simulation runs</span></span>
+<span id="cb412-5"><a href="4-richness-measures.html#cb412-5" tabindex="-1"></a>rep.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="fu">seq_len</span>(mc.reps) , <span class="cf">function</span>(this.iter) {</span>
+<span id="cb412-6"><a href="4-richness-measures.html#cb412-6" tabindex="-1"></a>  <span class="co"># multinomial sampling</span></span>
+<span id="cb412-7"><a href="4-richness-measures.html#cb412-7" tabindex="-1"></a>  this.sample <span class="ot">&lt;-</span> sampling<span class="sc">::</span><span class="fu">UPmultinomial</span>(pop.df<span class="sc">$</span>pi1)</span>
+<span id="cb412-8"><a href="4-richness-measures.html#cb412-8" tabindex="-1"></a>  this.sample <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>n.pop , this.sample)</span>
+<span id="cb412-9"><a href="4-richness-measures.html#cb412-9" tabindex="-1"></a>  sample.df <span class="ot">&lt;-</span> pop.df[this.sample ,]</span>
+<span id="cb412-10"><a href="4-richness-measures.html#cb412-10" tabindex="-1"></a>  sample.df<span class="sc">$</span>weights <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> sample.df<span class="sc">$</span>pi1</span>
+<span id="cb412-11"><a href="4-richness-measures.html#cb412-11" tabindex="-1"></a>  des.obj <span class="ot">&lt;-</span></span>
+<span id="cb412-12"><a href="4-richness-measures.html#cb412-12" tabindex="-1"></a>    <span class="fu">svydesign</span>(</span>
+<span id="cb412-13"><a href="4-richness-measures.html#cb412-13" tabindex="-1"></a>      <span class="at">ids =</span> <span class="sc">~</span> <span class="dv">1</span> ,</span>
+<span id="cb412-14"><a href="4-richness-measures.html#cb412-14" tabindex="-1"></a>      <span class="at">weights =</span> <span class="sc">~</span> weights ,</span>
+<span id="cb412-15"><a href="4-richness-measures.html#cb412-15" tabindex="-1"></a>      <span class="at">data =</span> sample.df ,</span>
+<span id="cb412-16"><a href="4-richness-measures.html#cb412-16" tabindex="-1"></a>      <span class="at">nest =</span> <span class="cn">FALSE</span></span>
+<span id="cb412-17"><a href="4-richness-measures.html#cb412-17" tabindex="-1"></a>    )</span>
+<span id="cb412-18"><a href="4-richness-measures.html#cb412-18" tabindex="-1"></a>  </span>
+<span id="cb412-19"><a href="4-richness-measures.html#cb412-19" tabindex="-1"></a>  <span class="co"># run estimation</span></span>
+<span id="cb412-20"><a href="4-richness-measures.html#cb412-20" tabindex="-1"></a>  des.obj <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(des.obj)</span>
+<span id="cb412-21"><a href="4-richness-measures.html#cb412-21" tabindex="-1"></a>  rCha.hat <span class="ot">&lt;-</span></span>
+<span id="cb412-22"><a href="4-richness-measures.html#cb412-22" tabindex="-1"></a>    <span class="fu">svyrich</span>(</span>
+<span id="cb412-23"><a href="4-richness-measures.html#cb412-23" tabindex="-1"></a>      <span class="sc">~</span> y1 ,</span>
+<span id="cb412-24"><a href="4-richness-measures.html#cb412-24" tabindex="-1"></a>      des.obj ,</span>
+<span id="cb412-25"><a href="4-richness-measures.html#cb412-25" tabindex="-1"></a>      <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
+<span id="cb412-26"><a href="4-richness-measures.html#cb412-26" tabindex="-1"></a>      <span class="at">g =</span> cha.beta ,</span>
+<span id="cb412-27"><a href="4-richness-measures.html#cb412-27" tabindex="-1"></a>      <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span> ,</span>
+<span id="cb412-28"><a href="4-richness-measures.html#cb412-28" tabindex="-1"></a>      <span class="at">percent =</span> <span class="dv">3</span></span>
+<span id="cb412-29"><a href="4-richness-measures.html#cb412-29" tabindex="-1"></a>    )</span>
+<span id="cb412-30"><a href="4-richness-measures.html#cb412-30" tabindex="-1"></a>  <span class="fu">suppressWarnings</span>(</span>
+<span id="cb412-31"><a href="4-richness-measures.html#cb412-31" tabindex="-1"></a>    rHC.hat <span class="ot">&lt;-</span></span>
+<span id="cb412-32"><a href="4-richness-measures.html#cb412-32" tabindex="-1"></a>      <span class="fu">svyrich</span>(</span>
+<span id="cb412-33"><a href="4-richness-measures.html#cb412-33" tabindex="-1"></a>        <span class="sc">~</span> y1 ,</span>
+<span id="cb412-34"><a href="4-richness-measures.html#cb412-34" tabindex="-1"></a>        des.obj ,</span>
+<span id="cb412-35"><a href="4-richness-measures.html#cb412-35" tabindex="-1"></a>        <span class="at">type_measure =</span> <span class="st">&quot;FGTT1&quot;</span> ,</span>
+<span id="cb412-36"><a href="4-richness-measures.html#cb412-36" tabindex="-1"></a>        <span class="at">g =</span> <span class="dv">0</span> ,</span>
+<span id="cb412-37"><a href="4-richness-measures.html#cb412-37" tabindex="-1"></a>        <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span>  ,</span>
+<span id="cb412-38"><a href="4-richness-measures.html#cb412-38" tabindex="-1"></a>        <span class="at">percent =</span> <span class="dv">3</span></span>
+<span id="cb412-39"><a href="4-richness-measures.html#cb412-39" tabindex="-1"></a>      )</span>
+<span id="cb412-40"><a href="4-richness-measures.html#cb412-40" tabindex="-1"></a>  )</span>
+<span id="cb412-41"><a href="4-richness-measures.html#cb412-41" tabindex="-1"></a>  <span class="fu">suppressWarnings</span>(</span>
+<span id="cb412-42"><a href="4-richness-measures.html#cb412-42" tabindex="-1"></a>    rFGTT2.hat <span class="ot">&lt;-</span></span>
+<span id="cb412-43"><a href="4-richness-measures.html#cb412-43" tabindex="-1"></a>      <span class="fu">svyrich</span>(</span>
+<span id="cb412-44"><a href="4-richness-measures.html#cb412-44" tabindex="-1"></a>        <span class="sc">~</span> y1 ,</span>
+<span id="cb412-45"><a href="4-richness-measures.html#cb412-45" tabindex="-1"></a>        des.obj ,</span>
+<span id="cb412-46"><a href="4-richness-measures.html#cb412-46" tabindex="-1"></a>        <span class="at">type_measure =</span> <span class="st">&quot;FGTT2&quot;</span> ,</span>
+<span id="cb412-47"><a href="4-richness-measures.html#cb412-47" tabindex="-1"></a>        <span class="at">g =</span> fgt.alpha ,</span>
+<span id="cb412-48"><a href="4-richness-measures.html#cb412-48" tabindex="-1"></a>        <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span>  ,</span>
+<span id="cb412-49"><a href="4-richness-measures.html#cb412-49" tabindex="-1"></a>        <span class="at">percent =</span> <span class="dv">3</span></span>
+<span id="cb412-50"><a href="4-richness-measures.html#cb412-50" tabindex="-1"></a>      )</span>
+<span id="cb412-51"><a href="4-richness-measures.html#cb412-51" tabindex="-1"></a>  )</span>
+<span id="cb412-52"><a href="4-richness-measures.html#cb412-52" tabindex="-1"></a>  est.list <span class="ot">&lt;-</span> <span class="fu">list</span>(rHC.hat , rCha.hat , rFGTT2.hat)</span>
+<span id="cb412-53"><a href="4-richness-measures.html#cb412-53" tabindex="-1"></a>  est.list</span>
+<span id="cb412-54"><a href="4-richness-measures.html#cb412-54" tabindex="-1"></a>  </span>
+<span id="cb412-55"><a href="4-richness-measures.html#cb412-55" tabindex="-1"></a>})</span></code></pre></div>
 <p>To study the behavior of the estimators, we estimate their expected values, empirical
 variance (for the main parameter) and mean squared error. To study the validity
 of the normal approximation, we also estimate the percent coverage rate of the nominal
 95% confidence interval. This is done using the function below:</p>
-<div class="sourceCode" id="cb410"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb410-1"><a href="4-richness-measures.html#cb410-1" tabindex="-1"></a>sim.compile <span class="ot">&lt;-</span> <span class="cf">function</span>(ll ,</span>
-<span id="cb410-2"><a href="4-richness-measures.html#cb410-2" tabindex="-1"></a>                        pv ,</span>
-<span id="cb410-3"><a href="4-richness-measures.html#cb410-3" tabindex="-1"></a>                        <span class="at">level =</span> .<span class="dv">95</span> ,</span>
-<span id="cb410-4"><a href="4-richness-measures.html#cb410-4" tabindex="-1"></a>                        <span class="at">na.rm =</span> <span class="cn">FALSE</span>) {</span>
-<span id="cb410-5"><a href="4-richness-measures.html#cb410-5" tabindex="-1"></a>  <span class="co"># collect estimates</span></span>
-<span id="cb410-6"><a href="4-richness-measures.html#cb410-6" tabindex="-1"></a>  mhat.vec <span class="ot">&lt;-</span> <span class="fu">sapply</span>(ll , coef)</span>
-<span id="cb410-7"><a href="4-richness-measures.html#cb410-7" tabindex="-1"></a>  vhat.vec <span class="ot">&lt;-</span> <span class="fu">sapply</span>(ll , vcov)</span>
-<span id="cb410-8"><a href="4-richness-measures.html#cb410-8" tabindex="-1"></a>  </span>
-<span id="cb410-9"><a href="4-richness-measures.html#cb410-9" tabindex="-1"></a>  <span class="co"># estimate expected value</span></span>
-<span id="cb410-10"><a href="4-richness-measures.html#cb410-10" tabindex="-1"></a>  mhat.exp <span class="ot">&lt;-</span> <span class="fu">mean</span>(mhat.vec , <span class="at">na.rm =</span> na.rm)</span>
-<span id="cb410-11"><a href="4-richness-measures.html#cb410-11" tabindex="-1"></a>  vhat.exp <span class="ot">&lt;-</span> <span class="fu">mean</span>(vhat.vec , <span class="at">na.rm =</span> na.rm)</span>
-<span id="cb410-12"><a href="4-richness-measures.html#cb410-12" tabindex="-1"></a>  </span>
-<span id="cb410-13"><a href="4-richness-measures.html#cb410-13" tabindex="-1"></a>  <span class="co"># calculate empirical variance</span></span>
-<span id="cb410-14"><a href="4-richness-measures.html#cb410-14" tabindex="-1"></a>  mhat.empvar <span class="ot">&lt;-</span> <span class="fu">var</span>(mhat.vec , <span class="at">na.rm =</span> na.rm)</span>
-<span id="cb410-15"><a href="4-richness-measures.html#cb410-15" tabindex="-1"></a>  </span>
-<span id="cb410-16"><a href="4-richness-measures.html#cb410-16" tabindex="-1"></a>  <span class="co"># estimate squared bias</span></span>
-<span id="cb410-17"><a href="4-richness-measures.html#cb410-17" tabindex="-1"></a>  mhat.bias2 <span class="ot">&lt;-</span> (mhat.exp <span class="sc">-</span> pv) <span class="sc">^</span> <span class="dv">2</span></span>
-<span id="cb410-18"><a href="4-richness-measures.html#cb410-18" tabindex="-1"></a>  vhat.bias2 <span class="ot">&lt;-</span> (vhat.exp <span class="sc">-</span> mhat.empvar) <span class="sc">^</span> <span class="dv">2</span></span>
-<span id="cb410-19"><a href="4-richness-measures.html#cb410-19" tabindex="-1"></a>  </span>
-<span id="cb410-20"><a href="4-richness-measures.html#cb410-20" tabindex="-1"></a>  <span class="co"># estimate mse</span></span>
-<span id="cb410-21"><a href="4-richness-measures.html#cb410-21" tabindex="-1"></a>  mhat.mse <span class="ot">&lt;-</span> mhat.bias2 <span class="sc">+</span> mhat.empvar</span>
-<span id="cb410-22"><a href="4-richness-measures.html#cb410-22" tabindex="-1"></a>  </span>
-<span id="cb410-23"><a href="4-richness-measures.html#cb410-23" tabindex="-1"></a>  <span class="co"># estimate coverage rate</span></span>
-<span id="cb410-24"><a href="4-richness-measures.html#cb410-24" tabindex="-1"></a>  ci.hats <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">sapply</span>(ll , confint))</span>
-<span id="cb410-25"><a href="4-richness-measures.html#cb410-25" tabindex="-1"></a>  ci.check <span class="ot">&lt;-</span></span>
-<span id="cb410-26"><a href="4-richness-measures.html#cb410-26" tabindex="-1"></a>    <span class="fu">matrix</span>(<span class="fu">as.logical</span>(<span class="cn">NA</span>) , <span class="at">nrow =</span> <span class="fu">nrow</span>(ci.hats) , <span class="at">ncol =</span> <span class="dv">3</span>)</span>
-<span id="cb410-27"><a href="4-richness-measures.html#cb410-27" tabindex="-1"></a>  ci.check[, <span class="dv">1</span>] <span class="ot">&lt;-</span> ci.hats[, <span class="dv">1</span>] <span class="sc">&lt;=</span> pv</span>
-<span id="cb410-28"><a href="4-richness-measures.html#cb410-28" tabindex="-1"></a>  ci.check[, <span class="dv">2</span>] <span class="ot">&lt;-</span> ci.hats[, <span class="dv">2</span>] <span class="sc">&gt;=</span> pv</span>
-<span id="cb410-29"><a href="4-richness-measures.html#cb410-29" tabindex="-1"></a>  ci.check[, <span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="fu">apply</span>(ci.check[, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>] , <span class="dv">1</span> , all)</span>
-<span id="cb410-30"><a href="4-richness-measures.html#cb410-30" tabindex="-1"></a>  pcr.emp <span class="ot">&lt;-</span> <span class="fu">mean</span>(ci.check[, <span class="dv">3</span>] , <span class="at">na.rm =</span> na.rm)</span>
-<span id="cb410-31"><a href="4-richness-measures.html#cb410-31" tabindex="-1"></a>  </span>
-<span id="cb410-32"><a href="4-richness-measures.html#cb410-32" tabindex="-1"></a>  <span class="co"># setup final table</span></span>
-<span id="cb410-33"><a href="4-richness-measures.html#cb410-33" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
-<span id="cb410-34"><a href="4-richness-measures.html#cb410-34" tabindex="-1"></a>    <span class="st">&quot;mc.reps&quot;</span> <span class="ot">=</span> <span class="fu">length</span>(ll) ,</span>
-<span id="cb410-35"><a href="4-richness-measures.html#cb410-35" tabindex="-1"></a>    <span class="st">&quot;theta&quot;</span> <span class="ot">=</span> pv ,</span>
-<span id="cb410-36"><a href="4-richness-measures.html#cb410-36" tabindex="-1"></a>    <span class="st">&quot;theta.hat&quot;</span> <span class="ot">=</span> mhat.exp ,</span>
-<span id="cb410-37"><a href="4-richness-measures.html#cb410-37" tabindex="-1"></a>    <span class="st">&quot;theta.bias2&quot;</span> <span class="ot">=</span> mhat.bias2 ,</span>
-<span id="cb410-38"><a href="4-richness-measures.html#cb410-38" tabindex="-1"></a>    <span class="st">&quot;theta.empvar&quot;</span> <span class="ot">=</span> mhat.empvar ,</span>
-<span id="cb410-39"><a href="4-richness-measures.html#cb410-39" tabindex="-1"></a>    <span class="st">&quot;theta.hat.mse&quot;</span> <span class="ot">=</span> mhat.mse ,</span>
-<span id="cb410-40"><a href="4-richness-measures.html#cb410-40" tabindex="-1"></a>    <span class="st">&quot;theta.varhat&quot;</span> <span class="ot">=</span> vhat.exp ,</span>
-<span id="cb410-41"><a href="4-richness-measures.html#cb410-41" tabindex="-1"></a>    <span class="st">&quot;pcr&quot;</span> <span class="ot">=</span> pcr.emp</span>
-<span id="cb410-42"><a href="4-richness-measures.html#cb410-42" tabindex="-1"></a>  )</span>
-<span id="cb410-43"><a href="4-richness-measures.html#cb410-43" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb413"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb413-1"><a href="4-richness-measures.html#cb413-1" tabindex="-1"></a>sim.compile <span class="ot">&lt;-</span> <span class="cf">function</span>(ll ,</span>
+<span id="cb413-2"><a href="4-richness-measures.html#cb413-2" tabindex="-1"></a>                        pv ,</span>
+<span id="cb413-3"><a href="4-richness-measures.html#cb413-3" tabindex="-1"></a>                        <span class="at">level =</span> .<span class="dv">95</span> ,</span>
+<span id="cb413-4"><a href="4-richness-measures.html#cb413-4" tabindex="-1"></a>                        <span class="at">na.rm =</span> <span class="cn">FALSE</span>) {</span>
+<span id="cb413-5"><a href="4-richness-measures.html#cb413-5" tabindex="-1"></a>  <span class="co"># collect estimates</span></span>
+<span id="cb413-6"><a href="4-richness-measures.html#cb413-6" tabindex="-1"></a>  mhat.vec <span class="ot">&lt;-</span> <span class="fu">sapply</span>(ll , coef)</span>
+<span id="cb413-7"><a href="4-richness-measures.html#cb413-7" tabindex="-1"></a>  vhat.vec <span class="ot">&lt;-</span> <span class="fu">sapply</span>(ll , vcov)</span>
+<span id="cb413-8"><a href="4-richness-measures.html#cb413-8" tabindex="-1"></a>  </span>
+<span id="cb413-9"><a href="4-richness-measures.html#cb413-9" tabindex="-1"></a>  <span class="co"># estimate expected value</span></span>
+<span id="cb413-10"><a href="4-richness-measures.html#cb413-10" tabindex="-1"></a>  mhat.exp <span class="ot">&lt;-</span> <span class="fu">mean</span>(mhat.vec , <span class="at">na.rm =</span> na.rm)</span>
+<span id="cb413-11"><a href="4-richness-measures.html#cb413-11" tabindex="-1"></a>  vhat.exp <span class="ot">&lt;-</span> <span class="fu">mean</span>(vhat.vec , <span class="at">na.rm =</span> na.rm)</span>
+<span id="cb413-12"><a href="4-richness-measures.html#cb413-12" tabindex="-1"></a>  </span>
+<span id="cb413-13"><a href="4-richness-measures.html#cb413-13" tabindex="-1"></a>  <span class="co"># calculate empirical variance</span></span>
+<span id="cb413-14"><a href="4-richness-measures.html#cb413-14" tabindex="-1"></a>  mhat.empvar <span class="ot">&lt;-</span> <span class="fu">var</span>(mhat.vec , <span class="at">na.rm =</span> na.rm)</span>
+<span id="cb413-15"><a href="4-richness-measures.html#cb413-15" tabindex="-1"></a>  </span>
+<span id="cb413-16"><a href="4-richness-measures.html#cb413-16" tabindex="-1"></a>  <span class="co"># estimate squared bias</span></span>
+<span id="cb413-17"><a href="4-richness-measures.html#cb413-17" tabindex="-1"></a>  mhat.bias2 <span class="ot">&lt;-</span> (mhat.exp <span class="sc">-</span> pv) <span class="sc">^</span> <span class="dv">2</span></span>
+<span id="cb413-18"><a href="4-richness-measures.html#cb413-18" tabindex="-1"></a>  vhat.bias2 <span class="ot">&lt;-</span> (vhat.exp <span class="sc">-</span> mhat.empvar) <span class="sc">^</span> <span class="dv">2</span></span>
+<span id="cb413-19"><a href="4-richness-measures.html#cb413-19" tabindex="-1"></a>  </span>
+<span id="cb413-20"><a href="4-richness-measures.html#cb413-20" tabindex="-1"></a>  <span class="co"># estimate mse</span></span>
+<span id="cb413-21"><a href="4-richness-measures.html#cb413-21" tabindex="-1"></a>  mhat.mse <span class="ot">&lt;-</span> mhat.bias2 <span class="sc">+</span> mhat.empvar</span>
+<span id="cb413-22"><a href="4-richness-measures.html#cb413-22" tabindex="-1"></a>  </span>
+<span id="cb413-23"><a href="4-richness-measures.html#cb413-23" tabindex="-1"></a>  <span class="co"># estimate coverage rate</span></span>
+<span id="cb413-24"><a href="4-richness-measures.html#cb413-24" tabindex="-1"></a>  ci.hats <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">sapply</span>(ll , confint))</span>
+<span id="cb413-25"><a href="4-richness-measures.html#cb413-25" tabindex="-1"></a>  ci.check <span class="ot">&lt;-</span></span>
+<span id="cb413-26"><a href="4-richness-measures.html#cb413-26" tabindex="-1"></a>    <span class="fu">matrix</span>(<span class="fu">as.logical</span>(<span class="cn">NA</span>) , <span class="at">nrow =</span> <span class="fu">nrow</span>(ci.hats) , <span class="at">ncol =</span> <span class="dv">3</span>)</span>
+<span id="cb413-27"><a href="4-richness-measures.html#cb413-27" tabindex="-1"></a>  ci.check[, <span class="dv">1</span>] <span class="ot">&lt;-</span> ci.hats[, <span class="dv">1</span>] <span class="sc">&lt;=</span> pv</span>
+<span id="cb413-28"><a href="4-richness-measures.html#cb413-28" tabindex="-1"></a>  ci.check[, <span class="dv">2</span>] <span class="ot">&lt;-</span> ci.hats[, <span class="dv">2</span>] <span class="sc">&gt;=</span> pv</span>
+<span id="cb413-29"><a href="4-richness-measures.html#cb413-29" tabindex="-1"></a>  ci.check[, <span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="fu">apply</span>(ci.check[, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>] , <span class="dv">1</span> , all)</span>
+<span id="cb413-30"><a href="4-richness-measures.html#cb413-30" tabindex="-1"></a>  pcr.emp <span class="ot">&lt;-</span> <span class="fu">mean</span>(ci.check[, <span class="dv">3</span>] , <span class="at">na.rm =</span> na.rm)</span>
+<span id="cb413-31"><a href="4-richness-measures.html#cb413-31" tabindex="-1"></a>  </span>
+<span id="cb413-32"><a href="4-richness-measures.html#cb413-32" tabindex="-1"></a>  <span class="co"># setup final table</span></span>
+<span id="cb413-33"><a href="4-richness-measures.html#cb413-33" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb413-34"><a href="4-richness-measures.html#cb413-34" tabindex="-1"></a>    <span class="st">&quot;mc.reps&quot;</span> <span class="ot">=</span> <span class="fu">length</span>(ll) ,</span>
+<span id="cb413-35"><a href="4-richness-measures.html#cb413-35" tabindex="-1"></a>    <span class="st">&quot;theta&quot;</span> <span class="ot">=</span> pv ,</span>
+<span id="cb413-36"><a href="4-richness-measures.html#cb413-36" tabindex="-1"></a>    <span class="st">&quot;theta.hat&quot;</span> <span class="ot">=</span> mhat.exp ,</span>
+<span id="cb413-37"><a href="4-richness-measures.html#cb413-37" tabindex="-1"></a>    <span class="st">&quot;theta.bias2&quot;</span> <span class="ot">=</span> mhat.bias2 ,</span>
+<span id="cb413-38"><a href="4-richness-measures.html#cb413-38" tabindex="-1"></a>    <span class="st">&quot;theta.empvar&quot;</span> <span class="ot">=</span> mhat.empvar ,</span>
+<span id="cb413-39"><a href="4-richness-measures.html#cb413-39" tabindex="-1"></a>    <span class="st">&quot;theta.hat.mse&quot;</span> <span class="ot">=</span> mhat.mse ,</span>
+<span id="cb413-40"><a href="4-richness-measures.html#cb413-40" tabindex="-1"></a>    <span class="st">&quot;theta.varhat&quot;</span> <span class="ot">=</span> vhat.exp ,</span>
+<span id="cb413-41"><a href="4-richness-measures.html#cb413-41" tabindex="-1"></a>    <span class="st">&quot;pcr&quot;</span> <span class="ot">=</span> pcr.emp</span>
+<span id="cb413-42"><a href="4-richness-measures.html#cb413-42" tabindex="-1"></a>  )</span>
+<span id="cb413-43"><a href="4-richness-measures.html#cb413-43" tabindex="-1"></a>}</span></code></pre></div>
 <p>For the Headcount Richness Ratio (computed using the concave FGT measure), we have:</p>
-<div class="sourceCode" id="cb411"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb411-1"><a href="4-richness-measures.html#cb411-1" tabindex="-1"></a>rhc.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(rep.list , <span class="st">`</span><span class="at">[[</span><span class="st">`</span> , <span class="dv">1</span>)</span>
-<span id="cb411-2"><a href="4-richness-measures.html#cb411-2" tabindex="-1"></a><span class="fu">sim.compile</span>(rhc.list, rHC.fp)</span></code></pre></div>
+<div class="sourceCode" id="cb414"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb414-1"><a href="4-richness-measures.html#cb414-1" tabindex="-1"></a>rhc.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(rep.list , <span class="st">`</span><span class="at">[[</span><span class="st">`</span> , <span class="dv">1</span>)</span>
+<span id="cb414-2"><a href="4-richness-measures.html#cb414-2" tabindex="-1"></a><span class="fu">sim.compile</span>(rhc.list, rHC.fp)</span></code></pre></div>
 <pre><code>##   mc.reps   theta  theta.hat  theta.bias2 theta.empvar theta.hat.mse
 ## 1    5000 0.05469 0.05452618 2.683797e-08 4.112616e-05    4.1153e-05
 ##   theta.varhat    pcr
 ## 1 4.336252e-05 0.9524</code></pre>
-<div class="sourceCode" id="cb413"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb413-1"><a href="4-richness-measures.html#cb413-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(</span>
-<span id="cb413-2"><a href="4-richness-measures.html#cb413-2" tabindex="-1"></a>  <span class="fu">sim.compile</span>(rhc.list, rHC.fp)[<span class="st">&quot;theta.bias2&quot;</span>] <span class="sc">/</span> <span class="fu">sim.compile</span>(rhc.list, rHC.fp)[<span class="st">&quot;theta.hat.mse&quot;</span>] ,</span>
-<span id="cb413-3"><a href="4-richness-measures.html#cb413-3" tabindex="-1"></a>  <span class="dv">4</span></span>
-<span id="cb413-4"><a href="4-richness-measures.html#cb413-4" tabindex="-1"></a>) <span class="sc">==</span> <span class="fl">0.0007</span>)</span>
-<span id="cb413-5"><a href="4-richness-measures.html#cb413-5" tabindex="-1"></a></span>
-<span id="cb413-6"><a href="4-richness-measures.html#cb413-6" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(</span>
-<span id="cb413-7"><a href="4-richness-measures.html#cb413-7" tabindex="-1"></a>  <span class="fu">sim.compile</span>(rhc.list, rHC.fp)[<span class="st">&quot;theta.varhat&quot;</span>] <span class="sc">/</span> <span class="fu">sim.compile</span>(rhc.list, rHC.fp)[<span class="st">&quot;theta.empvar&quot;</span>] ,</span>
-<span id="cb413-8"><a href="4-richness-measures.html#cb413-8" tabindex="-1"></a>  <span class="dv">2</span></span>
-<span id="cb413-9"><a href="4-richness-measures.html#cb413-9" tabindex="-1"></a>) <span class="sc">==</span> <span class="fl">1.05</span>)</span>
-<span id="cb413-10"><a href="4-richness-measures.html#cb413-10" tabindex="-1"></a></span>
-<span id="cb413-11"><a href="4-richness-measures.html#cb413-11" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">sim.compile</span>(rhc.list, rHC.fp)[<span class="st">&quot;pcr&quot;</span>] , <span class="dv">4</span>) <span class="sc">==</span> <span class="fl">0.9524</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb416"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb416-1"><a href="4-richness-measures.html#cb416-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(</span>
+<span id="cb416-2"><a href="4-richness-measures.html#cb416-2" tabindex="-1"></a>  <span class="fu">sim.compile</span>(rhc.list, rHC.fp)[<span class="st">&quot;theta.bias2&quot;</span>] <span class="sc">/</span> <span class="fu">sim.compile</span>(rhc.list, rHC.fp)[<span class="st">&quot;theta.hat.mse&quot;</span>] ,</span>
+<span id="cb416-3"><a href="4-richness-measures.html#cb416-3" tabindex="-1"></a>  <span class="dv">4</span></span>
+<span id="cb416-4"><a href="4-richness-measures.html#cb416-4" tabindex="-1"></a>) <span class="sc">==</span> <span class="fl">0.0007</span>)</span>
+<span id="cb416-5"><a href="4-richness-measures.html#cb416-5" tabindex="-1"></a></span>
+<span id="cb416-6"><a href="4-richness-measures.html#cb416-6" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(</span>
+<span id="cb416-7"><a href="4-richness-measures.html#cb416-7" tabindex="-1"></a>  <span class="fu">sim.compile</span>(rhc.list, rHC.fp)[<span class="st">&quot;theta.varhat&quot;</span>] <span class="sc">/</span> <span class="fu">sim.compile</span>(rhc.list, rHC.fp)[<span class="st">&quot;theta.empvar&quot;</span>] ,</span>
+<span id="cb416-8"><a href="4-richness-measures.html#cb416-8" tabindex="-1"></a>  <span class="dv">2</span></span>
+<span id="cb416-9"><a href="4-richness-measures.html#cb416-9" tabindex="-1"></a>) <span class="sc">==</span> <span class="fl">1.05</span>)</span>
+<span id="cb416-10"><a href="4-richness-measures.html#cb416-10" tabindex="-1"></a></span>
+<span id="cb416-11"><a href="4-richness-measures.html#cb416-11" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">sim.compile</span>(rhc.list, rHC.fp)[<span class="st">&quot;pcr&quot;</span>] , <span class="dv">4</span>) <span class="sc">==</span> <span class="fl">0.9524</span>)</span></code></pre></div>
 <p>Under this approach, the squared bias accounts for approx. 0.07% of the MSE, indicating
 that the MSE of the estimator is reasonably approximated by its variance. Additionally,
 the ratio between the expected value of the variance estimator and the empirical
@@ -408,23 +408,23 @@ be a (slighlty conservative, but) good approximation of the empirical variance.
 Finally, the estimated percent coverage rate of 95.24% is close to the nominal
 level of 95%, indicating that the confidence intervals are approximately valid.</p>
 <p>For the Chakravarty measure, we have:</p>
-<div class="sourceCode" id="cb414"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb414-1"><a href="4-richness-measures.html#cb414-1" tabindex="-1"></a>rcha.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(rep.list , <span class="st">`</span><span class="at">[[</span><span class="st">`</span> , <span class="dv">2</span>)</span>
-<span id="cb414-2"><a href="4-richness-measures.html#cb414-2" tabindex="-1"></a><span class="fu">sim.compile</span>(rcha.list, rCha.fp)</span></code></pre></div>
+<div class="sourceCode" id="cb417"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb417-1"><a href="4-richness-measures.html#cb417-1" tabindex="-1"></a>rcha.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(rep.list , <span class="st">`</span><span class="at">[[</span><span class="st">`</span> , <span class="dv">2</span>)</span>
+<span id="cb417-2"><a href="4-richness-measures.html#cb417-2" tabindex="-1"></a><span class="fu">sim.compile</span>(rcha.list, rCha.fp)</span></code></pre></div>
 <pre><code>##   mc.reps      theta  theta.hat  theta.bias2 theta.empvar theta.hat.mse
 ## 1    5000 0.02743915 0.02737177 4.538966e-09 1.428639e-05  1.429093e-05
 ##   theta.varhat    pcr
 ## 1 1.402416e-05 0.9428</code></pre>
-<div class="sourceCode" id="cb416"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb416-1"><a href="4-richness-measures.html#cb416-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(</span>
-<span id="cb416-2"><a href="4-richness-measures.html#cb416-2" tabindex="-1"></a>  <span class="fu">sim.compile</span>(rcha.list, rCha.fp)[<span class="st">&quot;theta.bias2&quot;</span>] <span class="sc">/</span> <span class="fu">sim.compile</span>(rcha.list, rCha.fp)[<span class="st">&quot;theta.hat.mse&quot;</span>] ,</span>
-<span id="cb416-3"><a href="4-richness-measures.html#cb416-3" tabindex="-1"></a>  <span class="dv">4</span></span>
-<span id="cb416-4"><a href="4-richness-measures.html#cb416-4" tabindex="-1"></a>) <span class="sc">==</span> <span class="fl">0.0003</span>)</span>
-<span id="cb416-5"><a href="4-richness-measures.html#cb416-5" tabindex="-1"></a></span>
-<span id="cb416-6"><a href="4-richness-measures.html#cb416-6" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(</span>
-<span id="cb416-7"><a href="4-richness-measures.html#cb416-7" tabindex="-1"></a>  <span class="fu">sim.compile</span>(rcha.list, rCha.fp)[<span class="st">&quot;theta.varhat&quot;</span>] <span class="sc">/</span> <span class="fu">sim.compile</span>(rcha.list, rCha.fp)[<span class="st">&quot;theta.empvar&quot;</span>] ,</span>
-<span id="cb416-8"><a href="4-richness-measures.html#cb416-8" tabindex="-1"></a>  <span class="dv">2</span></span>
-<span id="cb416-9"><a href="4-richness-measures.html#cb416-9" tabindex="-1"></a>) <span class="sc">==</span> <span class="fl">0.98</span>)</span>
-<span id="cb416-10"><a href="4-richness-measures.html#cb416-10" tabindex="-1"></a></span>
-<span id="cb416-11"><a href="4-richness-measures.html#cb416-11" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">sim.compile</span>(rcha.list, rCha.fp)[<span class="st">&quot;pcr&quot;</span>] , <span class="dv">4</span>) <span class="sc">==</span> <span class="fl">0.9428</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb419"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb419-1"><a href="4-richness-measures.html#cb419-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(</span>
+<span id="cb419-2"><a href="4-richness-measures.html#cb419-2" tabindex="-1"></a>  <span class="fu">sim.compile</span>(rcha.list, rCha.fp)[<span class="st">&quot;theta.bias2&quot;</span>] <span class="sc">/</span> <span class="fu">sim.compile</span>(rcha.list, rCha.fp)[<span class="st">&quot;theta.hat.mse&quot;</span>] ,</span>
+<span id="cb419-3"><a href="4-richness-measures.html#cb419-3" tabindex="-1"></a>  <span class="dv">4</span></span>
+<span id="cb419-4"><a href="4-richness-measures.html#cb419-4" tabindex="-1"></a>) <span class="sc">==</span> <span class="fl">0.0003</span>)</span>
+<span id="cb419-5"><a href="4-richness-measures.html#cb419-5" tabindex="-1"></a></span>
+<span id="cb419-6"><a href="4-richness-measures.html#cb419-6" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(</span>
+<span id="cb419-7"><a href="4-richness-measures.html#cb419-7" tabindex="-1"></a>  <span class="fu">sim.compile</span>(rcha.list, rCha.fp)[<span class="st">&quot;theta.varhat&quot;</span>] <span class="sc">/</span> <span class="fu">sim.compile</span>(rcha.list, rCha.fp)[<span class="st">&quot;theta.empvar&quot;</span>] ,</span>
+<span id="cb419-8"><a href="4-richness-measures.html#cb419-8" tabindex="-1"></a>  <span class="dv">2</span></span>
+<span id="cb419-9"><a href="4-richness-measures.html#cb419-9" tabindex="-1"></a>) <span class="sc">==</span> <span class="fl">0.98</span>)</span>
+<span id="cb419-10"><a href="4-richness-measures.html#cb419-10" tabindex="-1"></a></span>
+<span id="cb419-11"><a href="4-richness-measures.html#cb419-11" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">sim.compile</span>(rcha.list, rCha.fp)[<span class="st">&quot;pcr&quot;</span>] , <span class="dv">4</span>) <span class="sc">==</span> <span class="fl">0.9428</span>)</span></code></pre></div>
 <p>Under this approach, the squared bias is approx 0.03% of the MSE, indicating that
 the MSE of the estimator is reasonably approximated by its variance. Additionally,
 the ratio between the expected value of the variance estimator and the empirical
@@ -433,23 +433,23 @@ be a good approximation of the empirical variance. Finally, the estimated percen
 coverage rate of 94.28% is close to the nominal level of 95%, indicating that the
 confidence intervals are approximately valid.</p>
 <p>For the convex FGT measure, we have:</p>
-<div class="sourceCode" id="cb417"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb417-1"><a href="4-richness-measures.html#cb417-1" tabindex="-1"></a>rfgtt2.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(rep.list , <span class="st">`</span><span class="at">[[</span><span class="st">`</span> , <span class="dv">3</span>)</span>
-<span id="cb417-2"><a href="4-richness-measures.html#cb417-2" tabindex="-1"></a><span class="fu">sim.compile</span>(rfgtt2.list, rFGTT2.fp)</span></code></pre></div>
+<div class="sourceCode" id="cb420"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb420-1"><a href="4-richness-measures.html#cb420-1" tabindex="-1"></a>rfgtt2.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(rep.list , <span class="st">`</span><span class="at">[[</span><span class="st">`</span> , <span class="dv">3</span>)</span>
+<span id="cb420-2"><a href="4-richness-measures.html#cb420-2" tabindex="-1"></a><span class="fu">sim.compile</span>(rfgtt2.list, rFGTT2.fp)</span></code></pre></div>
 <pre><code>##   mc.reps      theta theta.hat theta.bias2 theta.empvar theta.hat.mse
 ## 1    5000 0.02349189 0.1045973  0.00657808   0.01865219    0.02523027
 ##   theta.varhat    pcr
 ## 1   0.01857144 0.5212</code></pre>
-<div class="sourceCode" id="cb419"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb419-1"><a href="4-richness-measures.html#cb419-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(</span>
-<span id="cb419-2"><a href="4-richness-measures.html#cb419-2" tabindex="-1"></a>  <span class="fu">sim.compile</span>(rfgtt2.list, rFGTT2.fp)[<span class="st">&quot;theta.bias2&quot;</span>] <span class="sc">/</span> <span class="fu">sim.compile</span>(rfgtt2.list, rFGTT2.fp)[<span class="st">&quot;theta.hat.mse&quot;</span>] ,</span>
-<span id="cb419-3"><a href="4-richness-measures.html#cb419-3" tabindex="-1"></a>  <span class="dv">2</span></span>
-<span id="cb419-4"><a href="4-richness-measures.html#cb419-4" tabindex="-1"></a>) <span class="sc">==</span> <span class="fl">0.26</span>)</span>
-<span id="cb419-5"><a href="4-richness-measures.html#cb419-5" tabindex="-1"></a></span>
-<span id="cb419-6"><a href="4-richness-measures.html#cb419-6" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(</span>
-<span id="cb419-7"><a href="4-richness-measures.html#cb419-7" tabindex="-1"></a>  <span class="fu">sim.compile</span>(rfgtt2.list, rFGTT2.fp)[<span class="st">&quot;theta.varhat&quot;</span>] <span class="sc">/</span> <span class="fu">sim.compile</span>(rfgtt2.list, rFGTT2.fp)[<span class="st">&quot;theta.empvar&quot;</span>] ,</span>
-<span id="cb419-8"><a href="4-richness-measures.html#cb419-8" tabindex="-1"></a>  <span class="dv">2</span></span>
-<span id="cb419-9"><a href="4-richness-measures.html#cb419-9" tabindex="-1"></a>) <span class="sc">==</span> <span class="dv">1</span>)</span>
-<span id="cb419-10"><a href="4-richness-measures.html#cb419-10" tabindex="-1"></a></span>
-<span id="cb419-11"><a href="4-richness-measures.html#cb419-11" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">sim.compile</span>(rfgtt2.list, rFGTT2.fp)[<span class="st">&quot;pcr&quot;</span>] , <span class="dv">4</span>) <span class="sc">==</span> <span class="fl">0.5212</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb422"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb422-1"><a href="4-richness-measures.html#cb422-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(</span>
+<span id="cb422-2"><a href="4-richness-measures.html#cb422-2" tabindex="-1"></a>  <span class="fu">sim.compile</span>(rfgtt2.list, rFGTT2.fp)[<span class="st">&quot;theta.bias2&quot;</span>] <span class="sc">/</span> <span class="fu">sim.compile</span>(rfgtt2.list, rFGTT2.fp)[<span class="st">&quot;theta.hat.mse&quot;</span>] ,</span>
+<span id="cb422-3"><a href="4-richness-measures.html#cb422-3" tabindex="-1"></a>  <span class="dv">2</span></span>
+<span id="cb422-4"><a href="4-richness-measures.html#cb422-4" tabindex="-1"></a>) <span class="sc">==</span> <span class="fl">0.26</span>)</span>
+<span id="cb422-5"><a href="4-richness-measures.html#cb422-5" tabindex="-1"></a></span>
+<span id="cb422-6"><a href="4-richness-measures.html#cb422-6" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(</span>
+<span id="cb422-7"><a href="4-richness-measures.html#cb422-7" tabindex="-1"></a>  <span class="fu">sim.compile</span>(rfgtt2.list, rFGTT2.fp)[<span class="st">&quot;theta.varhat&quot;</span>] <span class="sc">/</span> <span class="fu">sim.compile</span>(rfgtt2.list, rFGTT2.fp)[<span class="st">&quot;theta.empvar&quot;</span>] ,</span>
+<span id="cb422-8"><a href="4-richness-measures.html#cb422-8" tabindex="-1"></a>  <span class="dv">2</span></span>
+<span id="cb422-9"><a href="4-richness-measures.html#cb422-9" tabindex="-1"></a>) <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb422-10"><a href="4-richness-measures.html#cb422-10" tabindex="-1"></a></span>
+<span id="cb422-11"><a href="4-richness-measures.html#cb422-11" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">sim.compile</span>(rfgtt2.list, rFGTT2.fp)[<span class="st">&quot;pcr&quot;</span>] , <span class="dv">4</span>) <span class="sc">==</span> <span class="fl">0.5212</span>)</span></code></pre></div>
 <p>Under this approach, the squared bias is approx 26% of the MSE, indicating that
 the <em>bias is substantial</em>. The ratio between the expected value of the variance
 estimator and the empirical variance is approx. 1.00, indicating that the variance

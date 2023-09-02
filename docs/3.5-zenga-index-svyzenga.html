@@ -13,7 +13,7 @@
 
 <meta name="author" content="Guilherme Jacob, Anthony Damico, and Djalma Pessoa" />
 
-<meta name="date" content="2023-08-29" />
+<meta name="date" content="2023-09-02" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -196,159 +196,159 @@ Z = 1 - \int_{0}^{1} \frac{L(p)}{p} \cdot \frac{ 1 - p }{ 1 - L(p) } dp
 <p><strong>A replication example</strong></p>
 <p>While it is not possible to reproduce the exact results because their simulation includes random sampling, we can replicate a Monte Carlo experiment similar to the one presented by <span class="citation">Barabesi, Diana, and Perri (<label for="tufte-mn-73" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-73" class="margin-toggle">2016<span class="marginnote">Barabesi, Lucio, Giancarlo Diana, and Pier Francesco Perri. 2016. <span>“Linearization of Inequality Indices in the Design-Based Framework.”</span> <em>Statistics</em> 50 (5): 1161–72. <a href="https://doi.org/10.1080/02331888.2015.1135924">https://doi.org/10.1080/02331888.2015.1135924</a>.</span>)</span> in Table 2.</p>
 <p>Load and prepare the data set:</p>
-<div class="sourceCode" id="cb287"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb287-1"><a href="3.5-zenga-index-svyzenga.html#cb287-1" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
-<span id="cb287-2"><a href="3.5-zenga-index-svyzenga.html#cb287-2" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
-<span id="cb287-3"><a href="3.5-zenga-index-svyzenga.html#cb287-3" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
-<span id="cb287-4"><a href="3.5-zenga-index-svyzenga.html#cb287-4" tabindex="-1"></a></span>
-<span id="cb287-5"><a href="3.5-zenga-index-svyzenga.html#cb287-5" tabindex="-1"></a><span class="co"># create a temporary file on the local disk</span></span>
-<span id="cb287-6"><a href="3.5-zenga-index-svyzenga.html#cb287-6" tabindex="-1"></a>tf <span class="ot">&lt;-</span> <span class="fu">tempfile</span>()</span>
-<span id="cb287-7"><a href="3.5-zenga-index-svyzenga.html#cb287-7" tabindex="-1"></a></span>
-<span id="cb287-8"><a href="3.5-zenga-index-svyzenga.html#cb287-8" tabindex="-1"></a><span class="co"># store the location of the zip file</span></span>
-<span id="cb287-9"><a href="3.5-zenga-index-svyzenga.html#cb287-9" tabindex="-1"></a>data_zip <span class="ot">&lt;-</span></span>
-<span id="cb287-10"><a href="3.5-zenga-index-svyzenga.html#cb287-10" tabindex="-1"></a>  <span class="st">&quot;https://www.bancaditalia.it/statistiche/tematiche/indagini-famiglie-imprese/bilanci-famiglie/distribuzione-microdati/documenti/ind12_ascii.zip&quot;</span></span>
-<span id="cb287-11"><a href="3.5-zenga-index-svyzenga.html#cb287-11" tabindex="-1"></a></span>
-<span id="cb287-12"><a href="3.5-zenga-index-svyzenga.html#cb287-12" tabindex="-1"></a><span class="co"># download to the temporary file</span></span>
-<span id="cb287-13"><a href="3.5-zenga-index-svyzenga.html#cb287-13" tabindex="-1"></a><span class="fu">download.file</span>(data_zip , tf , <span class="at">mode =</span> <span class="st">&#39;wb&#39;</span>)</span>
-<span id="cb287-14"><a href="3.5-zenga-index-svyzenga.html#cb287-14" tabindex="-1"></a></span>
-<span id="cb287-15"><a href="3.5-zenga-index-svyzenga.html#cb287-15" tabindex="-1"></a><span class="co"># unzip the contents of the archive to a temporary directory</span></span>
-<span id="cb287-16"><a href="3.5-zenga-index-svyzenga.html#cb287-16" tabindex="-1"></a>td <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>() , <span class="st">&quot;shiw2012&quot;</span>)</span>
-<span id="cb287-17"><a href="3.5-zenga-index-svyzenga.html#cb287-17" tabindex="-1"></a>data_files <span class="ot">&lt;-</span> <span class="fu">unzip</span>(tf , <span class="at">exdir =</span> td)</span>
-<span id="cb287-18"><a href="3.5-zenga-index-svyzenga.html#cb287-18" tabindex="-1"></a></span>
-<span id="cb287-19"><a href="3.5-zenga-index-svyzenga.html#cb287-19" tabindex="-1"></a><span class="co"># load the household, consumption and income from SHIW (2012) survey data</span></span>
-<span id="cb287-20"><a href="3.5-zenga-index-svyzenga.html#cb287-20" tabindex="-1"></a>hhr.df <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">grep</span>(<span class="st">&quot;carcom12&quot;</span> , data_files , <span class="at">value =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb287-21"><a href="3.5-zenga-index-svyzenga.html#cb287-21" tabindex="-1"></a>cns.df <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">grep</span>(<span class="st">&quot;risfam12&quot;</span> , data_files , <span class="at">value =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb287-22"><a href="3.5-zenga-index-svyzenga.html#cb287-22" tabindex="-1"></a>inc.df <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">grep</span>(<span class="st">&quot;rper12&quot;</span> , data_files , <span class="at">value =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb287-23"><a href="3.5-zenga-index-svyzenga.html#cb287-23" tabindex="-1"></a></span>
-<span id="cb287-24"><a href="3.5-zenga-index-svyzenga.html#cb287-24" tabindex="-1"></a><span class="co"># fixes names</span></span>
-<span id="cb287-25"><a href="3.5-zenga-index-svyzenga.html#cb287-25" tabindex="-1"></a><span class="fu">colnames</span>(cns.df)[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">colnames</span>(cns.df))[<span class="dv">1</span>]</span>
-<span id="cb287-26"><a href="3.5-zenga-index-svyzenga.html#cb287-26" tabindex="-1"></a></span>
-<span id="cb287-27"><a href="3.5-zenga-index-svyzenga.html#cb287-27" tabindex="-1"></a><span class="co"># household count should be 8151</span></span>
-<span id="cb287-28"><a href="3.5-zenga-index-svyzenga.html#cb287-28" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="sc">!</span><span class="fu">duplicated</span>(hhr.df<span class="sc">$</span>nquest)) <span class="sc">==</span> <span class="dv">8151</span>)</span>
-<span id="cb287-29"><a href="3.5-zenga-index-svyzenga.html#cb287-29" tabindex="-1"></a></span>
-<span id="cb287-30"><a href="3.5-zenga-index-svyzenga.html#cb287-30" tabindex="-1"></a><span class="co"># person count should be 20022</span></span>
-<span id="cb287-31"><a href="3.5-zenga-index-svyzenga.html#cb287-31" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="sc">!</span><span class="fu">duplicated</span>(<span class="fu">paste0</span>(</span>
-<span id="cb287-32"><a href="3.5-zenga-index-svyzenga.html#cb287-32" tabindex="-1"></a>  hhr.df<span class="sc">$</span>nquest , <span class="st">&quot;-&quot;</span> , hhr.df<span class="sc">$</span>nord</span>
-<span id="cb287-33"><a href="3.5-zenga-index-svyzenga.html#cb287-33" tabindex="-1"></a>))) <span class="sc">==</span> <span class="dv">20022</span>)</span>
-<span id="cb287-34"><a href="3.5-zenga-index-svyzenga.html#cb287-34" tabindex="-1"></a></span>
-<span id="cb287-35"><a href="3.5-zenga-index-svyzenga.html#cb287-35" tabindex="-1"></a><span class="co"># income recipients: should be 12986</span></span>
-<span id="cb287-36"><a href="3.5-zenga-index-svyzenga.html#cb287-36" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(hhr.df<span class="sc">$</span>PERC) <span class="sc">==</span> <span class="dv">12986</span>)</span>
-<span id="cb287-37"><a href="3.5-zenga-index-svyzenga.html#cb287-37" tabindex="-1"></a></span>
-<span id="cb287-38"><a href="3.5-zenga-index-svyzenga.html#cb287-38" tabindex="-1"></a><span class="co"># combine household roster and income datasets</span></span>
-<span id="cb287-39"><a href="3.5-zenga-index-svyzenga.html#cb287-39" tabindex="-1"></a>pop.df <span class="ot">&lt;-</span></span>
-<span id="cb287-40"><a href="3.5-zenga-index-svyzenga.html#cb287-40" tabindex="-1"></a>  <span class="fu">merge</span>(</span>
-<span id="cb287-41"><a href="3.5-zenga-index-svyzenga.html#cb287-41" tabindex="-1"></a>    hhr.df ,</span>
-<span id="cb287-42"><a href="3.5-zenga-index-svyzenga.html#cb287-42" tabindex="-1"></a>    inc.df ,</span>
-<span id="cb287-43"><a href="3.5-zenga-index-svyzenga.html#cb287-43" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;nquest&quot;</span> , <span class="st">&quot;nord&quot;</span>) ,</span>
-<span id="cb287-44"><a href="3.5-zenga-index-svyzenga.html#cb287-44" tabindex="-1"></a>    <span class="at">all.x =</span> <span class="cn">TRUE</span> ,</span>
-<span id="cb287-45"><a href="3.5-zenga-index-svyzenga.html#cb287-45" tabindex="-1"></a>    <span class="at">sort =</span> <span class="cn">FALSE</span></span>
-<span id="cb287-46"><a href="3.5-zenga-index-svyzenga.html#cb287-46" tabindex="-1"></a>  )</span>
-<span id="cb287-47"><a href="3.5-zenga-index-svyzenga.html#cb287-47" tabindex="-1"></a></span>
-<span id="cb287-48"><a href="3.5-zenga-index-svyzenga.html#cb287-48" tabindex="-1"></a><span class="co"># compute household-level income</span></span>
-<span id="cb287-49"><a href="3.5-zenga-index-svyzenga.html#cb287-49" tabindex="-1"></a>hinc.df <span class="ot">&lt;-</span></span>
-<span id="cb287-50"><a href="3.5-zenga-index-svyzenga.html#cb287-50" tabindex="-1"></a>  pop.df[pop.df<span class="sc">$</span>PERC <span class="sc">==</span> <span class="dv">1</span> ,</span>
-<span id="cb287-51"><a href="3.5-zenga-index-svyzenga.html#cb287-51" tabindex="-1"></a>         <span class="fu">c</span>(<span class="st">&quot;nquest&quot;</span> , <span class="st">&quot;nord&quot;</span> , <span class="st">&quot;PERC&quot;</span> , <span class="st">&quot;Y&quot;</span> , <span class="st">&quot;YL&quot;</span> , <span class="st">&quot;YM&quot;</span> , <span class="st">&quot;YT&quot;</span> , <span class="st">&quot;YC&quot;</span>) ,</span>
-<span id="cb287-52"><a href="3.5-zenga-index-svyzenga.html#cb287-52" tabindex="-1"></a>         drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
-<span id="cb287-53"><a href="3.5-zenga-index-svyzenga.html#cb287-53" tabindex="-1"></a></span>
-<span id="cb287-54"><a href="3.5-zenga-index-svyzenga.html#cb287-54" tabindex="-1"></a>hinc.df <span class="ot">&lt;-</span></span>
-<span id="cb287-55"><a href="3.5-zenga-index-svyzenga.html#cb287-55" tabindex="-1"></a>  <span class="fu">aggregate</span>(<span class="fu">rowSums</span>(hinc.df[, <span class="fu">c</span>(<span class="st">&quot;YL&quot;</span>  , <span class="st">&quot;YM&quot;</span> , <span class="st">&quot;YT&quot;</span>) , <span class="at">drop =</span> <span class="cn">FALSE</span>]) ,</span>
-<span id="cb287-56"><a href="3.5-zenga-index-svyzenga.html#cb287-56" tabindex="-1"></a>            <span class="fu">list</span>(<span class="st">&quot;nquest&quot;</span> <span class="ot">=</span> hinc.df<span class="sc">$</span>nquest) ,</span>
-<span id="cb287-57"><a href="3.5-zenga-index-svyzenga.html#cb287-57" tabindex="-1"></a>            sum ,</span>
-<span id="cb287-58"><a href="3.5-zenga-index-svyzenga.html#cb287-58" tabindex="-1"></a>            <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb287-59"><a href="3.5-zenga-index-svyzenga.html#cb287-59" tabindex="-1"></a></span>
-<span id="cb287-60"><a href="3.5-zenga-index-svyzenga.html#cb287-60" tabindex="-1"></a>pop.df <span class="ot">&lt;-</span></span>
-<span id="cb287-61"><a href="3.5-zenga-index-svyzenga.html#cb287-61" tabindex="-1"></a>  <span class="fu">merge</span>(pop.df ,</span>
-<span id="cb287-62"><a href="3.5-zenga-index-svyzenga.html#cb287-62" tabindex="-1"></a>        hinc.df ,</span>
-<span id="cb287-63"><a href="3.5-zenga-index-svyzenga.html#cb287-63" tabindex="-1"></a>        <span class="at">by =</span> <span class="st">&quot;nquest&quot;</span> ,</span>
-<span id="cb287-64"><a href="3.5-zenga-index-svyzenga.html#cb287-64" tabindex="-1"></a>        <span class="at">all.x =</span> <span class="cn">TRUE</span> ,</span>
-<span id="cb287-65"><a href="3.5-zenga-index-svyzenga.html#cb287-65" tabindex="-1"></a>        <span class="at">sort =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb287-66"><a href="3.5-zenga-index-svyzenga.html#cb287-66" tabindex="-1"></a></span>
-<span id="cb287-67"><a href="3.5-zenga-index-svyzenga.html#cb287-67" tabindex="-1"></a><span class="co"># combine with consumption data</span></span>
-<span id="cb287-68"><a href="3.5-zenga-index-svyzenga.html#cb287-68" tabindex="-1"></a>pop.df <span class="ot">&lt;-</span></span>
-<span id="cb287-69"><a href="3.5-zenga-index-svyzenga.html#cb287-69" tabindex="-1"></a>  <span class="fu">merge</span>(pop.df ,</span>
-<span id="cb287-70"><a href="3.5-zenga-index-svyzenga.html#cb287-70" tabindex="-1"></a>        cns.df ,</span>
-<span id="cb287-71"><a href="3.5-zenga-index-svyzenga.html#cb287-71" tabindex="-1"></a>        <span class="at">by =</span> <span class="st">&quot;nquest&quot;</span> ,</span>
-<span id="cb287-72"><a href="3.5-zenga-index-svyzenga.html#cb287-72" tabindex="-1"></a>        <span class="at">all.x =</span> <span class="cn">TRUE</span> ,</span>
-<span id="cb287-73"><a href="3.5-zenga-index-svyzenga.html#cb287-73" tabindex="-1"></a>        <span class="at">sort =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb287-74"><a href="3.5-zenga-index-svyzenga.html#cb287-74" tabindex="-1"></a></span>
-<span id="cb287-75"><a href="3.5-zenga-index-svyzenga.html#cb287-75" tabindex="-1"></a><span class="co"># treat household-level sample as the finite population</span></span>
-<span id="cb287-76"><a href="3.5-zenga-index-svyzenga.html#cb287-76" tabindex="-1"></a>pop.df <span class="ot">&lt;-</span></span>
-<span id="cb287-77"><a href="3.5-zenga-index-svyzenga.html#cb287-77" tabindex="-1"></a>  pop.df[<span class="sc">!</span><span class="fu">duplicated</span>(pop.df<span class="sc">$</span>nquest) , , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span></code></pre></div>
-<p>For the Monte Carlo experiment, we take <code>5000</code> samples of (expected) size <code>1000</code> using Poisson sampling<label for="tufte-sn-3" class="margin-toggle sidenote-number">3</label><input type="checkbox" id="tufte-sn-3" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">3</span> but not Conditional Poisson Sampling.</span>:</p>
-<div class="sourceCode" id="cb288"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb288-1"><a href="3.5-zenga-index-svyzenga.html#cb288-1" tabindex="-1"></a><span class="co"># set up monte carlo attributes</span></span>
-<span id="cb288-2"><a href="3.5-zenga-index-svyzenga.html#cb288-2" tabindex="-1"></a>mc.rep <span class="ot">&lt;-</span> 5000L</span>
-<span id="cb288-3"><a href="3.5-zenga-index-svyzenga.html#cb288-3" tabindex="-1"></a>n.size <span class="ot">=</span> 1000L</span>
-<span id="cb288-4"><a href="3.5-zenga-index-svyzenga.html#cb288-4" tabindex="-1"></a>N.size <span class="ot">=</span> <span class="fu">nrow</span>(pop.df)</span>
-<span id="cb288-5"><a href="3.5-zenga-index-svyzenga.html#cb288-5" tabindex="-1"></a></span>
-<span id="cb288-6"><a href="3.5-zenga-index-svyzenga.html#cb288-6" tabindex="-1"></a><span class="co"># calculate first order probabilities</span></span>
-<span id="cb288-7"><a href="3.5-zenga-index-svyzenga.html#cb288-7" tabindex="-1"></a>pop.df<span class="sc">$</span>pik <span class="ot">&lt;-</span></span>
-<span id="cb288-8"><a href="3.5-zenga-index-svyzenga.html#cb288-8" tabindex="-1"></a>  n.size <span class="sc">*</span> (<span class="fu">abs</span>(pop.df<span class="sc">$</span>C) <span class="sc">/</span> <span class="fu">sum</span>(<span class="fu">abs</span>(pop.df<span class="sc">$</span>C)))</span>
-<span id="cb288-9"><a href="3.5-zenga-index-svyzenga.html#cb288-9" tabindex="-1"></a></span>
-<span id="cb288-10"><a href="3.5-zenga-index-svyzenga.html#cb288-10" tabindex="-1"></a><span class="co"># calculate second order probabilities</span></span>
-<span id="cb288-11"><a href="3.5-zenga-index-svyzenga.html#cb288-11" tabindex="-1"></a>pikl <span class="ot">&lt;-</span> pop.df<span class="sc">$</span>pik <span class="sc">%*%</span> <span class="fu">t</span>(pop.df<span class="sc">$</span>pik)</span>
-<span id="cb288-12"><a href="3.5-zenga-index-svyzenga.html#cb288-12" tabindex="-1"></a><span class="fu">diag</span>(pikl) <span class="ot">&lt;-</span> pop.df<span class="sc">$</span>pik</span>
-<span id="cb288-13"><a href="3.5-zenga-index-svyzenga.html#cb288-13" tabindex="-1"></a></span>
-<span id="cb288-14"><a href="3.5-zenga-index-svyzenga.html#cb288-14" tabindex="-1"></a><span class="co"># set random number seed</span></span>
-<span id="cb288-15"><a href="3.5-zenga-index-svyzenga.html#cb288-15" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1997</span>)</span>
-<span id="cb288-16"><a href="3.5-zenga-index-svyzenga.html#cb288-16" tabindex="-1"></a></span>
-<span id="cb288-17"><a href="3.5-zenga-index-svyzenga.html#cb288-17" tabindex="-1"></a><span class="co"># create list of survey design objects</span></span>
-<span id="cb288-18"><a href="3.5-zenga-index-svyzenga.html#cb288-18" tabindex="-1"></a><span class="co"># using poisson sampling</span></span>
-<span id="cb288-19"><a href="3.5-zenga-index-svyzenga.html#cb288-19" tabindex="-1"></a>survey.list <span class="ot">&lt;-</span></span>
-<span id="cb288-20"><a href="3.5-zenga-index-svyzenga.html#cb288-20" tabindex="-1"></a>  <span class="fu">lapply</span>(<span class="fu">seq_len</span>(mc.rep) ,</span>
-<span id="cb288-21"><a href="3.5-zenga-index-svyzenga.html#cb288-21" tabindex="-1"></a>         <span class="cf">function</span>(this.rep) {</span>
-<span id="cb288-22"><a href="3.5-zenga-index-svyzenga.html#cb288-22" tabindex="-1"></a>           smp.ind <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">runif</span>(N.size) <span class="sc">&lt;=</span> pop.df<span class="sc">$</span>pik)</span>
-<span id="cb288-23"><a href="3.5-zenga-index-svyzenga.html#cb288-23" tabindex="-1"></a>           smp.df <span class="ot">&lt;-</span> pop.df[smp.ind , , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
-<span id="cb288-24"><a href="3.5-zenga-index-svyzenga.html#cb288-24" tabindex="-1"></a>           <span class="fu">svydesign</span>(</span>
-<span id="cb288-25"><a href="3.5-zenga-index-svyzenga.html#cb288-25" tabindex="-1"></a>             <span class="at">ids =</span> <span class="sc">~</span> nquest ,</span>
-<span id="cb288-26"><a href="3.5-zenga-index-svyzenga.html#cb288-26" tabindex="-1"></a>             <span class="at">data =</span> smp.df ,</span>
-<span id="cb288-27"><a href="3.5-zenga-index-svyzenga.html#cb288-27" tabindex="-1"></a>             <span class="at">fpc =</span> <span class="sc">~</span> pik ,</span>
-<span id="cb288-28"><a href="3.5-zenga-index-svyzenga.html#cb288-28" tabindex="-1"></a>             <span class="at">nest =</span> <span class="cn">FALSE</span> ,</span>
-<span id="cb288-29"><a href="3.5-zenga-index-svyzenga.html#cb288-29" tabindex="-1"></a>             <span class="at">pps =</span> <span class="fu">ppsmat</span>(pikl[smp.ind , smp.ind]) ,</span>
-<span id="cb288-30"><a href="3.5-zenga-index-svyzenga.html#cb288-30" tabindex="-1"></a>             <span class="at">variance =</span> <span class="st">&quot;HT&quot;</span></span>
-<span id="cb288-31"><a href="3.5-zenga-index-svyzenga.html#cb288-31" tabindex="-1"></a>           )</span>
-<span id="cb288-32"><a href="3.5-zenga-index-svyzenga.html#cb288-32" tabindex="-1"></a>         })</span></code></pre></div>
-<p>… and estimate the Zenga index using each sample:</p>
-<div class="sourceCode" id="cb289"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb289-1"><a href="3.5-zenga-index-svyzenga.html#cb289-1" tabindex="-1"></a><span class="co"># estimate zenga index for each sample</span></span>
-<span id="cb289-2"><a href="3.5-zenga-index-svyzenga.html#cb289-2" tabindex="-1"></a>zenga.estimate.list <span class="ot">&lt;-</span></span>
-<span id="cb289-3"><a href="3.5-zenga-index-svyzenga.html#cb289-3" tabindex="-1"></a>  <span class="fu">lapply</span>(survey.list ,</span>
-<span id="cb289-4"><a href="3.5-zenga-index-svyzenga.html#cb289-4" tabindex="-1"></a>         <span class="cf">function</span>(this.sample) {</span>
-<span id="cb289-5"><a href="3.5-zenga-index-svyzenga.html#cb289-5" tabindex="-1"></a>           <span class="fu">svyzenga</span>( <span class="sc">~</span> x ,</span>
-<span id="cb289-6"><a href="3.5-zenga-index-svyzenga.html#cb289-6" tabindex="-1"></a>                     <span class="fu">subset</span>(this.sample , x <span class="sc">&gt;</span> <span class="dv">0</span>) ,</span>
-<span id="cb289-7"><a href="3.5-zenga-index-svyzenga.html#cb289-7" tabindex="-1"></a>                     <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb289-8"><a href="3.5-zenga-index-svyzenga.html#cb289-8" tabindex="-1"></a>         })</span></code></pre></div>
-<p>Then, we evaluate the Percentage Relative Bias (PRB) of the Zenga index estimator. Under this scenario, the PRB of the Zenga index estimator is 0.3397%, a result similar to the <code>0.321</code> shown in Table 2.</p>
-<div class="sourceCode" id="cb290"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb290-1"><a href="3.5-zenga-index-svyzenga.html#cb290-1" tabindex="-1"></a><span class="co"># compute the (finite population) Zenga index parameter</span></span>
-<span id="cb290-2"><a href="3.5-zenga-index-svyzenga.html#cb290-2" tabindex="-1"></a>theta.pop <span class="ot">&lt;-</span></span>
-<span id="cb290-3"><a href="3.5-zenga-index-svyzenga.html#cb290-3" tabindex="-1"></a>  convey<span class="sc">:::</span><span class="fu">CalcZenga</span>(pop.df<span class="sc">$</span>x , <span class="fu">ifelse</span>(pop.df<span class="sc">$</span>x <span class="sc">&gt;</span> <span class="dv">0</span> , <span class="dv">1</span> , <span class="dv">0</span>))</span>
+<div class="sourceCode" id="cb290"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb290-1"><a href="3.5-zenga-index-svyzenga.html#cb290-1" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
+<span id="cb290-2"><a href="3.5-zenga-index-svyzenga.html#cb290-2" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb290-3"><a href="3.5-zenga-index-svyzenga.html#cb290-3" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
 <span id="cb290-4"><a href="3.5-zenga-index-svyzenga.html#cb290-4" tabindex="-1"></a></span>
-<span id="cb290-5"><a href="3.5-zenga-index-svyzenga.html#cb290-5" tabindex="-1"></a><span class="co"># estimate the expected value of the Zenga index estimator</span></span>
-<span id="cb290-6"><a href="3.5-zenga-index-svyzenga.html#cb290-6" tabindex="-1"></a><span class="co"># using the average of the estimates</span></span>
-<span id="cb290-7"><a href="3.5-zenga-index-svyzenga.html#cb290-7" tabindex="-1"></a>theta.exp <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">sapply</span>(zenga.estimate.list , coef))</span>
-<span id="cb290-8"><a href="3.5-zenga-index-svyzenga.html#cb290-8" tabindex="-1"></a></span>
-<span id="cb290-9"><a href="3.5-zenga-index-svyzenga.html#cb290-9" tabindex="-1"></a><span class="co"># estimate the percentage relative bias</span></span>
-<span id="cb290-10"><a href="3.5-zenga-index-svyzenga.html#cb290-10" tabindex="-1"></a><span class="dv">100</span> <span class="sc">*</span> (theta.exp <span class="sc">/</span> theta.pop <span class="sc">-</span> <span class="dv">1</span>)</span></code></pre></div>
+<span id="cb290-5"><a href="3.5-zenga-index-svyzenga.html#cb290-5" tabindex="-1"></a><span class="co"># create a temporary file on the local disk</span></span>
+<span id="cb290-6"><a href="3.5-zenga-index-svyzenga.html#cb290-6" tabindex="-1"></a>tf <span class="ot">&lt;-</span> <span class="fu">tempfile</span>()</span>
+<span id="cb290-7"><a href="3.5-zenga-index-svyzenga.html#cb290-7" tabindex="-1"></a></span>
+<span id="cb290-8"><a href="3.5-zenga-index-svyzenga.html#cb290-8" tabindex="-1"></a><span class="co"># store the location of the zip file</span></span>
+<span id="cb290-9"><a href="3.5-zenga-index-svyzenga.html#cb290-9" tabindex="-1"></a>data_zip <span class="ot">&lt;-</span></span>
+<span id="cb290-10"><a href="3.5-zenga-index-svyzenga.html#cb290-10" tabindex="-1"></a>  <span class="st">&quot;https://www.bancaditalia.it/statistiche/tematiche/indagini-famiglie-imprese/bilanci-famiglie/distribuzione-microdati/documenti/ind12_ascii.zip&quot;</span></span>
+<span id="cb290-11"><a href="3.5-zenga-index-svyzenga.html#cb290-11" tabindex="-1"></a></span>
+<span id="cb290-12"><a href="3.5-zenga-index-svyzenga.html#cb290-12" tabindex="-1"></a><span class="co"># download to the temporary file</span></span>
+<span id="cb290-13"><a href="3.5-zenga-index-svyzenga.html#cb290-13" tabindex="-1"></a><span class="fu">download.file</span>(data_zip , tf , <span class="at">mode =</span> <span class="st">&#39;wb&#39;</span>)</span>
+<span id="cb290-14"><a href="3.5-zenga-index-svyzenga.html#cb290-14" tabindex="-1"></a></span>
+<span id="cb290-15"><a href="3.5-zenga-index-svyzenga.html#cb290-15" tabindex="-1"></a><span class="co"># unzip the contents of the archive to a temporary directory</span></span>
+<span id="cb290-16"><a href="3.5-zenga-index-svyzenga.html#cb290-16" tabindex="-1"></a>td <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>() , <span class="st">&quot;shiw2012&quot;</span>)</span>
+<span id="cb290-17"><a href="3.5-zenga-index-svyzenga.html#cb290-17" tabindex="-1"></a>data_files <span class="ot">&lt;-</span> <span class="fu">unzip</span>(tf , <span class="at">exdir =</span> td)</span>
+<span id="cb290-18"><a href="3.5-zenga-index-svyzenga.html#cb290-18" tabindex="-1"></a></span>
+<span id="cb290-19"><a href="3.5-zenga-index-svyzenga.html#cb290-19" tabindex="-1"></a><span class="co"># load the household, consumption and income from SHIW (2012) survey data</span></span>
+<span id="cb290-20"><a href="3.5-zenga-index-svyzenga.html#cb290-20" tabindex="-1"></a>hhr.df <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">grep</span>(<span class="st">&quot;carcom12&quot;</span> , data_files , <span class="at">value =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb290-21"><a href="3.5-zenga-index-svyzenga.html#cb290-21" tabindex="-1"></a>cns.df <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">grep</span>(<span class="st">&quot;risfam12&quot;</span> , data_files , <span class="at">value =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb290-22"><a href="3.5-zenga-index-svyzenga.html#cb290-22" tabindex="-1"></a>inc.df <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">grep</span>(<span class="st">&quot;rper12&quot;</span> , data_files , <span class="at">value =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb290-23"><a href="3.5-zenga-index-svyzenga.html#cb290-23" tabindex="-1"></a></span>
+<span id="cb290-24"><a href="3.5-zenga-index-svyzenga.html#cb290-24" tabindex="-1"></a><span class="co"># fixes names</span></span>
+<span id="cb290-25"><a href="3.5-zenga-index-svyzenga.html#cb290-25" tabindex="-1"></a><span class="fu">colnames</span>(cns.df)[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">colnames</span>(cns.df))[<span class="dv">1</span>]</span>
+<span id="cb290-26"><a href="3.5-zenga-index-svyzenga.html#cb290-26" tabindex="-1"></a></span>
+<span id="cb290-27"><a href="3.5-zenga-index-svyzenga.html#cb290-27" tabindex="-1"></a><span class="co"># household count should be 8151</span></span>
+<span id="cb290-28"><a href="3.5-zenga-index-svyzenga.html#cb290-28" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="sc">!</span><span class="fu">duplicated</span>(hhr.df<span class="sc">$</span>nquest)) <span class="sc">==</span> <span class="dv">8151</span>)</span>
+<span id="cb290-29"><a href="3.5-zenga-index-svyzenga.html#cb290-29" tabindex="-1"></a></span>
+<span id="cb290-30"><a href="3.5-zenga-index-svyzenga.html#cb290-30" tabindex="-1"></a><span class="co"># person count should be 20022</span></span>
+<span id="cb290-31"><a href="3.5-zenga-index-svyzenga.html#cb290-31" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="sc">!</span><span class="fu">duplicated</span>(<span class="fu">paste0</span>(</span>
+<span id="cb290-32"><a href="3.5-zenga-index-svyzenga.html#cb290-32" tabindex="-1"></a>  hhr.df<span class="sc">$</span>nquest , <span class="st">&quot;-&quot;</span> , hhr.df<span class="sc">$</span>nord</span>
+<span id="cb290-33"><a href="3.5-zenga-index-svyzenga.html#cb290-33" tabindex="-1"></a>))) <span class="sc">==</span> <span class="dv">20022</span>)</span>
+<span id="cb290-34"><a href="3.5-zenga-index-svyzenga.html#cb290-34" tabindex="-1"></a></span>
+<span id="cb290-35"><a href="3.5-zenga-index-svyzenga.html#cb290-35" tabindex="-1"></a><span class="co"># income recipients: should be 12986</span></span>
+<span id="cb290-36"><a href="3.5-zenga-index-svyzenga.html#cb290-36" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(hhr.df<span class="sc">$</span>PERC) <span class="sc">==</span> <span class="dv">12986</span>)</span>
+<span id="cb290-37"><a href="3.5-zenga-index-svyzenga.html#cb290-37" tabindex="-1"></a></span>
+<span id="cb290-38"><a href="3.5-zenga-index-svyzenga.html#cb290-38" tabindex="-1"></a><span class="co"># combine household roster and income datasets</span></span>
+<span id="cb290-39"><a href="3.5-zenga-index-svyzenga.html#cb290-39" tabindex="-1"></a>pop.df <span class="ot">&lt;-</span></span>
+<span id="cb290-40"><a href="3.5-zenga-index-svyzenga.html#cb290-40" tabindex="-1"></a>  <span class="fu">merge</span>(</span>
+<span id="cb290-41"><a href="3.5-zenga-index-svyzenga.html#cb290-41" tabindex="-1"></a>    hhr.df ,</span>
+<span id="cb290-42"><a href="3.5-zenga-index-svyzenga.html#cb290-42" tabindex="-1"></a>    inc.df ,</span>
+<span id="cb290-43"><a href="3.5-zenga-index-svyzenga.html#cb290-43" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;nquest&quot;</span> , <span class="st">&quot;nord&quot;</span>) ,</span>
+<span id="cb290-44"><a href="3.5-zenga-index-svyzenga.html#cb290-44" tabindex="-1"></a>    <span class="at">all.x =</span> <span class="cn">TRUE</span> ,</span>
+<span id="cb290-45"><a href="3.5-zenga-index-svyzenga.html#cb290-45" tabindex="-1"></a>    <span class="at">sort =</span> <span class="cn">FALSE</span></span>
+<span id="cb290-46"><a href="3.5-zenga-index-svyzenga.html#cb290-46" tabindex="-1"></a>  )</span>
+<span id="cb290-47"><a href="3.5-zenga-index-svyzenga.html#cb290-47" tabindex="-1"></a></span>
+<span id="cb290-48"><a href="3.5-zenga-index-svyzenga.html#cb290-48" tabindex="-1"></a><span class="co"># compute household-level income</span></span>
+<span id="cb290-49"><a href="3.5-zenga-index-svyzenga.html#cb290-49" tabindex="-1"></a>hinc.df <span class="ot">&lt;-</span></span>
+<span id="cb290-50"><a href="3.5-zenga-index-svyzenga.html#cb290-50" tabindex="-1"></a>  pop.df[pop.df<span class="sc">$</span>PERC <span class="sc">==</span> <span class="dv">1</span> ,</span>
+<span id="cb290-51"><a href="3.5-zenga-index-svyzenga.html#cb290-51" tabindex="-1"></a>         <span class="fu">c</span>(<span class="st">&quot;nquest&quot;</span> , <span class="st">&quot;nord&quot;</span> , <span class="st">&quot;PERC&quot;</span> , <span class="st">&quot;Y&quot;</span> , <span class="st">&quot;YL&quot;</span> , <span class="st">&quot;YM&quot;</span> , <span class="st">&quot;YT&quot;</span> , <span class="st">&quot;YC&quot;</span>) ,</span>
+<span id="cb290-52"><a href="3.5-zenga-index-svyzenga.html#cb290-52" tabindex="-1"></a>         drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb290-53"><a href="3.5-zenga-index-svyzenga.html#cb290-53" tabindex="-1"></a></span>
+<span id="cb290-54"><a href="3.5-zenga-index-svyzenga.html#cb290-54" tabindex="-1"></a>hinc.df <span class="ot">&lt;-</span></span>
+<span id="cb290-55"><a href="3.5-zenga-index-svyzenga.html#cb290-55" tabindex="-1"></a>  <span class="fu">aggregate</span>(<span class="fu">rowSums</span>(hinc.df[, <span class="fu">c</span>(<span class="st">&quot;YL&quot;</span>  , <span class="st">&quot;YM&quot;</span> , <span class="st">&quot;YT&quot;</span>) , <span class="at">drop =</span> <span class="cn">FALSE</span>]) ,</span>
+<span id="cb290-56"><a href="3.5-zenga-index-svyzenga.html#cb290-56" tabindex="-1"></a>            <span class="fu">list</span>(<span class="st">&quot;nquest&quot;</span> <span class="ot">=</span> hinc.df<span class="sc">$</span>nquest) ,</span>
+<span id="cb290-57"><a href="3.5-zenga-index-svyzenga.html#cb290-57" tabindex="-1"></a>            sum ,</span>
+<span id="cb290-58"><a href="3.5-zenga-index-svyzenga.html#cb290-58" tabindex="-1"></a>            <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb290-59"><a href="3.5-zenga-index-svyzenga.html#cb290-59" tabindex="-1"></a></span>
+<span id="cb290-60"><a href="3.5-zenga-index-svyzenga.html#cb290-60" tabindex="-1"></a>pop.df <span class="ot">&lt;-</span></span>
+<span id="cb290-61"><a href="3.5-zenga-index-svyzenga.html#cb290-61" tabindex="-1"></a>  <span class="fu">merge</span>(pop.df ,</span>
+<span id="cb290-62"><a href="3.5-zenga-index-svyzenga.html#cb290-62" tabindex="-1"></a>        hinc.df ,</span>
+<span id="cb290-63"><a href="3.5-zenga-index-svyzenga.html#cb290-63" tabindex="-1"></a>        <span class="at">by =</span> <span class="st">&quot;nquest&quot;</span> ,</span>
+<span id="cb290-64"><a href="3.5-zenga-index-svyzenga.html#cb290-64" tabindex="-1"></a>        <span class="at">all.x =</span> <span class="cn">TRUE</span> ,</span>
+<span id="cb290-65"><a href="3.5-zenga-index-svyzenga.html#cb290-65" tabindex="-1"></a>        <span class="at">sort =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb290-66"><a href="3.5-zenga-index-svyzenga.html#cb290-66" tabindex="-1"></a></span>
+<span id="cb290-67"><a href="3.5-zenga-index-svyzenga.html#cb290-67" tabindex="-1"></a><span class="co"># combine with consumption data</span></span>
+<span id="cb290-68"><a href="3.5-zenga-index-svyzenga.html#cb290-68" tabindex="-1"></a>pop.df <span class="ot">&lt;-</span></span>
+<span id="cb290-69"><a href="3.5-zenga-index-svyzenga.html#cb290-69" tabindex="-1"></a>  <span class="fu">merge</span>(pop.df ,</span>
+<span id="cb290-70"><a href="3.5-zenga-index-svyzenga.html#cb290-70" tabindex="-1"></a>        cns.df ,</span>
+<span id="cb290-71"><a href="3.5-zenga-index-svyzenga.html#cb290-71" tabindex="-1"></a>        <span class="at">by =</span> <span class="st">&quot;nquest&quot;</span> ,</span>
+<span id="cb290-72"><a href="3.5-zenga-index-svyzenga.html#cb290-72" tabindex="-1"></a>        <span class="at">all.x =</span> <span class="cn">TRUE</span> ,</span>
+<span id="cb290-73"><a href="3.5-zenga-index-svyzenga.html#cb290-73" tabindex="-1"></a>        <span class="at">sort =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb290-74"><a href="3.5-zenga-index-svyzenga.html#cb290-74" tabindex="-1"></a></span>
+<span id="cb290-75"><a href="3.5-zenga-index-svyzenga.html#cb290-75" tabindex="-1"></a><span class="co"># treat household-level sample as the finite population</span></span>
+<span id="cb290-76"><a href="3.5-zenga-index-svyzenga.html#cb290-76" tabindex="-1"></a>pop.df <span class="ot">&lt;-</span></span>
+<span id="cb290-77"><a href="3.5-zenga-index-svyzenga.html#cb290-77" tabindex="-1"></a>  pop.df[<span class="sc">!</span><span class="fu">duplicated</span>(pop.df<span class="sc">$</span>nquest) , , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span></code></pre></div>
+<p>For the Monte Carlo experiment, we take <code>5000</code> samples of (expected) size <code>1000</code> using Poisson sampling<label for="tufte-sn-3" class="margin-toggle sidenote-number">3</label><input type="checkbox" id="tufte-sn-3" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">3</span> but not Conditional Poisson Sampling.</span>:</p>
+<div class="sourceCode" id="cb291"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb291-1"><a href="3.5-zenga-index-svyzenga.html#cb291-1" tabindex="-1"></a><span class="co"># set up monte carlo attributes</span></span>
+<span id="cb291-2"><a href="3.5-zenga-index-svyzenga.html#cb291-2" tabindex="-1"></a>mc.rep <span class="ot">&lt;-</span> 5000L</span>
+<span id="cb291-3"><a href="3.5-zenga-index-svyzenga.html#cb291-3" tabindex="-1"></a>n.size <span class="ot">=</span> 1000L</span>
+<span id="cb291-4"><a href="3.5-zenga-index-svyzenga.html#cb291-4" tabindex="-1"></a>N.size <span class="ot">=</span> <span class="fu">nrow</span>(pop.df)</span>
+<span id="cb291-5"><a href="3.5-zenga-index-svyzenga.html#cb291-5" tabindex="-1"></a></span>
+<span id="cb291-6"><a href="3.5-zenga-index-svyzenga.html#cb291-6" tabindex="-1"></a><span class="co"># calculate first order probabilities</span></span>
+<span id="cb291-7"><a href="3.5-zenga-index-svyzenga.html#cb291-7" tabindex="-1"></a>pop.df<span class="sc">$</span>pik <span class="ot">&lt;-</span></span>
+<span id="cb291-8"><a href="3.5-zenga-index-svyzenga.html#cb291-8" tabindex="-1"></a>  n.size <span class="sc">*</span> (<span class="fu">abs</span>(pop.df<span class="sc">$</span>C) <span class="sc">/</span> <span class="fu">sum</span>(<span class="fu">abs</span>(pop.df<span class="sc">$</span>C)))</span>
+<span id="cb291-9"><a href="3.5-zenga-index-svyzenga.html#cb291-9" tabindex="-1"></a></span>
+<span id="cb291-10"><a href="3.5-zenga-index-svyzenga.html#cb291-10" tabindex="-1"></a><span class="co"># calculate second order probabilities</span></span>
+<span id="cb291-11"><a href="3.5-zenga-index-svyzenga.html#cb291-11" tabindex="-1"></a>pikl <span class="ot">&lt;-</span> pop.df<span class="sc">$</span>pik <span class="sc">%*%</span> <span class="fu">t</span>(pop.df<span class="sc">$</span>pik)</span>
+<span id="cb291-12"><a href="3.5-zenga-index-svyzenga.html#cb291-12" tabindex="-1"></a><span class="fu">diag</span>(pikl) <span class="ot">&lt;-</span> pop.df<span class="sc">$</span>pik</span>
+<span id="cb291-13"><a href="3.5-zenga-index-svyzenga.html#cb291-13" tabindex="-1"></a></span>
+<span id="cb291-14"><a href="3.5-zenga-index-svyzenga.html#cb291-14" tabindex="-1"></a><span class="co"># set random number seed</span></span>
+<span id="cb291-15"><a href="3.5-zenga-index-svyzenga.html#cb291-15" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1997</span>)</span>
+<span id="cb291-16"><a href="3.5-zenga-index-svyzenga.html#cb291-16" tabindex="-1"></a></span>
+<span id="cb291-17"><a href="3.5-zenga-index-svyzenga.html#cb291-17" tabindex="-1"></a><span class="co"># create list of survey design objects</span></span>
+<span id="cb291-18"><a href="3.5-zenga-index-svyzenga.html#cb291-18" tabindex="-1"></a><span class="co"># using poisson sampling</span></span>
+<span id="cb291-19"><a href="3.5-zenga-index-svyzenga.html#cb291-19" tabindex="-1"></a>survey.list <span class="ot">&lt;-</span></span>
+<span id="cb291-20"><a href="3.5-zenga-index-svyzenga.html#cb291-20" tabindex="-1"></a>  <span class="fu">lapply</span>(<span class="fu">seq_len</span>(mc.rep) ,</span>
+<span id="cb291-21"><a href="3.5-zenga-index-svyzenga.html#cb291-21" tabindex="-1"></a>         <span class="cf">function</span>(this.rep) {</span>
+<span id="cb291-22"><a href="3.5-zenga-index-svyzenga.html#cb291-22" tabindex="-1"></a>           smp.ind <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">runif</span>(N.size) <span class="sc">&lt;=</span> pop.df<span class="sc">$</span>pik)</span>
+<span id="cb291-23"><a href="3.5-zenga-index-svyzenga.html#cb291-23" tabindex="-1"></a>           smp.df <span class="ot">&lt;-</span> pop.df[smp.ind , , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb291-24"><a href="3.5-zenga-index-svyzenga.html#cb291-24" tabindex="-1"></a>           <span class="fu">svydesign</span>(</span>
+<span id="cb291-25"><a href="3.5-zenga-index-svyzenga.html#cb291-25" tabindex="-1"></a>             <span class="at">ids =</span> <span class="sc">~</span> nquest ,</span>
+<span id="cb291-26"><a href="3.5-zenga-index-svyzenga.html#cb291-26" tabindex="-1"></a>             <span class="at">data =</span> smp.df ,</span>
+<span id="cb291-27"><a href="3.5-zenga-index-svyzenga.html#cb291-27" tabindex="-1"></a>             <span class="at">fpc =</span> <span class="sc">~</span> pik ,</span>
+<span id="cb291-28"><a href="3.5-zenga-index-svyzenga.html#cb291-28" tabindex="-1"></a>             <span class="at">nest =</span> <span class="cn">FALSE</span> ,</span>
+<span id="cb291-29"><a href="3.5-zenga-index-svyzenga.html#cb291-29" tabindex="-1"></a>             <span class="at">pps =</span> <span class="fu">ppsmat</span>(pikl[smp.ind , smp.ind]) ,</span>
+<span id="cb291-30"><a href="3.5-zenga-index-svyzenga.html#cb291-30" tabindex="-1"></a>             <span class="at">variance =</span> <span class="st">&quot;HT&quot;</span></span>
+<span id="cb291-31"><a href="3.5-zenga-index-svyzenga.html#cb291-31" tabindex="-1"></a>           )</span>
+<span id="cb291-32"><a href="3.5-zenga-index-svyzenga.html#cb291-32" tabindex="-1"></a>         })</span></code></pre></div>
+<p>… and estimate the Zenga index using each sample:</p>
+<div class="sourceCode" id="cb292"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb292-1"><a href="3.5-zenga-index-svyzenga.html#cb292-1" tabindex="-1"></a><span class="co"># estimate zenga index for each sample</span></span>
+<span id="cb292-2"><a href="3.5-zenga-index-svyzenga.html#cb292-2" tabindex="-1"></a>zenga.estimate.list <span class="ot">&lt;-</span></span>
+<span id="cb292-3"><a href="3.5-zenga-index-svyzenga.html#cb292-3" tabindex="-1"></a>  <span class="fu">lapply</span>(survey.list ,</span>
+<span id="cb292-4"><a href="3.5-zenga-index-svyzenga.html#cb292-4" tabindex="-1"></a>         <span class="cf">function</span>(this.sample) {</span>
+<span id="cb292-5"><a href="3.5-zenga-index-svyzenga.html#cb292-5" tabindex="-1"></a>           <span class="fu">svyzenga</span>( <span class="sc">~</span> x ,</span>
+<span id="cb292-6"><a href="3.5-zenga-index-svyzenga.html#cb292-6" tabindex="-1"></a>                     <span class="fu">subset</span>(this.sample , x <span class="sc">&gt;</span> <span class="dv">0</span>) ,</span>
+<span id="cb292-7"><a href="3.5-zenga-index-svyzenga.html#cb292-7" tabindex="-1"></a>                     <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb292-8"><a href="3.5-zenga-index-svyzenga.html#cb292-8" tabindex="-1"></a>         })</span></code></pre></div>
+<p>Then, we evaluate the Percentage Relative Bias (PRB) of the Zenga index estimator. Under this scenario, the PRB of the Zenga index estimator is 0.3397%, a result similar to the <code>0.321</code> shown in Table 2.</p>
+<div class="sourceCode" id="cb293"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb293-1"><a href="3.5-zenga-index-svyzenga.html#cb293-1" tabindex="-1"></a><span class="co"># compute the (finite population) Zenga index parameter</span></span>
+<span id="cb293-2"><a href="3.5-zenga-index-svyzenga.html#cb293-2" tabindex="-1"></a>theta.pop <span class="ot">&lt;-</span></span>
+<span id="cb293-3"><a href="3.5-zenga-index-svyzenga.html#cb293-3" tabindex="-1"></a>  convey<span class="sc">:::</span><span class="fu">CalcZenga</span>(pop.df<span class="sc">$</span>x , <span class="fu">ifelse</span>(pop.df<span class="sc">$</span>x <span class="sc">&gt;</span> <span class="dv">0</span> , <span class="dv">1</span> , <span class="dv">0</span>))</span>
+<span id="cb293-4"><a href="3.5-zenga-index-svyzenga.html#cb293-4" tabindex="-1"></a></span>
+<span id="cb293-5"><a href="3.5-zenga-index-svyzenga.html#cb293-5" tabindex="-1"></a><span class="co"># estimate the expected value of the Zenga index estimator</span></span>
+<span id="cb293-6"><a href="3.5-zenga-index-svyzenga.html#cb293-6" tabindex="-1"></a><span class="co"># using the average of the estimates</span></span>
+<span id="cb293-7"><a href="3.5-zenga-index-svyzenga.html#cb293-7" tabindex="-1"></a>theta.exp <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">sapply</span>(zenga.estimate.list , coef))</span>
+<span id="cb293-8"><a href="3.5-zenga-index-svyzenga.html#cb293-8" tabindex="-1"></a></span>
+<span id="cb293-9"><a href="3.5-zenga-index-svyzenga.html#cb293-9" tabindex="-1"></a><span class="co"># estimate the percentage relative bias</span></span>
+<span id="cb293-10"><a href="3.5-zenga-index-svyzenga.html#cb293-10" tabindex="-1"></a><span class="dv">100</span> <span class="sc">*</span> (theta.exp <span class="sc">/</span> theta.pop <span class="sc">-</span> <span class="dv">1</span>)</span></code></pre></div>
 <pre><code>## [1] 0.3396837</code></pre>
 <p>Then, we evaluate the PRB of the variance estimator of the Zenga index estimator. Under this scenario, the PRB of the Zenga index variance estimator is -0.4954%, another result similar to the <code>-0.600</code> shown in Table 2.</p>
-<div class="sourceCode" id="cb292"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb292-1"><a href="3.5-zenga-index-svyzenga.html#cb292-1" tabindex="-1"></a><span class="co"># estimate the variance of the Zenga index estimator</span></span>
-<span id="cb292-2"><a href="3.5-zenga-index-svyzenga.html#cb292-2" tabindex="-1"></a><span class="co"># using the variance of the estimates</span></span>
-<span id="cb292-3"><a href="3.5-zenga-index-svyzenga.html#cb292-3" tabindex="-1"></a>(vartheta.popest <span class="ot">&lt;-</span> <span class="fu">var</span>(<span class="fu">sapply</span>(zenga.estimate.list , coef)))</span></code></pre></div>
+<div class="sourceCode" id="cb295"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb295-1"><a href="3.5-zenga-index-svyzenga.html#cb295-1" tabindex="-1"></a><span class="co"># estimate the variance of the Zenga index estimator</span></span>
+<span id="cb295-2"><a href="3.5-zenga-index-svyzenga.html#cb295-2" tabindex="-1"></a><span class="co"># using the variance of the estimates</span></span>
+<span id="cb295-3"><a href="3.5-zenga-index-svyzenga.html#cb295-3" tabindex="-1"></a>(vartheta.popest <span class="ot">&lt;-</span> <span class="fu">var</span>(<span class="fu">sapply</span>(zenga.estimate.list , coef)))</span></code></pre></div>
 <pre><code>## [1] 9.47244e-05</code></pre>
-<div class="sourceCode" id="cb294"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb294-1"><a href="3.5-zenga-index-svyzenga.html#cb294-1" tabindex="-1"></a><span class="co"># estimate the expected value of the Zenga index variance estimator</span></span>
-<span id="cb294-2"><a href="3.5-zenga-index-svyzenga.html#cb294-2" tabindex="-1"></a><span class="co"># using the expected of the variance estimates</span></span>
-<span id="cb294-3"><a href="3.5-zenga-index-svyzenga.html#cb294-3" tabindex="-1"></a>(vartheta.exp <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">sapply</span>(zenga.estimate.list , vcov)))</span></code></pre></div>
+<div class="sourceCode" id="cb297"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb297-1"><a href="3.5-zenga-index-svyzenga.html#cb297-1" tabindex="-1"></a><span class="co"># estimate the expected value of the Zenga index variance estimator</span></span>
+<span id="cb297-2"><a href="3.5-zenga-index-svyzenga.html#cb297-2" tabindex="-1"></a><span class="co"># using the expected of the variance estimates</span></span>
+<span id="cb297-3"><a href="3.5-zenga-index-svyzenga.html#cb297-3" tabindex="-1"></a>(vartheta.exp <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">sapply</span>(zenga.estimate.list , vcov)))</span></code></pre></div>
 <pre><code>## [1] 9.425515e-05</code></pre>
-<div class="sourceCode" id="cb296"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb296-1"><a href="3.5-zenga-index-svyzenga.html#cb296-1" tabindex="-1"></a><span class="co"># estimate the percentage relative bias</span></span>
-<span id="cb296-2"><a href="3.5-zenga-index-svyzenga.html#cb296-2" tabindex="-1"></a><span class="dv">100</span> <span class="sc">*</span> (vartheta.exp <span class="sc">/</span> vartheta.popest <span class="sc">-</span> <span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb299"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb299-1"><a href="3.5-zenga-index-svyzenga.html#cb299-1" tabindex="-1"></a><span class="co"># estimate the percentage relative bias</span></span>
+<span id="cb299-2"><a href="3.5-zenga-index-svyzenga.html#cb299-2" tabindex="-1"></a><span class="dv">100</span> <span class="sc">*</span> (vartheta.exp <span class="sc">/</span> vartheta.popest <span class="sc">-</span> <span class="dv">1</span>)</span></code></pre></div>
 <pre><code>## [1] -0.4953863</code></pre>
 <p>Next, we evaluate the Percentage Coverage Rate (PCR). In theory, under repeated sampling, the estimated 95% CIs should cover the population parameter 95% of the time. We can evaluate that using:</p>
-<div class="sourceCode" id="cb298"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb298-1"><a href="3.5-zenga-index-svyzenga.html#cb298-1" tabindex="-1"></a><span class="co"># estimate confidence intervals of the Zenga index</span></span>
-<span id="cb298-2"><a href="3.5-zenga-index-svyzenga.html#cb298-2" tabindex="-1"></a><span class="co"># for each of the samples</span></span>
-<span id="cb298-3"><a href="3.5-zenga-index-svyzenga.html#cb298-3" tabindex="-1"></a>est.cis <span class="ot">&lt;-</span></span>
-<span id="cb298-4"><a href="3.5-zenga-index-svyzenga.html#cb298-4" tabindex="-1"></a>  <span class="fu">t</span>(<span class="fu">sapply</span>(zenga.estimate.list, <span class="cf">function</span>(this.stat)</span>
-<span id="cb298-5"><a href="3.5-zenga-index-svyzenga.html#cb298-5" tabindex="-1"></a>    <span class="fu">c</span>(<span class="fu">confint</span>(this.stat))))</span>
-<span id="cb298-6"><a href="3.5-zenga-index-svyzenga.html#cb298-6" tabindex="-1"></a></span>
-<span id="cb298-7"><a href="3.5-zenga-index-svyzenga.html#cb298-7" tabindex="-1"></a><span class="co"># evaluate</span></span>
-<span id="cb298-8"><a href="3.5-zenga-index-svyzenga.html#cb298-8" tabindex="-1"></a><span class="fu">prop.table</span>(<span class="fu">table</span>((theta.pop <span class="sc">&gt;</span> est.cis[, <span class="dv">1</span>]) <span class="sc">&amp;</span></span>
-<span id="cb298-9"><a href="3.5-zenga-index-svyzenga.html#cb298-9" tabindex="-1"></a>                   (theta.pop <span class="sc">&lt;</span> est.cis[, <span class="dv">2</span>])))</span></code></pre></div>
+<div class="sourceCode" id="cb301"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb301-1"><a href="3.5-zenga-index-svyzenga.html#cb301-1" tabindex="-1"></a><span class="co"># estimate confidence intervals of the Zenga index</span></span>
+<span id="cb301-2"><a href="3.5-zenga-index-svyzenga.html#cb301-2" tabindex="-1"></a><span class="co"># for each of the samples</span></span>
+<span id="cb301-3"><a href="3.5-zenga-index-svyzenga.html#cb301-3" tabindex="-1"></a>est.cis <span class="ot">&lt;-</span></span>
+<span id="cb301-4"><a href="3.5-zenga-index-svyzenga.html#cb301-4" tabindex="-1"></a>  <span class="fu">t</span>(<span class="fu">sapply</span>(zenga.estimate.list, <span class="cf">function</span>(this.stat)</span>
+<span id="cb301-5"><a href="3.5-zenga-index-svyzenga.html#cb301-5" tabindex="-1"></a>    <span class="fu">c</span>(<span class="fu">confint</span>(this.stat))))</span>
+<span id="cb301-6"><a href="3.5-zenga-index-svyzenga.html#cb301-6" tabindex="-1"></a></span>
+<span id="cb301-7"><a href="3.5-zenga-index-svyzenga.html#cb301-7" tabindex="-1"></a><span class="co"># evaluate</span></span>
+<span id="cb301-8"><a href="3.5-zenga-index-svyzenga.html#cb301-8" tabindex="-1"></a><span class="fu">prop.table</span>(<span class="fu">table</span>((theta.pop <span class="sc">&gt;</span> est.cis[, <span class="dv">1</span>]) <span class="sc">&amp;</span></span>
+<span id="cb301-9"><a href="3.5-zenga-index-svyzenga.html#cb301-9" tabindex="-1"></a>                   (theta.pop <span class="sc">&lt;</span> est.cis[, <span class="dv">2</span>])))</span></code></pre></div>
 <pre><code>## 
 ##  FALSE   TRUE 
 ## 0.0548 0.9452</code></pre>
