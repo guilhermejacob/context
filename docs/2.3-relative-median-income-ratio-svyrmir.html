@@ -13,7 +13,7 @@
 
 <meta name="author" content="Guilherme Jacob, Anthony Damico, and Djalma Pessoa" />
 
-<meta name="date" content="2023-09-07" />
+<meta name="date" content="2023-09-11" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -189,149 +189,149 @@ rmir = \frac{median\{y_i; age_i &gt;65 \}}{median\{y_i; age_i \leq 65 \}}.
 <p><strong>A replication example</strong></p>
 <p>The R <code>vardpoor</code> package <span class="citation">(<label for="tufte-mn-32" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-32" class="margin-toggle">Breidaks, Liberts, and Ivanova 2016<span class="marginnote">Breidaks, Juris, Martins Liberts, and Santa Ivanova. 2016. <span>“Vardpoor: Estimation of Indicators on Social Exclusion and Poverty and Its Linearization, Variance Estimation.”</span> Riga, Latvia: CSB.</span>)</span>, created by researchers at the Central Statistical Bureau of Latvia, includes a RMIR coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.</p>
 <p>Load and prepare the same data set:</p>
-<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-1" tabindex="-1"></a><span class="co"># load the convey package</span></span>
-<span id="cb88-2"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-2" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
-<span id="cb88-3"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-3" tabindex="-1"></a></span>
-<span id="cb88-4"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-4" tabindex="-1"></a><span class="co"># load the survey library</span></span>
-<span id="cb88-5"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-5" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
-<span id="cb88-6"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-6" tabindex="-1"></a></span>
-<span id="cb88-7"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-7" tabindex="-1"></a><span class="co"># load the vardpoor library</span></span>
-<span id="cb88-8"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-8" tabindex="-1"></a><span class="fu">library</span>(vardpoor)</span>
-<span id="cb88-9"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-9" tabindex="-1"></a></span>
-<span id="cb88-10"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-10" tabindex="-1"></a><span class="co"># load the vardpoor library</span></span>
-<span id="cb88-11"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-11" tabindex="-1"></a><span class="fu">library</span>(laeken)</span>
-<span id="cb88-12"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-12" tabindex="-1"></a></span>
-<span id="cb88-13"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-13" tabindex="-1"></a><span class="co"># load the synthetic EU statistics on income &amp; living conditions</span></span>
-<span id="cb88-14"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-14" tabindex="-1"></a><span class="fu">data</span>(eusilc)</span>
-<span id="cb88-15"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-15" tabindex="-1"></a></span>
-<span id="cb88-16"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-16" tabindex="-1"></a><span class="co"># make all column names lowercase</span></span>
-<span id="cb88-17"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-17" tabindex="-1"></a><span class="fu">names</span>(eusilc) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(eusilc))</span>
-<span id="cb88-18"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-18" tabindex="-1"></a></span>
-<span id="cb88-19"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-19" tabindex="-1"></a><span class="co"># add a column with the row number</span></span>
-<span id="cb88-20"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-20" tabindex="-1"></a>dati <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">data.table</span>(<span class="at">IDd =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(eusilc), eusilc)</span>
-<span id="cb88-21"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-21" tabindex="-1"></a></span>
-<span id="cb88-22"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-22" tabindex="-1"></a><span class="co"># calculate the rmir coefficient</span></span>
-<span id="cb88-23"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-23" tabindex="-1"></a><span class="co"># using the R vardpoor library</span></span>
-<span id="cb88-24"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-24" tabindex="-1"></a>varpoord_rmir_calculation <span class="ot">&lt;-</span></span>
-<span id="cb88-25"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-25" tabindex="-1"></a>  <span class="fu">varpoord</span>(</span>
-<span id="cb88-26"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-26" tabindex="-1"></a>    <span class="co"># analysis variable</span></span>
-<span id="cb88-27"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-27" tabindex="-1"></a>    <span class="at">Y =</span> <span class="st">&quot;eqincome&quot;</span>,</span>
-<span id="cb88-28"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-28" tabindex="-1"></a>    </span>
-<span id="cb88-29"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-29" tabindex="-1"></a>    <span class="co"># weights variable</span></span>
-<span id="cb88-30"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-30" tabindex="-1"></a>    <span class="at">w_final =</span> <span class="st">&quot;rb050&quot;</span>,</span>
-<span id="cb88-31"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-31" tabindex="-1"></a>    </span>
-<span id="cb88-32"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-32" tabindex="-1"></a>    <span class="co"># row number variable</span></span>
-<span id="cb88-33"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-33" tabindex="-1"></a>    <span class="at">ID_level1 =</span> <span class="st">&quot;IDd&quot;</span>,</span>
-<span id="cb88-34"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-34" tabindex="-1"></a>    </span>
-<span id="cb88-35"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-35" tabindex="-1"></a>    <span class="co"># row number variable</span></span>
-<span id="cb88-36"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-36" tabindex="-1"></a>    <span class="at">ID_level2 =</span> <span class="st">&quot;IDd&quot;</span>,</span>
-<span id="cb88-37"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-37" tabindex="-1"></a>    </span>
-<span id="cb88-38"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-38" tabindex="-1"></a>    <span class="co"># strata variable</span></span>
-<span id="cb88-39"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-39" tabindex="-1"></a>    <span class="at">H =</span> <span class="st">&quot;db040&quot;</span>,</span>
-<span id="cb88-40"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-40" tabindex="-1"></a>    </span>
-<span id="cb88-41"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-41" tabindex="-1"></a>    <span class="at">N_h =</span> <span class="cn">NULL</span> ,</span>
-<span id="cb88-42"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-42" tabindex="-1"></a>    </span>
-<span id="cb88-43"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-43" tabindex="-1"></a>    <span class="co"># clustering variable</span></span>
-<span id="cb88-44"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-44" tabindex="-1"></a>    <span class="at">PSU =</span> <span class="st">&quot;rb030&quot;</span>,</span>
-<span id="cb88-45"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-45" tabindex="-1"></a>    </span>
-<span id="cb88-46"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-46" tabindex="-1"></a>    <span class="co"># data.table</span></span>
-<span id="cb88-47"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-47" tabindex="-1"></a>    <span class="at">dataset =</span> dati,</span>
-<span id="cb88-48"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-48" tabindex="-1"></a>    </span>
-<span id="cb88-49"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-49" tabindex="-1"></a>    <span class="co"># age variable</span></span>
-<span id="cb88-50"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-50" tabindex="-1"></a>    <span class="at">age =</span> <span class="st">&quot;age&quot;</span>,</span>
-<span id="cb88-51"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-51" tabindex="-1"></a>    </span>
-<span id="cb88-52"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-52" tabindex="-1"></a>    <span class="co"># rmir coefficient function</span></span>
-<span id="cb88-53"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-53" tabindex="-1"></a>    <span class="at">type =</span> <span class="st">&quot;linrmir&quot;</span>,</span>
-<span id="cb88-54"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-54" tabindex="-1"></a>    </span>
-<span id="cb88-55"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-55" tabindex="-1"></a>    <span class="co"># get linearized variable</span></span>
-<span id="cb88-56"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-56" tabindex="-1"></a>    <span class="at">outp_lin =</span> <span class="cn">TRUE</span></span>
-<span id="cb88-57"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-57" tabindex="-1"></a>    </span>
-<span id="cb88-58"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-58" tabindex="-1"></a>  )</span>
-<span id="cb88-59"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-59" tabindex="-1"></a></span>
-<span id="cb88-60"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-60" tabindex="-1"></a></span>
-<span id="cb88-61"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-61" tabindex="-1"></a></span>
-<span id="cb88-62"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-62" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
-<span id="cb88-63"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-63" tabindex="-1"></a><span class="co"># using our recommended setup</span></span>
-<span id="cb88-64"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-64" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span></span>
-<span id="cb88-65"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-65" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
-<span id="cb88-66"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-66" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
-<span id="cb88-67"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-67" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
-<span id="cb88-68"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-68" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
-<span id="cb88-69"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-69" tabindex="-1"></a>    <span class="at">data =</span> eusilc</span>
-<span id="cb88-70"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-70" tabindex="-1"></a>  )</span>
-<span id="cb88-71"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-71" tabindex="-1"></a></span>
-<span id="cb88-72"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-72" tabindex="-1"></a><span class="co"># immediately run the convey_prep function on it</span></span>
-<span id="cb88-73"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-73" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(des_eusilc)</span>
-<span id="cb88-74"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-74" tabindex="-1"></a></span>
-<span id="cb88-75"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-75" tabindex="-1"></a><span class="co"># coefficients do match</span></span>
-<span id="cb88-76"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-76" tabindex="-1"></a>varpoord_rmir_calculation<span class="sc">$</span>all_result<span class="sc">$</span>value</span></code></pre></div>
+<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-1" tabindex="-1"></a><span class="co"># load the convey package</span></span>
+<span id="cb84-2"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-2" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
+<span id="cb84-3"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-3" tabindex="-1"></a></span>
+<span id="cb84-4"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-4" tabindex="-1"></a><span class="co"># load the survey library</span></span>
+<span id="cb84-5"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-5" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb84-6"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-6" tabindex="-1"></a></span>
+<span id="cb84-7"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-7" tabindex="-1"></a><span class="co"># load the vardpoor library</span></span>
+<span id="cb84-8"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-8" tabindex="-1"></a><span class="fu">library</span>(vardpoor)</span>
+<span id="cb84-9"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-9" tabindex="-1"></a></span>
+<span id="cb84-10"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-10" tabindex="-1"></a><span class="co"># load the vardpoor library</span></span>
+<span id="cb84-11"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-11" tabindex="-1"></a><span class="fu">library</span>(laeken)</span>
+<span id="cb84-12"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-12" tabindex="-1"></a></span>
+<span id="cb84-13"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-13" tabindex="-1"></a><span class="co"># load the synthetic EU statistics on income &amp; living conditions</span></span>
+<span id="cb84-14"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-14" tabindex="-1"></a><span class="fu">data</span>(eusilc)</span>
+<span id="cb84-15"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-15" tabindex="-1"></a></span>
+<span id="cb84-16"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-16" tabindex="-1"></a><span class="co"># make all column names lowercase</span></span>
+<span id="cb84-17"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-17" tabindex="-1"></a><span class="fu">names</span>(eusilc) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(eusilc))</span>
+<span id="cb84-18"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-18" tabindex="-1"></a></span>
+<span id="cb84-19"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-19" tabindex="-1"></a><span class="co"># add a column with the row number</span></span>
+<span id="cb84-20"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-20" tabindex="-1"></a>dati <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">data.table</span>(<span class="at">IDd =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(eusilc), eusilc)</span>
+<span id="cb84-21"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-21" tabindex="-1"></a></span>
+<span id="cb84-22"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-22" tabindex="-1"></a><span class="co"># calculate the rmir coefficient</span></span>
+<span id="cb84-23"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-23" tabindex="-1"></a><span class="co"># using the R vardpoor library</span></span>
+<span id="cb84-24"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-24" tabindex="-1"></a>varpoord_rmir_calculation <span class="ot">&lt;-</span></span>
+<span id="cb84-25"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-25" tabindex="-1"></a>  <span class="fu">varpoord</span>(</span>
+<span id="cb84-26"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-26" tabindex="-1"></a>    <span class="co"># analysis variable</span></span>
+<span id="cb84-27"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-27" tabindex="-1"></a>    <span class="at">Y =</span> <span class="st">&quot;eqincome&quot;</span>,</span>
+<span id="cb84-28"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-28" tabindex="-1"></a>    </span>
+<span id="cb84-29"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-29" tabindex="-1"></a>    <span class="co"># weights variable</span></span>
+<span id="cb84-30"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-30" tabindex="-1"></a>    <span class="at">w_final =</span> <span class="st">&quot;rb050&quot;</span>,</span>
+<span id="cb84-31"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-31" tabindex="-1"></a>    </span>
+<span id="cb84-32"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-32" tabindex="-1"></a>    <span class="co"># row number variable</span></span>
+<span id="cb84-33"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-33" tabindex="-1"></a>    <span class="at">ID_level1 =</span> <span class="st">&quot;IDd&quot;</span>,</span>
+<span id="cb84-34"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-34" tabindex="-1"></a>    </span>
+<span id="cb84-35"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-35" tabindex="-1"></a>    <span class="co"># row number variable</span></span>
+<span id="cb84-36"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-36" tabindex="-1"></a>    <span class="at">ID_level2 =</span> <span class="st">&quot;IDd&quot;</span>,</span>
+<span id="cb84-37"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-37" tabindex="-1"></a>    </span>
+<span id="cb84-38"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-38" tabindex="-1"></a>    <span class="co"># strata variable</span></span>
+<span id="cb84-39"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-39" tabindex="-1"></a>    <span class="at">H =</span> <span class="st">&quot;db040&quot;</span>,</span>
+<span id="cb84-40"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-40" tabindex="-1"></a>    </span>
+<span id="cb84-41"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-41" tabindex="-1"></a>    <span class="at">N_h =</span> <span class="cn">NULL</span> ,</span>
+<span id="cb84-42"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-42" tabindex="-1"></a>    </span>
+<span id="cb84-43"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-43" tabindex="-1"></a>    <span class="co"># clustering variable</span></span>
+<span id="cb84-44"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-44" tabindex="-1"></a>    <span class="at">PSU =</span> <span class="st">&quot;rb030&quot;</span>,</span>
+<span id="cb84-45"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-45" tabindex="-1"></a>    </span>
+<span id="cb84-46"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-46" tabindex="-1"></a>    <span class="co"># data.table</span></span>
+<span id="cb84-47"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-47" tabindex="-1"></a>    <span class="at">dataset =</span> dati,</span>
+<span id="cb84-48"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-48" tabindex="-1"></a>    </span>
+<span id="cb84-49"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-49" tabindex="-1"></a>    <span class="co"># age variable</span></span>
+<span id="cb84-50"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-50" tabindex="-1"></a>    <span class="at">age =</span> <span class="st">&quot;age&quot;</span>,</span>
+<span id="cb84-51"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-51" tabindex="-1"></a>    </span>
+<span id="cb84-52"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-52" tabindex="-1"></a>    <span class="co"># rmir coefficient function</span></span>
+<span id="cb84-53"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-53" tabindex="-1"></a>    <span class="at">type =</span> <span class="st">&quot;linrmir&quot;</span>,</span>
+<span id="cb84-54"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-54" tabindex="-1"></a>    </span>
+<span id="cb84-55"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-55" tabindex="-1"></a>    <span class="co"># get linearized variable</span></span>
+<span id="cb84-56"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-56" tabindex="-1"></a>    <span class="at">outp_lin =</span> <span class="cn">TRUE</span></span>
+<span id="cb84-57"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-57" tabindex="-1"></a>    </span>
+<span id="cb84-58"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-58" tabindex="-1"></a>  )</span>
+<span id="cb84-59"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-59" tabindex="-1"></a></span>
+<span id="cb84-60"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-60" tabindex="-1"></a></span>
+<span id="cb84-61"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-61" tabindex="-1"></a></span>
+<span id="cb84-62"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-62" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
+<span id="cb84-63"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-63" tabindex="-1"></a><span class="co"># using our recommended setup</span></span>
+<span id="cb84-64"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-64" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span></span>
+<span id="cb84-65"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-65" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
+<span id="cb84-66"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-66" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
+<span id="cb84-67"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-67" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
+<span id="cb84-68"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-68" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
+<span id="cb84-69"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-69" tabindex="-1"></a>    <span class="at">data =</span> eusilc</span>
+<span id="cb84-70"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-70" tabindex="-1"></a>  )</span>
+<span id="cb84-71"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-71" tabindex="-1"></a></span>
+<span id="cb84-72"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-72" tabindex="-1"></a><span class="co"># immediately run the convey_prep function on it</span></span>
+<span id="cb84-73"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-73" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(des_eusilc)</span>
+<span id="cb84-74"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-74" tabindex="-1"></a></span>
+<span id="cb84-75"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-75" tabindex="-1"></a><span class="co"># coefficients do match</span></span>
+<span id="cb84-76"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb84-76" tabindex="-1"></a>varpoord_rmir_calculation<span class="sc">$</span>all_result<span class="sc">$</span>value</span></code></pre></div>
 <pre><code>## [1] 0.9330361</code></pre>
-<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb90-1" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">svyrmir</span>( <span class="sc">~</span> eqincome , des_eusilc, <span class="at">age =</span> <span class="sc">~</span> age))</span></code></pre></div>
+<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb86-1" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">svyrmir</span>( <span class="sc">~</span> eqincome , des_eusilc, <span class="at">age =</span> <span class="sc">~</span> age))</span></code></pre></div>
 <pre><code>##  eqincome 
 ## 0.9330361</code></pre>
-<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb92-1"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb92-1" tabindex="-1"></a><span class="co"># linearized variables do match</span></span>
-<span id="cb92-2"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb92-2" tabindex="-1"></a><span class="co"># vardpoor</span></span>
-<span id="cb92-3"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb92-3" tabindex="-1"></a>lin_rmir_varpoord <span class="ot">&lt;-</span> varpoord_rmir_calculation<span class="sc">$</span>lin_out<span class="sc">$</span>lin_rmir</span>
-<span id="cb92-4"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb92-4" tabindex="-1"></a><span class="co"># convey</span></span>
-<span id="cb92-5"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb92-5" tabindex="-1"></a>lin_rmir_convey <span class="ot">&lt;-</span></span>
-<span id="cb92-6"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb92-6" tabindex="-1"></a>  <span class="fu">attr</span>(<span class="fu">svyrmir</span>( <span class="sc">~</span> eqincome , des_eusilc, <span class="at">age =</span> <span class="sc">~</span> age), <span class="st">&quot;lin&quot;</span>)</span>
-<span id="cb92-7"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb92-7" tabindex="-1"></a></span>
-<span id="cb92-8"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb92-8" tabindex="-1"></a><span class="co"># check equality</span></span>
-<span id="cb92-9"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb92-9" tabindex="-1"></a><span class="fu">all.equal</span>(lin_rmir_varpoord, lin_rmir_convey[, <span class="dv">1</span>])</span></code></pre></div>
+<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-1" tabindex="-1"></a><span class="co"># linearized variables do match</span></span>
+<span id="cb88-2"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-2" tabindex="-1"></a><span class="co"># vardpoor</span></span>
+<span id="cb88-3"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-3" tabindex="-1"></a>lin_rmir_varpoord <span class="ot">&lt;-</span> varpoord_rmir_calculation<span class="sc">$</span>lin_out<span class="sc">$</span>lin_rmir</span>
+<span id="cb88-4"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-4" tabindex="-1"></a><span class="co"># convey</span></span>
+<span id="cb88-5"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-5" tabindex="-1"></a>lin_rmir_convey <span class="ot">&lt;-</span></span>
+<span id="cb88-6"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-6" tabindex="-1"></a>  <span class="fu">attr</span>(<span class="fu">svyrmir</span>( <span class="sc">~</span> eqincome , des_eusilc, <span class="at">age =</span> <span class="sc">~</span> age), <span class="st">&quot;lin&quot;</span>)</span>
+<span id="cb88-7"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-7" tabindex="-1"></a></span>
+<span id="cb88-8"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-8" tabindex="-1"></a><span class="co"># check equality</span></span>
+<span id="cb88-9"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb88-9" tabindex="-1"></a><span class="fu">all.equal</span>(lin_rmir_varpoord, lin_rmir_convey[, <span class="dv">1</span>])</span></code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
-<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb94-1"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb94-1" tabindex="-1"></a><span class="co"># variances do not match exactly</span></span>
-<span id="cb94-2"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb94-2" tabindex="-1"></a><span class="fu">attr</span>(<span class="fu">svyrmir</span>( <span class="sc">~</span> eqincome , des_eusilc, <span class="at">age =</span> <span class="sc">~</span> age) , <span class="st">&#39;var&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb90-1" tabindex="-1"></a><span class="co"># variances do not match exactly</span></span>
+<span id="cb90-2"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb90-2" tabindex="-1"></a><span class="fu">attr</span>(<span class="fu">svyrmir</span>( <span class="sc">~</span> eqincome , des_eusilc, <span class="at">age =</span> <span class="sc">~</span> age) , <span class="st">&#39;var&#39;</span>)</span></code></pre></div>
 <pre><code>##             eqincome
 ## eqincome 0.000127444</code></pre>
-<div class="sourceCode" id="cb96"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb96-1"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb96-1" tabindex="-1"></a>varpoord_rmir_calculation<span class="sc">$</span>all_result<span class="sc">$</span>var</span></code></pre></div>
+<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb92-1"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb92-1" tabindex="-1"></a>varpoord_rmir_calculation<span class="sc">$</span>all_result<span class="sc">$</span>var</span></code></pre></div>
 <pre><code>## [1] 0.0001272137</code></pre>
-<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb98-1"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-1" tabindex="-1"></a><span class="co"># standard errors do not match exactly</span></span>
-<span id="cb98-2"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-2" tabindex="-1"></a>varpoord_rmir_calculation<span class="sc">$</span>all_result<span class="sc">$</span>se</span></code></pre></div>
+<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb94-1"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb94-1" tabindex="-1"></a><span class="co"># standard errors do not match exactly</span></span>
+<span id="cb94-2"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb94-2" tabindex="-1"></a>varpoord_rmir_calculation<span class="sc">$</span>all_result<span class="sc">$</span>se</span></code></pre></div>
 <pre><code>## [1] 0.0112789</code></pre>
-<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb100-1"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb100-1" tabindex="-1"></a><span class="fu">SE</span>(<span class="fu">svyrmir</span>( <span class="sc">~</span> eqincome , des_eusilc , <span class="at">age =</span> <span class="sc">~</span> age)) </span></code></pre></div>
+<div class="sourceCode" id="cb96"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb96-1"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb96-1" tabindex="-1"></a><span class="fu">SE</span>(<span class="fu">svyrmir</span>( <span class="sc">~</span> eqincome , des_eusilc , <span class="at">age =</span> <span class="sc">~</span> age)) </span></code></pre></div>
 <pre><code>##            eqincome
 ## eqincome 0.01128911</code></pre>
 <p>The variance estimate is computed by using the approximation defined in <a href="1.5-var.html#var">1.5</a>, while the linearized variable <span class="math inline">\(z\)</span> is defined by <a href="1.4-lin.html#lin">1.4</a>. The functions <code>convey::svyrmir</code> and <code>vardpoor::linrmir</code> produce the same linearized variable <span class="math inline">\(z\)</span>.</p>
 <p>However, the measures of uncertainty do not line up, because <code>library(vardpoor)</code> defaults to an ultimate cluster method that can be replicated with an alternative setup of the <code>survey.design</code> object.</p>
-<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb102-1"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-1" tabindex="-1"></a><span class="co"># within each strata, sum up the weights</span></span>
-<span id="cb102-2"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-2" tabindex="-1"></a>cluster_sums <span class="ot">&lt;-</span></span>
-<span id="cb102-3"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-3" tabindex="-1"></a>  <span class="fu">aggregate</span>(eusilc<span class="sc">$</span>rb050 , <span class="fu">list</span>(eusilc<span class="sc">$</span>db040) , sum)</span>
-<span id="cb102-4"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-4" tabindex="-1"></a></span>
-<span id="cb102-5"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-5" tabindex="-1"></a><span class="co"># name the within-strata sums of weights the `cluster_sum`</span></span>
-<span id="cb102-6"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-6" tabindex="-1"></a><span class="fu">names</span>(cluster_sums) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;db040&quot;</span> , <span class="st">&quot;cluster_sum&quot;</span>)</span>
-<span id="cb102-7"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-7" tabindex="-1"></a></span>
-<span id="cb102-8"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-8" tabindex="-1"></a><span class="co"># merge this column back onto the data.frame</span></span>
-<span id="cb102-9"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-9" tabindex="-1"></a>eusilc <span class="ot">&lt;-</span> <span class="fu">merge</span>(eusilc , cluster_sums)</span>
-<span id="cb102-10"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-10" tabindex="-1"></a></span>
-<span id="cb102-11"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-11" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
-<span id="cb102-12"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-12" tabindex="-1"></a><span class="co"># with the fpc using the cluster sum</span></span>
-<span id="cb102-13"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-13" tabindex="-1"></a>des_eusilc_ultimate_cluster <span class="ot">&lt;-</span></span>
-<span id="cb102-14"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-14" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
-<span id="cb102-15"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-15" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
-<span id="cb102-16"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-16" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
-<span id="cb102-17"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-17" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
-<span id="cb102-18"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-18" tabindex="-1"></a>    <span class="at">data =</span> eusilc ,</span>
-<span id="cb102-19"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-19" tabindex="-1"></a>    <span class="at">fpc =</span> <span class="sc">~</span> cluster_sum</span>
-<span id="cb102-20"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-20" tabindex="-1"></a>  )</span>
-<span id="cb102-21"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-21" tabindex="-1"></a></span>
-<span id="cb102-22"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-22" tabindex="-1"></a><span class="co"># again, immediately run the convey_prep function on the `survey.design`</span></span>
-<span id="cb102-23"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-23" tabindex="-1"></a>des_eusilc_ultimate_cluster <span class="ot">&lt;-</span></span>
-<span id="cb102-24"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-24" tabindex="-1"></a>  <span class="fu">convey_prep</span>(des_eusilc_ultimate_cluster)</span>
-<span id="cb102-25"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-25" tabindex="-1"></a></span>
-<span id="cb102-26"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-26" tabindex="-1"></a><span class="co"># matches</span></span>
-<span id="cb102-27"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-27" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all.equal</span>(</span>
-<span id="cb102-28"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-28" tabindex="-1"></a>  <span class="fu">attr</span>(</span>
-<span id="cb102-29"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-29" tabindex="-1"></a>    <span class="fu">svyrmir</span>(<span class="sc">~</span> eqincome , des_eusilc_ultimate_cluster , <span class="at">age =</span> <span class="sc">~</span> age) ,</span>
-<span id="cb102-30"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-30" tabindex="-1"></a>    <span class="st">&#39;var&#39;</span></span>
-<span id="cb102-31"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-31" tabindex="-1"></a>  )[<span class="dv">1</span>],</span>
-<span id="cb102-32"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-32" tabindex="-1"></a>  varpoord_rmir_calculation<span class="sc">$</span>all_result<span class="sc">$</span>var</span>
-<span id="cb102-33"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-33" tabindex="-1"></a>))</span>
-<span id="cb102-34"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-34" tabindex="-1"></a></span>
-<span id="cb102-35"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-35" tabindex="-1"></a></span>
-<span id="cb102-36"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-36" tabindex="-1"></a><span class="co"># matches</span></span>
-<span id="cb102-37"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-37" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all.equal</span>(<span class="fu">SE</span>(</span>
-<span id="cb102-38"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-38" tabindex="-1"></a>  <span class="fu">svyrmir</span>(<span class="sc">~</span> eqincome , des_eusilc_ultimate_cluster, <span class="at">age =</span> <span class="sc">~</span> age)</span>
-<span id="cb102-39"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb102-39" tabindex="-1"></a>)[<span class="dv">1</span>], varpoord_rmir_calculation<span class="sc">$</span>all_result<span class="sc">$</span>se))</span></code></pre></div>
+<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb98-1"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-1" tabindex="-1"></a><span class="co"># within each strata, sum up the weights</span></span>
+<span id="cb98-2"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-2" tabindex="-1"></a>cluster_sums <span class="ot">&lt;-</span></span>
+<span id="cb98-3"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-3" tabindex="-1"></a>  <span class="fu">aggregate</span>(eusilc<span class="sc">$</span>rb050 , <span class="fu">list</span>(eusilc<span class="sc">$</span>db040) , sum)</span>
+<span id="cb98-4"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-4" tabindex="-1"></a></span>
+<span id="cb98-5"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-5" tabindex="-1"></a><span class="co"># name the within-strata sums of weights the `cluster_sum`</span></span>
+<span id="cb98-6"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-6" tabindex="-1"></a><span class="fu">names</span>(cluster_sums) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;db040&quot;</span> , <span class="st">&quot;cluster_sum&quot;</span>)</span>
+<span id="cb98-7"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-7" tabindex="-1"></a></span>
+<span id="cb98-8"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-8" tabindex="-1"></a><span class="co"># merge this column back onto the data.frame</span></span>
+<span id="cb98-9"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-9" tabindex="-1"></a>eusilc <span class="ot">&lt;-</span> <span class="fu">merge</span>(eusilc , cluster_sums)</span>
+<span id="cb98-10"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-10" tabindex="-1"></a></span>
+<span id="cb98-11"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-11" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
+<span id="cb98-12"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-12" tabindex="-1"></a><span class="co"># with the fpc using the cluster sum</span></span>
+<span id="cb98-13"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-13" tabindex="-1"></a>des_eusilc_ultimate_cluster <span class="ot">&lt;-</span></span>
+<span id="cb98-14"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-14" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
+<span id="cb98-15"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-15" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
+<span id="cb98-16"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-16" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
+<span id="cb98-17"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-17" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
+<span id="cb98-18"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-18" tabindex="-1"></a>    <span class="at">data =</span> eusilc ,</span>
+<span id="cb98-19"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-19" tabindex="-1"></a>    <span class="at">fpc =</span> <span class="sc">~</span> cluster_sum</span>
+<span id="cb98-20"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-20" tabindex="-1"></a>  )</span>
+<span id="cb98-21"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-21" tabindex="-1"></a></span>
+<span id="cb98-22"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-22" tabindex="-1"></a><span class="co"># again, immediately run the convey_prep function on the `survey.design`</span></span>
+<span id="cb98-23"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-23" tabindex="-1"></a>des_eusilc_ultimate_cluster <span class="ot">&lt;-</span></span>
+<span id="cb98-24"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-24" tabindex="-1"></a>  <span class="fu">convey_prep</span>(des_eusilc_ultimate_cluster)</span>
+<span id="cb98-25"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-25" tabindex="-1"></a></span>
+<span id="cb98-26"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-26" tabindex="-1"></a><span class="co"># matches</span></span>
+<span id="cb98-27"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-27" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all.equal</span>(</span>
+<span id="cb98-28"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-28" tabindex="-1"></a>  <span class="fu">attr</span>(</span>
+<span id="cb98-29"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-29" tabindex="-1"></a>    <span class="fu">svyrmir</span>(<span class="sc">~</span> eqincome , des_eusilc_ultimate_cluster , <span class="at">age =</span> <span class="sc">~</span> age) ,</span>
+<span id="cb98-30"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-30" tabindex="-1"></a>    <span class="st">&#39;var&#39;</span></span>
+<span id="cb98-31"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-31" tabindex="-1"></a>  )[<span class="dv">1</span>],</span>
+<span id="cb98-32"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-32" tabindex="-1"></a>  varpoord_rmir_calculation<span class="sc">$</span>all_result<span class="sc">$</span>var</span>
+<span id="cb98-33"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-33" tabindex="-1"></a>))</span>
+<span id="cb98-34"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-34" tabindex="-1"></a></span>
+<span id="cb98-35"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-35" tabindex="-1"></a></span>
+<span id="cb98-36"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-36" tabindex="-1"></a><span class="co"># matches</span></span>
+<span id="cb98-37"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-37" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all.equal</span>(<span class="fu">SE</span>(</span>
+<span id="cb98-38"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-38" tabindex="-1"></a>  <span class="fu">svyrmir</span>(<span class="sc">~</span> eqincome , des_eusilc_ultimate_cluster, <span class="at">age =</span> <span class="sc">~</span> age)</span>
+<span id="cb98-39"><a href="2.3-relative-median-income-ratio-svyrmir.html#cb98-39" tabindex="-1"></a>)[<span class="dv">1</span>], varpoord_rmir_calculation<span class="sc">$</span>all_result<span class="sc">$</span>se))</span></code></pre></div>
 <p>For additional usage examples of <code>svyrmir</code>, type <code>?convey::svyrmir</code> in the R console.</p>
 </div>
 <p style="text-align: center;">
