@@ -403,13 +403,14 @@ For the variance estimator, we have:
 
 Under this scenario, the PRB of the ARPR variance estimator is -1.8873%.
 
-Our simulations show that the Squared Bias of this estimator accounts for less than 0.1% of its Mean Squared Error:
+Our simulation shows that the Bias Ratio of this estimator is approximately 2%:
 
 ```{r}
-theta.bias2 <- ( theta.exp - theta.pop )^2
-theta.mse <- theta.bias2 + vartheta.popest
-100 * (theta.bias2 / theta.mse)
+# compute bias ratio
+100 * abs( theta.exp - theta.pop ) / sqrt( vartheta.popest )
 ```
+
+\noindent IF the normal approximation holds, a small bias ratio still allows for approximately valid estimates of the confidence intervals.
 
 Next, we evaluate the Percentage Coverage Rate (PCR). In theory, under repeated sampling, the estimated 95% CIs should cover the population parameter approximately 95% of the time. We can evaluate that using:
 
@@ -1386,7 +1387,7 @@ Then, we evaluate the Percentage Relative Bias (PRB) of the Watts index estimato
 ( theta.exp <- mean( sapply( estimate.list , coef ) ) )
 
 # estimate the percentage relative bias
-100 * ( theta.exp / theta.pop - 1)
+100 * ( theta.exp / theta.pop - 1 )
 ```
 
 For the variance estimator, we have:
@@ -1401,7 +1402,7 @@ For the variance estimator, we have:
 ( vartheta.exp <- mean( sapply( estimate.list , vcov ) ) )
 
 # estimate the percentage relative bias of the variance estimator
-100 *  (vartheta.exp / vartheta.popest - 1 )
+100 *  ( vartheta.exp / vartheta.popest - 1 )
 ```
 
 Under this scenario, the PRB of the Watts index variance estimator is 0.5921%.
@@ -1494,7 +1495,7 @@ The PRB of each component is estimated using the code below. Notice that PRBs ar
 ( theta.exp <- rowMeans( sapply( estimate.list , coef ) ) )
 
 # estimate the percentage relative bias
-( 100 * ( theta.exp / theta.pop - 1) )
+( 100 * ( theta.exp / theta.pop - 1 ) )
 ```
 
 For the variance estimators, we estimate the PRB using the code below. 
@@ -1513,7 +1514,7 @@ Note that the bias is still relatively small, with absolute values of the PRB be
 ( 100 *  (vartheta.exp / vartheta.popest - 1 ) )
 ```
 
-Regarding the MSE, the squared bias accounts for less than 0.1% of the MSE. 
+Regarding the MSE of the decomposition estimator, the squared bias accounts for less than 0.1% of the MSE. 
 This means that, with a good estimate of the variance, we should be able to have a good approximation for the MSE.
 
 ```{r}
