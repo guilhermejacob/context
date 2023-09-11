@@ -13,7 +13,7 @@
 
 <meta name="author" content="Guilherme Jacob, Anthony Damico, and Djalma Pessoa" />
 
-<meta name="date" content="2023-09-07" />
+<meta name="date" content="2023-09-11" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -197,142 +197,142 @@ G &amp;= 2 \bigg( \int_{0}^{1} pdp - \int_{0}^{1} L(p)dp \bigg) \\
 <p><strong>A replication example</strong></p>
 <p>The R <code>vardpoor</code> package <span class="citation">(<label for="tufte-mn-64" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-64" class="margin-toggle">Breidaks, Liberts, and Ivanova 2016<span class="marginnote">Breidaks, Juris, Martins Liberts, and Santa Ivanova. 2016. <span>“Vardpoor: Estimation of Indicators on Social Exclusion and Poverty and Its Linearization, Variance Estimation.”</span> Riga, Latvia: CSB.</span>)</span>, created by researchers at the Central Statistical Bureau of Latvia, includes a Gini coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.</p>
 <p>Load and prepare the same data set:</p>
-<div class="sourceCode" id="cb268"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb268-1"><a href="3.4-gini-index-svygini.html#cb268-1" tabindex="-1"></a><span class="co"># load the convey package</span></span>
-<span id="cb268-2"><a href="3.4-gini-index-svygini.html#cb268-2" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
-<span id="cb268-3"><a href="3.4-gini-index-svygini.html#cb268-3" tabindex="-1"></a></span>
-<span id="cb268-4"><a href="3.4-gini-index-svygini.html#cb268-4" tabindex="-1"></a><span class="co"># load the survey library</span></span>
-<span id="cb268-5"><a href="3.4-gini-index-svygini.html#cb268-5" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
-<span id="cb268-6"><a href="3.4-gini-index-svygini.html#cb268-6" tabindex="-1"></a></span>
-<span id="cb268-7"><a href="3.4-gini-index-svygini.html#cb268-7" tabindex="-1"></a><span class="co"># load the vardpoor library</span></span>
-<span id="cb268-8"><a href="3.4-gini-index-svygini.html#cb268-8" tabindex="-1"></a><span class="fu">library</span>(vardpoor)</span>
-<span id="cb268-9"><a href="3.4-gini-index-svygini.html#cb268-9" tabindex="-1"></a></span>
-<span id="cb268-10"><a href="3.4-gini-index-svygini.html#cb268-10" tabindex="-1"></a><span class="co"># load the laeken library</span></span>
-<span id="cb268-11"><a href="3.4-gini-index-svygini.html#cb268-11" tabindex="-1"></a><span class="fu">library</span>(laeken)</span>
-<span id="cb268-12"><a href="3.4-gini-index-svygini.html#cb268-12" tabindex="-1"></a></span>
-<span id="cb268-13"><a href="3.4-gini-index-svygini.html#cb268-13" tabindex="-1"></a><span class="co"># load the synthetic EU statistics on income &amp; living conditions</span></span>
-<span id="cb268-14"><a href="3.4-gini-index-svygini.html#cb268-14" tabindex="-1"></a><span class="fu">data</span>(eusilc)</span>
-<span id="cb268-15"><a href="3.4-gini-index-svygini.html#cb268-15" tabindex="-1"></a></span>
-<span id="cb268-16"><a href="3.4-gini-index-svygini.html#cb268-16" tabindex="-1"></a><span class="co"># make all column names lowercase</span></span>
-<span id="cb268-17"><a href="3.4-gini-index-svygini.html#cb268-17" tabindex="-1"></a><span class="fu">names</span>(eusilc) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(eusilc))</span>
-<span id="cb268-18"><a href="3.4-gini-index-svygini.html#cb268-18" tabindex="-1"></a></span>
-<span id="cb268-19"><a href="3.4-gini-index-svygini.html#cb268-19" tabindex="-1"></a><span class="co"># add a column with the row number</span></span>
-<span id="cb268-20"><a href="3.4-gini-index-svygini.html#cb268-20" tabindex="-1"></a>dati <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">data.table</span>(<span class="at">IDd =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(eusilc), eusilc)</span>
-<span id="cb268-21"><a href="3.4-gini-index-svygini.html#cb268-21" tabindex="-1"></a></span>
-<span id="cb268-22"><a href="3.4-gini-index-svygini.html#cb268-22" tabindex="-1"></a><span class="co"># calculate the gini coefficient</span></span>
-<span id="cb268-23"><a href="3.4-gini-index-svygini.html#cb268-23" tabindex="-1"></a><span class="co"># using the R vardpoor library</span></span>
-<span id="cb268-24"><a href="3.4-gini-index-svygini.html#cb268-24" tabindex="-1"></a>varpoord_gini_calculation <span class="ot">&lt;-</span></span>
-<span id="cb268-25"><a href="3.4-gini-index-svygini.html#cb268-25" tabindex="-1"></a>  <span class="fu">varpoord</span>(</span>
-<span id="cb268-26"><a href="3.4-gini-index-svygini.html#cb268-26" tabindex="-1"></a>    <span class="co"># analysis variable</span></span>
-<span id="cb268-27"><a href="3.4-gini-index-svygini.html#cb268-27" tabindex="-1"></a>    <span class="at">Y =</span> <span class="st">&quot;eqincome&quot;</span>,</span>
-<span id="cb268-28"><a href="3.4-gini-index-svygini.html#cb268-28" tabindex="-1"></a>    </span>
-<span id="cb268-29"><a href="3.4-gini-index-svygini.html#cb268-29" tabindex="-1"></a>    <span class="co"># weights variable</span></span>
-<span id="cb268-30"><a href="3.4-gini-index-svygini.html#cb268-30" tabindex="-1"></a>    <span class="at">w_final =</span> <span class="st">&quot;rb050&quot;</span>,</span>
-<span id="cb268-31"><a href="3.4-gini-index-svygini.html#cb268-31" tabindex="-1"></a>    </span>
-<span id="cb268-32"><a href="3.4-gini-index-svygini.html#cb268-32" tabindex="-1"></a>    <span class="co"># row number variable</span></span>
-<span id="cb268-33"><a href="3.4-gini-index-svygini.html#cb268-33" tabindex="-1"></a>    <span class="at">ID_level1 =</span> <span class="st">&quot;IDd&quot;</span>,</span>
-<span id="cb268-34"><a href="3.4-gini-index-svygini.html#cb268-34" tabindex="-1"></a>    </span>
-<span id="cb268-35"><a href="3.4-gini-index-svygini.html#cb268-35" tabindex="-1"></a>    <span class="co"># row number variable</span></span>
-<span id="cb268-36"><a href="3.4-gini-index-svygini.html#cb268-36" tabindex="-1"></a>    <span class="at">ID_level2 =</span> <span class="st">&quot;IDd&quot;</span>,</span>
-<span id="cb268-37"><a href="3.4-gini-index-svygini.html#cb268-37" tabindex="-1"></a>    </span>
-<span id="cb268-38"><a href="3.4-gini-index-svygini.html#cb268-38" tabindex="-1"></a>    <span class="co"># strata variable</span></span>
-<span id="cb268-39"><a href="3.4-gini-index-svygini.html#cb268-39" tabindex="-1"></a>    <span class="at">H =</span> <span class="st">&quot;db040&quot;</span>,</span>
-<span id="cb268-40"><a href="3.4-gini-index-svygini.html#cb268-40" tabindex="-1"></a>    </span>
-<span id="cb268-41"><a href="3.4-gini-index-svygini.html#cb268-41" tabindex="-1"></a>    <span class="at">N_h =</span> <span class="cn">NULL</span> ,</span>
-<span id="cb268-42"><a href="3.4-gini-index-svygini.html#cb268-42" tabindex="-1"></a>    </span>
-<span id="cb268-43"><a href="3.4-gini-index-svygini.html#cb268-43" tabindex="-1"></a>    <span class="co"># clustering variable</span></span>
-<span id="cb268-44"><a href="3.4-gini-index-svygini.html#cb268-44" tabindex="-1"></a>    <span class="at">PSU =</span> <span class="st">&quot;rb030&quot;</span>,</span>
-<span id="cb268-45"><a href="3.4-gini-index-svygini.html#cb268-45" tabindex="-1"></a>    </span>
-<span id="cb268-46"><a href="3.4-gini-index-svygini.html#cb268-46" tabindex="-1"></a>    <span class="co"># data.table</span></span>
-<span id="cb268-47"><a href="3.4-gini-index-svygini.html#cb268-47" tabindex="-1"></a>    <span class="at">dataset =</span> dati,</span>
-<span id="cb268-48"><a href="3.4-gini-index-svygini.html#cb268-48" tabindex="-1"></a>    </span>
-<span id="cb268-49"><a href="3.4-gini-index-svygini.html#cb268-49" tabindex="-1"></a>    <span class="co"># gini coefficient function</span></span>
-<span id="cb268-50"><a href="3.4-gini-index-svygini.html#cb268-50" tabindex="-1"></a>    <span class="at">type =</span> <span class="st">&quot;lingini&quot;</span>,</span>
-<span id="cb268-51"><a href="3.4-gini-index-svygini.html#cb268-51" tabindex="-1"></a>    </span>
-<span id="cb268-52"><a href="3.4-gini-index-svygini.html#cb268-52" tabindex="-1"></a>    <span class="co"># get linearized variable</span></span>
-<span id="cb268-53"><a href="3.4-gini-index-svygini.html#cb268-53" tabindex="-1"></a>    <span class="at">outp_lin =</span> <span class="cn">TRUE</span></span>
-<span id="cb268-54"><a href="3.4-gini-index-svygini.html#cb268-54" tabindex="-1"></a>    </span>
-<span id="cb268-55"><a href="3.4-gini-index-svygini.html#cb268-55" tabindex="-1"></a>  )</span>
-<span id="cb268-56"><a href="3.4-gini-index-svygini.html#cb268-56" tabindex="-1"></a></span>
-<span id="cb268-57"><a href="3.4-gini-index-svygini.html#cb268-57" tabindex="-1"></a></span>
-<span id="cb268-58"><a href="3.4-gini-index-svygini.html#cb268-58" tabindex="-1"></a></span>
-<span id="cb268-59"><a href="3.4-gini-index-svygini.html#cb268-59" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
-<span id="cb268-60"><a href="3.4-gini-index-svygini.html#cb268-60" tabindex="-1"></a><span class="co"># using our recommended setup</span></span>
-<span id="cb268-61"><a href="3.4-gini-index-svygini.html#cb268-61" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span></span>
-<span id="cb268-62"><a href="3.4-gini-index-svygini.html#cb268-62" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
-<span id="cb268-63"><a href="3.4-gini-index-svygini.html#cb268-63" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
-<span id="cb268-64"><a href="3.4-gini-index-svygini.html#cb268-64" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
-<span id="cb268-65"><a href="3.4-gini-index-svygini.html#cb268-65" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
-<span id="cb268-66"><a href="3.4-gini-index-svygini.html#cb268-66" tabindex="-1"></a>    <span class="at">data =</span> eusilc</span>
-<span id="cb268-67"><a href="3.4-gini-index-svygini.html#cb268-67" tabindex="-1"></a>  )</span>
-<span id="cb268-68"><a href="3.4-gini-index-svygini.html#cb268-68" tabindex="-1"></a></span>
-<span id="cb268-69"><a href="3.4-gini-index-svygini.html#cb268-69" tabindex="-1"></a><span class="co"># immediately run the convey_prep function on it</span></span>
-<span id="cb268-70"><a href="3.4-gini-index-svygini.html#cb268-70" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(des_eusilc)</span>
-<span id="cb268-71"><a href="3.4-gini-index-svygini.html#cb268-71" tabindex="-1"></a></span>
-<span id="cb268-72"><a href="3.4-gini-index-svygini.html#cb268-72" tabindex="-1"></a><span class="co"># coefficients do match</span></span>
-<span id="cb268-73"><a href="3.4-gini-index-svygini.html#cb268-73" tabindex="-1"></a>varpoord_gini_calculation<span class="sc">$</span>all_result<span class="sc">$</span>value</span></code></pre></div>
+<div class="sourceCode" id="cb264"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb264-1"><a href="3.4-gini-index-svygini.html#cb264-1" tabindex="-1"></a><span class="co"># load the convey package</span></span>
+<span id="cb264-2"><a href="3.4-gini-index-svygini.html#cb264-2" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
+<span id="cb264-3"><a href="3.4-gini-index-svygini.html#cb264-3" tabindex="-1"></a></span>
+<span id="cb264-4"><a href="3.4-gini-index-svygini.html#cb264-4" tabindex="-1"></a><span class="co"># load the survey library</span></span>
+<span id="cb264-5"><a href="3.4-gini-index-svygini.html#cb264-5" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb264-6"><a href="3.4-gini-index-svygini.html#cb264-6" tabindex="-1"></a></span>
+<span id="cb264-7"><a href="3.4-gini-index-svygini.html#cb264-7" tabindex="-1"></a><span class="co"># load the vardpoor library</span></span>
+<span id="cb264-8"><a href="3.4-gini-index-svygini.html#cb264-8" tabindex="-1"></a><span class="fu">library</span>(vardpoor)</span>
+<span id="cb264-9"><a href="3.4-gini-index-svygini.html#cb264-9" tabindex="-1"></a></span>
+<span id="cb264-10"><a href="3.4-gini-index-svygini.html#cb264-10" tabindex="-1"></a><span class="co"># load the laeken library</span></span>
+<span id="cb264-11"><a href="3.4-gini-index-svygini.html#cb264-11" tabindex="-1"></a><span class="fu">library</span>(laeken)</span>
+<span id="cb264-12"><a href="3.4-gini-index-svygini.html#cb264-12" tabindex="-1"></a></span>
+<span id="cb264-13"><a href="3.4-gini-index-svygini.html#cb264-13" tabindex="-1"></a><span class="co"># load the synthetic EU statistics on income &amp; living conditions</span></span>
+<span id="cb264-14"><a href="3.4-gini-index-svygini.html#cb264-14" tabindex="-1"></a><span class="fu">data</span>(eusilc)</span>
+<span id="cb264-15"><a href="3.4-gini-index-svygini.html#cb264-15" tabindex="-1"></a></span>
+<span id="cb264-16"><a href="3.4-gini-index-svygini.html#cb264-16" tabindex="-1"></a><span class="co"># make all column names lowercase</span></span>
+<span id="cb264-17"><a href="3.4-gini-index-svygini.html#cb264-17" tabindex="-1"></a><span class="fu">names</span>(eusilc) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(eusilc))</span>
+<span id="cb264-18"><a href="3.4-gini-index-svygini.html#cb264-18" tabindex="-1"></a></span>
+<span id="cb264-19"><a href="3.4-gini-index-svygini.html#cb264-19" tabindex="-1"></a><span class="co"># add a column with the row number</span></span>
+<span id="cb264-20"><a href="3.4-gini-index-svygini.html#cb264-20" tabindex="-1"></a>dati <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">data.table</span>(<span class="at">IDd =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(eusilc), eusilc)</span>
+<span id="cb264-21"><a href="3.4-gini-index-svygini.html#cb264-21" tabindex="-1"></a></span>
+<span id="cb264-22"><a href="3.4-gini-index-svygini.html#cb264-22" tabindex="-1"></a><span class="co"># calculate the gini coefficient</span></span>
+<span id="cb264-23"><a href="3.4-gini-index-svygini.html#cb264-23" tabindex="-1"></a><span class="co"># using the R vardpoor library</span></span>
+<span id="cb264-24"><a href="3.4-gini-index-svygini.html#cb264-24" tabindex="-1"></a>varpoord_gini_calculation <span class="ot">&lt;-</span></span>
+<span id="cb264-25"><a href="3.4-gini-index-svygini.html#cb264-25" tabindex="-1"></a>  <span class="fu">varpoord</span>(</span>
+<span id="cb264-26"><a href="3.4-gini-index-svygini.html#cb264-26" tabindex="-1"></a>    <span class="co"># analysis variable</span></span>
+<span id="cb264-27"><a href="3.4-gini-index-svygini.html#cb264-27" tabindex="-1"></a>    <span class="at">Y =</span> <span class="st">&quot;eqincome&quot;</span>,</span>
+<span id="cb264-28"><a href="3.4-gini-index-svygini.html#cb264-28" tabindex="-1"></a>    </span>
+<span id="cb264-29"><a href="3.4-gini-index-svygini.html#cb264-29" tabindex="-1"></a>    <span class="co"># weights variable</span></span>
+<span id="cb264-30"><a href="3.4-gini-index-svygini.html#cb264-30" tabindex="-1"></a>    <span class="at">w_final =</span> <span class="st">&quot;rb050&quot;</span>,</span>
+<span id="cb264-31"><a href="3.4-gini-index-svygini.html#cb264-31" tabindex="-1"></a>    </span>
+<span id="cb264-32"><a href="3.4-gini-index-svygini.html#cb264-32" tabindex="-1"></a>    <span class="co"># row number variable</span></span>
+<span id="cb264-33"><a href="3.4-gini-index-svygini.html#cb264-33" tabindex="-1"></a>    <span class="at">ID_level1 =</span> <span class="st">&quot;IDd&quot;</span>,</span>
+<span id="cb264-34"><a href="3.4-gini-index-svygini.html#cb264-34" tabindex="-1"></a>    </span>
+<span id="cb264-35"><a href="3.4-gini-index-svygini.html#cb264-35" tabindex="-1"></a>    <span class="co"># row number variable</span></span>
+<span id="cb264-36"><a href="3.4-gini-index-svygini.html#cb264-36" tabindex="-1"></a>    <span class="at">ID_level2 =</span> <span class="st">&quot;IDd&quot;</span>,</span>
+<span id="cb264-37"><a href="3.4-gini-index-svygini.html#cb264-37" tabindex="-1"></a>    </span>
+<span id="cb264-38"><a href="3.4-gini-index-svygini.html#cb264-38" tabindex="-1"></a>    <span class="co"># strata variable</span></span>
+<span id="cb264-39"><a href="3.4-gini-index-svygini.html#cb264-39" tabindex="-1"></a>    <span class="at">H =</span> <span class="st">&quot;db040&quot;</span>,</span>
+<span id="cb264-40"><a href="3.4-gini-index-svygini.html#cb264-40" tabindex="-1"></a>    </span>
+<span id="cb264-41"><a href="3.4-gini-index-svygini.html#cb264-41" tabindex="-1"></a>    <span class="at">N_h =</span> <span class="cn">NULL</span> ,</span>
+<span id="cb264-42"><a href="3.4-gini-index-svygini.html#cb264-42" tabindex="-1"></a>    </span>
+<span id="cb264-43"><a href="3.4-gini-index-svygini.html#cb264-43" tabindex="-1"></a>    <span class="co"># clustering variable</span></span>
+<span id="cb264-44"><a href="3.4-gini-index-svygini.html#cb264-44" tabindex="-1"></a>    <span class="at">PSU =</span> <span class="st">&quot;rb030&quot;</span>,</span>
+<span id="cb264-45"><a href="3.4-gini-index-svygini.html#cb264-45" tabindex="-1"></a>    </span>
+<span id="cb264-46"><a href="3.4-gini-index-svygini.html#cb264-46" tabindex="-1"></a>    <span class="co"># data.table</span></span>
+<span id="cb264-47"><a href="3.4-gini-index-svygini.html#cb264-47" tabindex="-1"></a>    <span class="at">dataset =</span> dati,</span>
+<span id="cb264-48"><a href="3.4-gini-index-svygini.html#cb264-48" tabindex="-1"></a>    </span>
+<span id="cb264-49"><a href="3.4-gini-index-svygini.html#cb264-49" tabindex="-1"></a>    <span class="co"># gini coefficient function</span></span>
+<span id="cb264-50"><a href="3.4-gini-index-svygini.html#cb264-50" tabindex="-1"></a>    <span class="at">type =</span> <span class="st">&quot;lingini&quot;</span>,</span>
+<span id="cb264-51"><a href="3.4-gini-index-svygini.html#cb264-51" tabindex="-1"></a>    </span>
+<span id="cb264-52"><a href="3.4-gini-index-svygini.html#cb264-52" tabindex="-1"></a>    <span class="co"># get linearized variable</span></span>
+<span id="cb264-53"><a href="3.4-gini-index-svygini.html#cb264-53" tabindex="-1"></a>    <span class="at">outp_lin =</span> <span class="cn">TRUE</span></span>
+<span id="cb264-54"><a href="3.4-gini-index-svygini.html#cb264-54" tabindex="-1"></a>    </span>
+<span id="cb264-55"><a href="3.4-gini-index-svygini.html#cb264-55" tabindex="-1"></a>  )</span>
+<span id="cb264-56"><a href="3.4-gini-index-svygini.html#cb264-56" tabindex="-1"></a></span>
+<span id="cb264-57"><a href="3.4-gini-index-svygini.html#cb264-57" tabindex="-1"></a></span>
+<span id="cb264-58"><a href="3.4-gini-index-svygini.html#cb264-58" tabindex="-1"></a></span>
+<span id="cb264-59"><a href="3.4-gini-index-svygini.html#cb264-59" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
+<span id="cb264-60"><a href="3.4-gini-index-svygini.html#cb264-60" tabindex="-1"></a><span class="co"># using our recommended setup</span></span>
+<span id="cb264-61"><a href="3.4-gini-index-svygini.html#cb264-61" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span></span>
+<span id="cb264-62"><a href="3.4-gini-index-svygini.html#cb264-62" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
+<span id="cb264-63"><a href="3.4-gini-index-svygini.html#cb264-63" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
+<span id="cb264-64"><a href="3.4-gini-index-svygini.html#cb264-64" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
+<span id="cb264-65"><a href="3.4-gini-index-svygini.html#cb264-65" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
+<span id="cb264-66"><a href="3.4-gini-index-svygini.html#cb264-66" tabindex="-1"></a>    <span class="at">data =</span> eusilc</span>
+<span id="cb264-67"><a href="3.4-gini-index-svygini.html#cb264-67" tabindex="-1"></a>  )</span>
+<span id="cb264-68"><a href="3.4-gini-index-svygini.html#cb264-68" tabindex="-1"></a></span>
+<span id="cb264-69"><a href="3.4-gini-index-svygini.html#cb264-69" tabindex="-1"></a><span class="co"># immediately run the convey_prep function on it</span></span>
+<span id="cb264-70"><a href="3.4-gini-index-svygini.html#cb264-70" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(des_eusilc)</span>
+<span id="cb264-71"><a href="3.4-gini-index-svygini.html#cb264-71" tabindex="-1"></a></span>
+<span id="cb264-72"><a href="3.4-gini-index-svygini.html#cb264-72" tabindex="-1"></a><span class="co"># coefficients do match</span></span>
+<span id="cb264-73"><a href="3.4-gini-index-svygini.html#cb264-73" tabindex="-1"></a>varpoord_gini_calculation<span class="sc">$</span>all_result<span class="sc">$</span>value</span></code></pre></div>
 <pre><code>## [1] 26.49652</code></pre>
-<div class="sourceCode" id="cb270"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb270-1"><a href="3.4-gini-index-svygini.html#cb270-1" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">svygini</span>( <span class="sc">~</span> eqincome , des_eusilc)) <span class="sc">*</span> <span class="dv">100</span></span></code></pre></div>
+<div class="sourceCode" id="cb266"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb266-1"><a href="3.4-gini-index-svygini.html#cb266-1" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">svygini</span>( <span class="sc">~</span> eqincome , des_eusilc)) <span class="sc">*</span> <span class="dv">100</span></span></code></pre></div>
 <pre><code>## eqincome 
 ## 26.49652</code></pre>
-<div class="sourceCode" id="cb272"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb272-1"><a href="3.4-gini-index-svygini.html#cb272-1" tabindex="-1"></a><span class="co"># linearized variables do match</span></span>
-<span id="cb272-2"><a href="3.4-gini-index-svygini.html#cb272-2" tabindex="-1"></a><span class="co"># varpoord</span></span>
-<span id="cb272-3"><a href="3.4-gini-index-svygini.html#cb272-3" tabindex="-1"></a>lin_gini_varpoord <span class="ot">&lt;-</span> varpoord_gini_calculation<span class="sc">$</span>lin_out<span class="sc">$</span>lin_gini</span>
-<span id="cb272-4"><a href="3.4-gini-index-svygini.html#cb272-4" tabindex="-1"></a><span class="co"># convey</span></span>
-<span id="cb272-5"><a href="3.4-gini-index-svygini.html#cb272-5" tabindex="-1"></a>lin_gini_convey <span class="ot">&lt;-</span></span>
-<span id="cb272-6"><a href="3.4-gini-index-svygini.html#cb272-6" tabindex="-1"></a>  <span class="fu">attr</span>(<span class="fu">svygini</span>( <span class="sc">~</span> eqincome , des_eusilc , <span class="at">linearized =</span> <span class="cn">TRUE</span>) , <span class="st">&quot;linearized&quot;</span>)</span>
-<span id="cb272-7"><a href="3.4-gini-index-svygini.html#cb272-7" tabindex="-1"></a></span>
-<span id="cb272-8"><a href="3.4-gini-index-svygini.html#cb272-8" tabindex="-1"></a><span class="co"># check equality</span></span>
-<span id="cb272-9"><a href="3.4-gini-index-svygini.html#cb272-9" tabindex="-1"></a><span class="fu">all.equal</span>(lin_gini_varpoord , (<span class="dv">100</span> <span class="sc">*</span> <span class="fu">as.numeric</span>(lin_gini_convey)))</span></code></pre></div>
+<div class="sourceCode" id="cb268"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb268-1"><a href="3.4-gini-index-svygini.html#cb268-1" tabindex="-1"></a><span class="co"># linearized variables do match</span></span>
+<span id="cb268-2"><a href="3.4-gini-index-svygini.html#cb268-2" tabindex="-1"></a><span class="co"># varpoord</span></span>
+<span id="cb268-3"><a href="3.4-gini-index-svygini.html#cb268-3" tabindex="-1"></a>lin_gini_varpoord <span class="ot">&lt;-</span> varpoord_gini_calculation<span class="sc">$</span>lin_out<span class="sc">$</span>lin_gini</span>
+<span id="cb268-4"><a href="3.4-gini-index-svygini.html#cb268-4" tabindex="-1"></a><span class="co"># convey</span></span>
+<span id="cb268-5"><a href="3.4-gini-index-svygini.html#cb268-5" tabindex="-1"></a>lin_gini_convey <span class="ot">&lt;-</span></span>
+<span id="cb268-6"><a href="3.4-gini-index-svygini.html#cb268-6" tabindex="-1"></a>  <span class="fu">attr</span>(<span class="fu">svygini</span>( <span class="sc">~</span> eqincome , des_eusilc , <span class="at">linearized =</span> <span class="cn">TRUE</span>) , <span class="st">&quot;linearized&quot;</span>)</span>
+<span id="cb268-7"><a href="3.4-gini-index-svygini.html#cb268-7" tabindex="-1"></a></span>
+<span id="cb268-8"><a href="3.4-gini-index-svygini.html#cb268-8" tabindex="-1"></a><span class="co"># check equality</span></span>
+<span id="cb268-9"><a href="3.4-gini-index-svygini.html#cb268-9" tabindex="-1"></a><span class="fu">all.equal</span>(lin_gini_varpoord , (<span class="dv">100</span> <span class="sc">*</span> <span class="fu">as.numeric</span>(lin_gini_convey)))</span></code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
-<div class="sourceCode" id="cb274"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb274-1"><a href="3.4-gini-index-svygini.html#cb274-1" tabindex="-1"></a><span class="co"># variances do not match exactly</span></span>
-<span id="cb274-2"><a href="3.4-gini-index-svygini.html#cb274-2" tabindex="-1"></a><span class="fu">attr</span>(<span class="fu">svygini</span>( <span class="sc">~</span> eqincome , des_eusilc) , <span class="st">&#39;var&#39;</span>) <span class="sc">*</span> <span class="dv">10000</span></span></code></pre></div>
+<div class="sourceCode" id="cb270"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb270-1"><a href="3.4-gini-index-svygini.html#cb270-1" tabindex="-1"></a><span class="co"># variances do not match exactly</span></span>
+<span id="cb270-2"><a href="3.4-gini-index-svygini.html#cb270-2" tabindex="-1"></a><span class="fu">attr</span>(<span class="fu">svygini</span>( <span class="sc">~</span> eqincome , des_eusilc) , <span class="st">&#39;var&#39;</span>) <span class="sc">*</span> <span class="dv">10000</span></span></code></pre></div>
 <pre><code>##            eqincome
 ## eqincome 0.03790739</code></pre>
-<div class="sourceCode" id="cb276"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb276-1"><a href="3.4-gini-index-svygini.html#cb276-1" tabindex="-1"></a>varpoord_gini_calculation<span class="sc">$</span>all_result<span class="sc">$</span>var</span></code></pre></div>
+<div class="sourceCode" id="cb272"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb272-1"><a href="3.4-gini-index-svygini.html#cb272-1" tabindex="-1"></a>varpoord_gini_calculation<span class="sc">$</span>all_result<span class="sc">$</span>var</span></code></pre></div>
 <pre><code>## [1] 0.03783931</code></pre>
-<div class="sourceCode" id="cb278"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb278-1"><a href="3.4-gini-index-svygini.html#cb278-1" tabindex="-1"></a><span class="co"># standard errors do not match exactly</span></span>
-<span id="cb278-2"><a href="3.4-gini-index-svygini.html#cb278-2" tabindex="-1"></a>varpoord_gini_calculation<span class="sc">$</span>all_result<span class="sc">$</span>se</span></code></pre></div>
+<div class="sourceCode" id="cb274"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb274-1"><a href="3.4-gini-index-svygini.html#cb274-1" tabindex="-1"></a><span class="co"># standard errors do not match exactly</span></span>
+<span id="cb274-2"><a href="3.4-gini-index-svygini.html#cb274-2" tabindex="-1"></a>varpoord_gini_calculation<span class="sc">$</span>all_result<span class="sc">$</span>se</span></code></pre></div>
 <pre><code>## [1] 0.1945233</code></pre>
-<div class="sourceCode" id="cb280"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb280-1"><a href="3.4-gini-index-svygini.html#cb280-1" tabindex="-1"></a><span class="fu">SE</span>(<span class="fu">svygini</span>( <span class="sc">~</span> eqincome , des_eusilc)) <span class="sc">*</span> <span class="dv">100</span></span></code></pre></div>
+<div class="sourceCode" id="cb276"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb276-1"><a href="3.4-gini-index-svygini.html#cb276-1" tabindex="-1"></a><span class="fu">SE</span>(<span class="fu">svygini</span>( <span class="sc">~</span> eqincome , des_eusilc)) <span class="sc">*</span> <span class="dv">100</span></span></code></pre></div>
 <pre><code>##           eqincome
 ## eqincome 0.1946982</code></pre>
 <p>The variance estimate is computed by using the approximation defined in <a href="1.5-var.html#var">1.5</a>, while the linearized variable <span class="math inline">\(z\)</span> is defined by <a href="1.4-lin.html#lin">1.4</a>. The functions <code>convey::svygini</code> and <code>vardpoor::lingini</code> produce the same linearized variable <span class="math inline">\(z\)</span>.</p>
 <p>However, the measures of uncertainty do not line up, because <code>library(vardpoor)</code> defaults to an ultimate cluster method that can be replicated with an alternative setup of the <code>survey.design</code> object.</p>
-<div class="sourceCode" id="cb282"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb282-1"><a href="3.4-gini-index-svygini.html#cb282-1" tabindex="-1"></a><span class="co"># within each strata, sum up the weights</span></span>
-<span id="cb282-2"><a href="3.4-gini-index-svygini.html#cb282-2" tabindex="-1"></a>cluster_sums <span class="ot">&lt;-</span></span>
-<span id="cb282-3"><a href="3.4-gini-index-svygini.html#cb282-3" tabindex="-1"></a>  <span class="fu">aggregate</span>(eusilc<span class="sc">$</span>rb050 , <span class="fu">list</span>(eusilc<span class="sc">$</span>db040) , sum)</span>
-<span id="cb282-4"><a href="3.4-gini-index-svygini.html#cb282-4" tabindex="-1"></a></span>
-<span id="cb282-5"><a href="3.4-gini-index-svygini.html#cb282-5" tabindex="-1"></a><span class="co"># name the within-strata sums of weights the `cluster_sum`</span></span>
-<span id="cb282-6"><a href="3.4-gini-index-svygini.html#cb282-6" tabindex="-1"></a><span class="fu">names</span>(cluster_sums) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;db040&quot;</span> , <span class="st">&quot;cluster_sum&quot;</span>)</span>
-<span id="cb282-7"><a href="3.4-gini-index-svygini.html#cb282-7" tabindex="-1"></a></span>
-<span id="cb282-8"><a href="3.4-gini-index-svygini.html#cb282-8" tabindex="-1"></a><span class="co"># merge this column back onto the data.frame</span></span>
-<span id="cb282-9"><a href="3.4-gini-index-svygini.html#cb282-9" tabindex="-1"></a>eusilc <span class="ot">&lt;-</span> <span class="fu">merge</span>(eusilc , cluster_sums)</span>
-<span id="cb282-10"><a href="3.4-gini-index-svygini.html#cb282-10" tabindex="-1"></a></span>
-<span id="cb282-11"><a href="3.4-gini-index-svygini.html#cb282-11" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
-<span id="cb282-12"><a href="3.4-gini-index-svygini.html#cb282-12" tabindex="-1"></a><span class="co"># with the fpc using the cluster sum</span></span>
-<span id="cb282-13"><a href="3.4-gini-index-svygini.html#cb282-13" tabindex="-1"></a>des_eusilc_ultimate_cluster <span class="ot">&lt;-</span></span>
-<span id="cb282-14"><a href="3.4-gini-index-svygini.html#cb282-14" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
-<span id="cb282-15"><a href="3.4-gini-index-svygini.html#cb282-15" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
-<span id="cb282-16"><a href="3.4-gini-index-svygini.html#cb282-16" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
-<span id="cb282-17"><a href="3.4-gini-index-svygini.html#cb282-17" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
-<span id="cb282-18"><a href="3.4-gini-index-svygini.html#cb282-18" tabindex="-1"></a>    <span class="at">data =</span> eusilc ,</span>
-<span id="cb282-19"><a href="3.4-gini-index-svygini.html#cb282-19" tabindex="-1"></a>    <span class="at">fpc =</span> <span class="sc">~</span> cluster_sum</span>
-<span id="cb282-20"><a href="3.4-gini-index-svygini.html#cb282-20" tabindex="-1"></a>  )</span>
-<span id="cb282-21"><a href="3.4-gini-index-svygini.html#cb282-21" tabindex="-1"></a></span>
-<span id="cb282-22"><a href="3.4-gini-index-svygini.html#cb282-22" tabindex="-1"></a><span class="co"># again, immediately run the convey_prep function on the `survey.design`</span></span>
-<span id="cb282-23"><a href="3.4-gini-index-svygini.html#cb282-23" tabindex="-1"></a>des_eusilc_ultimate_cluster <span class="ot">&lt;-</span></span>
-<span id="cb282-24"><a href="3.4-gini-index-svygini.html#cb282-24" tabindex="-1"></a>  <span class="fu">convey_prep</span>(des_eusilc_ultimate_cluster)</span>
-<span id="cb282-25"><a href="3.4-gini-index-svygini.html#cb282-25" tabindex="-1"></a></span>
-<span id="cb282-26"><a href="3.4-gini-index-svygini.html#cb282-26" tabindex="-1"></a><span class="co"># matches</span></span>
-<span id="cb282-27"><a href="3.4-gini-index-svygini.html#cb282-27" tabindex="-1"></a><span class="fu">attr</span>(<span class="fu">svygini</span>( <span class="sc">~</span> eqincome , des_eusilc_ultimate_cluster) , <span class="st">&#39;var&#39;</span>) <span class="sc">*</span> <span class="dv">10000</span></span></code></pre></div>
+<div class="sourceCode" id="cb278"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb278-1"><a href="3.4-gini-index-svygini.html#cb278-1" tabindex="-1"></a><span class="co"># within each strata, sum up the weights</span></span>
+<span id="cb278-2"><a href="3.4-gini-index-svygini.html#cb278-2" tabindex="-1"></a>cluster_sums <span class="ot">&lt;-</span></span>
+<span id="cb278-3"><a href="3.4-gini-index-svygini.html#cb278-3" tabindex="-1"></a>  <span class="fu">aggregate</span>(eusilc<span class="sc">$</span>rb050 , <span class="fu">list</span>(eusilc<span class="sc">$</span>db040) , sum)</span>
+<span id="cb278-4"><a href="3.4-gini-index-svygini.html#cb278-4" tabindex="-1"></a></span>
+<span id="cb278-5"><a href="3.4-gini-index-svygini.html#cb278-5" tabindex="-1"></a><span class="co"># name the within-strata sums of weights the `cluster_sum`</span></span>
+<span id="cb278-6"><a href="3.4-gini-index-svygini.html#cb278-6" tabindex="-1"></a><span class="fu">names</span>(cluster_sums) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;db040&quot;</span> , <span class="st">&quot;cluster_sum&quot;</span>)</span>
+<span id="cb278-7"><a href="3.4-gini-index-svygini.html#cb278-7" tabindex="-1"></a></span>
+<span id="cb278-8"><a href="3.4-gini-index-svygini.html#cb278-8" tabindex="-1"></a><span class="co"># merge this column back onto the data.frame</span></span>
+<span id="cb278-9"><a href="3.4-gini-index-svygini.html#cb278-9" tabindex="-1"></a>eusilc <span class="ot">&lt;-</span> <span class="fu">merge</span>(eusilc , cluster_sums)</span>
+<span id="cb278-10"><a href="3.4-gini-index-svygini.html#cb278-10" tabindex="-1"></a></span>
+<span id="cb278-11"><a href="3.4-gini-index-svygini.html#cb278-11" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
+<span id="cb278-12"><a href="3.4-gini-index-svygini.html#cb278-12" tabindex="-1"></a><span class="co"># with the fpc using the cluster sum</span></span>
+<span id="cb278-13"><a href="3.4-gini-index-svygini.html#cb278-13" tabindex="-1"></a>des_eusilc_ultimate_cluster <span class="ot">&lt;-</span></span>
+<span id="cb278-14"><a href="3.4-gini-index-svygini.html#cb278-14" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
+<span id="cb278-15"><a href="3.4-gini-index-svygini.html#cb278-15" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
+<span id="cb278-16"><a href="3.4-gini-index-svygini.html#cb278-16" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
+<span id="cb278-17"><a href="3.4-gini-index-svygini.html#cb278-17" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
+<span id="cb278-18"><a href="3.4-gini-index-svygini.html#cb278-18" tabindex="-1"></a>    <span class="at">data =</span> eusilc ,</span>
+<span id="cb278-19"><a href="3.4-gini-index-svygini.html#cb278-19" tabindex="-1"></a>    <span class="at">fpc =</span> <span class="sc">~</span> cluster_sum</span>
+<span id="cb278-20"><a href="3.4-gini-index-svygini.html#cb278-20" tabindex="-1"></a>  )</span>
+<span id="cb278-21"><a href="3.4-gini-index-svygini.html#cb278-21" tabindex="-1"></a></span>
+<span id="cb278-22"><a href="3.4-gini-index-svygini.html#cb278-22" tabindex="-1"></a><span class="co"># again, immediately run the convey_prep function on the `survey.design`</span></span>
+<span id="cb278-23"><a href="3.4-gini-index-svygini.html#cb278-23" tabindex="-1"></a>des_eusilc_ultimate_cluster <span class="ot">&lt;-</span></span>
+<span id="cb278-24"><a href="3.4-gini-index-svygini.html#cb278-24" tabindex="-1"></a>  <span class="fu">convey_prep</span>(des_eusilc_ultimate_cluster)</span>
+<span id="cb278-25"><a href="3.4-gini-index-svygini.html#cb278-25" tabindex="-1"></a></span>
+<span id="cb278-26"><a href="3.4-gini-index-svygini.html#cb278-26" tabindex="-1"></a><span class="co"># matches</span></span>
+<span id="cb278-27"><a href="3.4-gini-index-svygini.html#cb278-27" tabindex="-1"></a><span class="fu">attr</span>(<span class="fu">svygini</span>( <span class="sc">~</span> eqincome , des_eusilc_ultimate_cluster) , <span class="st">&#39;var&#39;</span>) <span class="sc">*</span> <span class="dv">10000</span></span></code></pre></div>
 <pre><code>##            eqincome
 ## eqincome 0.03783931</code></pre>
-<div class="sourceCode" id="cb284"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb284-1"><a href="3.4-gini-index-svygini.html#cb284-1" tabindex="-1"></a>varpoord_gini_calculation<span class="sc">$</span>all_result<span class="sc">$</span>var</span></code></pre></div>
+<div class="sourceCode" id="cb280"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb280-1"><a href="3.4-gini-index-svygini.html#cb280-1" tabindex="-1"></a>varpoord_gini_calculation<span class="sc">$</span>all_result<span class="sc">$</span>var</span></code></pre></div>
 <pre><code>## [1] 0.03783931</code></pre>
-<div class="sourceCode" id="cb286"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb286-1"><a href="3.4-gini-index-svygini.html#cb286-1" tabindex="-1"></a><span class="co"># matches</span></span>
-<span id="cb286-2"><a href="3.4-gini-index-svygini.html#cb286-2" tabindex="-1"></a>varpoord_gini_calculation<span class="sc">$</span>all_result<span class="sc">$</span>se</span></code></pre></div>
+<div class="sourceCode" id="cb282"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb282-1"><a href="3.4-gini-index-svygini.html#cb282-1" tabindex="-1"></a><span class="co"># matches</span></span>
+<span id="cb282-2"><a href="3.4-gini-index-svygini.html#cb282-2" tabindex="-1"></a>varpoord_gini_calculation<span class="sc">$</span>all_result<span class="sc">$</span>se</span></code></pre></div>
 <pre><code>## [1] 0.1945233</code></pre>
-<div class="sourceCode" id="cb288"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb288-1"><a href="3.4-gini-index-svygini.html#cb288-1" tabindex="-1"></a><span class="fu">SE</span>(<span class="fu">svygini</span>( <span class="sc">~</span> eqincome , des_eusilc_ultimate_cluster)) <span class="sc">*</span> <span class="dv">100</span></span></code></pre></div>
+<div class="sourceCode" id="cb284"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb284-1"><a href="3.4-gini-index-svygini.html#cb284-1" tabindex="-1"></a><span class="fu">SE</span>(<span class="fu">svygini</span>( <span class="sc">~</span> eqincome , des_eusilc_ultimate_cluster)) <span class="sc">*</span> <span class="dv">100</span></span></code></pre></div>
 <pre><code>##           eqincome
 ## eqincome 0.1945233</code></pre>
 </div>

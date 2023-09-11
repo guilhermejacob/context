@@ -13,7 +13,7 @@
 
 <meta name="author" content="Guilherme Jacob, Anthony Damico, and Djalma Pessoa" />
 
-<meta name="date" content="2023-09-07" />
+<meta name="date" content="2023-09-11" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -205,294 +205,294 @@ T_\theta &amp;= \frac{Watts}{g} \\
 <p><strong>A replication example</strong></p>
 <p>To provide a example for our code, we proceed with a Monte Carlo experiment.
 Using the <code>eusilcP</code> data from the <code>simPop</code> package <span class="citation">(<label for="tufte-mn-51" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-51" class="margin-toggle">Templ et al. 2017<span class="marginnote">Templ, Matthias, Bernhard Meindl, Alexander Kowarik, and Olivier Dupriez. 2017. <span>“Simulation of Synthetic Complex Data: The <span>R</span> Package <span class="nocase">simPop</span>.”</span> <em>Journal of Statistical Software</em> 79 (10): 1–38. <a href="https://doi.org/10.18637/jss.v079.i10">https://doi.org/10.18637/jss.v079.i10</a>.</span>)</span>, we can compute the actual value of the Watts index for that population:</p>
-<div class="sourceCode" id="cb173"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb173-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb173-1" tabindex="-1"></a><span class="co"># load libraries</span></span>
-<span id="cb173-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb173-2" tabindex="-1"></a><span class="fu">library</span>(sampling)</span>
-<span id="cb173-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb173-3" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
-<span id="cb173-4"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb173-4" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
-<span id="cb173-5"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb173-5" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
-<span id="cb173-6"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb173-6" tabindex="-1"></a></span>
-<span id="cb173-7"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb173-7" tabindex="-1"></a><span class="co"># load pseudo population data</span></span>
-<span id="cb173-8"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb173-8" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;eusilcP&quot;</span> , <span class="at">package =</span> <span class="st">&quot;simPop&quot;</span>)</span>
-<span id="cb173-9"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb173-9" tabindex="-1"></a></span>
-<span id="cb173-10"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb173-10" tabindex="-1"></a><span class="co"># compute population value of the Watts index decomposition</span></span>
-<span id="cb173-11"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb173-11" tabindex="-1"></a>inc.pos <span class="ot">&lt;-</span> eusilcP<span class="sc">$</span>eqIncome[eusilcP<span class="sc">$</span>eqIncome <span class="sc">&gt;</span> <span class="dv">0</span>]</span>
-<span id="cb173-12"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb173-12" tabindex="-1"></a>(theta.pop <span class="ot">&lt;-</span></span>
-<span id="cb173-13"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb173-13" tabindex="-1"></a>    <span class="fu">mean</span>(<span class="fu">ifelse</span>(inc.pos <span class="sc">&lt;=</span> <span class="dv">10000</span> , <span class="fu">log</span>(<span class="dv">10000</span> <span class="sc">/</span>  inc.pos) , <span class="dv">0</span>) , <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb169"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb169-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb169-1" tabindex="-1"></a><span class="co"># load libraries</span></span>
+<span id="cb169-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb169-2" tabindex="-1"></a><span class="fu">library</span>(sampling)</span>
+<span id="cb169-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb169-3" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb169-4"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb169-4" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
+<span id="cb169-5"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb169-5" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
+<span id="cb169-6"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb169-6" tabindex="-1"></a></span>
+<span id="cb169-7"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb169-7" tabindex="-1"></a><span class="co"># load pseudo population data</span></span>
+<span id="cb169-8"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb169-8" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;eusilcP&quot;</span> , <span class="at">package =</span> <span class="st">&quot;simPop&quot;</span>)</span>
+<span id="cb169-9"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb169-9" tabindex="-1"></a></span>
+<span id="cb169-10"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb169-10" tabindex="-1"></a><span class="co"># compute population value of the Watts index decomposition</span></span>
+<span id="cb169-11"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb169-11" tabindex="-1"></a>inc.pos <span class="ot">&lt;-</span> eusilcP<span class="sc">$</span>eqIncome[eusilcP<span class="sc">$</span>eqIncome <span class="sc">&gt;</span> <span class="dv">0</span>]</span>
+<span id="cb169-12"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb169-12" tabindex="-1"></a>(theta.pop <span class="ot">&lt;-</span></span>
+<span id="cb169-13"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb169-13" tabindex="-1"></a>    <span class="fu">mean</span>(<span class="fu">ifelse</span>(inc.pos <span class="sc">&lt;=</span> <span class="dv">10000</span> , <span class="fu">log</span>(<span class="dv">10000</span> <span class="sc">/</span>  inc.pos) , <span class="dv">0</span>) , <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div>
 <pre><code>## [1] 0.05025374</code></pre>
 <p>Now, to study the distribution of the estimator under a particular sampling design, we select 5000 samples under one-stage cluster sampling of 100 households using the <code>cluster</code> function from the <code>sampling</code> package <span class="citation">(<label for="tufte-mn-52" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-52" class="margin-toggle">Tillé and Matei 2021<span class="marginnote">Tillé, Yves, and Alina Matei. 2021. <em>Sampling: Survey Sampling</em>. <a href="https://CRAN.R-project.org/package=sampling">https://CRAN.R-project.org/package=sampling</a>.</span>)</span>, and use the <code>svywatts</code> function to estimate the Watts index for each of those samples:</p>
-<div class="sourceCode" id="cb175"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb175-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-1" tabindex="-1"></a><span class="co"># define the number of monte carlo replicates</span></span>
-<span id="cb175-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-2" tabindex="-1"></a>mc.rep <span class="ot">&lt;-</span> 5000L</span>
-<span id="cb175-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-3" tabindex="-1"></a></span>
-<span id="cb175-4"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-4" tabindex="-1"></a></span>
-<span id="cb175-5"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-5" tabindex="-1"></a><span class="co"># simulation function</span></span>
-<span id="cb175-6"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-6" tabindex="-1"></a>watts_sim_fun <span class="ot">&lt;-</span> <span class="cf">function</span>(this.iter) {</span>
-<span id="cb175-7"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-7" tabindex="-1"></a>  <span class="fu">set.seed</span>(this.iter)</span>
-<span id="cb175-8"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-8" tabindex="-1"></a>  </span>
-<span id="cb175-9"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-9" tabindex="-1"></a>  <span class="fu">library</span>(survey)</span>
-<span id="cb175-10"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-10" tabindex="-1"></a>  <span class="fu">library</span>(convey)</span>
-<span id="cb175-11"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-11" tabindex="-1"></a>  <span class="fu">library</span>(sampling)</span>
-<span id="cb175-12"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-12" tabindex="-1"></a>  </span>
-<span id="cb175-13"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-13" tabindex="-1"></a>  </span>
-<span id="cb175-14"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-14" tabindex="-1"></a>  <span class="co"># load pseudo population data</span></span>
-<span id="cb175-15"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-15" tabindex="-1"></a>  <span class="fu">data</span>(<span class="st">&quot;eusilcP&quot;</span> , <span class="at">package =</span> <span class="st">&quot;simPop&quot;</span>)</span>
-<span id="cb175-16"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-16" tabindex="-1"></a>  </span>
-<span id="cb175-17"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-17" tabindex="-1"></a>  <span class="co"># compute size-like variable for PPS sampling design</span></span>
-<span id="cb175-18"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-18" tabindex="-1"></a>  eusilcP<span class="sc">$</span>aux <span class="ot">&lt;-</span></span>
-<span id="cb175-19"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-19" tabindex="-1"></a>    <span class="fu">log</span>(<span class="fu">ifelse</span>(eusilcP<span class="sc">$</span>eqIncome <span class="sc">&gt;=</span> <span class="dv">1000</span> , eusilcP<span class="sc">$</span>eqIncome , <span class="dv">1000</span>))</span>
-<span id="cb175-20"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-20" tabindex="-1"></a>  </span>
-<span id="cb175-21"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-21" tabindex="-1"></a>  <span class="co"># select sample</span></span>
-<span id="cb175-22"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-22" tabindex="-1"></a>  tt <span class="ot">&lt;-</span></span>
-<span id="cb175-23"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-23" tabindex="-1"></a>    sampling<span class="sc">::</span><span class="fu">cluster</span>(</span>
-<span id="cb175-24"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-24" tabindex="-1"></a>      <span class="at">data =</span> eusilcP[<span class="fu">sample.int</span>(<span class="fu">nrow</span>(eusilcP) , <span class="fu">nrow</span>(eusilcP) , <span class="at">replace =</span> <span class="cn">FALSE</span>) ,] ,</span>
-<span id="cb175-25"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-25" tabindex="-1"></a>      <span class="at">clustername =</span> <span class="st">&quot;hid&quot;</span> ,</span>
-<span id="cb175-26"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-26" tabindex="-1"></a>      <span class="at">size =</span> 1000L ,</span>
-<span id="cb175-27"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-27" tabindex="-1"></a>      <span class="at">method =</span> <span class="st">&quot;systematic&quot;</span> ,</span>
-<span id="cb175-28"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-28" tabindex="-1"></a>      <span class="at">pik =</span> eusilcP<span class="sc">$</span>aux</span>
-<span id="cb175-29"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-29" tabindex="-1"></a>    )</span>
-<span id="cb175-30"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-30" tabindex="-1"></a>  </span>
-<span id="cb175-31"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-31" tabindex="-1"></a>  <span class="co"># collect data</span></span>
-<span id="cb175-32"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-32" tabindex="-1"></a>  this.sample <span class="ot">&lt;-</span> <span class="fu">getdata</span>(eusilcP , tt)</span>
-<span id="cb175-33"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-33" tabindex="-1"></a>  </span>
-<span id="cb175-34"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-34" tabindex="-1"></a>  <span class="co"># create survey design object</span></span>
-<span id="cb175-35"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-35" tabindex="-1"></a>  this.desobj <span class="ot">&lt;-</span></span>
-<span id="cb175-36"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-36" tabindex="-1"></a>    <span class="fu">svydesign</span>(</span>
-<span id="cb175-37"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-37" tabindex="-1"></a>      <span class="at">ids =</span> <span class="sc">~</span> hid ,</span>
-<span id="cb175-38"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-38" tabindex="-1"></a>      <span class="at">probs =</span> <span class="sc">~</span> Prob ,</span>
-<span id="cb175-39"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-39" tabindex="-1"></a>      <span class="at">data =</span> this.sample ,</span>
-<span id="cb175-40"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-40" tabindex="-1"></a>      <span class="at">nest =</span> <span class="cn">FALSE</span></span>
-<span id="cb175-41"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-41" tabindex="-1"></a>    )</span>
-<span id="cb175-42"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-42" tabindex="-1"></a>  </span>
-<span id="cb175-43"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-43" tabindex="-1"></a>  <span class="co"># prepare for convey functions</span></span>
-<span id="cb175-44"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-44" tabindex="-1"></a>  this.desobj <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(this.desobj)</span>
-<span id="cb175-45"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-45" tabindex="-1"></a>  </span>
-<span id="cb175-46"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-46" tabindex="-1"></a>  <span class="co"># filter positive incomes</span></span>
-<span id="cb175-47"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-47" tabindex="-1"></a>  this.desobj <span class="ot">&lt;-</span> <span class="fu">subset</span>(this.desobj , eqIncome <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
-<span id="cb175-48"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-48" tabindex="-1"></a>  </span>
-<span id="cb175-49"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-49" tabindex="-1"></a>  <span class="co"># compute estimates</span></span>
-<span id="cb175-50"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-50" tabindex="-1"></a>  <span class="fu">svywatts</span>( <span class="sc">~</span> eqIncome , this.desobj , <span class="at">abs_thresh =</span> <span class="dv">10000</span>)</span>
-<span id="cb175-51"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-51" tabindex="-1"></a>  </span>
-<span id="cb175-52"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-52" tabindex="-1"></a>}</span>
-<span id="cb175-53"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-53" tabindex="-1"></a></span>
-<span id="cb175-54"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-54" tabindex="-1"></a><span class="co"># run replications</span></span>
-<span id="cb175-55"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-55" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="fu">makeCluster</span>(<span class="fu">detectCores</span>() <span class="sc">-</span> <span class="dv">1</span>)</span>
-<span id="cb175-56"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-56" tabindex="-1"></a></span>
-<span id="cb175-57"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-57" tabindex="-1"></a>watts.estimate.list <span class="ot">&lt;-</span></span>
-<span id="cb175-58"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-58" tabindex="-1"></a>  <span class="fu">clusterApply</span>(cl, <span class="fu">seq_len</span>(mc.rep) , watts_sim_fun)</span>
-<span id="cb175-59"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-59" tabindex="-1"></a></span>
-<span id="cb175-60"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb175-60" tabindex="-1"></a><span class="fu">stopCluster</span>(cl)</span></code></pre></div>
+<div class="sourceCode" id="cb171"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb171-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-1" tabindex="-1"></a><span class="co"># define the number of monte carlo replicates</span></span>
+<span id="cb171-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-2" tabindex="-1"></a>mc.rep <span class="ot">&lt;-</span> 5000L</span>
+<span id="cb171-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-3" tabindex="-1"></a></span>
+<span id="cb171-4"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-4" tabindex="-1"></a></span>
+<span id="cb171-5"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-5" tabindex="-1"></a><span class="co"># simulation function</span></span>
+<span id="cb171-6"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-6" tabindex="-1"></a>watts_sim_fun <span class="ot">&lt;-</span> <span class="cf">function</span>(this.iter) {</span>
+<span id="cb171-7"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-7" tabindex="-1"></a>  <span class="fu">set.seed</span>(this.iter)</span>
+<span id="cb171-8"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-8" tabindex="-1"></a>  </span>
+<span id="cb171-9"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-9" tabindex="-1"></a>  <span class="fu">library</span>(survey)</span>
+<span id="cb171-10"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-10" tabindex="-1"></a>  <span class="fu">library</span>(convey)</span>
+<span id="cb171-11"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-11" tabindex="-1"></a>  <span class="fu">library</span>(sampling)</span>
+<span id="cb171-12"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-12" tabindex="-1"></a>  </span>
+<span id="cb171-13"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-13" tabindex="-1"></a>  </span>
+<span id="cb171-14"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-14" tabindex="-1"></a>  <span class="co"># load pseudo population data</span></span>
+<span id="cb171-15"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-15" tabindex="-1"></a>  <span class="fu">data</span>(<span class="st">&quot;eusilcP&quot;</span> , <span class="at">package =</span> <span class="st">&quot;simPop&quot;</span>)</span>
+<span id="cb171-16"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-16" tabindex="-1"></a>  </span>
+<span id="cb171-17"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-17" tabindex="-1"></a>  <span class="co"># compute size-like variable for PPS sampling design</span></span>
+<span id="cb171-18"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-18" tabindex="-1"></a>  eusilcP<span class="sc">$</span>aux <span class="ot">&lt;-</span></span>
+<span id="cb171-19"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-19" tabindex="-1"></a>    <span class="fu">log</span>(<span class="fu">ifelse</span>(eusilcP<span class="sc">$</span>eqIncome <span class="sc">&gt;=</span> <span class="dv">1000</span> , eusilcP<span class="sc">$</span>eqIncome , <span class="dv">1000</span>))</span>
+<span id="cb171-20"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-20" tabindex="-1"></a>  </span>
+<span id="cb171-21"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-21" tabindex="-1"></a>  <span class="co"># select sample</span></span>
+<span id="cb171-22"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-22" tabindex="-1"></a>  tt <span class="ot">&lt;-</span></span>
+<span id="cb171-23"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-23" tabindex="-1"></a>    sampling<span class="sc">::</span><span class="fu">cluster</span>(</span>
+<span id="cb171-24"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-24" tabindex="-1"></a>      <span class="at">data =</span> eusilcP[<span class="fu">sample.int</span>(<span class="fu">nrow</span>(eusilcP) , <span class="fu">nrow</span>(eusilcP) , <span class="at">replace =</span> <span class="cn">FALSE</span>) ,] ,</span>
+<span id="cb171-25"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-25" tabindex="-1"></a>      <span class="at">clustername =</span> <span class="st">&quot;hid&quot;</span> ,</span>
+<span id="cb171-26"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-26" tabindex="-1"></a>      <span class="at">size =</span> 1000L ,</span>
+<span id="cb171-27"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-27" tabindex="-1"></a>      <span class="at">method =</span> <span class="st">&quot;systematic&quot;</span> ,</span>
+<span id="cb171-28"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-28" tabindex="-1"></a>      <span class="at">pik =</span> eusilcP<span class="sc">$</span>aux</span>
+<span id="cb171-29"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-29" tabindex="-1"></a>    )</span>
+<span id="cb171-30"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-30" tabindex="-1"></a>  </span>
+<span id="cb171-31"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-31" tabindex="-1"></a>  <span class="co"># collect data</span></span>
+<span id="cb171-32"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-32" tabindex="-1"></a>  this.sample <span class="ot">&lt;-</span> <span class="fu">getdata</span>(eusilcP , tt)</span>
+<span id="cb171-33"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-33" tabindex="-1"></a>  </span>
+<span id="cb171-34"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-34" tabindex="-1"></a>  <span class="co"># create survey design object</span></span>
+<span id="cb171-35"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-35" tabindex="-1"></a>  this.desobj <span class="ot">&lt;-</span></span>
+<span id="cb171-36"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-36" tabindex="-1"></a>    <span class="fu">svydesign</span>(</span>
+<span id="cb171-37"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-37" tabindex="-1"></a>      <span class="at">ids =</span> <span class="sc">~</span> hid ,</span>
+<span id="cb171-38"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-38" tabindex="-1"></a>      <span class="at">probs =</span> <span class="sc">~</span> Prob ,</span>
+<span id="cb171-39"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-39" tabindex="-1"></a>      <span class="at">data =</span> this.sample ,</span>
+<span id="cb171-40"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-40" tabindex="-1"></a>      <span class="at">nest =</span> <span class="cn">FALSE</span></span>
+<span id="cb171-41"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-41" tabindex="-1"></a>    )</span>
+<span id="cb171-42"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-42" tabindex="-1"></a>  </span>
+<span id="cb171-43"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-43" tabindex="-1"></a>  <span class="co"># prepare for convey functions</span></span>
+<span id="cb171-44"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-44" tabindex="-1"></a>  this.desobj <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(this.desobj)</span>
+<span id="cb171-45"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-45" tabindex="-1"></a>  </span>
+<span id="cb171-46"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-46" tabindex="-1"></a>  <span class="co"># filter positive incomes</span></span>
+<span id="cb171-47"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-47" tabindex="-1"></a>  this.desobj <span class="ot">&lt;-</span> <span class="fu">subset</span>(this.desobj , eqIncome <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb171-48"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-48" tabindex="-1"></a>  </span>
+<span id="cb171-49"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-49" tabindex="-1"></a>  <span class="co"># compute estimates</span></span>
+<span id="cb171-50"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-50" tabindex="-1"></a>  <span class="fu">svywatts</span>( <span class="sc">~</span> eqIncome , this.desobj , <span class="at">abs_thresh =</span> <span class="dv">10000</span>)</span>
+<span id="cb171-51"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-51" tabindex="-1"></a>  </span>
+<span id="cb171-52"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-52" tabindex="-1"></a>}</span>
+<span id="cb171-53"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-53" tabindex="-1"></a></span>
+<span id="cb171-54"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-54" tabindex="-1"></a><span class="co"># run replications</span></span>
+<span id="cb171-55"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-55" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="fu">makeCluster</span>(<span class="fu">detectCores</span>() <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb171-56"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-56" tabindex="-1"></a></span>
+<span id="cb171-57"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-57" tabindex="-1"></a>watts.estimate.list <span class="ot">&lt;-</span></span>
+<span id="cb171-58"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-58" tabindex="-1"></a>  <span class="fu">clusterApply</span>(cl, <span class="fu">seq_len</span>(mc.rep) , watts_sim_fun)</span>
+<span id="cb171-59"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-59" tabindex="-1"></a></span>
+<span id="cb171-60"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb171-60" tabindex="-1"></a><span class="fu">stopCluster</span>(cl)</span></code></pre></div>
 <p>Then, we evaluate the Percentage Relative Bias (PRB) of the Watts index estimator. Under this scenario, the PRB of the Watts index estimator is 0.3772%.</p>
-<div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb176-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb176-1" tabindex="-1"></a><span class="co"># estimate the expected value of the Watts index estimator</span></span>
-<span id="cb176-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb176-2" tabindex="-1"></a><span class="co"># using the average of the estimates</span></span>
-<span id="cb176-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb176-3" tabindex="-1"></a>(theta.exp <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">sapply</span>(watts.estimate.list , coef)))</span></code></pre></div>
+<div class="sourceCode" id="cb172"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb172-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb172-1" tabindex="-1"></a><span class="co"># estimate the expected value of the Watts index estimator</span></span>
+<span id="cb172-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb172-2" tabindex="-1"></a><span class="co"># using the average of the estimates</span></span>
+<span id="cb172-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb172-3" tabindex="-1"></a>(theta.exp <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">sapply</span>(watts.estimate.list , coef)))</span></code></pre></div>
 <pre><code>## [1] 0.05044329</code></pre>
-<div class="sourceCode" id="cb178"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb178-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb178-1" tabindex="-1"></a><span class="co"># estimate the percentage relative bias</span></span>
-<span id="cb178-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb178-2" tabindex="-1"></a>(percentage_relative_bias <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">*</span> (theta.exp <span class="sc">/</span> theta.pop <span class="sc">-</span> <span class="dv">1</span>) )</span></code></pre></div>
+<div class="sourceCode" id="cb174"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb174-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb174-1" tabindex="-1"></a><span class="co"># estimate the percentage relative bias</span></span>
+<span id="cb174-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb174-2" tabindex="-1"></a>(percentage_relative_bias <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">*</span> (theta.exp <span class="sc">/</span> theta.pop <span class="sc">-</span> <span class="dv">1</span>) )</span></code></pre></div>
 <pre><code>## [1] 0.377195</code></pre>
-<div class="sourceCode" id="cb180"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb180-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb180-1" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">round</span>( percentage_relative_bias , <span class="dv">4</span> ) <span class="sc">==</span> <span class="fl">0.3772</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb176-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb176-1" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">round</span>( percentage_relative_bias , <span class="dv">4</span> ) <span class="sc">==</span> <span class="fl">0.3772</span>)</span></code></pre></div>
 <p>For the variance estimator, we have:</p>
-<div class="sourceCode" id="cb181"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb181-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb181-1" tabindex="-1"></a><span class="co"># estimate the variance of the Watts index estimator</span></span>
-<span id="cb181-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb181-2" tabindex="-1"></a><span class="co"># using the empirical variance of the estimates</span></span>
-<span id="cb181-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb181-3" tabindex="-1"></a>(vartheta.popest <span class="ot">&lt;-</span> <span class="fu">var</span>(<span class="fu">sapply</span>(watts.estimate.list , coef)))</span></code></pre></div>
+<div class="sourceCode" id="cb177"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb177-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb177-1" tabindex="-1"></a><span class="co"># estimate the variance of the Watts index estimator</span></span>
+<span id="cb177-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb177-2" tabindex="-1"></a><span class="co"># using the empirical variance of the estimates</span></span>
+<span id="cb177-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb177-3" tabindex="-1"></a>(vartheta.popest <span class="ot">&lt;-</span> <span class="fu">var</span>(<span class="fu">sapply</span>(watts.estimate.list , coef)))</span></code></pre></div>
 <pre><code>## [1] 6.141434e-05</code></pre>
-<div class="sourceCode" id="cb183"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb183-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb183-1" tabindex="-1"></a><span class="co"># estimate the expected value of the Watts index variance estimator</span></span>
-<span id="cb183-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb183-2" tabindex="-1"></a><span class="co"># using the (estimated) expected value of the variance estimates</span></span>
-<span id="cb183-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb183-3" tabindex="-1"></a>(vartheta.exp <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">sapply</span>(watts.estimate.list , vcov)))</span></code></pre></div>
+<div class="sourceCode" id="cb179"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb179-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb179-1" tabindex="-1"></a><span class="co"># estimate the expected value of the Watts index variance estimator</span></span>
+<span id="cb179-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb179-2" tabindex="-1"></a><span class="co"># using the (estimated) expected value of the variance estimates</span></span>
+<span id="cb179-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb179-3" tabindex="-1"></a>(vartheta.exp <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">sapply</span>(watts.estimate.list , vcov)))</span></code></pre></div>
 <pre><code>## [1] 6.100902e-05</code></pre>
-<div class="sourceCode" id="cb185"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb185-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb185-1" tabindex="-1"></a><span class="co"># estimate the percentage relative bias of the variance estimator</span></span>
-<span id="cb185-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb185-2" tabindex="-1"></a>(percentage_relative_bias_variance <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">*</span>  (vartheta.exp <span class="sc">/</span> vartheta.popest <span class="sc">-</span> <span class="dv">1</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb181"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb181-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb181-1" tabindex="-1"></a><span class="co"># estimate the percentage relative bias of the variance estimator</span></span>
+<span id="cb181-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb181-2" tabindex="-1"></a>(percentage_relative_bias_variance <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">*</span>  (vartheta.exp <span class="sc">/</span> vartheta.popest <span class="sc">-</span> <span class="dv">1</span>))</span></code></pre></div>
 <pre><code>## [1] -0.6599717</code></pre>
-<div class="sourceCode" id="cb187"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb187-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb187-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(percentage_relative_bias_variance, <span class="dv">4</span>) <span class="sc">==</span> <span class="sc">-</span><span class="fl">0.6600</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb183"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb183-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb183-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(percentage_relative_bias_variance, <span class="dv">4</span>) <span class="sc">==</span> <span class="sc">-</span><span class="fl">0.6600</span>)</span></code></pre></div>
 <p>Under this scenario, the PRB of the Watts index variance estimator is -0.6600%.</p>
 <p>Our simulations show that the Squared Bias of this estimator accounts for less than 0.1% of its Mean Squared Error:</p>
-<div class="sourceCode" id="cb188"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb188-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb188-1" tabindex="-1"></a>theta.bias2 <span class="ot">&lt;-</span> (theta.exp <span class="sc">-</span> theta.pop) <span class="sc">^</span> <span class="dv">2</span></span>
-<span id="cb188-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb188-2" tabindex="-1"></a>theta.mse <span class="ot">&lt;-</span> theta.bias2 <span class="sc">+</span> vartheta.popest</span>
-<span id="cb188-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb188-3" tabindex="-1"></a>(squared_bias_over_mse <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">*</span> (theta.bias2 <span class="sc">/</span> theta.mse))</span></code></pre></div>
+<div class="sourceCode" id="cb184"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb184-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb184-1" tabindex="-1"></a>theta.bias2 <span class="ot">&lt;-</span> (theta.exp <span class="sc">-</span> theta.pop) <span class="sc">^</span> <span class="dv">2</span></span>
+<span id="cb184-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb184-2" tabindex="-1"></a>theta.mse <span class="ot">&lt;-</span> theta.bias2 <span class="sc">+</span> vartheta.popest</span>
+<span id="cb184-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb184-3" tabindex="-1"></a>(squared_bias_over_mse <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">*</span> (theta.bias2 <span class="sc">/</span> theta.mse))</span></code></pre></div>
 <pre><code>## [1] 0.05847158</code></pre>
-<div class="sourceCode" id="cb190"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb190-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb190-1" tabindex="-1"></a><span class="fu">stopifnot</span>(squared_bias_over_mse <span class="sc">&lt;</span> <span class="fl">0.1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb186"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb186-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb186-1" tabindex="-1"></a><span class="fu">stopifnot</span>(squared_bias_over_mse <span class="sc">&lt;</span> <span class="fl">0.1</span>)</span></code></pre></div>
 <p>Next, we evaluate the Percentage Coverage Rate (PCR). In theory, under repeated sampling, the estimated 95% CIs should cover the population parameter approximately 95% of the time. We can evaluate that using:</p>
-<div class="sourceCode" id="cb191"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb191-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb191-1" tabindex="-1"></a><span class="co"># estimate confidence intervals of the Watts index</span></span>
-<span id="cb191-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb191-2" tabindex="-1"></a><span class="co"># for each of the samples</span></span>
-<span id="cb191-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb191-3" tabindex="-1"></a>est.coverage <span class="ot">&lt;-</span></span>
-<span id="cb191-4"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb191-4" tabindex="-1"></a>  <span class="fu">sapply</span>(watts.estimate.list, <span class="cf">function</span>(this.stat)</span>
-<span id="cb191-5"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb191-5" tabindex="-1"></a>    <span class="fu">confint</span>(this.stat)[, <span class="dv">1</span>] <span class="sc">&lt;=</span> theta.pop <span class="sc">&amp;</span></span>
-<span id="cb191-6"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb191-6" tabindex="-1"></a>      <span class="fu">confint</span>(this.stat)[, <span class="dv">2</span>] <span class="sc">&gt;=</span> theta.pop)</span>
-<span id="cb191-7"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb191-7" tabindex="-1"></a></span>
-<span id="cb191-8"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb191-8" tabindex="-1"></a><span class="co"># evaluate empirical coverage</span></span>
-<span id="cb191-9"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb191-9" tabindex="-1"></a>(empirical_coverage <span class="ot">&lt;-</span> <span class="fu">mean</span>(est.coverage))</span></code></pre></div>
+<div class="sourceCode" id="cb187"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb187-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb187-1" tabindex="-1"></a><span class="co"># estimate confidence intervals of the Watts index</span></span>
+<span id="cb187-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb187-2" tabindex="-1"></a><span class="co"># for each of the samples</span></span>
+<span id="cb187-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb187-3" tabindex="-1"></a>est.coverage <span class="ot">&lt;-</span></span>
+<span id="cb187-4"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb187-4" tabindex="-1"></a>  <span class="fu">sapply</span>(watts.estimate.list, <span class="cf">function</span>(this.stat)</span>
+<span id="cb187-5"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb187-5" tabindex="-1"></a>    <span class="fu">confint</span>(this.stat)[, <span class="dv">1</span>] <span class="sc">&lt;=</span> theta.pop <span class="sc">&amp;</span></span>
+<span id="cb187-6"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb187-6" tabindex="-1"></a>      <span class="fu">confint</span>(this.stat)[, <span class="dv">2</span>] <span class="sc">&gt;=</span> theta.pop)</span>
+<span id="cb187-7"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb187-7" tabindex="-1"></a></span>
+<span id="cb187-8"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb187-8" tabindex="-1"></a><span class="co"># evaluate empirical coverage</span></span>
+<span id="cb187-9"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb187-9" tabindex="-1"></a>(empirical_coverage <span class="ot">&lt;-</span> <span class="fu">mean</span>(est.coverage))</span></code></pre></div>
 <pre><code>## [1] 0.9268</code></pre>
-<div class="sourceCode" id="cb193"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb193-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb193-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(empirical_coverage  <span class="sc">-</span> <span class="fl">0.95</span>) <span class="sc">&lt;</span> <span class="fl">0.025</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb189"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb189-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb189-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(empirical_coverage  <span class="sc">-</span> <span class="fl">0.95</span>) <span class="sc">&lt;</span> <span class="fl">0.025</span>)</span></code></pre></div>
 <p>Our coverages are not too far from the nominal coverage level of 95%.</p>
 <p>For the Watts index decomposition, we start by computing the (true) population values of the components:</p>
-<div class="sourceCode" id="cb194"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb194-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb194-1" tabindex="-1"></a><span class="co"># compute population value of the Watts index decomposition</span></span>
-<span id="cb194-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb194-2" tabindex="-1"></a>inc.pos <span class="ot">&lt;-</span> eusilcP<span class="sc">$</span>eqIncome[eusilcP<span class="sc">$</span>eqIncome <span class="sc">&gt;</span> <span class="dv">0</span>]</span>
-<span id="cb194-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb194-3" tabindex="-1"></a>wdec1 <span class="ot">&lt;-</span></span>
-<span id="cb194-4"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb194-4" tabindex="-1"></a>  <span class="fu">mean</span>(<span class="fu">ifelse</span>(inc.pos <span class="sc">&lt;=</span> <span class="dv">10000</span> , <span class="fu">log</span>(<span class="dv">10000</span> <span class="sc">/</span>  inc.pos) , <span class="dv">0</span>) , <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb194-5"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb194-5" tabindex="-1"></a>wdec2 <span class="ot">&lt;-</span> <span class="fu">mean</span>(inc.pos <span class="sc">&lt;=</span> <span class="dv">10000</span> , <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb194-6"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb194-6" tabindex="-1"></a>mu.poor <span class="ot">&lt;-</span> <span class="fu">mean</span>(inc.pos [inc.pos <span class="sc">&lt;=</span> <span class="dv">10000</span>])</span>
-<span id="cb194-7"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb194-7" tabindex="-1"></a>wdec3 <span class="ot">&lt;-</span> <span class="fu">log</span>(<span class="dv">10000</span> <span class="sc">/</span> mu.poor)</span>
-<span id="cb194-8"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb194-8" tabindex="-1"></a>wdec4 <span class="ot">&lt;-</span></span>
-<span id="cb194-9"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb194-9" tabindex="-1"></a>  <span class="sc">-</span><span class="fu">mean</span>(<span class="fu">log</span>(inc.pos[inc.pos <span class="sc">&lt;=</span> <span class="dv">10000</span>] <span class="sc">/</span> mu.poor) , <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb194-10"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb194-10" tabindex="-1"></a>theta.pop <span class="ot">&lt;-</span></span>
-<span id="cb194-11"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb194-11" tabindex="-1"></a>  <span class="fu">c</span>(</span>
-<span id="cb194-12"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb194-12" tabindex="-1"></a>    <span class="st">&quot;watts&quot;</span> <span class="ot">=</span> wdec1 ,</span>
-<span id="cb194-13"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb194-13" tabindex="-1"></a>    <span class="st">&quot;fgt0&quot;</span> <span class="ot">=</span>  wdec2 ,</span>
-<span id="cb194-14"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb194-14" tabindex="-1"></a>    <span class="st">&quot;watts pov. gap ratio&quot;</span> <span class="ot">=</span> wdec3 ,</span>
-<span id="cb194-15"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb194-15" tabindex="-1"></a>    <span class="st">&quot;theil(poor)&quot;</span> <span class="ot">=</span>  wdec4</span>
-<span id="cb194-16"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb194-16" tabindex="-1"></a>  )</span>
-<span id="cb194-17"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb194-17" tabindex="-1"></a>theta.pop</span></code></pre></div>
+<div class="sourceCode" id="cb190"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb190-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb190-1" tabindex="-1"></a><span class="co"># compute population value of the Watts index decomposition</span></span>
+<span id="cb190-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb190-2" tabindex="-1"></a>inc.pos <span class="ot">&lt;-</span> eusilcP<span class="sc">$</span>eqIncome[eusilcP<span class="sc">$</span>eqIncome <span class="sc">&gt;</span> <span class="dv">0</span>]</span>
+<span id="cb190-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb190-3" tabindex="-1"></a>wdec1 <span class="ot">&lt;-</span></span>
+<span id="cb190-4"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb190-4" tabindex="-1"></a>  <span class="fu">mean</span>(<span class="fu">ifelse</span>(inc.pos <span class="sc">&lt;=</span> <span class="dv">10000</span> , <span class="fu">log</span>(<span class="dv">10000</span> <span class="sc">/</span>  inc.pos) , <span class="dv">0</span>) , <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb190-5"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb190-5" tabindex="-1"></a>wdec2 <span class="ot">&lt;-</span> <span class="fu">mean</span>(inc.pos <span class="sc">&lt;=</span> <span class="dv">10000</span> , <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb190-6"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb190-6" tabindex="-1"></a>mu.poor <span class="ot">&lt;-</span> <span class="fu">mean</span>(inc.pos [inc.pos <span class="sc">&lt;=</span> <span class="dv">10000</span>])</span>
+<span id="cb190-7"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb190-7" tabindex="-1"></a>wdec3 <span class="ot">&lt;-</span> <span class="fu">log</span>(<span class="dv">10000</span> <span class="sc">/</span> mu.poor)</span>
+<span id="cb190-8"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb190-8" tabindex="-1"></a>wdec4 <span class="ot">&lt;-</span></span>
+<span id="cb190-9"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb190-9" tabindex="-1"></a>  <span class="sc">-</span><span class="fu">mean</span>(<span class="fu">log</span>(inc.pos[inc.pos <span class="sc">&lt;=</span> <span class="dv">10000</span>] <span class="sc">/</span> mu.poor) , <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb190-10"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb190-10" tabindex="-1"></a>theta.pop <span class="ot">&lt;-</span></span>
+<span id="cb190-11"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb190-11" tabindex="-1"></a>  <span class="fu">c</span>(</span>
+<span id="cb190-12"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb190-12" tabindex="-1"></a>    <span class="st">&quot;watts&quot;</span> <span class="ot">=</span> wdec1 ,</span>
+<span id="cb190-13"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb190-13" tabindex="-1"></a>    <span class="st">&quot;fgt0&quot;</span> <span class="ot">=</span>  wdec2 ,</span>
+<span id="cb190-14"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb190-14" tabindex="-1"></a>    <span class="st">&quot;watts pov. gap ratio&quot;</span> <span class="ot">=</span> wdec3 ,</span>
+<span id="cb190-15"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb190-15" tabindex="-1"></a>    <span class="st">&quot;theil(poor)&quot;</span> <span class="ot">=</span>  wdec4</span>
+<span id="cb190-16"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb190-16" tabindex="-1"></a>  )</span>
+<span id="cb190-17"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb190-17" tabindex="-1"></a>theta.pop</span></code></pre></div>
 <pre><code>##                watts                 fgt0 watts pov. gap ratio 
 ##           0.05025374           0.11399096           0.33497664 
 ##          theil(poor) 
 ##           0.10588056</code></pre>
 <p>Then, using the same sampling strategy of the <code>svywatts</code>, we compute the <code>svywattsdec</code> for each sample:</p>
-<div class="sourceCode" id="cb196"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb196-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-1" tabindex="-1"></a><span class="co"># simulation function</span></span>
-<span id="cb196-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-2" tabindex="-1"></a>wattsdec_sim_fun <span class="ot">&lt;-</span> <span class="cf">function</span>(this.iter) {</span>
-<span id="cb196-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-3" tabindex="-1"></a>  </span>
-<span id="cb196-4"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-4" tabindex="-1"></a>  <span class="fu">set.seed</span>(this.iter)</span>
-<span id="cb196-5"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-5" tabindex="-1"></a>  </span>
-<span id="cb196-6"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-6" tabindex="-1"></a>  <span class="fu">library</span>(survey)</span>
-<span id="cb196-7"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-7" tabindex="-1"></a>  <span class="fu">library</span>(convey)</span>
-<span id="cb196-8"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-8" tabindex="-1"></a>  <span class="fu">library</span>(sampling)</span>
-<span id="cb196-9"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-9" tabindex="-1"></a>  </span>
-<span id="cb196-10"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-10" tabindex="-1"></a>  </span>
-<span id="cb196-11"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-11" tabindex="-1"></a>  <span class="co"># load pseudo population data</span></span>
-<span id="cb196-12"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-12" tabindex="-1"></a>  <span class="fu">data</span>(<span class="st">&quot;eusilcP&quot;</span> , <span class="at">package =</span> <span class="st">&quot;simPop&quot;</span>)</span>
-<span id="cb196-13"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-13" tabindex="-1"></a>  </span>
-<span id="cb196-14"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-14" tabindex="-1"></a>  <span class="co"># compute size-like variable for PPS sampling design</span></span>
-<span id="cb196-15"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-15" tabindex="-1"></a>  eusilcP<span class="sc">$</span>aux <span class="ot">&lt;-</span></span>
-<span id="cb196-16"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-16" tabindex="-1"></a>    <span class="fu">log</span>(<span class="fu">ifelse</span>(eusilcP<span class="sc">$</span>eqIncome <span class="sc">&gt;=</span> <span class="dv">1000</span> , eusilcP<span class="sc">$</span>eqIncome , <span class="dv">1000</span>))</span>
-<span id="cb196-17"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-17" tabindex="-1"></a>  </span>
-<span id="cb196-18"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-18" tabindex="-1"></a>  <span class="co"># select sample</span></span>
-<span id="cb196-19"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-19" tabindex="-1"></a>  tt <span class="ot">&lt;-</span></span>
-<span id="cb196-20"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-20" tabindex="-1"></a>    sampling<span class="sc">::</span><span class="fu">cluster</span>(</span>
-<span id="cb196-21"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-21" tabindex="-1"></a>      <span class="at">data =</span> eusilcP[<span class="fu">sample.int</span>(<span class="fu">nrow</span>(eusilcP) , <span class="fu">nrow</span>(eusilcP) , <span class="at">replace =</span> <span class="cn">FALSE</span>) , ] ,</span>
-<span id="cb196-22"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-22" tabindex="-1"></a>      <span class="at">clustername =</span> <span class="st">&quot;hid&quot;</span> ,</span>
-<span id="cb196-23"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-23" tabindex="-1"></a>      <span class="at">size =</span> 1000L ,</span>
-<span id="cb196-24"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-24" tabindex="-1"></a>      <span class="at">method =</span> <span class="st">&quot;systematic&quot;</span> ,</span>
-<span id="cb196-25"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-25" tabindex="-1"></a>      <span class="at">pik =</span> eusilcP<span class="sc">$</span>aux</span>
-<span id="cb196-26"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-26" tabindex="-1"></a>    )</span>
-<span id="cb196-27"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-27" tabindex="-1"></a>  </span>
-<span id="cb196-28"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-28" tabindex="-1"></a>  <span class="co"># collect data</span></span>
-<span id="cb196-29"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-29" tabindex="-1"></a>  this.sample <span class="ot">&lt;-</span> <span class="fu">getdata</span>(eusilcP , tt)</span>
-<span id="cb196-30"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-30" tabindex="-1"></a>  </span>
-<span id="cb196-31"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-31" tabindex="-1"></a>  <span class="co"># create survey design object</span></span>
-<span id="cb196-32"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-32" tabindex="-1"></a>  this.desobj <span class="ot">&lt;-</span></span>
-<span id="cb196-33"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-33" tabindex="-1"></a>    <span class="fu">svydesign</span>(</span>
-<span id="cb196-34"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-34" tabindex="-1"></a>      <span class="at">ids =</span> <span class="sc">~</span> hid ,</span>
-<span id="cb196-35"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-35" tabindex="-1"></a>      <span class="at">probs =</span> <span class="sc">~</span> Prob ,</span>
-<span id="cb196-36"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-36" tabindex="-1"></a>      <span class="at">data =</span> this.sample ,</span>
-<span id="cb196-37"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-37" tabindex="-1"></a>      <span class="at">nest =</span> <span class="cn">FALSE</span></span>
-<span id="cb196-38"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-38" tabindex="-1"></a>    )</span>
-<span id="cb196-39"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-39" tabindex="-1"></a>  </span>
-<span id="cb196-40"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-40" tabindex="-1"></a>  <span class="co"># prepare for convey functions</span></span>
-<span id="cb196-41"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-41" tabindex="-1"></a>  this.desobj <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(this.desobj)</span>
-<span id="cb196-42"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-42" tabindex="-1"></a>  </span>
-<span id="cb196-43"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-43" tabindex="-1"></a>  <span class="co"># filter positive incomes</span></span>
-<span id="cb196-44"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-44" tabindex="-1"></a>  this.desobj <span class="ot">&lt;-</span> <span class="fu">subset</span>(this.desobj , eqIncome <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
-<span id="cb196-45"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-45" tabindex="-1"></a>  </span>
-<span id="cb196-46"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-46" tabindex="-1"></a>  <span class="co"># compute estimates</span></span>
-<span id="cb196-47"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-47" tabindex="-1"></a>  <span class="fu">svywattsdec</span>(<span class="sc">~</span> eqIncome , this.desobj , <span class="at">abs_thresh =</span> <span class="dv">10000</span>)</span>
-<span id="cb196-48"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-48" tabindex="-1"></a>  </span>
-<span id="cb196-49"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-49" tabindex="-1"></a>}</span>
-<span id="cb196-50"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-50" tabindex="-1"></a></span>
-<span id="cb196-51"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-51" tabindex="-1"></a><span class="co"># run replications</span></span>
-<span id="cb196-52"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-52" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="fu">makeCluster</span>(<span class="fu">detectCores</span>() <span class="sc">-</span> <span class="dv">1</span>)</span>
-<span id="cb196-53"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-53" tabindex="-1"></a></span>
-<span id="cb196-54"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-54" tabindex="-1"></a>wattsdec.estimate.list <span class="ot">&lt;-</span></span>
-<span id="cb196-55"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-55" tabindex="-1"></a>  <span class="fu">clusterApply</span>(cl, <span class="fu">seq_len</span>(mc.rep) , wattsdec_sim_fun)</span>
-<span id="cb196-56"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-56" tabindex="-1"></a></span>
-<span id="cb196-57"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb196-57" tabindex="-1"></a><span class="fu">stopCluster</span>(cl)</span></code></pre></div>
+<div class="sourceCode" id="cb192"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb192-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-1" tabindex="-1"></a><span class="co"># simulation function</span></span>
+<span id="cb192-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-2" tabindex="-1"></a>wattsdec_sim_fun <span class="ot">&lt;-</span> <span class="cf">function</span>(this.iter) {</span>
+<span id="cb192-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-3" tabindex="-1"></a>  </span>
+<span id="cb192-4"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-4" tabindex="-1"></a>  <span class="fu">set.seed</span>(this.iter)</span>
+<span id="cb192-5"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-5" tabindex="-1"></a>  </span>
+<span id="cb192-6"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-6" tabindex="-1"></a>  <span class="fu">library</span>(survey)</span>
+<span id="cb192-7"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-7" tabindex="-1"></a>  <span class="fu">library</span>(convey)</span>
+<span id="cb192-8"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-8" tabindex="-1"></a>  <span class="fu">library</span>(sampling)</span>
+<span id="cb192-9"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-9" tabindex="-1"></a>  </span>
+<span id="cb192-10"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-10" tabindex="-1"></a>  </span>
+<span id="cb192-11"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-11" tabindex="-1"></a>  <span class="co"># load pseudo population data</span></span>
+<span id="cb192-12"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-12" tabindex="-1"></a>  <span class="fu">data</span>(<span class="st">&quot;eusilcP&quot;</span> , <span class="at">package =</span> <span class="st">&quot;simPop&quot;</span>)</span>
+<span id="cb192-13"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-13" tabindex="-1"></a>  </span>
+<span id="cb192-14"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-14" tabindex="-1"></a>  <span class="co"># compute size-like variable for PPS sampling design</span></span>
+<span id="cb192-15"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-15" tabindex="-1"></a>  eusilcP<span class="sc">$</span>aux <span class="ot">&lt;-</span></span>
+<span id="cb192-16"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-16" tabindex="-1"></a>    <span class="fu">log</span>(<span class="fu">ifelse</span>(eusilcP<span class="sc">$</span>eqIncome <span class="sc">&gt;=</span> <span class="dv">1000</span> , eusilcP<span class="sc">$</span>eqIncome , <span class="dv">1000</span>))</span>
+<span id="cb192-17"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-17" tabindex="-1"></a>  </span>
+<span id="cb192-18"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-18" tabindex="-1"></a>  <span class="co"># select sample</span></span>
+<span id="cb192-19"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-19" tabindex="-1"></a>  tt <span class="ot">&lt;-</span></span>
+<span id="cb192-20"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-20" tabindex="-1"></a>    sampling<span class="sc">::</span><span class="fu">cluster</span>(</span>
+<span id="cb192-21"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-21" tabindex="-1"></a>      <span class="at">data =</span> eusilcP[<span class="fu">sample.int</span>(<span class="fu">nrow</span>(eusilcP) , <span class="fu">nrow</span>(eusilcP) , <span class="at">replace =</span> <span class="cn">FALSE</span>) , ] ,</span>
+<span id="cb192-22"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-22" tabindex="-1"></a>      <span class="at">clustername =</span> <span class="st">&quot;hid&quot;</span> ,</span>
+<span id="cb192-23"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-23" tabindex="-1"></a>      <span class="at">size =</span> 1000L ,</span>
+<span id="cb192-24"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-24" tabindex="-1"></a>      <span class="at">method =</span> <span class="st">&quot;systematic&quot;</span> ,</span>
+<span id="cb192-25"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-25" tabindex="-1"></a>      <span class="at">pik =</span> eusilcP<span class="sc">$</span>aux</span>
+<span id="cb192-26"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-26" tabindex="-1"></a>    )</span>
+<span id="cb192-27"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-27" tabindex="-1"></a>  </span>
+<span id="cb192-28"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-28" tabindex="-1"></a>  <span class="co"># collect data</span></span>
+<span id="cb192-29"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-29" tabindex="-1"></a>  this.sample <span class="ot">&lt;-</span> <span class="fu">getdata</span>(eusilcP , tt)</span>
+<span id="cb192-30"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-30" tabindex="-1"></a>  </span>
+<span id="cb192-31"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-31" tabindex="-1"></a>  <span class="co"># create survey design object</span></span>
+<span id="cb192-32"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-32" tabindex="-1"></a>  this.desobj <span class="ot">&lt;-</span></span>
+<span id="cb192-33"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-33" tabindex="-1"></a>    <span class="fu">svydesign</span>(</span>
+<span id="cb192-34"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-34" tabindex="-1"></a>      <span class="at">ids =</span> <span class="sc">~</span> hid ,</span>
+<span id="cb192-35"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-35" tabindex="-1"></a>      <span class="at">probs =</span> <span class="sc">~</span> Prob ,</span>
+<span id="cb192-36"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-36" tabindex="-1"></a>      <span class="at">data =</span> this.sample ,</span>
+<span id="cb192-37"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-37" tabindex="-1"></a>      <span class="at">nest =</span> <span class="cn">FALSE</span></span>
+<span id="cb192-38"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-38" tabindex="-1"></a>    )</span>
+<span id="cb192-39"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-39" tabindex="-1"></a>  </span>
+<span id="cb192-40"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-40" tabindex="-1"></a>  <span class="co"># prepare for convey functions</span></span>
+<span id="cb192-41"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-41" tabindex="-1"></a>  this.desobj <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(this.desobj)</span>
+<span id="cb192-42"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-42" tabindex="-1"></a>  </span>
+<span id="cb192-43"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-43" tabindex="-1"></a>  <span class="co"># filter positive incomes</span></span>
+<span id="cb192-44"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-44" tabindex="-1"></a>  this.desobj <span class="ot">&lt;-</span> <span class="fu">subset</span>(this.desobj , eqIncome <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb192-45"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-45" tabindex="-1"></a>  </span>
+<span id="cb192-46"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-46" tabindex="-1"></a>  <span class="co"># compute estimates</span></span>
+<span id="cb192-47"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-47" tabindex="-1"></a>  <span class="fu">svywattsdec</span>(<span class="sc">~</span> eqIncome , this.desobj , <span class="at">abs_thresh =</span> <span class="dv">10000</span>)</span>
+<span id="cb192-48"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-48" tabindex="-1"></a>  </span>
+<span id="cb192-49"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-49" tabindex="-1"></a>}</span>
+<span id="cb192-50"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-50" tabindex="-1"></a></span>
+<span id="cb192-51"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-51" tabindex="-1"></a><span class="co"># run replications</span></span>
+<span id="cb192-52"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-52" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="fu">makeCluster</span>(<span class="fu">detectCores</span>() <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb192-53"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-53" tabindex="-1"></a></span>
+<span id="cb192-54"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-54" tabindex="-1"></a>wattsdec.estimate.list <span class="ot">&lt;-</span></span>
+<span id="cb192-55"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-55" tabindex="-1"></a>  <span class="fu">clusterApply</span>(cl, <span class="fu">seq_len</span>(mc.rep) , wattsdec_sim_fun)</span>
+<span id="cb192-56"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-56" tabindex="-1"></a></span>
+<span id="cb192-57"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb192-57" tabindex="-1"></a><span class="fu">stopCluster</span>(cl)</span></code></pre></div>
 <p>The PRB of each component is estimated using the code below. Notice that PRBs are relatively small, with absolute values below 1%, with the largest bias in the Theil index component.</p>
-<div class="sourceCode" id="cb197"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb197-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb197-1" tabindex="-1"></a><span class="co"># repeat true population values</span></span>
-<span id="cb197-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb197-2" tabindex="-1"></a>(theta.pop)</span></code></pre></div>
+<div class="sourceCode" id="cb193"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb193-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb193-1" tabindex="-1"></a><span class="co"># repeat true population values</span></span>
+<span id="cb193-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb193-2" tabindex="-1"></a>(theta.pop)</span></code></pre></div>
 <pre><code>##                watts                 fgt0 watts pov. gap ratio 
 ##           0.05025374           0.11399096           0.33497664 
 ##          theil(poor) 
 ##           0.10588056</code></pre>
-<div class="sourceCode" id="cb199"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb199-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb199-1" tabindex="-1"></a><span class="co"># estimate the expected values of the components estimators</span></span>
-<span id="cb199-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb199-2" tabindex="-1"></a><span class="co"># using the average of the estimates</span></span>
-<span id="cb199-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb199-3" tabindex="-1"></a>(theta.exp <span class="ot">&lt;-</span> <span class="fu">rowMeans</span>(<span class="fu">sapply</span>(wattsdec.estimate.list , coef)))</span></code></pre></div>
+<div class="sourceCode" id="cb195"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb195-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb195-1" tabindex="-1"></a><span class="co"># estimate the expected values of the components estimators</span></span>
+<span id="cb195-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb195-2" tabindex="-1"></a><span class="co"># using the average of the estimates</span></span>
+<span id="cb195-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb195-3" tabindex="-1"></a>(theta.exp <span class="ot">&lt;-</span> <span class="fu">rowMeans</span>(<span class="fu">sapply</span>(wattsdec.estimate.list , coef)))</span></code></pre></div>
 <pre><code>##                watts                 fgt0 watts pov. gap ratio 
 ##           0.05044329           0.11418992           0.33584759 
 ##          theil(poor) 
 ##           0.10584416</code></pre>
-<div class="sourceCode" id="cb201"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb201-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb201-1" tabindex="-1"></a><span class="co"># estimate the percentage relative bias</span></span>
-<span id="cb201-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb201-2" tabindex="-1"></a>(percentage_relative_bias <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">*</span> (theta.exp <span class="sc">/</span> theta.pop <span class="sc">-</span> <span class="dv">1</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb197"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb197-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb197-1" tabindex="-1"></a><span class="co"># estimate the percentage relative bias</span></span>
+<span id="cb197-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb197-2" tabindex="-1"></a>(percentage_relative_bias <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">*</span> (theta.exp <span class="sc">/</span> theta.pop <span class="sc">-</span> <span class="dv">1</span>))</span></code></pre></div>
 <pre><code>##                watts                 fgt0 watts pov. gap ratio 
 ##           0.37719501           0.17453750           0.26000223 
 ##          theil(poor) 
 ##          -0.03437576</code></pre>
-<div class="sourceCode" id="cb203"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb203-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb203-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(percentage_relative_bias) <span class="sc">&lt;</span> <span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb199"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb199-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb199-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(percentage_relative_bias) <span class="sc">&lt;</span> <span class="dv">1</span>)</span></code></pre></div>
 <p>For the variance estimators, we estimate the PRB using the code below.
-Note that the bias is still relatively small, with absolute values of the PRB below 1%.</p>
-<div class="sourceCode" id="cb204"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb204-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb204-1" tabindex="-1"></a><span class="co"># estimate the variance of the components estimators</span></span>
-<span id="cb204-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb204-2" tabindex="-1"></a><span class="co"># using the empirical variance of the estimates</span></span>
-<span id="cb204-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb204-3" tabindex="-1"></a>(vartheta.popest <span class="ot">&lt;-</span></span>
-<span id="cb204-4"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb204-4" tabindex="-1"></a>   <span class="fu">diag</span>(<span class="fu">var</span>(<span class="fu">t</span>(</span>
-<span id="cb204-5"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb204-5" tabindex="-1"></a>     <span class="fu">sapply</span>(wattsdec.estimate.list , coef)</span>
-<span id="cb204-6"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb204-6" tabindex="-1"></a>   ))))</span></code></pre></div>
+Note that the bias of the variance estimators is still relatively small, with absolute value of the Watts variance estimator’s PRB below 1% and all four components variance estimators below 5%.</p>
+<div class="sourceCode" id="cb200"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb200-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb200-1" tabindex="-1"></a><span class="co"># estimate the variance of the components estimators</span></span>
+<span id="cb200-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb200-2" tabindex="-1"></a><span class="co"># using the empirical variance of the estimates</span></span>
+<span id="cb200-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb200-3" tabindex="-1"></a>(vartheta.popest <span class="ot">&lt;-</span></span>
+<span id="cb200-4"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb200-4" tabindex="-1"></a>   <span class="fu">diag</span>(<span class="fu">var</span>(<span class="fu">t</span>(</span>
+<span id="cb200-5"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb200-5" tabindex="-1"></a>     <span class="fu">sapply</span>(wattsdec.estimate.list , coef)</span>
+<span id="cb200-6"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb200-6" tabindex="-1"></a>   ))))</span></code></pre></div>
 <pre><code>##                watts                 fgt0 watts pov. gap ratio 
 ##         6.141434e-05         1.015260e-04         9.241259e-04 
 ##          theil(poor) 
 ##         1.108525e-03</code></pre>
-<div class="sourceCode" id="cb206"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb206-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb206-1" tabindex="-1"></a><span class="co"># estimate the expected value of the Watts index variance estimator</span></span>
-<span id="cb206-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb206-2" tabindex="-1"></a><span class="co"># using the (estimated) expected value of the variance estimates</span></span>
-<span id="cb206-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb206-3" tabindex="-1"></a>(vartheta.exp <span class="ot">&lt;-</span></span>
-<span id="cb206-4"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb206-4" tabindex="-1"></a>    <span class="fu">rowMeans</span>(<span class="fu">sapply</span>(wattsdec.estimate.list , <span class="cf">function</span>(z)</span>
-<span id="cb206-5"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb206-5" tabindex="-1"></a>      <span class="fu">diag</span>(<span class="fu">vcov</span>(</span>
-<span id="cb206-6"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb206-6" tabindex="-1"></a>        z</span>
-<span id="cb206-7"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb206-7" tabindex="-1"></a>      )))))</span></code></pre></div>
+<div class="sourceCode" id="cb202"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb202-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb202-1" tabindex="-1"></a><span class="co"># estimate the expected value of the Watts index variance estimator</span></span>
+<span id="cb202-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb202-2" tabindex="-1"></a><span class="co"># using the (estimated) expected value of the variance estimates</span></span>
+<span id="cb202-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb202-3" tabindex="-1"></a>(vartheta.exp <span class="ot">&lt;-</span></span>
+<span id="cb202-4"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb202-4" tabindex="-1"></a>    <span class="fu">rowMeans</span>(<span class="fu">sapply</span>(wattsdec.estimate.list , <span class="cf">function</span>(z)</span>
+<span id="cb202-5"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb202-5" tabindex="-1"></a>      <span class="fu">diag</span>(<span class="fu">vcov</span>(</span>
+<span id="cb202-6"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb202-6" tabindex="-1"></a>        z</span>
+<span id="cb202-7"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb202-7" tabindex="-1"></a>      )))))</span></code></pre></div>
 <pre><code>##                watts                 fgt0 watts pov. gap ratio 
 ##         6.100902e-05         1.013968e-04         9.613831e-04 
 ##          theil(poor) 
 ##         1.070018e-03</code></pre>
-<div class="sourceCode" id="cb208"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb208-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb208-1" tabindex="-1"></a><span class="co"># estimate the percentage relative bias of the variance estimators</span></span>
-<span id="cb208-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb208-2" tabindex="-1"></a>(percentage_relative_bias <span class="ot">&lt;-</span></span>
-<span id="cb208-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb208-3" tabindex="-1"></a>    <span class="dv">100</span> <span class="sc">*</span>  (vartheta.exp <span class="sc">/</span> vartheta.popest <span class="sc">-</span> <span class="dv">1</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb204"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb204-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb204-1" tabindex="-1"></a><span class="co"># estimate the percentage relative bias of the variance estimators</span></span>
+<span id="cb204-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb204-2" tabindex="-1"></a>(percentage_relative_bias <span class="ot">&lt;-</span></span>
+<span id="cb204-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb204-3" tabindex="-1"></a>    <span class="dv">100</span> <span class="sc">*</span>  (vartheta.exp <span class="sc">/</span> vartheta.popest <span class="sc">-</span> <span class="dv">1</span>))</span></code></pre></div>
 <pre><code>##                watts                 fgt0 watts pov. gap ratio 
 ##           -0.6599717           -0.1273107            4.0316155 
 ##          theil(poor) 
 ##           -3.4736907</code></pre>
-<div class="sourceCode" id="cb210"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb210-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb210-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(percentage_relative_bias[<span class="dv">1</span>]) <span class="sc">&lt;</span> <span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb206"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb206-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb206-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(percentage_relative_bias[<span class="dv">1</span>]) <span class="sc">&lt;</span> <span class="dv">1</span> <span class="sc">&amp;</span> <span class="fu">all</span>(<span class="fu">abs</span>(percentage_relative_bias) <span class="sc">&lt;</span> <span class="dv">5</span>))</span></code></pre></div>
 <p>Regarding the MSE, the squared bias accounts for less than 0.1% of the MSE.
 This means that, with a good estimate of the variance, we should be able to have a good approximation for the MSE.</p>
-<div class="sourceCode" id="cb211"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb211-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb211-1" tabindex="-1"></a><span class="co"># estimate MSE</span></span>
-<span id="cb211-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb211-2" tabindex="-1"></a>theta.bias2 <span class="ot">&lt;-</span> (theta.exp <span class="sc">-</span> theta.pop) <span class="sc">^</span> <span class="dv">2</span></span>
-<span id="cb211-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb211-3" tabindex="-1"></a>(theta.mse <span class="ot">&lt;-</span> theta.bias2 <span class="sc">+</span> vartheta.popest)</span></code></pre></div>
+<div class="sourceCode" id="cb207"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb207-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb207-1" tabindex="-1"></a><span class="co"># estimate MSE</span></span>
+<span id="cb207-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb207-2" tabindex="-1"></a>theta.bias2 <span class="ot">&lt;-</span> (theta.exp <span class="sc">-</span> theta.pop) <span class="sc">^</span> <span class="dv">2</span></span>
+<span id="cb207-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb207-3" tabindex="-1"></a>(theta.mse <span class="ot">&lt;-</span> theta.bias2 <span class="sc">+</span> vartheta.popest)</span></code></pre></div>
 <pre><code>##                watts                 fgt0 watts pov. gap ratio 
 ##         6.145027e-05         1.015656e-04         9.248844e-04 
 ##          theil(poor) 
 ##         1.108526e-03</code></pre>
-<div class="sourceCode" id="cb213"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb213-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb213-1" tabindex="-1"></a><span class="co"># squared bias component of the MSE</span></span>
-<span id="cb213-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb213-2" tabindex="-1"></a>(squared_bias_over_mse <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">*</span> (theta.bias2 <span class="sc">/</span> theta.mse))</span></code></pre></div>
+<div class="sourceCode" id="cb209"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb209-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb209-1" tabindex="-1"></a><span class="co"># squared bias component of the MSE</span></span>
+<span id="cb209-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb209-2" tabindex="-1"></a>(squared_bias_over_mse <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">*</span> (theta.bias2 <span class="sc">/</span> theta.mse))</span></code></pre></div>
 <pre><code>##                watts                 fgt0 watts pov. gap ratio 
 ##         0.0584715789         0.0389737000         0.0820154610 
 ##          theil(poor) 
 ##         0.0001195063</code></pre>
-<div class="sourceCode" id="cb215"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb215-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb215-1" tabindex="-1"></a><span class="fu">stopifnot</span>(squared_bias_over_mse <span class="sc">&lt;</span> <span class="fl">0.1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb211"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb211-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb211-1" tabindex="-1"></a><span class="fu">stopifnot</span>(squared_bias_over_mse <span class="sc">&lt;</span> <span class="fl">0.1</span>)</span></code></pre></div>
 <p>However, the CIs based on the normal approximation might not work very well for some components. The code below shows that coverage rate for the Theil index component differs significantly from the 95% nominal coverage rate.</p>
-<div class="sourceCode" id="cb216"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb216-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb216-1" tabindex="-1"></a><span class="co"># estimate confidence intervals of the Watts index</span></span>
-<span id="cb216-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb216-2" tabindex="-1"></a><span class="co"># for each of the samples</span></span>
-<span id="cb216-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb216-3" tabindex="-1"></a>est.coverage <span class="ot">&lt;-</span></span>
-<span id="cb216-4"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb216-4" tabindex="-1"></a>  <span class="fu">sapply</span>(wattsdec.estimate.list, <span class="cf">function</span>(this.stat)</span>
-<span id="cb216-5"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb216-5" tabindex="-1"></a>    <span class="fu">confint</span>(this.stat)[, <span class="dv">1</span>] <span class="sc">&lt;=</span> theta.pop <span class="sc">&amp;</span></span>
-<span id="cb216-6"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb216-6" tabindex="-1"></a>      <span class="fu">confint</span>(this.stat)[, <span class="dv">2</span>] <span class="sc">&gt;=</span> theta.pop)</span>
-<span id="cb216-7"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb216-7" tabindex="-1"></a></span>
-<span id="cb216-8"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb216-8" tabindex="-1"></a><span class="co"># evaluate empirical coverage</span></span>
-<span id="cb216-9"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb216-9" tabindex="-1"></a>(empirical_coverage <span class="ot">&lt;-</span> <span class="fu">rowMeans</span>(est.coverage))</span></code></pre></div>
+<div class="sourceCode" id="cb212"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb212-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb212-1" tabindex="-1"></a><span class="co"># estimate confidence intervals of the Watts index</span></span>
+<span id="cb212-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb212-2" tabindex="-1"></a><span class="co"># for each of the samples</span></span>
+<span id="cb212-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb212-3" tabindex="-1"></a>est.coverage <span class="ot">&lt;-</span></span>
+<span id="cb212-4"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb212-4" tabindex="-1"></a>  <span class="fu">sapply</span>(wattsdec.estimate.list, <span class="cf">function</span>(this.stat)</span>
+<span id="cb212-5"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb212-5" tabindex="-1"></a>    <span class="fu">confint</span>(this.stat)[, <span class="dv">1</span>] <span class="sc">&lt;=</span> theta.pop <span class="sc">&amp;</span></span>
+<span id="cb212-6"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb212-6" tabindex="-1"></a>      <span class="fu">confint</span>(this.stat)[, <span class="dv">2</span>] <span class="sc">&gt;=</span> theta.pop)</span>
+<span id="cb212-7"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb212-7" tabindex="-1"></a></span>
+<span id="cb212-8"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb212-8" tabindex="-1"></a><span class="co"># evaluate empirical coverage</span></span>
+<span id="cb212-9"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb212-9" tabindex="-1"></a>(empirical_coverage <span class="ot">&lt;-</span> <span class="fu">rowMeans</span>(est.coverage))</span></code></pre></div>
 <pre><code>##                watts                 fgt0 watts pov. gap ratio 
 ##               0.9268               0.9494               0.9476 
 ##          theil(poor) 
 ##               0.8452</code></pre>
-<div class="sourceCode" id="cb218"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb218-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb218-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(empirical_coverage <span class="sc">-</span> <span class="fl">0.95</span>) <span class="sc">&lt;</span> <span class="fl">0.15</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb214"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb214-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb214-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(empirical_coverage <span class="sc">-</span> <span class="fl">0.95</span>) <span class="sc">&lt;</span> <span class="fl">0.15</span>)</span></code></pre></div>
 <p>One of the reasons for this is that the sample might not be large enough for the CLT to hold. The distribution of the estimator shows substantial asymmetry, which would be a problem for the normal approximation.</p>
-<div class="sourceCode" id="cb219"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb219-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb219-1" tabindex="-1"></a><span class="fu">hist</span>(</span>
-<span id="cb219-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb219-2" tabindex="-1"></a>  <span class="fu">sapply</span>(wattsdec.estimate.list , coef)[<span class="dv">4</span>, ] ,</span>
-<span id="cb219-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb219-3" tabindex="-1"></a>  <span class="at">main =</span> <span class="st">&quot;Histogram of Theil component estimator&quot;</span> ,</span>
-<span id="cb219-4"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb219-4" tabindex="-1"></a>  <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>, .<span class="dv">30</span>) ,</span>
-<span id="cb219-5"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb219-5" tabindex="-1"></a>  <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span> , <span class="dv">1500</span>) ,</span>
-<span id="cb219-6"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb219-6" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">&quot;Estimate&quot;</span></span>
-<span id="cb219-7"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb219-7" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb215"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb215-1"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb215-1" tabindex="-1"></a><span class="fu">hist</span>(</span>
+<span id="cb215-2"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb215-2" tabindex="-1"></a>  <span class="fu">sapply</span>(wattsdec.estimate.list , coef)[<span class="dv">4</span>, ] ,</span>
+<span id="cb215-3"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb215-3" tabindex="-1"></a>  <span class="at">main =</span> <span class="st">&quot;Histogram of Theil component estimator&quot;</span> ,</span>
+<span id="cb215-4"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb215-4" tabindex="-1"></a>  <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>, .<span class="dv">30</span>) ,</span>
+<span id="cb215-5"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb215-5" tabindex="-1"></a>  <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span> , <span class="dv">1500</span>) ,</span>
+<span id="cb215-6"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb215-6" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">&quot;Estimate&quot;</span></span>
+<span id="cb215-7"><a href="2.7-watts-poverty-measure-svywatts-svywattsdec.html#cb215-7" tabindex="-1"></a>)</span></code></pre></div>
 <p><img src="context_files/figure-html/unnamed-chunk-55-1.png" width="672"  /></p>
 <p>For additional usage examples of <code>svywatts</code> and <code>svywattsdec</code>, type <code>?convey::svywatts</code> or <code>?convey::svywattsdec</code> in the R console.</p>
 

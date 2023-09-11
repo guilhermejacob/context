@@ -121,7 +121,7 @@
 
 \title{Poverty and Inequality with Complex Survey Data}
 \author{Guilherme Jacob, Anthony Damico, and Djalma Pessoa}
-\date{2023-09-07}
+\date{2023-09-11}
 
 \begin{document}
 \maketitle
@@ -1092,22 +1092,6 @@ Using the \texttt{eusilcP} data from the \texttt{simPop} package \autocite{R-sim
 \begin{Highlighting}[]
 \CommentTok{\# load libraries}
 \FunctionTok{library}\NormalTok{(sampling)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## 
-## Attaching package: 'sampling'
-\end{verbatim}
-
-\begin{verbatim}
-## The following objects are masked from 'package:survival':
-## 
-##     cluster, strata
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(survey)}
 \FunctionTok{library}\NormalTok{(convey)}
 \FunctionTok{library}\NormalTok{(parallel)}
@@ -1274,25 +1258,20 @@ For the variance estimator, we have:
 
 Under this scenario, the PRB of the ARPR variance estimator is 3.1720\%.
 
-Our simulations show that the Squared Bias of this estimator accounts for less than 0.1\% of its Mean Squared Error:
+Our simulation shows that the Bias Ratio of this estimator is approximately 2\%:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{theta.bias2 }\OtherTok{\textless{}{-}}\NormalTok{ (theta.exp }\SpecialCharTok{{-}}\NormalTok{ theta.pop) }\SpecialCharTok{\^{}} \DecValTok{2}
-\NormalTok{theta.mse }\OtherTok{\textless{}{-}}\NormalTok{ theta.bias2 }\SpecialCharTok{+}\NormalTok{ vartheta.popest}
-\NormalTok{(squared\_bias\_over\_mse }\OtherTok{\textless{}{-}}  \DecValTok{100} \SpecialCharTok{*}\NormalTok{ (theta.bias2 }\SpecialCharTok{/}\NormalTok{ theta.mse))}
+\CommentTok{\# compute bias ratio}
+\DecValTok{100} \SpecialCharTok{*} \FunctionTok{abs}\NormalTok{( theta.exp }\SpecialCharTok{{-}}\NormalTok{ theta.pop ) }\SpecialCharTok{/} \FunctionTok{sqrt}\NormalTok{( vartheta.popest )}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-## [1] 0.0808799
+## [1] 2.84509
 \end{verbatim}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\FunctionTok{stopifnot}\NormalTok{(squared\_bias\_over\_mse }\SpecialCharTok{\textless{}} \FloatTok{0.1}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
+\noindent if the normal approximation holds, a small bias ratio still allows for approximately valid estimates of the confidence intervals.
 
 Next, we evaluate the Percentage Coverage Rate (PCR). In theory, under repeated sampling, the estimated 95\% CIs should cover the population parameter approximately 95\% of the time. We can evaluate that using:
 
@@ -2556,7 +2535,7 @@ Note that the bias is still relatively small, with absolute values of the PRB be
 \end{Highlighting}
 \end{Shaded}
 
-Regarding the MSE, the squared bias accounts for less than 1\% of the MSE.
+Regarding the MSE of the decomposition estimator, the squared bias accounts for less than 0.1\% of the MSE.
 This means that, with a good estimate of the variance, we should be able to have a good approximation for the MSE.
 
 \begin{Shaded}
@@ -3013,7 +2992,7 @@ The PRB of each component is estimated using the code below. Notice that PRBs ar
 \end{Shaded}
 
 For the variance estimators, we estimate the PRB using the code below.
-Note that the bias is still relatively small, with absolute values of the PRB below 1\%.
+Note that the bias of the variance estimators is still relatively small, with absolute value of the Watts variance estimator's PRB below 1\% and all four components variance estimators below 5\%.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -3069,7 +3048,7 @@ Note that the bias is still relatively small, with absolute values of the PRB be
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{stopifnot}\NormalTok{(}\FunctionTok{abs}\NormalTok{(percentage\_relative\_bias[}\DecValTok{1}\NormalTok{]) }\SpecialCharTok{\textless{}} \DecValTok{1}\NormalTok{)}
+\FunctionTok{stopifnot}\NormalTok{(}\FunctionTok{abs}\NormalTok{(percentage\_relative\_bias[}\DecValTok{1}\NormalTok{]) }\SpecialCharTok{\textless{}} \DecValTok{1} \SpecialCharTok{\&} \FunctionTok{all}\NormalTok{(}\FunctionTok{abs}\NormalTok{(percentage\_relative\_bias) }\SpecialCharTok{\textless{}} \DecValTok{5}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 
@@ -4121,11 +4100,11 @@ Alternatively, \textcite{langel2011} uses an estimator based on smoothed quantil
 
 The intuition behind the Zenga index is based on argument similar to the Quintile Share Ratio or the Palma index. While the QSR and Palma indices are based on ratios of lower and upper shares, the Zenga scores (but not the measure itself!) is the ratio of lower and upper means. The Zenga index is the average of those scores.
 
-For a given p, when the mean income of the poorest is not much smaller than the mean income of the richest, the ratio is close to one, resulting in Z(p) close to zero. However, when the lower mean is much smaller than the upper mean, the ratio goes to 0, resulting in a Z(p) close to one.
+For a given p, when the mean income of the poorest is not much smaller than the mean income of the richest, the ratio is close to one, resulting in \(Z(p)\) close to zero. However, when the lower mean is much smaller than the upper mean, the ratio goes to 0, resulting in a \(Z(p)\) close to one.
 
-Take the mean income of the poorest 20\% of a population: this is the lower mean. The ``complement'' is the mean income of the richest 80\%: this is the upper mean. If the lower mean is \$100 and the upper mean is \$1,000, then the respective point on the Zenga curve would associate the fraction 20\% to 1 - ( \$100 / \$1,000 ) = 0.9. In other words, Z(20\%) = 90\%.
+Take the mean income of the poorest 20\% of a population: this is the lower mean. The ``complement'' is the mean income of the richest 80\%: this is the upper mean. If the lower mean is \$100 and the upper mean is \$1,000, then the respective point on the Zenga curve would associate the fraction \(20\)\% to \(1 - ( \$100 / \$1,000 ) = 0.9\). In other words, \(Z(20\%) = 90\%\).
 
-In this case, we took a fixed p = 20\%; however, the full Zenga curve would be computed varying p from 0\% to 100\%. Then, the Zenga index is the integral of this curve in the interval (0,1).
+In this case, we took a fixed \(p = 20\)\%; however, the full Zenga curve would be computed varying \(p\) from \(0\)\% to \(100\)\%. Then, the Zenga index is the integral of this curve in the interval \((0,1)\).
 
 Unlike the relationship between the Gini coefficient and the Lorenz curve, this allows for a more straightforward graphical interpretation (see Figure 1 from \textcite{langel2011}) of the Zenga index. In fact, the Zenga index is the mean of the Y axis of the Zenga coordinates.
 
