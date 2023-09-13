@@ -35,7 +35,7 @@ graph TD
 	G --> T["No, I would like to make comparisons<br>within and between the subgroups<br>of my surveyed population"]
 
 
-	S --> U["Are you examining poverty or inequality?"]
+	S --> U["Are you examining poverty, inequality, or affluence?"]
 	
 	U --> V{"Poverty"}
 	
@@ -44,13 +44,21 @@ graph TD
 	V --> Y["svyfgt( ... , g = 2) computes the<br>average squared normalized poverty gap,<br>where the above regressive transfer<br>will result in an increase of the<br>poverty measure. In other words,<br>gamma=2 takes 'inequality in poverty' into account"]
 	V --> Z["svywatts() computes a measure comparable<br>to the average squared normalized poverty gap<br>with a time-to-exit-poverty interpretation:<br>under some (unrealistic, but useful) assumptions,<br>dividing the Watts measure by an income annual growth rate R<br>yields the average number of years<br>for leaving poverty status."]
 	
-	U --> |Inequality| AA["Are you looking for a<br>social welfare function?<br>Do you wish to assign a<br>welfare, happiness, or satisfaction value<br>to a given amount of money?"]	
+	U --> |Inequality| AA["Are you looking for a social welfare function?<br>Do you wish to assign a welfare, happiness, or satisfaction value<br>to a given amount of money?"]	
 	
 	AA --> TT{"No"}
 	
-	AA --> |Yes, I am interested in a social welfare function, a measure more interpretable to economists| RR["svyatk() computes the Atkinson index, an inequality measure focused on the marginal utility of money.<br>This calculation expresses the idea that more money provides more welfare, but at a diminishing rate.<br>So $100 makes less difference in someone's welfare as they move up the income distribution."]
+	AA --> |Yes, I am interested in a social welfare function, a concept more interpretable to economists| RR["svyatk() computes the Atkinson index, an inequality measure directly related to the marginal utility of money.<br>This calculation expresses the idea that more money provides more welfare, but at a diminishing rate.<br>So $100 makes less difference in someone's welfare as they move up the income distribution."]
 	
+	U --> VV{"Richness or Affluence"}
 	
+	VV --> OO["In general, the Chakravarty svyrich( ... , type_measure = 'Cha' ) is recommended.<br><br>The concave, polarization-sensitive richness measures<br>svyrich( ... , type_measure = 'Cha' ) and svyrich( ... , type_measure = 'FGTT1' )<br>both increase with a progressive transfer among the rich.<br>The convex, inequality-sensitive richness<br>svyrich( ... , type_measure = 'FGTT2' ) declines after a<br>progressive transfer among the rich."]
+	
+	OO --> WW["For type_measure = 'FGTT1' and 'FGTT2',<br>svyrich( ... , g = 0) computes the headcount ratio,<br>a score unaffected by being $1 or $100 above the richness threshold"]
+
+	OO --> UU["For type_measure = 'FGTT1' and 'FGTT2',<br>svyrich( ... , g = 1) computes the richness gap, which takes into account the distance above the richness threshold:<br>people $100 above the richness threshold have a higher richness score than those $10 above the richness threshold."]
+	
+	OO --> XX["For type_measure = 'Cha',<br>svyrich( ... , g = 1 ) computes the richness gap index while higher parameters<br>like svyrich( ... , g = 3 ) tend toward the headcount ratio."]
 	
 	TT --> BB["svygini() computes the gini coefficient,<br>a commonly-used value to describe<br>economic inequality that weights outliers equally"]
 	TT --> CC["svygei( ... , epsilon = 0 ) computes the<br>Theil-L index, a measure sensitive to<br>differences among those with lower incomes"]
@@ -73,11 +81,3 @@ graph TD
 	
 	LL --> MM["svygeidec( ... , epsilon = 0 ) computes the<br>Theil-L index, a measure sensitive to<br>differences among those with lower incomes"]
 	LL --> NN["svygeidec( ... , epsilon = 1 ) computes the<br>Theil-T index, a measure sensitive to<br>differences among those with higher incomes"]
-
-
-
-	OO["Some richness measures can be estimated using the svyrich function.<br>Those are not poverty or inequality measures, with particular properties.<br>Like poverty measures, it has a focus axiom -- it focuses on the top of the income distribution.<br>They can also have an income inequality or income polarization aspect, depending on the effect of progressive transfers among the rich.<br>An inequality-sensitive richness measure would say that richness is reduced with a progressive transfer among the rich, since the inequality in that part of the distribution has decreased.<br>On the other hand, a polarization-sensitive richness measure would increase after a progressive transfer among the rich, since the rich are more clustered after this transfer."]
-	
-	PP["svyiqalpha() computes the linearized variable of a quantile of variable"]
-	
-	QQ["svyisq() estimates the total income held by bottom % of the distribution.<br>At the population level, it is similar to the Lorenz curve multiplied by the total income.<br>However, even after the multiplication, they might differ a little at the sample level.<br>This is because svylorenz() uses a different estimator, producing an estimated curve more in line with the theoretical properties of the theoretical Lorenz curve."]
