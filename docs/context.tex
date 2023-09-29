@@ -121,7 +121,7 @@
 
 \title{Poverty and Inequality with Complex Survey Data}
 \author{Guilherme Jacob, Anthony Damico, and Djalma Pessoa}
-\date{2023-09-11}
+\date{2023-09-29}
 
 \begin{document}
 \maketitle
@@ -5108,7 +5108,73 @@ For additional usage examples of \texttt{svyjdiv} or \texttt{svyjdivdec}, type \
 \hypertarget{atkinson-index-svyatk}{%
 \section{Atkinson index (svyatk)}\label{atkinson-index-svyatk}}
 
-Although the original formula was proposed in \textcite{atkinson1970}, the estimator used here comes from \textcite{biewen2003}:
+\textcite{dalton1920} pointed out one of the most important facts about the economic theory
+of income inequality measurement: every income inequality measure has an implicit
+social welfare function (SWF).\footnote{This is the subject of an interesting discussion between the British and the Italian schools of inequality measurement.}
+More formally, \textcite{atkinson1970} represent the SWF by an additively
+separable and symmetric function
+
+\[
+W ( y ) = \int_0^{+\infty} U ( y ) f( y ) dy
+\]
+\noindent where \(U( y )\) is a twice differentiable, increasing and concave utility function.
+The utility function ``weights'' the individual income \(y\) on the (overall) social welfare.\footnote{The utility is not what the welfare that the individual attributes to its own income, but the social welfare that the society attributes to an individual with that level of income.}
+Saying that ``\(U ( y )\) is increasing in \(y\)'' means that more income means more individual utility,
+while ``\(U ( y )\) is concave'' means that (individual) welfare grows less for every income increase.
+
+\textcite[p.~250]{atkinson1970} that we should measure inequality by using the Equally Distriuted Equivalent level of income
+\(y_{EDE}\). The \(y_{EDE}\) is the level of income that would lead to the observed level welfare if income was equally distributed.
+In mathematical terms, the \(y_{EDE}\) is defined as:
+
+\[
+\begin{aligned}
+W( y_{EDE} \cdot \mathbb{1} ) &= W( y ) \\
+\int_0^{+\infty} U ( y_{EDE} ) f( y ) dy &= \int_0^{+\infty} U ( y ) f( y ) dy \\
+U ( y_{EDE} ) \int_0^{+\infty}  f( y ) dy &= \int_0^{+\infty} U ( y ) f( y ) dy \\ 
+\therefore \quad y_{EDE} :\quad U ( y_{EDE} )  &= \int_0^{+\infty} U ( y ) f( y ) dy 
+\end{aligned}
+\]
+
+By using this concept, \textcite{atkinson1970} proposed measuring inequality as
+
+\[
+I = 1 - \frac{ y_{EDE}}{ \mu }
+\]
+
+\noindent where \(\mu\) is the average income.
+Once a suitable form \(U\) is defined, this index has a direct interpretation in terms of social welfare;
+e.g., for a given level \(I\), it means that, if we could equally redistribute income from the distribution, we would only need
+about \((1 - I)\%\) of the current average income to reach the same level of social welfare.
+
+However, in order to completely rank distributions, we need to impose more restrictions
+on the form of \(U(y)\).
+Based on results from the theory of choice under uncertainty, \textcite{atkinson1970}
+suggests a class of utility functions given by
+
+\[
+U( y , \epsilon ) =
+\begin{cases}
+A + B \frac{y^{1 - \epsilon}}{1 - \epsilon} , &\epsilon \neq 1 \\
+\log y , &\epsilon \neq 1
+\end{cases}
+\]
+
+\noindent where \(\epsilon\) is an inequality-aversion (scalar) parameter: as it
+approaches infinity, more weight is given to lower incomes.
+
+Combining this with his proposed approach, \textcite{atkinson1970} derives what came to be known as
+the Atkinson index:
+
+\[
+I_\epsilon = 
+\begin{cases}
+1 - \bigg[ \int_0^{+ \infty} \big( {\frac{y}{\mu} } \big)^{1-\epsilon} f(y) dy \bigg]^{1/(1-\epsilon)} , &\epsilon \neq 1 \\
+1 - \exp \bigg[ \int_0^{+ \infty} \log \frac{y}{\mu} f(y) dy \bigg] , &\epsilon \to 1
+\end{cases}
+\]
+
+Although the above form is given terms of a continuous distribution,
+the equivalent plug-in estimator we use comes from \textcite{biewen2003}:
 
 \[
 \widehat{A}_\epsilon =
@@ -5117,8 +5183,6 @@ Although the original formula was proposed in \textcite{atkinson1970}, the estim
 1 - \widehat{U}_0 \widehat{U}_0^{-1} exp( \widehat{T}_0 \widehat{U}_0^{-1} ), &\text{if } \epsilon \rightarrow1
 \end{cases}
 \]
-
-The \(\epsilon\) is an inequality aversion parameter: as it approaches infinity, more weight is given to incomes in bottom of the distribution.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
