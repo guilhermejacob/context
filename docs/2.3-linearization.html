@@ -5,7 +5,7 @@
 <meta charset="utf-8" />
 <meta name="generator" content="pandoc" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="1.2 Complex surveys and statistical inference | Poverty and Inequality with Complex Survey Data" />
+<meta property="og:title" content="2.3 Linearization | Poverty and Inequality with Complex Survey Data" />
 <meta property="og:type" content="book" />
 
 <meta property="og:description" content="A book about the R convey package" />
@@ -24,7 +24,7 @@ MathJax.Hub.Config({
 
 <meta name="description" content="A book about the R convey package">
 
-<title>1.2 Complex surveys and statistical inference | Poverty and Inequality with Complex Survey Data</title>
+<title>2.3 Linearization | Poverty and Inequality with Complex Survey Data</title>
 
 <link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte-background.css" rel="stylesheet" />
@@ -257,22 +257,40 @@ div.csl-indent {
 </div>
 <div class="row">
 <div class="col-sm-12">
-<div id="survey" class="section level2" number="1.2">
-<h2><span class="header-section-number">1.2</span> Complex surveys and statistical inference</h2>
-<p>In this book, we demonstrate how to measure poverty and income concentration in a population based on microdata collected from a complex survey sample. Most surveys administered by government agencies or larger research organizations utilize a sampling design that violates the assumption of simple random sampling (SRS), including:</p>
-<ol style="list-style-type: decimal">
-<li>Different units selection probabilities;</li>
-<li>Clustering of units;</li>
-<li>Stratification of clusters;</li>
-<li>Reweighting to compensate for missing values and other adjustments.</li>
-</ol>
-<p>Therefore, basic unweighted R commands such as <code>mean()</code> or <code>glm()</code> will not properly account for the weighting nor the measures of uncertainty (such as the confidence intervals) present in the dataset. For some examples of publicly-available complex survey data sets, see <a href="">http://asdfree.com</a>.</p>
-<p>Unlike other software, the R <code>convey</code> package does not require that the user specify these parameters throughout the analysis. So long as the <a href="http://r-survey.r-forge.r-project.org/survey/html/svydesign.html">svydesign object</a> or <a href="http://r-survey.r-forge.r-project.org/survey/html/svrepdesign.html">svrepdesign object</a> has been constructed properly at the outset of the analysis, the <code>convey</code> package will incorporate the survey design automatically and produce statistics and variances that take the complex sample into account.</p>
-<p>Survey analysts familiar with the R <code>dplyr</code> syntax implemented by the <code>survey</code> library’s wrapper <code>srvyr</code> package might be interested in implementing specific <code>convey</code> functions by following the <a href="http://gdfe.co/srvyr/articles/extending-srvyr.html"><code>svygini()</code> example</a> published by <code>srvyr</code> author Greg Freedman Ellis. Note that the full design stored by <code>convey_prep()</code> may in some cases complicate this extension.</p>
+<div id="linearization" class="section level2" number="2.3">
+<h2><span class="header-section-number">2.3</span> Linearization</h2>
+<div id="linearization-examples-using-the-influence-function" class="section level3" number="2.3.1">
+<h3><span class="header-section-number">2.3.1</span> Linearization Examples Using the Influence Function</h3>
+<ul>
+<li>At-risk-of-poverty threshold:
+<span class="math display">\[
+arpt = 0.6\times m
+\]</span>
+where <span class="math inline">\(m\)</span> is the median income.</li>
+</ul>
+<p><span class="math display">\[
+z_k= -\frac{0.6}{f(m)}\times\frac{1}{N}\times\left[I(y_k\leq m-0.5) \right]
+\]</span></p>
+<ul>
+<li>At-risk-of-poverty rate:</li>
+</ul>
+<p><span class="math display">\[
+arpr=\frac{\sum_U I(y_i \leq t)}{\sum_U w_i}.100
+\]</span>
+<span class="math display">\[
+z_k=\frac{1}{N}\left[I(y_k\leq t)-t\right]-\frac{0.6}{N}\times\frac{f(t)}{f(m)}\left[I(y_k\leq m)-0.5\right]
+\]</span></p>
+<p>where:</p>
+<p><span class="math inline">\(N\)</span> - population size;</p>
+<p><span class="math inline">\(t\)</span> - at-risk-of-poverty threshold;</p>
+<p><span class="math inline">\(y_k\)</span> - income of person <span class="math inline">\(k\)</span>;</p>
+<p><span class="math inline">\(m\)</span> - median income;</p>
+<p><span class="math inline">\(f\)</span> - income density function;</p>
+</div>
 </div>
 <p style="text-align: center;">
-<a href="1.1-install.html"><button class="btn btn-default">Previous</button></a>
-<a href="1.3-variance-estimation-linearization-and-replication-based-methods.html"><button class="btn btn-default">Next</button></a>
+<a href="2.2-influence-functions.html"><button class="btn btn-default">Previous</button></a>
+<a href="2.4-decomposition.html"><button class="btn btn-default">Next</button></a>
 </p>
 </div>
 </div>
