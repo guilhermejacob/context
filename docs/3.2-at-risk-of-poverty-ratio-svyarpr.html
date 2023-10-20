@@ -13,7 +13,7 @@
 
 <meta name="author" content="Guilherme Jacob, Anthony Damico, and Djalma Pessoa" />
 
-<meta name="date" content="2023-10-17" />
+<meta name="date" content="2023-10-20" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -411,130 +411,125 @@ div.csl-indent {
 In order to still provide additional examples for our code, we proceed with a Monte Carlo experiment.</p>
 <p>Using the <code>eusilcP</code> data from the <code>simPop</code> package <span class="citation">(<label for="tufte-mn-28" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-28" class="margin-toggle">Templ et al. 2017<span class="marginnote">Templ, Matthias, Bernhard Meindl, Alexander Kowarik, and Olivier Dupriez. 2017. <span>“Simulation of Synthetic Complex Data: The <span>R</span> Package <span class="nocase">simPop</span>.”</span> <em>Journal of Statistical Software</em> 79 (10): 1–38. <a href="https://doi.org/10.18637/jss.v079.i10">https://doi.org/10.18637/jss.v079.i10</a>.</span>)</span>, we can compute the actual value of the at risk of poverty rate for that population:</p>
 <div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb64-1" tabindex="-1"></a><span class="co"># load libraries</span></span>
-<span id="cb64-2"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb64-2" tabindex="-1"></a><span class="fu">library</span>(sampling)</span></code></pre></div>
-<pre><code>## 
-## Attaching package: &#39;sampling&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:survival&#39;:
-## 
-##     cluster, strata</code></pre>
-<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb67-1" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
-<span id="cb67-2"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb67-2" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
-<span id="cb67-3"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb67-3" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
-<span id="cb67-4"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb67-4" tabindex="-1"></a></span>
-<span id="cb67-5"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb67-5" tabindex="-1"></a><span class="co"># load pseudo population data</span></span>
-<span id="cb67-6"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb67-6" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;eusilcP&quot;</span> , <span class="at">package =</span> <span class="st">&quot;simPop&quot;</span>)</span>
-<span id="cb67-7"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb67-7" tabindex="-1"></a></span>
-<span id="cb67-8"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb67-8" tabindex="-1"></a><span class="co"># compute population median</span></span>
-<span id="cb67-9"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb67-9" tabindex="-1"></a>q50.pop <span class="ot">&lt;-</span></span>
-<span id="cb67-10"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb67-10" tabindex="-1"></a>  convey<span class="sc">:::</span><span class="fu">computeQuantiles</span>(eusilcP<span class="sc">$</span>eqIncome , <span class="fu">rep</span>(<span class="dv">1</span> , <span class="fu">length</span>(eusilcP<span class="sc">$</span>eqIncome)) , .<span class="dv">50</span>)</span>
-<span id="cb67-11"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb67-11" tabindex="-1"></a></span>
-<span id="cb67-12"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb67-12" tabindex="-1"></a><span class="co"># compute population poverty threshold</span></span>
-<span id="cb67-13"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb67-13" tabindex="-1"></a><span class="co"># as 60% of the median</span></span>
-<span id="cb67-14"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb67-14" tabindex="-1"></a>thresh.pop <span class="ot">&lt;-</span> .<span class="dv">60</span> <span class="sc">*</span> q50.pop</span>
-<span id="cb67-15"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb67-15" tabindex="-1"></a></span>
-<span id="cb67-16"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb67-16" tabindex="-1"></a><span class="co"># compute population at risk of poverty rate</span></span>
-<span id="cb67-17"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb67-17" tabindex="-1"></a>(theta.pop <span class="ot">&lt;-</span></span>
-<span id="cb67-18"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb67-18" tabindex="-1"></a>    <span class="fu">mean</span>(eusilcP<span class="sc">$</span>eqIncome <span class="sc">&lt;=</span> thresh.pop , <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div>
+<span id="cb64-2"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb64-2" tabindex="-1"></a><span class="fu">library</span>(sampling)</span>
+<span id="cb64-3"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb64-3" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb64-4"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb64-4" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
+<span id="cb64-5"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb64-5" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
+<span id="cb64-6"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb64-6" tabindex="-1"></a></span>
+<span id="cb64-7"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb64-7" tabindex="-1"></a><span class="co"># load pseudo population data</span></span>
+<span id="cb64-8"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb64-8" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;eusilcP&quot;</span> , <span class="at">package =</span> <span class="st">&quot;simPop&quot;</span>)</span>
+<span id="cb64-9"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb64-9" tabindex="-1"></a></span>
+<span id="cb64-10"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb64-10" tabindex="-1"></a><span class="co"># compute population median</span></span>
+<span id="cb64-11"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb64-11" tabindex="-1"></a>q50.pop <span class="ot">&lt;-</span></span>
+<span id="cb64-12"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb64-12" tabindex="-1"></a>  convey<span class="sc">:::</span><span class="fu">computeQuantiles</span>(eusilcP<span class="sc">$</span>eqIncome , <span class="fu">rep</span>(<span class="dv">1</span> , <span class="fu">length</span>(eusilcP<span class="sc">$</span>eqIncome)) , .<span class="dv">50</span>)</span>
+<span id="cb64-13"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb64-13" tabindex="-1"></a></span>
+<span id="cb64-14"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb64-14" tabindex="-1"></a><span class="co"># compute population poverty threshold</span></span>
+<span id="cb64-15"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb64-15" tabindex="-1"></a><span class="co"># as 60% of the median</span></span>
+<span id="cb64-16"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb64-16" tabindex="-1"></a>thresh.pop <span class="ot">&lt;-</span> .<span class="dv">60</span> <span class="sc">*</span> q50.pop</span>
+<span id="cb64-17"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb64-17" tabindex="-1"></a></span>
+<span id="cb64-18"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb64-18" tabindex="-1"></a><span class="co"># compute population at risk of poverty rate</span></span>
+<span id="cb64-19"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb64-19" tabindex="-1"></a>(theta.pop <span class="ot">&lt;-</span></span>
+<span id="cb64-20"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb64-20" tabindex="-1"></a>    <span class="fu">mean</span>(eusilcP<span class="sc">$</span>eqIncome <span class="sc">&lt;=</span> thresh.pop , <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div>
 <pre><code>## [1] 0.1469295</code></pre>
 <p>Now, to study the distribution of the estimator under a particular sampling design, we select 5000 samples under one-stage cluster sampling of 100 households using the <code>cluster</code> function from the <code>sampling</code> package <span class="citation">(<label for="tufte-mn-29" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-29" class="margin-toggle">Tillé and Matei 2021<span class="marginnote">Tillé, Yves, and Alina Matei. 2021. <em>Sampling: Survey Sampling</em>. <a href="https://CRAN.R-project.org/package=sampling">https://CRAN.R-project.org/package=sampling</a>.</span>)</span>, and use the <code>svyarpr</code> function to estimate the ARPR for each of those samples:</p>
-<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-1" tabindex="-1"></a><span class="co"># define the number of monte carlo replicates</span></span>
-<span id="cb69-2"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-2" tabindex="-1"></a>mc.rep <span class="ot">&lt;-</span> 5000L</span>
-<span id="cb69-3"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-3" tabindex="-1"></a></span>
-<span id="cb69-4"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-4" tabindex="-1"></a><span class="co"># simulation function</span></span>
-<span id="cb69-5"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-5" tabindex="-1"></a>arpr_sim_fun <span class="ot">&lt;-</span> <span class="cf">function</span>(this.iter) {</span>
-<span id="cb69-6"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-6" tabindex="-1"></a>  </span>
-<span id="cb69-7"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-7" tabindex="-1"></a>  <span class="fu">set.seed</span>(this.iter)</span>
-<span id="cb69-8"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-8" tabindex="-1"></a>  </span>
-<span id="cb69-9"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-9" tabindex="-1"></a>  </span>
-<span id="cb69-10"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-10" tabindex="-1"></a>  <span class="fu">library</span>(survey)</span>
-<span id="cb69-11"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-11" tabindex="-1"></a>  <span class="fu">library</span>(convey)</span>
-<span id="cb69-12"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-12" tabindex="-1"></a>  <span class="fu">library</span>(sampling)</span>
-<span id="cb69-13"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-13" tabindex="-1"></a>  </span>
-<span id="cb69-14"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-14" tabindex="-1"></a>  <span class="co"># load pseudo population data</span></span>
-<span id="cb69-15"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-15" tabindex="-1"></a>  <span class="fu">data</span>(<span class="st">&quot;eusilcP&quot;</span> , <span class="at">package =</span> <span class="st">&quot;simPop&quot;</span>)</span>
-<span id="cb69-16"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-16" tabindex="-1"></a>  </span>
-<span id="cb69-17"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-17" tabindex="-1"></a>  <span class="co"># compute size-like variable for PPS sampling design</span></span>
-<span id="cb69-18"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-18" tabindex="-1"></a>  eusilcP<span class="sc">$</span>aux <span class="ot">&lt;-</span></span>
-<span id="cb69-19"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-19" tabindex="-1"></a>    <span class="fu">log</span>(<span class="fu">ifelse</span>(eusilcP<span class="sc">$</span>eqIncome <span class="sc">&gt;=</span> <span class="dv">1000</span> , eusilcP<span class="sc">$</span>eqIncome , <span class="dv">1000</span>))</span>
-<span id="cb69-20"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-20" tabindex="-1"></a>  </span>
-<span id="cb69-21"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-21" tabindex="-1"></a>  </span>
-<span id="cb69-22"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-22" tabindex="-1"></a>  <span class="co"># select sample</span></span>
-<span id="cb69-23"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-23" tabindex="-1"></a>  tt <span class="ot">&lt;-</span></span>
-<span id="cb69-24"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-24" tabindex="-1"></a>    sampling<span class="sc">::</span><span class="fu">cluster</span>(</span>
-<span id="cb69-25"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-25" tabindex="-1"></a>      <span class="at">data =</span> eusilcP[<span class="fu">sample.int</span>(<span class="fu">nrow</span>(eusilcP) , <span class="fu">nrow</span>(eusilcP) , <span class="at">replace =</span> <span class="cn">FALSE</span>) , ] ,</span>
-<span id="cb69-26"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-26" tabindex="-1"></a>      <span class="at">clustername =</span> <span class="st">&quot;hid&quot;</span> ,</span>
-<span id="cb69-27"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-27" tabindex="-1"></a>      <span class="at">size =</span> 1000L ,</span>
-<span id="cb69-28"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-28" tabindex="-1"></a>      <span class="at">method =</span> <span class="st">&quot;systematic&quot;</span> ,</span>
-<span id="cb69-29"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-29" tabindex="-1"></a>      <span class="at">pik =</span> eusilcP<span class="sc">$</span>aux</span>
-<span id="cb69-30"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-30" tabindex="-1"></a>    )</span>
-<span id="cb69-31"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-31" tabindex="-1"></a>  </span>
-<span id="cb69-32"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-32" tabindex="-1"></a>  <span class="co"># collect data</span></span>
-<span id="cb69-33"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-33" tabindex="-1"></a>  this.sample <span class="ot">&lt;-</span> <span class="fu">getdata</span>(eusilcP , tt)</span>
-<span id="cb69-34"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-34" tabindex="-1"></a>  </span>
-<span id="cb69-35"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-35" tabindex="-1"></a>  <span class="co"># create survey design object</span></span>
-<span id="cb69-36"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-36" tabindex="-1"></a>  this.desobj <span class="ot">&lt;-</span></span>
-<span id="cb69-37"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-37" tabindex="-1"></a>    <span class="fu">svydesign</span>(</span>
-<span id="cb69-38"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-38" tabindex="-1"></a>      <span class="at">ids =</span> <span class="sc">~</span> hid ,</span>
-<span id="cb69-39"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-39" tabindex="-1"></a>      <span class="at">probs =</span> <span class="sc">~</span> Prob ,</span>
-<span id="cb69-40"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-40" tabindex="-1"></a>      <span class="at">data =</span> this.sample ,</span>
-<span id="cb69-41"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-41" tabindex="-1"></a>      <span class="at">nest =</span> <span class="cn">FALSE</span></span>
-<span id="cb69-42"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-42" tabindex="-1"></a>    )</span>
-<span id="cb69-43"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-43" tabindex="-1"></a>  </span>
-<span id="cb69-44"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-44" tabindex="-1"></a>  <span class="co"># prepare for convey functions</span></span>
-<span id="cb69-45"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-45" tabindex="-1"></a>  this.desobj <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(this.desobj)</span>
-<span id="cb69-46"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-46" tabindex="-1"></a>  </span>
-<span id="cb69-47"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-47" tabindex="-1"></a>  <span class="co"># compute estimates</span></span>
-<span id="cb69-48"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-48" tabindex="-1"></a>  <span class="fu">svyarpr</span>( <span class="sc">~</span> eqIncome , this.desobj)</span>
-<span id="cb69-49"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-49" tabindex="-1"></a>  </span>
-<span id="cb69-50"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-50" tabindex="-1"></a>}</span>
-<span id="cb69-51"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-51" tabindex="-1"></a></span>
-<span id="cb69-52"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-52" tabindex="-1"></a><span class="co"># run replications</span></span>
-<span id="cb69-53"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-53" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="fu">makeCluster</span>(<span class="fu">detectCores</span>() <span class="sc">-</span> <span class="dv">1</span>)</span>
-<span id="cb69-54"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-54" tabindex="-1"></a></span>
-<span id="cb69-55"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-55" tabindex="-1"></a>arpr.estimate.list <span class="ot">&lt;-</span></span>
-<span id="cb69-56"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-56" tabindex="-1"></a>  <span class="fu">clusterApply</span>(cl, <span class="fu">seq_len</span>(mc.rep) , arpr_sim_fun)</span>
-<span id="cb69-57"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-57" tabindex="-1"></a></span>
-<span id="cb69-58"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-58" tabindex="-1"></a><span class="fu">stopCluster</span>(cl)</span></code></pre></div>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-1" tabindex="-1"></a><span class="co"># define the number of monte carlo replicates</span></span>
+<span id="cb66-2"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-2" tabindex="-1"></a>mc.rep <span class="ot">&lt;-</span> 5000L</span>
+<span id="cb66-3"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-3" tabindex="-1"></a></span>
+<span id="cb66-4"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-4" tabindex="-1"></a><span class="co"># simulation function</span></span>
+<span id="cb66-5"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-5" tabindex="-1"></a>arpr_sim_fun <span class="ot">&lt;-</span> <span class="cf">function</span>(this.iter) {</span>
+<span id="cb66-6"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-6" tabindex="-1"></a>  </span>
+<span id="cb66-7"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-7" tabindex="-1"></a>  <span class="fu">set.seed</span>(this.iter)</span>
+<span id="cb66-8"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-8" tabindex="-1"></a>  </span>
+<span id="cb66-9"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-9" tabindex="-1"></a>  </span>
+<span id="cb66-10"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-10" tabindex="-1"></a>  <span class="fu">library</span>(survey)</span>
+<span id="cb66-11"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-11" tabindex="-1"></a>  <span class="fu">library</span>(convey)</span>
+<span id="cb66-12"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-12" tabindex="-1"></a>  <span class="fu">library</span>(sampling)</span>
+<span id="cb66-13"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-13" tabindex="-1"></a>  </span>
+<span id="cb66-14"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-14" tabindex="-1"></a>  <span class="co"># load pseudo population data</span></span>
+<span id="cb66-15"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-15" tabindex="-1"></a>  <span class="fu">data</span>(<span class="st">&quot;eusilcP&quot;</span> , <span class="at">package =</span> <span class="st">&quot;simPop&quot;</span>)</span>
+<span id="cb66-16"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-16" tabindex="-1"></a>  </span>
+<span id="cb66-17"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-17" tabindex="-1"></a>  <span class="co"># compute size-like variable for PPS sampling design</span></span>
+<span id="cb66-18"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-18" tabindex="-1"></a>  eusilcP<span class="sc">$</span>aux <span class="ot">&lt;-</span></span>
+<span id="cb66-19"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-19" tabindex="-1"></a>    <span class="fu">log</span>(<span class="fu">ifelse</span>(eusilcP<span class="sc">$</span>eqIncome <span class="sc">&gt;=</span> <span class="dv">1000</span> , eusilcP<span class="sc">$</span>eqIncome , <span class="dv">1000</span>))</span>
+<span id="cb66-20"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-20" tabindex="-1"></a>  </span>
+<span id="cb66-21"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-21" tabindex="-1"></a>  </span>
+<span id="cb66-22"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-22" tabindex="-1"></a>  <span class="co"># select sample</span></span>
+<span id="cb66-23"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-23" tabindex="-1"></a>  tt <span class="ot">&lt;-</span></span>
+<span id="cb66-24"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-24" tabindex="-1"></a>    sampling<span class="sc">::</span><span class="fu">cluster</span>(</span>
+<span id="cb66-25"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-25" tabindex="-1"></a>      <span class="at">data =</span> eusilcP[<span class="fu">sample.int</span>(<span class="fu">nrow</span>(eusilcP) , <span class="fu">nrow</span>(eusilcP) , <span class="at">replace =</span> <span class="cn">FALSE</span>) , ] ,</span>
+<span id="cb66-26"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-26" tabindex="-1"></a>      <span class="at">clustername =</span> <span class="st">&quot;hid&quot;</span> ,</span>
+<span id="cb66-27"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-27" tabindex="-1"></a>      <span class="at">size =</span> 1000L ,</span>
+<span id="cb66-28"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-28" tabindex="-1"></a>      <span class="at">method =</span> <span class="st">&quot;systematic&quot;</span> ,</span>
+<span id="cb66-29"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-29" tabindex="-1"></a>      <span class="at">pik =</span> eusilcP<span class="sc">$</span>aux</span>
+<span id="cb66-30"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-30" tabindex="-1"></a>    )</span>
+<span id="cb66-31"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-31" tabindex="-1"></a>  </span>
+<span id="cb66-32"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-32" tabindex="-1"></a>  <span class="co"># collect data</span></span>
+<span id="cb66-33"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-33" tabindex="-1"></a>  this.sample <span class="ot">&lt;-</span> <span class="fu">getdata</span>(eusilcP , tt)</span>
+<span id="cb66-34"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-34" tabindex="-1"></a>  </span>
+<span id="cb66-35"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-35" tabindex="-1"></a>  <span class="co"># create survey design object</span></span>
+<span id="cb66-36"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-36" tabindex="-1"></a>  this.desobj <span class="ot">&lt;-</span></span>
+<span id="cb66-37"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-37" tabindex="-1"></a>    <span class="fu">svydesign</span>(</span>
+<span id="cb66-38"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-38" tabindex="-1"></a>      <span class="at">ids =</span> <span class="sc">~</span> hid ,</span>
+<span id="cb66-39"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-39" tabindex="-1"></a>      <span class="at">probs =</span> <span class="sc">~</span> Prob ,</span>
+<span id="cb66-40"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-40" tabindex="-1"></a>      <span class="at">data =</span> this.sample ,</span>
+<span id="cb66-41"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-41" tabindex="-1"></a>      <span class="at">nest =</span> <span class="cn">FALSE</span></span>
+<span id="cb66-42"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-42" tabindex="-1"></a>    )</span>
+<span id="cb66-43"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-43" tabindex="-1"></a>  </span>
+<span id="cb66-44"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-44" tabindex="-1"></a>  <span class="co"># prepare for convey functions</span></span>
+<span id="cb66-45"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-45" tabindex="-1"></a>  this.desobj <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(this.desobj)</span>
+<span id="cb66-46"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-46" tabindex="-1"></a>  </span>
+<span id="cb66-47"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-47" tabindex="-1"></a>  <span class="co"># compute estimates</span></span>
+<span id="cb66-48"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-48" tabindex="-1"></a>  <span class="fu">svyarpr</span>( <span class="sc">~</span> eqIncome , this.desobj)</span>
+<span id="cb66-49"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-49" tabindex="-1"></a>  </span>
+<span id="cb66-50"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-50" tabindex="-1"></a>}</span>
+<span id="cb66-51"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-51" tabindex="-1"></a></span>
+<span id="cb66-52"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-52" tabindex="-1"></a><span class="co"># run replications</span></span>
+<span id="cb66-53"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-53" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="fu">makeCluster</span>(<span class="fu">detectCores</span>() <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb66-54"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-54" tabindex="-1"></a></span>
+<span id="cb66-55"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-55" tabindex="-1"></a>arpr.estimate.list <span class="ot">&lt;-</span></span>
+<span id="cb66-56"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-56" tabindex="-1"></a>  <span class="fu">clusterApply</span>(cl, <span class="fu">seq_len</span>(mc.rep) , arpr_sim_fun)</span>
+<span id="cb66-57"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-57" tabindex="-1"></a></span>
+<span id="cb66-58"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb66-58" tabindex="-1"></a><span class="fu">stopCluster</span>(cl)</span></code></pre></div>
 <p>Then, we evaluate the Percentage Relative Bias (PRB) of the ARPR estimator. Under this scenario, the PRB of the ARPR estimator is -0.19830%.</p>
-<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb70-1" tabindex="-1"></a><span class="co"># estimate the expected value of the ARPR estimator</span></span>
-<span id="cb70-2"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb70-2" tabindex="-1"></a><span class="co"># using the average of the estimates</span></span>
-<span id="cb70-3"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb70-3" tabindex="-1"></a>(theta.exp <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">sapply</span>(arpr.estimate.list , coef)))</span></code></pre></div>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb67-1" tabindex="-1"></a><span class="co"># estimate the expected value of the ARPR estimator</span></span>
+<span id="cb67-2"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb67-2" tabindex="-1"></a><span class="co"># using the average of the estimates</span></span>
+<span id="cb67-3"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb67-3" tabindex="-1"></a>(theta.exp <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">sapply</span>(arpr.estimate.list , coef)))</span></code></pre></div>
 <pre><code>## [1] 0.1466381</code></pre>
-<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb72-1" tabindex="-1"></a><span class="co"># estimate the percentage relative bias</span></span>
-<span id="cb72-2"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb72-2" tabindex="-1"></a>(percentage_relative_bias_arpr <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">*</span> (theta.exp <span class="sc">/</span> theta.pop <span class="sc">-</span> <span class="dv">1</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-1" tabindex="-1"></a><span class="co"># estimate the percentage relative bias</span></span>
+<span id="cb69-2"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb69-2" tabindex="-1"></a>(percentage_relative_bias_arpr <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">*</span> (theta.exp <span class="sc">/</span> theta.pop <span class="sc">-</span> <span class="dv">1</span>))</span></code></pre></div>
 <pre><code>## [1] -0.1982981</code></pre>
-<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb74-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(percentage_relative_bias_arpr , <span class="dv">4</span>) <span class="sc">==</span> <span class="sc">-</span><span class="fl">0.19830</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb71-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(percentage_relative_bias_arpr , <span class="dv">4</span>) <span class="sc">==</span> <span class="sc">-</span><span class="fl">0.19830</span>)</span></code></pre></div>
 <p>For the variance estimator, we have:</p>
-<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb75-1" tabindex="-1"></a><span class="co"># estimate the variance of the ARPR estimator</span></span>
-<span id="cb75-2"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb75-2" tabindex="-1"></a><span class="co"># using the empirical variance of the estimates</span></span>
-<span id="cb75-3"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb75-3" tabindex="-1"></a>(vartheta.popest <span class="ot">&lt;-</span> <span class="fu">var</span>(<span class="fu">sapply</span>(arpr.estimate.list , coef)))</span></code></pre></div>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb72-1" tabindex="-1"></a><span class="co"># estimate the variance of the ARPR estimator</span></span>
+<span id="cb72-2"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb72-2" tabindex="-1"></a><span class="co"># using the empirical variance of the estimates</span></span>
+<span id="cb72-3"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb72-3" tabindex="-1"></a>(vartheta.popest <span class="ot">&lt;-</span> <span class="fu">var</span>(<span class="fu">sapply</span>(arpr.estimate.list , coef)))</span></code></pre></div>
 <pre><code>## [1] 0.0001048728</code></pre>
-<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb77-1" tabindex="-1"></a><span class="co"># estimate the expected value of the ARPR variance estimator</span></span>
-<span id="cb77-2"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb77-2" tabindex="-1"></a><span class="co"># using the (estimated) expected value of the variance estimates</span></span>
-<span id="cb77-3"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb77-3" tabindex="-1"></a>(vartheta.exp <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">sapply</span>(arpr.estimate.list , vcov)))</span></code></pre></div>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb74-1" tabindex="-1"></a><span class="co"># estimate the expected value of the ARPR variance estimator</span></span>
+<span id="cb74-2"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb74-2" tabindex="-1"></a><span class="co"># using the (estimated) expected value of the variance estimates</span></span>
+<span id="cb74-3"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb74-3" tabindex="-1"></a>(vartheta.exp <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">sapply</span>(arpr.estimate.list , vcov)))</span></code></pre></div>
 <pre><code>## [1] 0.0001081994</code></pre>
-<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb79-1" tabindex="-1"></a><span class="co"># estimate the percentage relative bias of the variance estimator</span></span>
-<span id="cb79-2"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb79-2" tabindex="-1"></a>( percentage_relative_bias_variance <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">*</span>  (vartheta.exp <span class="sc">/</span> vartheta.popest <span class="sc">-</span> <span class="dv">1</span>) )</span></code></pre></div>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb76-1" tabindex="-1"></a><span class="co"># estimate the percentage relative bias of the variance estimator</span></span>
+<span id="cb76-2"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb76-2" tabindex="-1"></a>( percentage_relative_bias_variance <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">*</span>  (vartheta.exp <span class="sc">/</span> vartheta.popest <span class="sc">-</span> <span class="dv">1</span>) )</span></code></pre></div>
 <pre><code>## [1] 3.172023</code></pre>
-<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb81-1" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">round</span>( percentage_relative_bias_variance , <span class="dv">4</span> ) <span class="sc">==</span> <span class="fl">3.1720</span> ) </span></code></pre></div>
+<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb78-1" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">round</span>( percentage_relative_bias_variance , <span class="dv">4</span> ) <span class="sc">==</span> <span class="fl">3.1720</span> ) </span></code></pre></div>
 <p>Under this scenario, the PRB of the ARPR variance estimator is 3.1720%.</p>
 <p>Our simulation shows that the Bias Ratio of this estimator is approximately 2%:</p>
-<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb82-1" tabindex="-1"></a><span class="co"># compute bias ratio</span></span>
-<span id="cb82-2"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb82-2" tabindex="-1"></a><span class="dv">100</span> <span class="sc">*</span> <span class="fu">abs</span>( theta.exp <span class="sc">-</span> theta.pop ) <span class="sc">/</span> <span class="fu">sqrt</span>( vartheta.popest )</span></code></pre></div>
+<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb79-1" tabindex="-1"></a><span class="co"># compute bias ratio</span></span>
+<span id="cb79-2"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb79-2" tabindex="-1"></a><span class="dv">100</span> <span class="sc">*</span> <span class="fu">abs</span>( theta.exp <span class="sc">-</span> theta.pop ) <span class="sc">/</span> <span class="fu">sqrt</span>( vartheta.popest )</span></code></pre></div>
 <pre><code>## [1] 2.84509</code></pre>
 <p>if the normal approximation holds, a small bias ratio still allows for approximately valid estimates of the confidence intervals.</p>
 <p>Next, we evaluate the Percentage Coverage Rate (PCR). In theory, under repeated sampling, the estimated 95% CIs should cover the population parameter approximately 95% of the time. We can evaluate that using:</p>
-<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb84-1" tabindex="-1"></a><span class="co"># estimate confidence intervals of the ARPR</span></span>
-<span id="cb84-2"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb84-2" tabindex="-1"></a><span class="co"># for each of the samples</span></span>
-<span id="cb84-3"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb84-3" tabindex="-1"></a>est.coverage <span class="ot">&lt;-</span></span>
-<span id="cb84-4"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb84-4" tabindex="-1"></a>  <span class="fu">sapply</span>(arpr.estimate.list, <span class="cf">function</span>(this.stat)</span>
-<span id="cb84-5"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb84-5" tabindex="-1"></a>    <span class="fu">confint</span>(this.stat)[, <span class="dv">1</span>] <span class="sc">&lt;=</span> theta.pop <span class="sc">&amp;</span></span>
-<span id="cb84-6"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb84-6" tabindex="-1"></a>      <span class="fu">confint</span>(this.stat)[, <span class="dv">2</span>] <span class="sc">&gt;=</span> theta.pop)</span>
-<span id="cb84-7"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb84-7" tabindex="-1"></a></span>
-<span id="cb84-8"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb84-8" tabindex="-1"></a><span class="co"># evaluate empirical coverage</span></span>
-<span id="cb84-9"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb84-9" tabindex="-1"></a>(empirical_coverage <span class="ot">&lt;-</span> <span class="fu">mean</span>(est.coverage))</span></code></pre></div>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb81-1" tabindex="-1"></a><span class="co"># estimate confidence intervals of the ARPR</span></span>
+<span id="cb81-2"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb81-2" tabindex="-1"></a><span class="co"># for each of the samples</span></span>
+<span id="cb81-3"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb81-3" tabindex="-1"></a>est.coverage <span class="ot">&lt;-</span></span>
+<span id="cb81-4"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb81-4" tabindex="-1"></a>  <span class="fu">sapply</span>(arpr.estimate.list, <span class="cf">function</span>(this.stat)</span>
+<span id="cb81-5"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb81-5" tabindex="-1"></a>    <span class="fu">confint</span>(this.stat)[, <span class="dv">1</span>] <span class="sc">&lt;=</span> theta.pop <span class="sc">&amp;</span></span>
+<span id="cb81-6"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb81-6" tabindex="-1"></a>      <span class="fu">confint</span>(this.stat)[, <span class="dv">2</span>] <span class="sc">&gt;=</span> theta.pop)</span>
+<span id="cb81-7"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb81-7" tabindex="-1"></a></span>
+<span id="cb81-8"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb81-8" tabindex="-1"></a><span class="co"># evaluate empirical coverage</span></span>
+<span id="cb81-9"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb81-9" tabindex="-1"></a>(empirical_coverage <span class="ot">&lt;-</span> <span class="fu">mean</span>(est.coverage))</span></code></pre></div>
 <pre><code>## [1] 0.9516</code></pre>
-<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb86-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(empirical_coverage , <span class="dv">2</span>) <span class="sc">==</span> <span class="fl">0.95</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#cb83-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(empirical_coverage , <span class="dv">2</span>) <span class="sc">==</span> <span class="fl">0.95</span>)</span></code></pre></div>
 <p>Our coverages are not too far from the nominal coverage level of 95%.</p>
 <p>For additional usage examples of <code>svyarpr</code>, type <code>?convey::svyarpr</code> in the R console.</p>
 </div>

@@ -13,7 +13,7 @@
 
 <meta name="author" content="Guilherme Jacob, Anthony Damico, and Djalma Pessoa" />
 
-<meta name="date" content="2023-10-17" />
+<meta name="date" content="2023-10-20" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -287,23 +287,23 @@ There are three possible choices:</p>
 <p>The quantile and the mean involved in the definition of the threshold are estimated for the whole population. When <span class="math inline">\(\gamma=0\)</span> and <span class="math inline">\(\theta= .6*MED\)</span>, this measure is equal to the indicator ARPR computed by the function <code>svyarpr</code>. The linearization of the FGT(0) is presented in <span class="citation">Berger and Skinner (<label for="tufte-mn-42" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-42" class="margin-toggle">2003<span class="marginnote">Berger, Yves G., and Chris J. Skinner. 2003. <span>“Variance Estimation for a Low Income Proportion.”</span> <em>Journal of the Royal Statistical Society: Series C (Applied Statistics)</em> 52 (4): 457–68. <a href="https://doi.org/10.1111/1467-9876.00417">https://doi.org/10.1111/1467-9876.00417</a>.</span>)</span>.</p>
 <p>Next, we give some examples of the function <code>svyfgt</code> to estimate the values of the FGT poverty index.</p>
 <p>Consider first the poverty threshold fixed (<span class="math inline">\(\gamma=0\)</span>) in the value <span class="math inline">\(10000\)</span>. The headcount ratio (FGT0) is</p>
-<div class="sourceCode" id="cb132"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb132-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb132-1" tabindex="-1"></a><span class="fu">svyfgt</span>( <span class="sc">~</span> eqincome, des_eusilc, <span class="at">g =</span> <span class="dv">0</span>, <span class="at">abs_thresh =</span> <span class="dv">10000</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb129"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb129-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb129-1" tabindex="-1"></a><span class="fu">svyfgt</span>( <span class="sc">~</span> eqincome, des_eusilc, <span class="at">g =</span> <span class="dv">0</span>, <span class="at">abs_thresh =</span> <span class="dv">10000</span>)</span></code></pre></div>
 <pre><code>            fgt0     SE
 eqincome 0.11444 0.0027</code></pre>
 <p>The poverty gap ratio (FGT(1)) (<span class="math inline">\(\gamma=1\)</span>) index for the poverty threshold fixed at the same value is</p>
-<div class="sourceCode" id="cb134"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb134-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb134-1" tabindex="-1"></a><span class="fu">svyfgt</span>( <span class="sc">~</span> eqincome, des_eusilc, <span class="at">g =</span> <span class="dv">1</span>, <span class="at">abs_thresh =</span> <span class="dv">10000</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb131"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb131-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb131-1" tabindex="-1"></a><span class="fu">svyfgt</span>( <span class="sc">~</span> eqincome, des_eusilc, <span class="at">g =</span> <span class="dv">1</span>, <span class="at">abs_thresh =</span> <span class="dv">10000</span>)</span></code></pre></div>
 <pre><code>             fgt1     SE
 eqincome 0.032085 0.0011</code></pre>
 <p>To estimate the FGT(0) with the poverty threshold fixed at <span class="math inline">\(0.6* MED\)</span>, we first fix the argument <code>type_thresh="relq"</code> and then use the default values for <code>percent</code> and <code>order</code>:</p>
-<div class="sourceCode" id="cb136"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb136-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb136-1" tabindex="-1"></a><span class="fu">svyfgt</span>( <span class="sc">~</span> eqincome, des_eusilc, <span class="at">g =</span> <span class="dv">0</span>, <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb133"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb133-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb133-1" tabindex="-1"></a><span class="fu">svyfgt</span>( <span class="sc">~</span> eqincome, des_eusilc, <span class="at">g =</span> <span class="dv">0</span>, <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span>)</span></code></pre></div>
 <pre><code>            fgt0     SE
 eqincome 0.14444 0.0028</code></pre>
 <p>This matches the estimate obtained by:</p>
-<div class="sourceCode" id="cb138"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb138-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb138-1" tabindex="-1"></a><span class="fu">svyarpr</span>( <span class="sc">~</span> eqincome, <span class="at">design =</span> des_eusilc, .<span class="dv">5</span>, .<span class="dv">6</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb135"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb135-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb135-1" tabindex="-1"></a><span class="fu">svyarpr</span>( <span class="sc">~</span> eqincome, <span class="at">design =</span> des_eusilc, .<span class="dv">5</span>, .<span class="dv">6</span>)</span></code></pre></div>
 <pre><code>            arpr     SE
 eqincome 0.14444 0.0028</code></pre>
 <p>To estimate the poverty gap ratio with the poverty threshold equal to <span class="math inline">\(0.6*MEAN\)</span>, we use:</p>
-<div class="sourceCode" id="cb140"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb140-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb140-1" tabindex="-1"></a><span class="fu">svyfgt</span>( <span class="sc">~</span> eqincome, des_eusilc, <span class="at">g =</span> <span class="dv">1</span>, <span class="at">type_thresh =</span> <span class="st">&quot;relm&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb137"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb137-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb137-1" tabindex="-1"></a><span class="fu">svyfgt</span>( <span class="sc">~</span> eqincome, des_eusilc, <span class="at">g =</span> <span class="dv">1</span>, <span class="at">type_thresh =</span> <span class="st">&quot;relm&quot;</span>)</span></code></pre></div>
 <pre><code>             fgt1     SE
 eqincome 0.051187 0.0011</code></pre>
 <hr />
@@ -312,59 +312,59 @@ eqincome 0.051187 0.0011</code></pre>
 <p>In July 2006, <span class="citation">Jenkins (<label for="tufte-mn-43" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-43" class="margin-toggle">2008<span class="marginnote">Jenkins, Stephen. 2008. <span>“Estimation and Interpretation of Measures of Inequality, Poverty, and Social Welfare Using Stata.”</span> North American Stata Users' Group Meetings 2006. Stata Users Group. <a href="http://EconPapers.repec.org/RePEc:boc:asug06:16">http://EconPapers.repec.org/RePEc:boc:asug06:16</a>.</span>)</span> presented at the North American Stata Users’ Group Meetings on the stata Atkinson Index command. The example below reproduces those statistics.</p>
 <p>In order to match the presentation’s results using the <code>svyfgt</code> function from the <code>convey</code> library, the poverty threshold was considered absolute despite being directly estimated from the survey sample. This effectively treats the variance of the estimated poverty threshold as zero; <code>svyfgt</code> does not account for the uncertainty of the poverty threshold when the level has been stated as absolute with the <code>abs_thresh=</code> parameter. In general, we would instead recommend using either <code>relq</code> or <code>relm</code> in the <code>type_thresh=</code> parameter in order to account for the added uncertainty of the poverty threshold calculation. This example serves only to show that <code>svyfgt</code> behaves properly as compared to other software.</p>
 <p>Load and prepare the same data set:</p>
-<div class="sourceCode" id="cb142"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb142-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb142-1" tabindex="-1"></a><span class="co"># load the convey package</span></span>
-<span id="cb142-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb142-2" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
-<span id="cb142-3"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb142-3" tabindex="-1"></a></span>
-<span id="cb142-4"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb142-4" tabindex="-1"></a><span class="co"># load the survey library</span></span>
-<span id="cb142-5"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb142-5" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
-<span id="cb142-6"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb142-6" tabindex="-1"></a></span>
-<span id="cb142-7"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb142-7" tabindex="-1"></a><span class="co"># load the foreign library</span></span>
-<span id="cb142-8"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb142-8" tabindex="-1"></a><span class="fu">library</span>(foreign)</span></code></pre></div>
-<pre><code>## Warning: package &#39;foreign&#39; was built under R version 4.2.2</code></pre>
-<div class="sourceCode" id="cb144"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb144-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-1" tabindex="-1"></a><span class="co"># create a temporary file on the local disk</span></span>
-<span id="cb144-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-2" tabindex="-1"></a>tf <span class="ot">&lt;-</span> <span class="fu">tempfile</span>()</span>
-<span id="cb144-3"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-3" tabindex="-1"></a></span>
-<span id="cb144-4"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-4" tabindex="-1"></a><span class="co"># store the location of the presentation file</span></span>
-<span id="cb144-5"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-5" tabindex="-1"></a>presentation_zip <span class="ot">&lt;-</span></span>
-<span id="cb144-6"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-6" tabindex="-1"></a>  <span class="st">&quot;http://repec.org/nasug2006/nasug2006_jenkins.zip&quot;</span></span>
-<span id="cb144-7"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-7" tabindex="-1"></a></span>
-<span id="cb144-8"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-8" tabindex="-1"></a><span class="co"># download jenkins&#39; presentation to the temporary file</span></span>
-<span id="cb144-9"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-9" tabindex="-1"></a><span class="fu">download.file</span>(presentation_zip , tf , <span class="at">mode =</span> <span class="st">&#39;wb&#39;</span>)</span>
-<span id="cb144-10"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-10" tabindex="-1"></a></span>
-<span id="cb144-11"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-11" tabindex="-1"></a><span class="co"># unzip the contents of the archive</span></span>
-<span id="cb144-12"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-12" tabindex="-1"></a>presentation_files <span class="ot">&lt;-</span> <span class="fu">unzip</span>(tf , <span class="at">exdir =</span> <span class="fu">tempdir</span>())</span>
-<span id="cb144-13"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-13" tabindex="-1"></a></span>
-<span id="cb144-14"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-14" tabindex="-1"></a><span class="co"># load the institute for fiscal studies&#39; 1981, 1985, and 1991 data.frame objects</span></span>
-<span id="cb144-15"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-15" tabindex="-1"></a>x81 <span class="ot">&lt;-</span></span>
-<span id="cb144-16"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-16" tabindex="-1"></a>  <span class="fu">read.dta</span>(<span class="fu">grep</span>(<span class="st">&quot;ifs81&quot;</span> , presentation_files , <span class="at">value =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb144-17"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-17" tabindex="-1"></a>x85 <span class="ot">&lt;-</span></span>
-<span id="cb144-18"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-18" tabindex="-1"></a>  <span class="fu">read.dta</span>(<span class="fu">grep</span>(<span class="st">&quot;ifs85&quot;</span> , presentation_files , <span class="at">value =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb144-19"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-19" tabindex="-1"></a>x91 <span class="ot">&lt;-</span></span>
-<span id="cb144-20"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-20" tabindex="-1"></a>  <span class="fu">read.dta</span>(<span class="fu">grep</span>(<span class="st">&quot;ifs91&quot;</span> , presentation_files , <span class="at">value =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb144-21"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-21" tabindex="-1"></a></span>
-<span id="cb144-22"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-22" tabindex="-1"></a><span class="co"># </span><span class="al">NOTE</span><span class="co">: we recommend using ?convey::svyarpt rather than this unweighted calculation #</span></span>
-<span id="cb144-23"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-23" tabindex="-1"></a></span>
-<span id="cb144-24"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-24" tabindex="-1"></a><span class="co"># calculate 60% of the unweighted median income in 1981</span></span>
-<span id="cb144-25"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-25" tabindex="-1"></a>unwtd_arpt81 <span class="ot">&lt;-</span> <span class="fu">quantile</span>(x81<span class="sc">$</span>eybhc0 , <span class="fl">0.5</span>) <span class="sc">*</span> .<span class="dv">6</span></span>
-<span id="cb144-26"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-26" tabindex="-1"></a></span>
-<span id="cb144-27"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-27" tabindex="-1"></a><span class="co"># calculate 60% of the unweighted median income in 1985</span></span>
-<span id="cb144-28"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-28" tabindex="-1"></a>unwtd_arpt85 <span class="ot">&lt;-</span> <span class="fu">quantile</span>(x85<span class="sc">$</span>eybhc0 , <span class="fl">0.5</span>) <span class="sc">*</span> .<span class="dv">6</span></span>
-<span id="cb144-29"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-29" tabindex="-1"></a></span>
-<span id="cb144-30"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-30" tabindex="-1"></a><span class="co"># calculate 60% of the unweighted median income in 1991</span></span>
-<span id="cb144-31"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-31" tabindex="-1"></a>unwtd_arpt91 <span class="ot">&lt;-</span> <span class="fu">quantile</span>(x91<span class="sc">$</span>eybhc0 , <span class="fl">0.5</span>) <span class="sc">*</span> .<span class="dv">6</span></span>
-<span id="cb144-32"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-32" tabindex="-1"></a></span>
-<span id="cb144-33"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-33" tabindex="-1"></a><span class="co"># stack each of these three years of data into a single data.frame</span></span>
-<span id="cb144-34"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb144-34" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rbind</span>(x81 , x85 , x91)</span></code></pre></div>
+<div class="sourceCode" id="cb139"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb139-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-1" tabindex="-1"></a><span class="co"># load the convey package</span></span>
+<span id="cb139-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-2" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
+<span id="cb139-3"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-3" tabindex="-1"></a></span>
+<span id="cb139-4"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-4" tabindex="-1"></a><span class="co"># load the survey library</span></span>
+<span id="cb139-5"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-5" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb139-6"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-6" tabindex="-1"></a></span>
+<span id="cb139-7"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-7" tabindex="-1"></a><span class="co"># load the foreign library</span></span>
+<span id="cb139-8"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-8" tabindex="-1"></a><span class="fu">library</span>(foreign)</span>
+<span id="cb139-9"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-9" tabindex="-1"></a></span>
+<span id="cb139-10"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-10" tabindex="-1"></a><span class="co"># create a temporary file on the local disk</span></span>
+<span id="cb139-11"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-11" tabindex="-1"></a>tf <span class="ot">&lt;-</span> <span class="fu">tempfile</span>()</span>
+<span id="cb139-12"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-12" tabindex="-1"></a></span>
+<span id="cb139-13"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-13" tabindex="-1"></a><span class="co"># store the location of the presentation file</span></span>
+<span id="cb139-14"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-14" tabindex="-1"></a>presentation_zip <span class="ot">&lt;-</span></span>
+<span id="cb139-15"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-15" tabindex="-1"></a>  <span class="st">&quot;http://repec.org/nasug2006/nasug2006_jenkins.zip&quot;</span></span>
+<span id="cb139-16"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-16" tabindex="-1"></a></span>
+<span id="cb139-17"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-17" tabindex="-1"></a><span class="co"># download jenkins&#39; presentation to the temporary file</span></span>
+<span id="cb139-18"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-18" tabindex="-1"></a><span class="fu">download.file</span>(presentation_zip , tf , <span class="at">mode =</span> <span class="st">&#39;wb&#39;</span>)</span>
+<span id="cb139-19"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-19" tabindex="-1"></a></span>
+<span id="cb139-20"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-20" tabindex="-1"></a><span class="co"># unzip the contents of the archive</span></span>
+<span id="cb139-21"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-21" tabindex="-1"></a>presentation_files <span class="ot">&lt;-</span> <span class="fu">unzip</span>(tf , <span class="at">exdir =</span> <span class="fu">tempdir</span>())</span>
+<span id="cb139-22"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-22" tabindex="-1"></a></span>
+<span id="cb139-23"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-23" tabindex="-1"></a><span class="co"># load the institute for fiscal studies&#39; 1981, 1985, and 1991 data.frame objects</span></span>
+<span id="cb139-24"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-24" tabindex="-1"></a>x81 <span class="ot">&lt;-</span></span>
+<span id="cb139-25"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-25" tabindex="-1"></a>  <span class="fu">read.dta</span>(<span class="fu">grep</span>(<span class="st">&quot;ifs81&quot;</span> , presentation_files , <span class="at">value =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb139-26"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-26" tabindex="-1"></a>x85 <span class="ot">&lt;-</span></span>
+<span id="cb139-27"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-27" tabindex="-1"></a>  <span class="fu">read.dta</span>(<span class="fu">grep</span>(<span class="st">&quot;ifs85&quot;</span> , presentation_files , <span class="at">value =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb139-28"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-28" tabindex="-1"></a>x91 <span class="ot">&lt;-</span></span>
+<span id="cb139-29"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-29" tabindex="-1"></a>  <span class="fu">read.dta</span>(<span class="fu">grep</span>(<span class="st">&quot;ifs91&quot;</span> , presentation_files , <span class="at">value =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb139-30"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-30" tabindex="-1"></a></span>
+<span id="cb139-31"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-31" tabindex="-1"></a><span class="co"># </span><span class="al">NOTE</span><span class="co">: we recommend using ?convey::svyarpt rather than this unweighted calculation #</span></span>
+<span id="cb139-32"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-32" tabindex="-1"></a></span>
+<span id="cb139-33"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-33" tabindex="-1"></a><span class="co"># calculate 60% of the unweighted median income in 1981</span></span>
+<span id="cb139-34"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-34" tabindex="-1"></a>unwtd_arpt81 <span class="ot">&lt;-</span> <span class="fu">quantile</span>(x81<span class="sc">$</span>eybhc0 , <span class="fl">0.5</span>) <span class="sc">*</span> .<span class="dv">6</span></span>
+<span id="cb139-35"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-35" tabindex="-1"></a></span>
+<span id="cb139-36"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-36" tabindex="-1"></a><span class="co"># calculate 60% of the unweighted median income in 1985</span></span>
+<span id="cb139-37"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-37" tabindex="-1"></a>unwtd_arpt85 <span class="ot">&lt;-</span> <span class="fu">quantile</span>(x85<span class="sc">$</span>eybhc0 , <span class="fl">0.5</span>) <span class="sc">*</span> .<span class="dv">6</span></span>
+<span id="cb139-38"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-38" tabindex="-1"></a></span>
+<span id="cb139-39"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-39" tabindex="-1"></a><span class="co"># calculate 60% of the unweighted median income in 1991</span></span>
+<span id="cb139-40"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-40" tabindex="-1"></a>unwtd_arpt91 <span class="ot">&lt;-</span> <span class="fu">quantile</span>(x91<span class="sc">$</span>eybhc0 , <span class="fl">0.5</span>) <span class="sc">*</span> .<span class="dv">6</span></span>
+<span id="cb139-41"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-41" tabindex="-1"></a></span>
+<span id="cb139-42"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-42" tabindex="-1"></a><span class="co"># stack each of these three years of data into a single data.frame</span></span>
+<span id="cb139-43"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb139-43" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rbind</span>(x81 , x85 , x91)</span></code></pre></div>
 <p>Replicate the author’s survey design statement from stata code..</p>
 <pre><code>. ge poor = (year==1981)*(x &lt; $z_81)+(year==1985)*(x &lt; $z_85)+(year==1991)*(x &lt; $z_91)
 . * account for clustering within HHs 
 . svyset hrn [pweight = wgt]</code></pre>
 <p>.. into R code:</p>
-<div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb146-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-1" tabindex="-1"></a><span class="co"># initiate a linearized survey design object</span></span>
-<span id="cb146-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-2" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">svydesign</span>( <span class="sc">~</span> hrn , <span class="at">data =</span> x , <span class="at">weights =</span> <span class="sc">~</span> wgt)</span>
-<span id="cb146-3"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-3" tabindex="-1"></a></span>
-<span id="cb146-4"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-4" tabindex="-1"></a><span class="co"># immediately run the `convey_prep` function on the survey design</span></span>
-<span id="cb146-5"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-5" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(y)</span></code></pre></div>
+<div class="sourceCode" id="cb141"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb141-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb141-1" tabindex="-1"></a><span class="co"># initiate a linearized survey design object</span></span>
+<span id="cb141-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb141-2" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">svydesign</span>( <span class="sc">~</span> hrn , <span class="at">data =</span> x , <span class="at">weights =</span> <span class="sc">~</span> wgt)</span>
+<span id="cb141-3"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb141-3" tabindex="-1"></a></span>
+<span id="cb141-4"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb141-4" tabindex="-1"></a><span class="co"># immediately run the `convey_prep` function on the survey design</span></span>
+<span id="cb141-5"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb141-5" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(y)</span></code></pre></div>
 <p>Replicate the author’s headcount ratio results with stata..</p>
 <pre><code>. svy: mean poor if year == 1981
 (running mean on estimation sample)
@@ -414,52 +414,52 @@ Number of PSUs   =    5254          Population size  = 5.6e+07
         poor |   .2021312   .0062077      .1899615    .2143009
 --------------------------------------------------------------</code></pre>
 <p>..using R code:</p>
-<div class="sourceCode" id="cb148"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb148-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-1" tabindex="-1"></a>headcount_81 <span class="ot">&lt;-</span></span>
-<span id="cb148-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-2" tabindex="-1"></a>  <span class="fu">svyfgt</span>( <span class="sc">~</span> eybhc0 ,</span>
-<span id="cb148-3"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-3" tabindex="-1"></a>          <span class="fu">subset</span>(z , year <span class="sc">==</span> <span class="dv">1981</span>) ,</span>
-<span id="cb148-4"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-4" tabindex="-1"></a>          <span class="at">g =</span> <span class="dv">0</span> ,</span>
-<span id="cb148-5"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-5" tabindex="-1"></a>          <span class="at">abs_thresh =</span> unwtd_arpt81)</span>
-<span id="cb148-6"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-6" tabindex="-1"></a></span>
-<span id="cb148-7"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-7" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">coef</span>(headcount_81) , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">14101</span>)</span>
-<span id="cb148-8"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-8" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">SE</span>(headcount_81) , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">00449</span>)</span>
-<span id="cb148-9"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-9" tabindex="-1"></a></span>
-<span id="cb148-10"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-10" tabindex="-1"></a>headcount_81_ci <span class="ot">&lt;-</span></span>
-<span id="cb148-11"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-11" tabindex="-1"></a>  <span class="fu">confint</span>(headcount_81 , <span class="at">df =</span> <span class="fu">degf</span>(<span class="fu">subset</span>(z , year <span class="sc">==</span> <span class="dv">1981</span>)))</span>
-<span id="cb148-12"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-12" tabindex="-1"></a></span>
-<span id="cb148-13"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-13" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(headcount_81_ci[<span class="dv">1</span>] , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">13222</span>)</span>
-<span id="cb148-14"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-14" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(headcount_81_ci[<span class="dv">2</span>] , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">14981</span>)</span>
-<span id="cb148-15"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-15" tabindex="-1"></a></span>
-<span id="cb148-16"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-16" tabindex="-1"></a>headcount_85 <span class="ot">&lt;-</span></span>
-<span id="cb148-17"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-17" tabindex="-1"></a>  <span class="fu">svyfgt</span>(<span class="sc">~</span> eybhc0 ,</span>
-<span id="cb148-18"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-18" tabindex="-1"></a>         <span class="fu">subset</span>(z , year <span class="sc">==</span> <span class="dv">1985</span>) ,</span>
-<span id="cb148-19"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-19" tabindex="-1"></a>         <span class="at">g =</span> <span class="dv">0</span> ,</span>
-<span id="cb148-20"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-20" tabindex="-1"></a>         <span class="at">abs_thresh =</span> unwtd_arpt85)</span>
-<span id="cb148-21"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-21" tabindex="-1"></a></span>
-<span id="cb148-22"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-22" tabindex="-1"></a></span>
-<span id="cb148-23"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-23" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">coef</span>(headcount_85) , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">13764</span>)</span>
-<span id="cb148-24"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-24" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">SE</span>(headcount_85) , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">00465</span>)</span>
-<span id="cb148-25"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-25" tabindex="-1"></a></span>
-<span id="cb148-26"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-26" tabindex="-1"></a>headcount_85_ci <span class="ot">&lt;-</span></span>
-<span id="cb148-27"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-27" tabindex="-1"></a>  <span class="fu">confint</span>(headcount_85 , <span class="at">df =</span> <span class="fu">degf</span>(<span class="fu">subset</span>(z , year <span class="sc">==</span> <span class="dv">1985</span>)))</span>
-<span id="cb148-28"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-28" tabindex="-1"></a></span>
-<span id="cb148-29"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-29" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(headcount_85_ci[<span class="dv">1</span>] , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">12852</span>)</span>
-<span id="cb148-30"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-30" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(headcount_85_ci[<span class="dv">2</span>] , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">14677</span>)</span>
-<span id="cb148-31"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-31" tabindex="-1"></a></span>
-<span id="cb148-32"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-32" tabindex="-1"></a>headcount_91 <span class="ot">&lt;-</span></span>
-<span id="cb148-33"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-33" tabindex="-1"></a>  <span class="fu">svyfgt</span>(<span class="sc">~</span> eybhc0 ,</span>
-<span id="cb148-34"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-34" tabindex="-1"></a>         <span class="fu">subset</span>(z , year <span class="sc">==</span> <span class="dv">1991</span>) ,</span>
-<span id="cb148-35"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-35" tabindex="-1"></a>         <span class="at">g =</span> <span class="dv">0</span> ,</span>
-<span id="cb148-36"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-36" tabindex="-1"></a>         <span class="at">abs_thresh =</span> unwtd_arpt91)</span>
-<span id="cb148-37"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-37" tabindex="-1"></a></span>
-<span id="cb148-38"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-38" tabindex="-1"></a></span>
-<span id="cb148-39"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-39" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">coef</span>(headcount_91) , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">20213</span>)</span>
-<span id="cb148-40"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-40" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">SE</span>(headcount_91) , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">00621</span>)</span>
-<span id="cb148-41"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-41" tabindex="-1"></a></span>
-<span id="cb148-42"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-42" tabindex="-1"></a>headcount_91_ci <span class="ot">&lt;-</span></span>
-<span id="cb148-43"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-43" tabindex="-1"></a>  <span class="fu">confint</span>(headcount_91 , <span class="at">df =</span> <span class="fu">degf</span>(<span class="fu">subset</span>(z , year <span class="sc">==</span> <span class="dv">1991</span>)))</span>
-<span id="cb148-44"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-44" tabindex="-1"></a></span>
-<span id="cb148-45"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-45" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(headcount_91_ci[<span class="dv">1</span>] , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">18996</span>)</span>
-<span id="cb148-46"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-46" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(headcount_91_ci[<span class="dv">2</span>] , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">21430</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb143"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb143-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-1" tabindex="-1"></a>headcount_81 <span class="ot">&lt;-</span></span>
+<span id="cb143-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-2" tabindex="-1"></a>  <span class="fu">svyfgt</span>( <span class="sc">~</span> eybhc0 ,</span>
+<span id="cb143-3"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-3" tabindex="-1"></a>          <span class="fu">subset</span>(z , year <span class="sc">==</span> <span class="dv">1981</span>) ,</span>
+<span id="cb143-4"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-4" tabindex="-1"></a>          <span class="at">g =</span> <span class="dv">0</span> ,</span>
+<span id="cb143-5"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-5" tabindex="-1"></a>          <span class="at">abs_thresh =</span> unwtd_arpt81)</span>
+<span id="cb143-6"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-6" tabindex="-1"></a></span>
+<span id="cb143-7"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-7" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">coef</span>(headcount_81) , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">14101</span>)</span>
+<span id="cb143-8"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-8" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">SE</span>(headcount_81) , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">00449</span>)</span>
+<span id="cb143-9"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-9" tabindex="-1"></a></span>
+<span id="cb143-10"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-10" tabindex="-1"></a>headcount_81_ci <span class="ot">&lt;-</span></span>
+<span id="cb143-11"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-11" tabindex="-1"></a>  <span class="fu">confint</span>(headcount_81 , <span class="at">df =</span> <span class="fu">degf</span>(<span class="fu">subset</span>(z , year <span class="sc">==</span> <span class="dv">1981</span>)))</span>
+<span id="cb143-12"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-12" tabindex="-1"></a></span>
+<span id="cb143-13"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-13" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(headcount_81_ci[<span class="dv">1</span>] , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">13222</span>)</span>
+<span id="cb143-14"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-14" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(headcount_81_ci[<span class="dv">2</span>] , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">14981</span>)</span>
+<span id="cb143-15"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-15" tabindex="-1"></a></span>
+<span id="cb143-16"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-16" tabindex="-1"></a>headcount_85 <span class="ot">&lt;-</span></span>
+<span id="cb143-17"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-17" tabindex="-1"></a>  <span class="fu">svyfgt</span>(<span class="sc">~</span> eybhc0 ,</span>
+<span id="cb143-18"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-18" tabindex="-1"></a>         <span class="fu">subset</span>(z , year <span class="sc">==</span> <span class="dv">1985</span>) ,</span>
+<span id="cb143-19"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-19" tabindex="-1"></a>         <span class="at">g =</span> <span class="dv">0</span> ,</span>
+<span id="cb143-20"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-20" tabindex="-1"></a>         <span class="at">abs_thresh =</span> unwtd_arpt85)</span>
+<span id="cb143-21"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-21" tabindex="-1"></a></span>
+<span id="cb143-22"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-22" tabindex="-1"></a></span>
+<span id="cb143-23"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-23" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">coef</span>(headcount_85) , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">13764</span>)</span>
+<span id="cb143-24"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-24" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">SE</span>(headcount_85) , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">00465</span>)</span>
+<span id="cb143-25"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-25" tabindex="-1"></a></span>
+<span id="cb143-26"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-26" tabindex="-1"></a>headcount_85_ci <span class="ot">&lt;-</span></span>
+<span id="cb143-27"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-27" tabindex="-1"></a>  <span class="fu">confint</span>(headcount_85 , <span class="at">df =</span> <span class="fu">degf</span>(<span class="fu">subset</span>(z , year <span class="sc">==</span> <span class="dv">1985</span>)))</span>
+<span id="cb143-28"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-28" tabindex="-1"></a></span>
+<span id="cb143-29"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-29" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(headcount_85_ci[<span class="dv">1</span>] , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">12852</span>)</span>
+<span id="cb143-30"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-30" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(headcount_85_ci[<span class="dv">2</span>] , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">14677</span>)</span>
+<span id="cb143-31"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-31" tabindex="-1"></a></span>
+<span id="cb143-32"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-32" tabindex="-1"></a>headcount_91 <span class="ot">&lt;-</span></span>
+<span id="cb143-33"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-33" tabindex="-1"></a>  <span class="fu">svyfgt</span>(<span class="sc">~</span> eybhc0 ,</span>
+<span id="cb143-34"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-34" tabindex="-1"></a>         <span class="fu">subset</span>(z , year <span class="sc">==</span> <span class="dv">1991</span>) ,</span>
+<span id="cb143-35"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-35" tabindex="-1"></a>         <span class="at">g =</span> <span class="dv">0</span> ,</span>
+<span id="cb143-36"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-36" tabindex="-1"></a>         <span class="at">abs_thresh =</span> unwtd_arpt91)</span>
+<span id="cb143-37"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-37" tabindex="-1"></a></span>
+<span id="cb143-38"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-38" tabindex="-1"></a></span>
+<span id="cb143-39"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-39" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">coef</span>(headcount_91) , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">20213</span>)</span>
+<span id="cb143-40"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-40" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">SE</span>(headcount_91) , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">00621</span>)</span>
+<span id="cb143-41"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-41" tabindex="-1"></a></span>
+<span id="cb143-42"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-42" tabindex="-1"></a>headcount_91_ci <span class="ot">&lt;-</span></span>
+<span id="cb143-43"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-43" tabindex="-1"></a>  <span class="fu">confint</span>(headcount_91 , <span class="at">df =</span> <span class="fu">degf</span>(<span class="fu">subset</span>(z , year <span class="sc">==</span> <span class="dv">1991</span>)))</span>
+<span id="cb143-44"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-44" tabindex="-1"></a></span>
+<span id="cb143-45"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-45" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(headcount_91_ci[<span class="dv">1</span>] , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">18996</span>)</span>
+<span id="cb143-46"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb143-46" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(headcount_91_ci[<span class="dv">2</span>] , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">21430</span>)</span></code></pre></div>
 <p>Confirm this replication applies for the normalized poverty gap as well, comparing stata code..</p>
 <pre><code>. ge ngap = poor*($z_81- x)/$z_81 if year == 1981
 
@@ -479,196 +479,196 @@ Number of PSUs   =    7476          Population size  = 5.5e+07
         ngap |   .0271577   .0013502      .0245109    .0298044
 --------------------------------------------------------------</code></pre>
 <p>..to R code:</p>
-<div class="sourceCode" id="cb150"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb150-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb150-1" tabindex="-1"></a>norm_pov_81 <span class="ot">&lt;-</span></span>
-<span id="cb150-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb150-2" tabindex="-1"></a>  <span class="fu">svyfgt</span>( <span class="sc">~</span> eybhc0 ,</span>
-<span id="cb150-3"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb150-3" tabindex="-1"></a>          <span class="fu">subset</span>(z , year <span class="sc">==</span> <span class="dv">1981</span>) ,</span>
-<span id="cb150-4"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb150-4" tabindex="-1"></a>          <span class="at">g =</span> <span class="dv">1</span> ,</span>
-<span id="cb150-5"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb150-5" tabindex="-1"></a>          <span class="at">abs_thresh =</span> unwtd_arpt81)</span>
-<span id="cb150-6"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb150-6" tabindex="-1"></a></span>
-<span id="cb150-7"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb150-7" tabindex="-1"></a></span>
-<span id="cb150-8"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb150-8" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">coef</span>(norm_pov_81) , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">02716</span>)</span>
-<span id="cb150-9"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb150-9" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">SE</span>(norm_pov_81) , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">00135</span>)</span>
-<span id="cb150-10"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb150-10" tabindex="-1"></a></span>
-<span id="cb150-11"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb150-11" tabindex="-1"></a>norm_pov_81_ci <span class="ot">&lt;-</span></span>
-<span id="cb150-12"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb150-12" tabindex="-1"></a>  <span class="fu">confint</span>(norm_pov_81 , <span class="at">df =</span> <span class="fu">degf</span>(<span class="fu">subset</span>(z , year <span class="sc">==</span> <span class="dv">1981</span>)))</span>
-<span id="cb150-13"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb150-13" tabindex="-1"></a></span>
-<span id="cb150-14"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb150-14" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(norm_pov_81_ci[<span class="dv">1</span>] , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">02451</span>)</span>
-<span id="cb150-15"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb150-15" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(norm_pov_81_ci[<span class="dv">2</span>] , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">02980</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb145"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb145-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb145-1" tabindex="-1"></a>norm_pov_81 <span class="ot">&lt;-</span></span>
+<span id="cb145-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb145-2" tabindex="-1"></a>  <span class="fu">svyfgt</span>( <span class="sc">~</span> eybhc0 ,</span>
+<span id="cb145-3"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb145-3" tabindex="-1"></a>          <span class="fu">subset</span>(z , year <span class="sc">==</span> <span class="dv">1981</span>) ,</span>
+<span id="cb145-4"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb145-4" tabindex="-1"></a>          <span class="at">g =</span> <span class="dv">1</span> ,</span>
+<span id="cb145-5"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb145-5" tabindex="-1"></a>          <span class="at">abs_thresh =</span> unwtd_arpt81)</span>
+<span id="cb145-6"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb145-6" tabindex="-1"></a></span>
+<span id="cb145-7"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb145-7" tabindex="-1"></a></span>
+<span id="cb145-8"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb145-8" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">coef</span>(norm_pov_81) , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">02716</span>)</span>
+<span id="cb145-9"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb145-9" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">SE</span>(norm_pov_81) , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">00135</span>)</span>
+<span id="cb145-10"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb145-10" tabindex="-1"></a></span>
+<span id="cb145-11"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb145-11" tabindex="-1"></a>norm_pov_81_ci <span class="ot">&lt;-</span></span>
+<span id="cb145-12"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb145-12" tabindex="-1"></a>  <span class="fu">confint</span>(norm_pov_81 , <span class="at">df =</span> <span class="fu">degf</span>(<span class="fu">subset</span>(z , year <span class="sc">==</span> <span class="dv">1981</span>)))</span>
+<span id="cb145-13"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb145-13" tabindex="-1"></a></span>
+<span id="cb145-14"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb145-14" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(norm_pov_81_ci[<span class="dv">1</span>] , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">02451</span>)</span>
+<span id="cb145-15"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb145-15" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(norm_pov_81_ci[<span class="dv">2</span>] , <span class="dv">5</span>) <span class="sc">==</span> .<span class="dv">02980</span>)</span></code></pre></div>
 </div>
 <div id="monte-carlo-simulation" class="section level3" number="3.6.2">
 <h3><span class="header-section-number">3.6.2</span> Monte Carlo Simulation</h3>
 <p>To provide a example for our code, we proceed with a Monte Carlo experiment.
 Using the <code>eusilcP</code> data from the <code>simPop</code> package <span class="citation">(<label for="tufte-mn-44" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-44" class="margin-toggle">Templ et al. 2017<span class="marginnote">Templ, Matthias, Bernhard Meindl, Alexander Kowarik, and Olivier Dupriez. 2017. <span>“Simulation of Synthetic Complex Data: The <span>R</span> Package <span class="nocase">simPop</span>.”</span> <em>Journal of Statistical Software</em> 79 (10): 1–38. <a href="https://doi.org/10.18637/jss.v079.i10">https://doi.org/10.18637/jss.v079.i10</a>.</span>)</span>, we can compute the actual values of the FGT components for that population:</p>
-<div class="sourceCode" id="cb151"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb151-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-1" tabindex="-1"></a><span class="co"># load libraries</span></span>
-<span id="cb151-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-2" tabindex="-1"></a><span class="fu">library</span>(sampling)</span>
-<span id="cb151-3"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-3" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
-<span id="cb151-4"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-4" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
-<span id="cb151-5"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-5" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
-<span id="cb151-6"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-6" tabindex="-1"></a></span>
-<span id="cb151-7"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-7" tabindex="-1"></a><span class="co"># load pseudo population data</span></span>
-<span id="cb151-8"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-8" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;eusilcP&quot;</span> , <span class="at">package =</span> <span class="st">&quot;simPop&quot;</span>)</span>
-<span id="cb151-9"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-9" tabindex="-1"></a></span>
-<span id="cb151-10"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-10" tabindex="-1"></a><span class="co"># compute population value of the FGT(2) index decomposition</span></span>
-<span id="cb151-11"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-11" tabindex="-1"></a>inc.all <span class="ot">&lt;-</span> eusilcP<span class="sc">$</span>eqIncome</span>
-<span id="cb151-12"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-12" tabindex="-1"></a>gfun <span class="ot">&lt;-</span> <span class="cf">function</span>(y , thresh)</span>
-<span id="cb151-13"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-13" tabindex="-1"></a>  (thresh <span class="sc">-</span> y) <span class="sc">/</span> thresh</span>
-<span id="cb151-14"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-14" tabindex="-1"></a>hfun <span class="ot">&lt;-</span></span>
-<span id="cb151-15"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-15" tabindex="-1"></a>  <span class="cf">function</span>(y , thresh , g)</span>
-<span id="cb151-16"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-16" tabindex="-1"></a>    (((thresh <span class="sc">-</span> y) <span class="sc">/</span> thresh) <span class="sc">^</span> g) <span class="sc">*</span> (y <span class="sc">&lt;=</span> thresh)</span>
-<span id="cb151-17"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-17" tabindex="-1"></a>fgt2 <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">hfun</span>(inc.all , <span class="dv">10000</span> , <span class="dv">2</span>) , <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb151-18"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-18" tabindex="-1"></a>fgt1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">hfun</span>(inc.all , <span class="dv">10000</span> , <span class="dv">1</span>) , <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb151-19"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-19" tabindex="-1"></a>fgt0 <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">hfun</span>(inc.all , <span class="dv">10000</span> , <span class="dv">0</span>) , <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb151-20"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-20" tabindex="-1"></a>igr.fgt <span class="ot">&lt;-</span></span>
-<span id="cb151-21"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-21" tabindex="-1"></a>  <span class="fu">mean</span>(<span class="fu">hfun</span>(inc.all , <span class="dv">10000</span> , <span class="dv">1</span>)[inc.all <span class="sc">&lt;=</span> <span class="dv">10000</span>] , <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb151-22"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-22" tabindex="-1"></a>gei.poor <span class="ot">&lt;-</span></span>
-<span id="cb151-23"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-23" tabindex="-1"></a>  convey<span class="sc">:::</span><span class="fu">CalcGEI</span>(<span class="fu">gfun</span>(inc.all , <span class="dv">10000</span>) , <span class="fu">ifelse</span>(inc.all <span class="sc">&lt;</span> <span class="dv">10000</span> , <span class="dv">1</span> , <span class="dv">0</span>) , <span class="dv">2</span>)</span>
-<span id="cb151-24"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-24" tabindex="-1"></a>theta.pop <span class="ot">&lt;-</span></span>
-<span id="cb151-25"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-25" tabindex="-1"></a>  <span class="fu">c</span>(</span>
-<span id="cb151-26"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-26" tabindex="-1"></a>    <span class="st">&quot;fgt2&quot;</span> <span class="ot">=</span> fgt2 ,</span>
-<span id="cb151-27"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-27" tabindex="-1"></a>    <span class="st">&quot;fgt0&quot;</span> <span class="ot">=</span>  fgt0 ,</span>
-<span id="cb151-28"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-28" tabindex="-1"></a>    <span class="st">&quot;fgt1&quot;</span> <span class="ot">=</span>  fgt1 ,</span>
-<span id="cb151-29"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-29" tabindex="-1"></a>    <span class="st">&quot;igr&quot;</span> <span class="ot">=</span> igr.fgt ,</span>
-<span id="cb151-30"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-30" tabindex="-1"></a>    <span class="st">&quot;gei(poor;epsilon=2)&quot;</span> <span class="ot">=</span>  gei.poor</span>
-<span id="cb151-31"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-31" tabindex="-1"></a>  )</span>
-<span id="cb151-32"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-32" tabindex="-1"></a>theta.pop</span></code></pre></div>
+<div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb146-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-1" tabindex="-1"></a><span class="co"># load libraries</span></span>
+<span id="cb146-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-2" tabindex="-1"></a><span class="fu">library</span>(sampling)</span>
+<span id="cb146-3"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-3" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb146-4"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-4" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
+<span id="cb146-5"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-5" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
+<span id="cb146-6"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-6" tabindex="-1"></a></span>
+<span id="cb146-7"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-7" tabindex="-1"></a><span class="co"># load pseudo population data</span></span>
+<span id="cb146-8"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-8" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;eusilcP&quot;</span> , <span class="at">package =</span> <span class="st">&quot;simPop&quot;</span>)</span>
+<span id="cb146-9"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-9" tabindex="-1"></a></span>
+<span id="cb146-10"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-10" tabindex="-1"></a><span class="co"># compute population value of the FGT(2) index decomposition</span></span>
+<span id="cb146-11"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-11" tabindex="-1"></a>inc.all <span class="ot">&lt;-</span> eusilcP<span class="sc">$</span>eqIncome</span>
+<span id="cb146-12"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-12" tabindex="-1"></a>gfun <span class="ot">&lt;-</span> <span class="cf">function</span>(y , thresh)</span>
+<span id="cb146-13"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-13" tabindex="-1"></a>  (thresh <span class="sc">-</span> y) <span class="sc">/</span> thresh</span>
+<span id="cb146-14"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-14" tabindex="-1"></a>hfun <span class="ot">&lt;-</span></span>
+<span id="cb146-15"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-15" tabindex="-1"></a>  <span class="cf">function</span>(y , thresh , g)</span>
+<span id="cb146-16"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-16" tabindex="-1"></a>    (((thresh <span class="sc">-</span> y) <span class="sc">/</span> thresh) <span class="sc">^</span> g) <span class="sc">*</span> (y <span class="sc">&lt;=</span> thresh)</span>
+<span id="cb146-17"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-17" tabindex="-1"></a>fgt2 <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">hfun</span>(inc.all , <span class="dv">10000</span> , <span class="dv">2</span>) , <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb146-18"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-18" tabindex="-1"></a>fgt1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">hfun</span>(inc.all , <span class="dv">10000</span> , <span class="dv">1</span>) , <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb146-19"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-19" tabindex="-1"></a>fgt0 <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">hfun</span>(inc.all , <span class="dv">10000</span> , <span class="dv">0</span>) , <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb146-20"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-20" tabindex="-1"></a>igr.fgt <span class="ot">&lt;-</span></span>
+<span id="cb146-21"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-21" tabindex="-1"></a>  <span class="fu">mean</span>(<span class="fu">hfun</span>(inc.all , <span class="dv">10000</span> , <span class="dv">1</span>)[inc.all <span class="sc">&lt;=</span> <span class="dv">10000</span>] , <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb146-22"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-22" tabindex="-1"></a>gei.poor <span class="ot">&lt;-</span></span>
+<span id="cb146-23"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-23" tabindex="-1"></a>  convey<span class="sc">:::</span><span class="fu">CalcGEI</span>(<span class="fu">gfun</span>(inc.all , <span class="dv">10000</span>) , <span class="fu">ifelse</span>(inc.all <span class="sc">&lt;</span> <span class="dv">10000</span> , <span class="dv">1</span> , <span class="dv">0</span>) , <span class="dv">2</span>)</span>
+<span id="cb146-24"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-24" tabindex="-1"></a>theta.pop <span class="ot">&lt;-</span></span>
+<span id="cb146-25"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-25" tabindex="-1"></a>  <span class="fu">c</span>(</span>
+<span id="cb146-26"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-26" tabindex="-1"></a>    <span class="st">&quot;fgt2&quot;</span> <span class="ot">=</span> fgt2 ,</span>
+<span id="cb146-27"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-27" tabindex="-1"></a>    <span class="st">&quot;fgt0&quot;</span> <span class="ot">=</span>  fgt0 ,</span>
+<span id="cb146-28"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-28" tabindex="-1"></a>    <span class="st">&quot;fgt1&quot;</span> <span class="ot">=</span>  fgt1 ,</span>
+<span id="cb146-29"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-29" tabindex="-1"></a>    <span class="st">&quot;igr&quot;</span> <span class="ot">=</span> igr.fgt ,</span>
+<span id="cb146-30"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-30" tabindex="-1"></a>    <span class="st">&quot;gei(poor;epsilon=2)&quot;</span> <span class="ot">=</span>  gei.poor</span>
+<span id="cb146-31"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-31" tabindex="-1"></a>  )</span>
+<span id="cb146-32"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb146-32" tabindex="-1"></a>theta.pop</span></code></pre></div>
 <pre><code>##                fgt2                fgt0                fgt1                 igr 
 ##          0.01571192          0.11412691          0.03259544          0.28560699 
 ## gei(poor;epsilon=2) 
 ##          0.34386588</code></pre>
 <p>Now, to study the distribution of the estimator under a particular sampling design, we select 5000 samples under one-stage cluster sampling of 100 households using the <code>cluster</code> function from the <code>sampling</code> package <span class="citation">(<label for="tufte-mn-45" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-45" class="margin-toggle">Tillé and Matei 2021<span class="marginnote">Tillé, Yves, and Alina Matei. 2021. <em>Sampling: Survey Sampling</em>. <a href="https://CRAN.R-project.org/package=sampling">https://CRAN.R-project.org/package=sampling</a>.</span>)</span>, and use the <code>svyfgtdec</code> function to estimate the FGT components for each of those samples:</p>
-<div class="sourceCode" id="cb153"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb153-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-1" tabindex="-1"></a><span class="co"># define the number of monte carlo replicates</span></span>
-<span id="cb153-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-2" tabindex="-1"></a>mc.rep <span class="ot">&lt;-</span> 5000L</span>
-<span id="cb153-3"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-3" tabindex="-1"></a></span>
-<span id="cb153-4"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-4" tabindex="-1"></a></span>
-<span id="cb153-5"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-5" tabindex="-1"></a></span>
-<span id="cb153-6"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-6" tabindex="-1"></a><span class="co"># simulation function</span></span>
-<span id="cb153-7"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-7" tabindex="-1"></a>fgtdec_sim_fun <span class="ot">&lt;-</span> <span class="cf">function</span>(this.iter) {</span>
-<span id="cb153-8"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-8" tabindex="-1"></a>  <span class="fu">set.seed</span>(this.iter)</span>
-<span id="cb153-9"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-9" tabindex="-1"></a>  </span>
-<span id="cb153-10"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-10" tabindex="-1"></a>  <span class="fu">library</span>(sampling)</span>
-<span id="cb153-11"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-11" tabindex="-1"></a>  <span class="fu">library</span>(survey)</span>
-<span id="cb153-12"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-12" tabindex="-1"></a>  <span class="fu">library</span>(convey)</span>
-<span id="cb153-13"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-13" tabindex="-1"></a>  </span>
-<span id="cb153-14"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-14" tabindex="-1"></a>  <span class="co"># load pseudo population data</span></span>
-<span id="cb153-15"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-15" tabindex="-1"></a>  <span class="fu">data</span>(<span class="st">&quot;eusilcP&quot;</span> , <span class="at">package =</span> <span class="st">&quot;simPop&quot;</span>)</span>
-<span id="cb153-16"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-16" tabindex="-1"></a>  </span>
-<span id="cb153-17"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-17" tabindex="-1"></a>  </span>
-<span id="cb153-18"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-18" tabindex="-1"></a>  <span class="co"># compute size-like variable for PPS sampling design</span></span>
-<span id="cb153-19"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-19" tabindex="-1"></a>  eusilcP<span class="sc">$</span>aux <span class="ot">&lt;-</span></span>
-<span id="cb153-20"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-20" tabindex="-1"></a>    <span class="fu">log</span>(<span class="fu">ifelse</span>(eusilcP<span class="sc">$</span>eqIncome <span class="sc">&gt;=</span> <span class="dv">1000</span> , eusilcP<span class="sc">$</span>eqIncome , <span class="dv">1000</span>))</span>
-<span id="cb153-21"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-21" tabindex="-1"></a>  </span>
-<span id="cb153-22"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-22" tabindex="-1"></a>  </span>
-<span id="cb153-23"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-23" tabindex="-1"></a>  <span class="co"># select sample</span></span>
-<span id="cb153-24"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-24" tabindex="-1"></a>  tt <span class="ot">&lt;-</span></span>
-<span id="cb153-25"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-25" tabindex="-1"></a>    sampling<span class="sc">::</span><span class="fu">cluster</span>(</span>
-<span id="cb153-26"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-26" tabindex="-1"></a>      <span class="at">data =</span> eusilcP[<span class="fu">sample.int</span>(<span class="fu">nrow</span>(eusilcP) , <span class="fu">nrow</span>(eusilcP) , <span class="at">replace =</span> <span class="cn">FALSE</span>) , ] ,</span>
-<span id="cb153-27"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-27" tabindex="-1"></a>      <span class="at">clustername =</span> <span class="st">&quot;hid&quot;</span> ,</span>
-<span id="cb153-28"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-28" tabindex="-1"></a>      <span class="at">size =</span> 1000L ,</span>
-<span id="cb153-29"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-29" tabindex="-1"></a>      <span class="at">method =</span> <span class="st">&quot;systematic&quot;</span> ,</span>
-<span id="cb153-30"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-30" tabindex="-1"></a>      <span class="at">pik =</span> eusilcP<span class="sc">$</span>aux</span>
-<span id="cb153-31"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-31" tabindex="-1"></a>    )</span>
-<span id="cb153-32"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-32" tabindex="-1"></a>  </span>
-<span id="cb153-33"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-33" tabindex="-1"></a>  <span class="co"># collect data</span></span>
-<span id="cb153-34"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-34" tabindex="-1"></a>  this.sample <span class="ot">&lt;-</span> <span class="fu">getdata</span>(eusilcP , tt)</span>
-<span id="cb153-35"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-35" tabindex="-1"></a>  </span>
-<span id="cb153-36"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-36" tabindex="-1"></a>  <span class="co"># create survey design object</span></span>
-<span id="cb153-37"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-37" tabindex="-1"></a>  this.desobj <span class="ot">&lt;-</span></span>
-<span id="cb153-38"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-38" tabindex="-1"></a>    <span class="fu">svydesign</span>(</span>
-<span id="cb153-39"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-39" tabindex="-1"></a>      <span class="at">ids =</span> <span class="sc">~</span> hid ,</span>
-<span id="cb153-40"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-40" tabindex="-1"></a>      <span class="at">probs =</span> <span class="sc">~</span> Prob ,</span>
-<span id="cb153-41"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-41" tabindex="-1"></a>      <span class="at">data =</span> this.sample ,</span>
-<span id="cb153-42"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-42" tabindex="-1"></a>      <span class="at">nest =</span> <span class="cn">FALSE</span></span>
-<span id="cb153-43"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-43" tabindex="-1"></a>    )</span>
-<span id="cb153-44"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-44" tabindex="-1"></a>  </span>
-<span id="cb153-45"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-45" tabindex="-1"></a>  <span class="co"># prepare for convey functions</span></span>
-<span id="cb153-46"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-46" tabindex="-1"></a>  this.desobj <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(this.desobj)</span>
-<span id="cb153-47"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-47" tabindex="-1"></a>  </span>
-<span id="cb153-48"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-48" tabindex="-1"></a>  <span class="co"># compute estimates</span></span>
-<span id="cb153-49"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-49" tabindex="-1"></a>  <span class="fu">svyfgtdec</span>( <span class="sc">~</span> eqIncome , this.desobj , <span class="at">abs_thresh =</span> <span class="dv">10000</span> , <span class="at">g =</span> <span class="dv">2</span>)</span>
-<span id="cb153-50"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-50" tabindex="-1"></a>  </span>
-<span id="cb153-51"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-51" tabindex="-1"></a>}</span>
-<span id="cb153-52"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-52" tabindex="-1"></a></span>
-<span id="cb153-53"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-53" tabindex="-1"></a><span class="co"># run replications</span></span>
-<span id="cb153-54"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-54" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="fu">makeCluster</span>(<span class="fu">detectCores</span>() <span class="sc">-</span> <span class="dv">1</span>)</span>
-<span id="cb153-55"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-55" tabindex="-1"></a></span>
-<span id="cb153-56"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-56" tabindex="-1"></a>fgtdec.estimate.list <span class="ot">&lt;-</span></span>
-<span id="cb153-57"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-57" tabindex="-1"></a>  <span class="fu">clusterApply</span>(cl, <span class="fu">seq_len</span>(mc.rep) , fgtdec_sim_fun)</span>
-<span id="cb153-58"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-58" tabindex="-1"></a></span>
-<span id="cb153-59"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-59" tabindex="-1"></a><span class="fu">stopCluster</span>(cl)</span></code></pre></div>
+<div class="sourceCode" id="cb148"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb148-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-1" tabindex="-1"></a><span class="co"># define the number of monte carlo replicates</span></span>
+<span id="cb148-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-2" tabindex="-1"></a>mc.rep <span class="ot">&lt;-</span> 5000L</span>
+<span id="cb148-3"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-3" tabindex="-1"></a></span>
+<span id="cb148-4"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-4" tabindex="-1"></a></span>
+<span id="cb148-5"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-5" tabindex="-1"></a></span>
+<span id="cb148-6"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-6" tabindex="-1"></a><span class="co"># simulation function</span></span>
+<span id="cb148-7"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-7" tabindex="-1"></a>fgtdec_sim_fun <span class="ot">&lt;-</span> <span class="cf">function</span>(this.iter) {</span>
+<span id="cb148-8"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-8" tabindex="-1"></a>  <span class="fu">set.seed</span>(this.iter)</span>
+<span id="cb148-9"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-9" tabindex="-1"></a>  </span>
+<span id="cb148-10"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-10" tabindex="-1"></a>  <span class="fu">library</span>(sampling)</span>
+<span id="cb148-11"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-11" tabindex="-1"></a>  <span class="fu">library</span>(survey)</span>
+<span id="cb148-12"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-12" tabindex="-1"></a>  <span class="fu">library</span>(convey)</span>
+<span id="cb148-13"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-13" tabindex="-1"></a>  </span>
+<span id="cb148-14"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-14" tabindex="-1"></a>  <span class="co"># load pseudo population data</span></span>
+<span id="cb148-15"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-15" tabindex="-1"></a>  <span class="fu">data</span>(<span class="st">&quot;eusilcP&quot;</span> , <span class="at">package =</span> <span class="st">&quot;simPop&quot;</span>)</span>
+<span id="cb148-16"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-16" tabindex="-1"></a>  </span>
+<span id="cb148-17"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-17" tabindex="-1"></a>  </span>
+<span id="cb148-18"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-18" tabindex="-1"></a>  <span class="co"># compute size-like variable for PPS sampling design</span></span>
+<span id="cb148-19"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-19" tabindex="-1"></a>  eusilcP<span class="sc">$</span>aux <span class="ot">&lt;-</span></span>
+<span id="cb148-20"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-20" tabindex="-1"></a>    <span class="fu">log</span>(<span class="fu">ifelse</span>(eusilcP<span class="sc">$</span>eqIncome <span class="sc">&gt;=</span> <span class="dv">1000</span> , eusilcP<span class="sc">$</span>eqIncome , <span class="dv">1000</span>))</span>
+<span id="cb148-21"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-21" tabindex="-1"></a>  </span>
+<span id="cb148-22"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-22" tabindex="-1"></a>  </span>
+<span id="cb148-23"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-23" tabindex="-1"></a>  <span class="co"># select sample</span></span>
+<span id="cb148-24"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-24" tabindex="-1"></a>  tt <span class="ot">&lt;-</span></span>
+<span id="cb148-25"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-25" tabindex="-1"></a>    sampling<span class="sc">::</span><span class="fu">cluster</span>(</span>
+<span id="cb148-26"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-26" tabindex="-1"></a>      <span class="at">data =</span> eusilcP[<span class="fu">sample.int</span>(<span class="fu">nrow</span>(eusilcP) , <span class="fu">nrow</span>(eusilcP) , <span class="at">replace =</span> <span class="cn">FALSE</span>) , ] ,</span>
+<span id="cb148-27"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-27" tabindex="-1"></a>      <span class="at">clustername =</span> <span class="st">&quot;hid&quot;</span> ,</span>
+<span id="cb148-28"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-28" tabindex="-1"></a>      <span class="at">size =</span> 1000L ,</span>
+<span id="cb148-29"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-29" tabindex="-1"></a>      <span class="at">method =</span> <span class="st">&quot;systematic&quot;</span> ,</span>
+<span id="cb148-30"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-30" tabindex="-1"></a>      <span class="at">pik =</span> eusilcP<span class="sc">$</span>aux</span>
+<span id="cb148-31"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-31" tabindex="-1"></a>    )</span>
+<span id="cb148-32"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-32" tabindex="-1"></a>  </span>
+<span id="cb148-33"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-33" tabindex="-1"></a>  <span class="co"># collect data</span></span>
+<span id="cb148-34"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-34" tabindex="-1"></a>  this.sample <span class="ot">&lt;-</span> <span class="fu">getdata</span>(eusilcP , tt)</span>
+<span id="cb148-35"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-35" tabindex="-1"></a>  </span>
+<span id="cb148-36"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-36" tabindex="-1"></a>  <span class="co"># create survey design object</span></span>
+<span id="cb148-37"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-37" tabindex="-1"></a>  this.desobj <span class="ot">&lt;-</span></span>
+<span id="cb148-38"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-38" tabindex="-1"></a>    <span class="fu">svydesign</span>(</span>
+<span id="cb148-39"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-39" tabindex="-1"></a>      <span class="at">ids =</span> <span class="sc">~</span> hid ,</span>
+<span id="cb148-40"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-40" tabindex="-1"></a>      <span class="at">probs =</span> <span class="sc">~</span> Prob ,</span>
+<span id="cb148-41"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-41" tabindex="-1"></a>      <span class="at">data =</span> this.sample ,</span>
+<span id="cb148-42"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-42" tabindex="-1"></a>      <span class="at">nest =</span> <span class="cn">FALSE</span></span>
+<span id="cb148-43"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-43" tabindex="-1"></a>    )</span>
+<span id="cb148-44"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-44" tabindex="-1"></a>  </span>
+<span id="cb148-45"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-45" tabindex="-1"></a>  <span class="co"># prepare for convey functions</span></span>
+<span id="cb148-46"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-46" tabindex="-1"></a>  this.desobj <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(this.desobj)</span>
+<span id="cb148-47"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-47" tabindex="-1"></a>  </span>
+<span id="cb148-48"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-48" tabindex="-1"></a>  <span class="co"># compute estimates</span></span>
+<span id="cb148-49"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-49" tabindex="-1"></a>  <span class="fu">svyfgtdec</span>( <span class="sc">~</span> eqIncome , this.desobj , <span class="at">abs_thresh =</span> <span class="dv">10000</span> , <span class="at">g =</span> <span class="dv">2</span>)</span>
+<span id="cb148-50"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-50" tabindex="-1"></a>  </span>
+<span id="cb148-51"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-51" tabindex="-1"></a>}</span>
+<span id="cb148-52"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-52" tabindex="-1"></a></span>
+<span id="cb148-53"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-53" tabindex="-1"></a><span class="co"># run replications</span></span>
+<span id="cb148-54"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-54" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="fu">makeCluster</span>(<span class="fu">detectCores</span>() <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb148-55"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-55" tabindex="-1"></a></span>
+<span id="cb148-56"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-56" tabindex="-1"></a>fgtdec.estimate.list <span class="ot">&lt;-</span></span>
+<span id="cb148-57"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-57" tabindex="-1"></a>  <span class="fu">clusterApply</span>(cl, <span class="fu">seq_len</span>(mc.rep) , fgtdec_sim_fun)</span>
+<span id="cb148-58"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-58" tabindex="-1"></a></span>
+<span id="cb148-59"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb148-59" tabindex="-1"></a><span class="fu">stopCluster</span>(cl)</span></code></pre></div>
 <p>The PRB of each component is estimated using the code below. Notice that PRBs are relatively small, with absolute values below 1%, with the largest bias in the GEI index component.</p>
-<div class="sourceCode" id="cb154"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb154-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb154-1" tabindex="-1"></a><span class="co"># repeat true population values</span></span>
-<span id="cb154-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb154-2" tabindex="-1"></a>(theta.pop)</span></code></pre></div>
+<div class="sourceCode" id="cb149"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb149-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb149-1" tabindex="-1"></a><span class="co"># repeat true population values</span></span>
+<span id="cb149-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb149-2" tabindex="-1"></a>(theta.pop)</span></code></pre></div>
 <pre><code>##                fgt2                fgt0                fgt1                 igr 
 ##          0.01571192          0.11412691          0.03259544          0.28560699 
 ## gei(poor;epsilon=2) 
 ##          0.34386588</code></pre>
-<div class="sourceCode" id="cb156"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb156-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb156-1" tabindex="-1"></a><span class="co"># estimate the expected values of the components estimators</span></span>
-<span id="cb156-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb156-2" tabindex="-1"></a><span class="co"># using the average of the estimates</span></span>
-<span id="cb156-3"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb156-3" tabindex="-1"></a>(theta.exp <span class="ot">&lt;-</span> <span class="fu">rowMeans</span>(<span class="fu">sapply</span>(fgtdec.estimate.list , coef)))</span></code></pre></div>
+<div class="sourceCode" id="cb151"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb151-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-1" tabindex="-1"></a><span class="co"># estimate the expected values of the components estimators</span></span>
+<span id="cb151-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-2" tabindex="-1"></a><span class="co"># using the average of the estimates</span></span>
+<span id="cb151-3"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb151-3" tabindex="-1"></a>(theta.exp <span class="ot">&lt;-</span> <span class="fu">rowMeans</span>(<span class="fu">sapply</span>(fgtdec.estimate.list , coef)))</span></code></pre></div>
 <pre><code>##                fgt2                fgt0                fgt1                 igr 
 ##          0.01577844          0.11432776          0.03269125          0.28591312 
 ## gei(poor;epsilon=2) 
 ##          0.34234370</code></pre>
-<div class="sourceCode" id="cb158"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb158-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb158-1" tabindex="-1"></a><span class="co"># estimate the percentage relative bias</span></span>
-<span id="cb158-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb158-2" tabindex="-1"></a>(percentage_relative_bias <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">*</span> (theta.exp <span class="sc">/</span> theta.pop <span class="sc">-</span> <span class="dv">1</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb153"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb153-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-1" tabindex="-1"></a><span class="co"># estimate the percentage relative bias</span></span>
+<span id="cb153-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb153-2" tabindex="-1"></a>(percentage_relative_bias <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">*</span> (theta.exp <span class="sc">/</span> theta.pop <span class="sc">-</span> <span class="dv">1</span>))</span></code></pre></div>
 <pre><code>##                fgt2                fgt0                fgt1                 igr 
 ##           0.4233956           0.1759893           0.2939132           0.1071867 
 ## gei(poor;epsilon=2) 
 ##          -0.4426679</code></pre>
-<div class="sourceCode" id="cb160"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb160-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb160-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(percentage_relative_bias) <span class="sc">&lt;</span> <span class="dv">1</span>) </span></code></pre></div>
+<div class="sourceCode" id="cb155"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb155-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb155-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(percentage_relative_bias) <span class="sc">&lt;</span> <span class="dv">1</span>) </span></code></pre></div>
 <p>For the variance estimators, we estimate the PRB using the code below.
 Note that the bias is still relatively small, with absolute values of the PRB below 5%.</p>
-<div class="sourceCode" id="cb161"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb161-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb161-1" tabindex="-1"></a><span class="co"># estimate the variance of the components estimators</span></span>
-<span id="cb161-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb161-2" tabindex="-1"></a><span class="co"># using the empirical variance of the estimates</span></span>
-<span id="cb161-3"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb161-3" tabindex="-1"></a>(vartheta.popest <span class="ot">&lt;-</span></span>
-<span id="cb161-4"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb161-4" tabindex="-1"></a>   <span class="fu">diag</span>(<span class="fu">var</span>(<span class="fu">t</span>(</span>
-<span id="cb161-5"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb161-5" tabindex="-1"></a>     <span class="fu">sapply</span>(fgtdec.estimate.list , coef)</span>
-<span id="cb161-6"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb161-6" tabindex="-1"></a>   ))))</span></code></pre></div>
+<div class="sourceCode" id="cb156"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb156-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb156-1" tabindex="-1"></a><span class="co"># estimate the variance of the components estimators</span></span>
+<span id="cb156-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb156-2" tabindex="-1"></a><span class="co"># using the empirical variance of the estimates</span></span>
+<span id="cb156-3"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb156-3" tabindex="-1"></a>(vartheta.popest <span class="ot">&lt;-</span></span>
+<span id="cb156-4"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb156-4" tabindex="-1"></a>   <span class="fu">diag</span>(<span class="fu">var</span>(<span class="fu">t</span>(</span>
+<span id="cb156-5"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb156-5" tabindex="-1"></a>     <span class="fu">sapply</span>(fgtdec.estimate.list , coef)</span>
+<span id="cb156-6"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb156-6" tabindex="-1"></a>   ))))</span></code></pre></div>
 <pre><code>##                fgt2                fgt0                fgt1                 igr 
 ##        6.447720e-06        1.015546e-04        1.468049e-05        4.753320e-04 
 ## gei(poor;epsilon=2) 
 ##        1.841360e-03</code></pre>
-<div class="sourceCode" id="cb163"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb163-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb163-1" tabindex="-1"></a><span class="co"># estimate the expected value of the Watts index variance estimator</span></span>
-<span id="cb163-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb163-2" tabindex="-1"></a><span class="co"># using the (estimated) expected value of the variance estimates</span></span>
-<span id="cb163-3"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb163-3" tabindex="-1"></a>(vartheta.exp <span class="ot">&lt;-</span></span>
-<span id="cb163-4"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb163-4" tabindex="-1"></a>    <span class="fu">rowMeans</span>(<span class="fu">sapply</span>(fgtdec.estimate.list , <span class="cf">function</span>(z)</span>
-<span id="cb163-5"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb163-5" tabindex="-1"></a>      <span class="fu">diag</span>(<span class="fu">vcov</span>(</span>
-<span id="cb163-6"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb163-6" tabindex="-1"></a>        z</span>
-<span id="cb163-7"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb163-7" tabindex="-1"></a>      )))))</span></code></pre></div>
+<div class="sourceCode" id="cb158"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb158-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb158-1" tabindex="-1"></a><span class="co"># estimate the expected value of the Watts index variance estimator</span></span>
+<span id="cb158-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb158-2" tabindex="-1"></a><span class="co"># using the (estimated) expected value of the variance estimates</span></span>
+<span id="cb158-3"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb158-3" tabindex="-1"></a>(vartheta.exp <span class="ot">&lt;-</span></span>
+<span id="cb158-4"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb158-4" tabindex="-1"></a>    <span class="fu">rowMeans</span>(<span class="fu">sapply</span>(fgtdec.estimate.list , <span class="cf">function</span>(z)</span>
+<span id="cb158-5"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb158-5" tabindex="-1"></a>      <span class="fu">diag</span>(<span class="fu">vcov</span>(</span>
+<span id="cb158-6"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb158-6" tabindex="-1"></a>        z</span>
+<span id="cb158-7"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb158-7" tabindex="-1"></a>      )))))</span></code></pre></div>
 <pre><code>## [1] 6.462904e-06 1.014859e-04 1.473047e-05 4.923412e-04 1.911158e-03</code></pre>
-<div class="sourceCode" id="cb165"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb165-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb165-1" tabindex="-1"></a><span class="co"># estimate the percentage relative bias of the variance estimators</span></span>
-<span id="cb165-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb165-2" tabindex="-1"></a>(percentage_relative_bias_variance <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">*</span>  (vartheta.exp <span class="sc">/</span> vartheta.popest <span class="sc">-</span> <span class="dv">1</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb160"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb160-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb160-1" tabindex="-1"></a><span class="co"># estimate the percentage relative bias of the variance estimators</span></span>
+<span id="cb160-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb160-2" tabindex="-1"></a>(percentage_relative_bias_variance <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">*</span>  (vartheta.exp <span class="sc">/</span> vartheta.popest <span class="sc">-</span> <span class="dv">1</span>))</span></code></pre></div>
 <pre><code>##                fgt2                fgt0                fgt1                 igr 
 ##          0.23548684         -0.06759586          0.34047392          3.57838870 
 ## gei(poor;epsilon=2) 
 ##          3.79052600</code></pre>
-<div class="sourceCode" id="cb167"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb167-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb167-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(percentage_relative_bias_variance) <span class="sc">&lt;</span> <span class="dv">5</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb162-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb162-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(percentage_relative_bias_variance) <span class="sc">&lt;</span> <span class="dv">5</span>)</span></code></pre></div>
 <p>Regarding the MSE of the decomposition estimator, the squared bias accounts for less than 0.1% of the MSE.
 This means that, with a good estimate of the variance, we should be able to have a good approximation for the MSE.</p>
-<div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb168-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb168-1" tabindex="-1"></a><span class="co"># estimate MSE</span></span>
-<span id="cb168-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb168-2" tabindex="-1"></a>theta.bias2 <span class="ot">&lt;-</span> (theta.exp <span class="sc">-</span> theta.pop) <span class="sc">^</span> <span class="dv">2</span></span>
-<span id="cb168-3"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb168-3" tabindex="-1"></a>(theta.mse <span class="ot">&lt;-</span> theta.bias2 <span class="sc">+</span> vartheta.popest)</span></code></pre></div>
+<div class="sourceCode" id="cb163"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb163-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb163-1" tabindex="-1"></a><span class="co"># estimate MSE</span></span>
+<span id="cb163-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb163-2" tabindex="-1"></a>theta.bias2 <span class="ot">&lt;-</span> (theta.exp <span class="sc">-</span> theta.pop) <span class="sc">^</span> <span class="dv">2</span></span>
+<span id="cb163-3"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb163-3" tabindex="-1"></a>(theta.mse <span class="ot">&lt;-</span> theta.bias2 <span class="sc">+</span> vartheta.popest)</span></code></pre></div>
 <pre><code>##                fgt2                fgt0                fgt1                 igr 
 ##        6.452146e-06        1.015949e-04        1.468967e-05        4.754257e-04 
 ## gei(poor;epsilon=2) 
 ##        1.843678e-03</code></pre>
-<div class="sourceCode" id="cb170"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb170-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb170-1" tabindex="-1"></a><span class="co"># squared bias component of the MSE</span></span>
-<span id="cb170-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb170-2" tabindex="-1"></a>( squared_bias_over_mse <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">*</span> (theta.bias2 <span class="sc">/</span> theta.mse) )</span></code></pre></div>
+<div class="sourceCode" id="cb165"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb165-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb165-1" tabindex="-1"></a><span class="co"># squared bias component of the MSE</span></span>
+<span id="cb165-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb165-2" tabindex="-1"></a>( squared_bias_over_mse <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">*</span> (theta.bias2 <span class="sc">/</span> theta.mse) )</span></code></pre></div>
 <pre><code>##                fgt2                fgt0                fgt1                 igr 
 ##          0.06858780          0.03970787          0.06247986          0.01971227 
 ## gei(poor;epsilon=2) 
 ##          0.12567511</code></pre>
-<div class="sourceCode" id="cb172"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb172-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb172-1" tabindex="-1"></a><span class="fu">stopifnot</span>( squared_bias_over_mse <span class="sc">&lt;</span> <span class="dv">1</span> )</span></code></pre></div>
+<div class="sourceCode" id="cb167"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb167-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb167-1" tabindex="-1"></a><span class="fu">stopifnot</span>( squared_bias_over_mse <span class="sc">&lt;</span> <span class="dv">1</span> )</span></code></pre></div>
 <p>The CIs based on the normal approximation work reasonably well for all components. The code below shows that the coverage rates are close to the 95% nominal coverage rate.</p>
-<div class="sourceCode" id="cb173"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb173-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb173-1" tabindex="-1"></a><span class="co"># estimate confidence intervals of the Watts index</span></span>
-<span id="cb173-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb173-2" tabindex="-1"></a><span class="co"># for each of the samples</span></span>
-<span id="cb173-3"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb173-3" tabindex="-1"></a>est.coverage <span class="ot">&lt;-</span></span>
-<span id="cb173-4"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb173-4" tabindex="-1"></a>  <span class="fu">sapply</span>(fgtdec.estimate.list, <span class="cf">function</span>(this.stat)</span>
-<span id="cb173-5"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb173-5" tabindex="-1"></a>    <span class="fu">confint</span>(this.stat)[, <span class="dv">1</span>] <span class="sc">&lt;=</span> theta.pop <span class="sc">&amp;</span></span>
-<span id="cb173-6"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb173-6" tabindex="-1"></a>      <span class="fu">confint</span>(this.stat)[, <span class="dv">2</span>] <span class="sc">&gt;=</span> theta.pop)</span>
-<span id="cb173-7"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb173-7" tabindex="-1"></a></span>
-<span id="cb173-8"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb173-8" tabindex="-1"></a><span class="co"># evaluate empirical coverage</span></span>
-<span id="cb173-9"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb173-9" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">abs</span>( <span class="fu">rowMeans</span>(est.coverage) <span class="sc">-</span> <span class="fl">0.95</span> ) <span class="sc">&lt;</span> <span class="fl">0.015</span> )</span></code></pre></div>
+<div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb168-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb168-1" tabindex="-1"></a><span class="co"># estimate confidence intervals of the Watts index</span></span>
+<span id="cb168-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb168-2" tabindex="-1"></a><span class="co"># for each of the samples</span></span>
+<span id="cb168-3"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb168-3" tabindex="-1"></a>est.coverage <span class="ot">&lt;-</span></span>
+<span id="cb168-4"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb168-4" tabindex="-1"></a>  <span class="fu">sapply</span>(fgtdec.estimate.list, <span class="cf">function</span>(this.stat)</span>
+<span id="cb168-5"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb168-5" tabindex="-1"></a>    <span class="fu">confint</span>(this.stat)[, <span class="dv">1</span>] <span class="sc">&lt;=</span> theta.pop <span class="sc">&amp;</span></span>
+<span id="cb168-6"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb168-6" tabindex="-1"></a>      <span class="fu">confint</span>(this.stat)[, <span class="dv">2</span>] <span class="sc">&gt;=</span> theta.pop)</span>
+<span id="cb168-7"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb168-7" tabindex="-1"></a></span>
+<span id="cb168-8"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb168-8" tabindex="-1"></a><span class="co"># evaluate empirical coverage</span></span>
+<span id="cb168-9"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb168-9" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">abs</span>( <span class="fu">rowMeans</span>(est.coverage) <span class="sc">-</span> <span class="fl">0.95</span> ) <span class="sc">&lt;</span> <span class="fl">0.015</span> )</span></code></pre></div>
 <p>For additional usage examples of <code>svyfgt</code> and <code>svyfgtdec</code>, type <code>?convey::svyfgt</code> or <code>?convey::svyfgtdec</code> in the R console.</p>
 </div>
 </div>

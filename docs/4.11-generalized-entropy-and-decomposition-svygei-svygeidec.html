@@ -13,7 +13,7 @@
 
 <meta name="author" content="Guilherme Jacob, Anthony Damico, and Djalma Pessoa" />
 
-<meta name="date" content="2023-10-17" />
+<meta name="date" content="2023-10-20" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -294,38 +294,38 @@ I ( \mathbf{y} ) &amp;= I_{Within} + I_{Between} \\
 <h3><span class="header-section-number">4.11.1</span> Replication Example</h3>
 <p>In July 2006, <span class="citation">Jenkins (<label for="tufte-mn-94" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-94" class="margin-toggle">2008<span class="marginnote">Jenkins, Stephen. 2008. <span>“Estimation and Interpretation of Measures of Inequality, Poverty, and Social Welfare Using Stata.”</span> North American Stata Users' Group Meetings 2006. Stata Users Group. <a href="http://EconPapers.repec.org/RePEc:boc:asug06:16">http://EconPapers.repec.org/RePEc:boc:asug06:16</a>.</span>)</span> presented at the North American Stata Users’ Group Meetings on the stata Generalized Entropy Index command. The example below reproduces those statistics.</p>
 <p>Load and prepare the same data set:</p>
-<div class="sourceCode" id="cb329"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb329-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-1" tabindex="-1"></a><span class="co"># load the convey package</span></span>
-<span id="cb329-2"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-2" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
-<span id="cb329-3"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-3" tabindex="-1"></a></span>
-<span id="cb329-4"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-4" tabindex="-1"></a><span class="co"># load the survey library</span></span>
-<span id="cb329-5"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-5" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
-<span id="cb329-6"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-6" tabindex="-1"></a></span>
-<span id="cb329-7"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-7" tabindex="-1"></a><span class="co"># load the foreign library</span></span>
-<span id="cb329-8"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-8" tabindex="-1"></a><span class="fu">library</span>(foreign)</span>
-<span id="cb329-9"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-9" tabindex="-1"></a></span>
-<span id="cb329-10"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-10" tabindex="-1"></a><span class="co"># create a temporary file on the local disk</span></span>
-<span id="cb329-11"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-11" tabindex="-1"></a>tf <span class="ot">&lt;-</span> <span class="fu">tempfile</span>()</span>
-<span id="cb329-12"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-12" tabindex="-1"></a></span>
-<span id="cb329-13"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-13" tabindex="-1"></a><span class="co"># store the location of the presentation file</span></span>
-<span id="cb329-14"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-14" tabindex="-1"></a>presentation_zip <span class="ot">&lt;-</span></span>
-<span id="cb329-15"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-15" tabindex="-1"></a>  <span class="st">&quot;http://repec.org/nasug2006/nasug2006_jenkins.zip&quot;</span></span>
-<span id="cb329-16"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-16" tabindex="-1"></a></span>
-<span id="cb329-17"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-17" tabindex="-1"></a><span class="co"># download jenkins&#39; presentation to the temporary file</span></span>
-<span id="cb329-18"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-18" tabindex="-1"></a><span class="fu">download.file</span>(presentation_zip , tf , <span class="at">mode =</span> <span class="st">&#39;wb&#39;</span>)</span>
-<span id="cb329-19"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-19" tabindex="-1"></a></span>
-<span id="cb329-20"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-20" tabindex="-1"></a><span class="co"># unzip the contents of the archive</span></span>
-<span id="cb329-21"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-21" tabindex="-1"></a>presentation_files <span class="ot">&lt;-</span> <span class="fu">unzip</span>(tf , <span class="at">exdir =</span> <span class="fu">tempdir</span>())</span>
-<span id="cb329-22"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-22" tabindex="-1"></a></span>
-<span id="cb329-23"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-23" tabindex="-1"></a><span class="co"># load the institute for fiscal studies&#39; 1981, 1985, and 1991 data.frame objects</span></span>
-<span id="cb329-24"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-24" tabindex="-1"></a>x81 <span class="ot">&lt;-</span></span>
-<span id="cb329-25"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-25" tabindex="-1"></a>  <span class="fu">read.dta</span>(<span class="fu">grep</span>(<span class="st">&quot;ifs81&quot;</span> , presentation_files , <span class="at">value =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb329-26"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-26" tabindex="-1"></a>x85 <span class="ot">&lt;-</span></span>
-<span id="cb329-27"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-27" tabindex="-1"></a>  <span class="fu">read.dta</span>(<span class="fu">grep</span>(<span class="st">&quot;ifs85&quot;</span> , presentation_files , <span class="at">value =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb329-28"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-28" tabindex="-1"></a>x91 <span class="ot">&lt;-</span></span>
-<span id="cb329-29"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-29" tabindex="-1"></a>  <span class="fu">read.dta</span>(<span class="fu">grep</span>(<span class="st">&quot;ifs91&quot;</span> , presentation_files , <span class="at">value =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb329-30"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-30" tabindex="-1"></a></span>
-<span id="cb329-31"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-31" tabindex="-1"></a><span class="co"># stack each of these three years of data into a single data.frame</span></span>
-<span id="cb329-32"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb329-32" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rbind</span>(x81 , x85 , x91)</span></code></pre></div>
+<div class="sourceCode" id="cb324"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb324-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-1" tabindex="-1"></a><span class="co"># load the convey package</span></span>
+<span id="cb324-2"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-2" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
+<span id="cb324-3"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-3" tabindex="-1"></a></span>
+<span id="cb324-4"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-4" tabindex="-1"></a><span class="co"># load the survey library</span></span>
+<span id="cb324-5"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-5" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb324-6"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-6" tabindex="-1"></a></span>
+<span id="cb324-7"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-7" tabindex="-1"></a><span class="co"># load the foreign library</span></span>
+<span id="cb324-8"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-8" tabindex="-1"></a><span class="fu">library</span>(foreign)</span>
+<span id="cb324-9"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-9" tabindex="-1"></a></span>
+<span id="cb324-10"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-10" tabindex="-1"></a><span class="co"># create a temporary file on the local disk</span></span>
+<span id="cb324-11"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-11" tabindex="-1"></a>tf <span class="ot">&lt;-</span> <span class="fu">tempfile</span>()</span>
+<span id="cb324-12"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-12" tabindex="-1"></a></span>
+<span id="cb324-13"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-13" tabindex="-1"></a><span class="co"># store the location of the presentation file</span></span>
+<span id="cb324-14"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-14" tabindex="-1"></a>presentation_zip <span class="ot">&lt;-</span></span>
+<span id="cb324-15"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-15" tabindex="-1"></a>  <span class="st">&quot;http://repec.org/nasug2006/nasug2006_jenkins.zip&quot;</span></span>
+<span id="cb324-16"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-16" tabindex="-1"></a></span>
+<span id="cb324-17"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-17" tabindex="-1"></a><span class="co"># download jenkins&#39; presentation to the temporary file</span></span>
+<span id="cb324-18"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-18" tabindex="-1"></a><span class="fu">download.file</span>(presentation_zip , tf , <span class="at">mode =</span> <span class="st">&#39;wb&#39;</span>)</span>
+<span id="cb324-19"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-19" tabindex="-1"></a></span>
+<span id="cb324-20"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-20" tabindex="-1"></a><span class="co"># unzip the contents of the archive</span></span>
+<span id="cb324-21"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-21" tabindex="-1"></a>presentation_files <span class="ot">&lt;-</span> <span class="fu">unzip</span>(tf , <span class="at">exdir =</span> <span class="fu">tempdir</span>())</span>
+<span id="cb324-22"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-22" tabindex="-1"></a></span>
+<span id="cb324-23"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-23" tabindex="-1"></a><span class="co"># load the institute for fiscal studies&#39; 1981, 1985, and 1991 data.frame objects</span></span>
+<span id="cb324-24"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-24" tabindex="-1"></a>x81 <span class="ot">&lt;-</span></span>
+<span id="cb324-25"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-25" tabindex="-1"></a>  <span class="fu">read.dta</span>(<span class="fu">grep</span>(<span class="st">&quot;ifs81&quot;</span> , presentation_files , <span class="at">value =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb324-26"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-26" tabindex="-1"></a>x85 <span class="ot">&lt;-</span></span>
+<span id="cb324-27"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-27" tabindex="-1"></a>  <span class="fu">read.dta</span>(<span class="fu">grep</span>(<span class="st">&quot;ifs85&quot;</span> , presentation_files , <span class="at">value =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb324-28"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-28" tabindex="-1"></a>x91 <span class="ot">&lt;-</span></span>
+<span id="cb324-29"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-29" tabindex="-1"></a>  <span class="fu">read.dta</span>(<span class="fu">grep</span>(<span class="st">&quot;ifs91&quot;</span> , presentation_files , <span class="at">value =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb324-30"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-30" tabindex="-1"></a></span>
+<span id="cb324-31"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-31" tabindex="-1"></a><span class="co"># stack each of these three years of data into a single data.frame</span></span>
+<span id="cb324-32"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb324-32" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rbind</span>(x81 , x85 , x91)</span></code></pre></div>
 <p>Replicate the author’s survey design statement from stata code..</p>
 <pre><code>. * account for clustering within HHs 
 . version 8: svyset [pweight = wgt], psu(hrn)
@@ -333,11 +333,11 @@ pweight is wgt
 psu is hrn
 construct an</code></pre>
 <p>.. into R code:</p>
-<div class="sourceCode" id="cb331"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb331-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb331-1" tabindex="-1"></a><span class="co"># initiate a linearized survey design object</span></span>
-<span id="cb331-2"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb331-2" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">svydesign</span>( <span class="sc">~</span> hrn , <span class="at">data =</span> x , <span class="at">weights =</span> <span class="sc">~</span> wgt)</span>
-<span id="cb331-3"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb331-3" tabindex="-1"></a></span>
-<span id="cb331-4"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb331-4" tabindex="-1"></a><span class="co"># immediately run the `convey_prep` function on the survey design</span></span>
-<span id="cb331-5"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb331-5" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(y)</span></code></pre></div>
+<div class="sourceCode" id="cb326"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb326-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb326-1" tabindex="-1"></a><span class="co"># initiate a linearized survey design object</span></span>
+<span id="cb326-2"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb326-2" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">svydesign</span>( <span class="sc">~</span> hrn , <span class="at">data =</span> x , <span class="at">weights =</span> <span class="sc">~</span> wgt)</span>
+<span id="cb326-3"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb326-3" tabindex="-1"></a></span>
+<span id="cb326-4"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb326-4" tabindex="-1"></a><span class="co"># immediately run the `convey_prep` function on the survey design</span></span>
+<span id="cb326-5"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb326-5" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(y)</span></code></pre></div>
 <p>Replicate the author’s subset statement and each of his svygei results..</p>
 <pre><code>. svygei x if year == 1981
  
@@ -359,21 +359,21 @@ GE(2)    |   .128793   .00330774    38.94    0.000      .1223099    .135276
 GE(3)    |  .1739994   .00662015    26.28    0.000      .1610242   .1869747
 ---------------------------------------------------------------------------</code></pre>
 <p>..using R code:</p>
-<div class="sourceCode" id="cb333"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb333-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb333-1" tabindex="-1"></a>z81 <span class="ot">&lt;-</span> <span class="fu">subset</span>(z , year <span class="sc">==</span> <span class="dv">1981</span>)</span>
-<span id="cb333-2"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb333-2" tabindex="-1"></a></span>
-<span id="cb333-3"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb333-3" tabindex="-1"></a><span class="fu">svygei</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z81 , eybhc0 <span class="sc">&gt;</span> <span class="dv">0</span>) , <span class="at">epsilon =</span> <span class="sc">-</span><span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb328"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb328-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb328-1" tabindex="-1"></a>z81 <span class="ot">&lt;-</span> <span class="fu">subset</span>(z , year <span class="sc">==</span> <span class="dv">1981</span>)</span>
+<span id="cb328-2"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb328-2" tabindex="-1"></a></span>
+<span id="cb328-3"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb328-3" tabindex="-1"></a><span class="fu">svygei</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z81 , eybhc0 <span class="sc">&gt;</span> <span class="dv">0</span>) , <span class="at">epsilon =</span> <span class="sc">-</span><span class="dv">1</span>)</span></code></pre></div>
 <pre><code>##            gei     SE
 ## eybhc0 0.19021 0.0247</code></pre>
-<div class="sourceCode" id="cb335"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb335-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb335-1" tabindex="-1"></a><span class="fu">svygei</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z81 , eybhc0 <span class="sc">&gt;</span> <span class="dv">0</span>) , <span class="at">epsilon =</span> <span class="dv">0</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb330"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb330-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb330-1" tabindex="-1"></a><span class="fu">svygei</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z81 , eybhc0 <span class="sc">&gt;</span> <span class="dv">0</span>) , <span class="at">epsilon =</span> <span class="dv">0</span>)</span></code></pre></div>
 <pre><code>##            gei     SE
 ## eybhc0 0.11429 0.0028</code></pre>
-<div class="sourceCode" id="cb337"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb337-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb337-1" tabindex="-1"></a><span class="fu">svygei</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z81 , eybhc0 <span class="sc">&gt;</span> <span class="dv">0</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb332"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb332-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb332-1" tabindex="-1"></a><span class="fu">svygei</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z81 , eybhc0 <span class="sc">&gt;</span> <span class="dv">0</span>))</span></code></pre></div>
 <pre><code>##            gei     SE
 ## eybhc0 0.11169 0.0023</code></pre>
-<div class="sourceCode" id="cb339"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb339-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb339-1" tabindex="-1"></a><span class="fu">svygei</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z81 , eybhc0 <span class="sc">&gt;</span> <span class="dv">0</span>) , <span class="at">epsilon =</span> <span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb334"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb334-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb334-1" tabindex="-1"></a><span class="fu">svygei</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z81 , eybhc0 <span class="sc">&gt;</span> <span class="dv">0</span>) , <span class="at">epsilon =</span> <span class="dv">2</span>)</span></code></pre></div>
 <pre><code>##            gei     SE
 ## eybhc0 0.12879 0.0033</code></pre>
-<div class="sourceCode" id="cb341"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb341-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb341-1" tabindex="-1"></a><span class="fu">svygei</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z81 , eybhc0 <span class="sc">&gt;</span> <span class="dv">0</span>) , <span class="at">epsilon =</span> <span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb336"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb336-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb336-1" tabindex="-1"></a><span class="fu">svygei</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z81 , eybhc0 <span class="sc">&gt;</span> <span class="dv">0</span>) , <span class="at">epsilon =</span> <span class="dv">3</span>)</span></code></pre></div>
 <pre><code>##          gei     SE
 ## eybhc0 0.174 0.0066</code></pre>
 <p>Confirm this replication applies for subsetted objects as well. Compare stata output..</p>
@@ -395,83 +395,83 @@ GE(2)    |  .1676393   .00730057    22.96    0.000      .1533304   .1819481
 GE(3)    |  .2609507   .01850689    14.10    0.000      .2246779   .2972235
 ---------------------------------------------------------------------------</code></pre>
 <p>..to R code:</p>
-<div class="sourceCode" id="cb344"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb344-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb344-1" tabindex="-1"></a>z85 <span class="ot">&lt;-</span> <span class="fu">subset</span>(z , year <span class="sc">==</span> <span class="dv">1985</span>)</span>
-<span id="cb344-2"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb344-2" tabindex="-1"></a></span>
-<span id="cb344-3"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb344-3" tabindex="-1"></a><span class="fu">svygei</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z85 , eybhc0 <span class="sc">&gt;</span> <span class="dv">1</span>) , <span class="at">epsilon =</span> <span class="sc">-</span><span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb339"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb339-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb339-1" tabindex="-1"></a>z85 <span class="ot">&lt;-</span> <span class="fu">subset</span>(z , year <span class="sc">==</span> <span class="dv">1985</span>)</span>
+<span id="cb339-2"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb339-2" tabindex="-1"></a></span>
+<span id="cb339-3"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb339-3" tabindex="-1"></a><span class="fu">svygei</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z85 , eybhc0 <span class="sc">&gt;</span> <span class="dv">1</span>) , <span class="at">epsilon =</span> <span class="sc">-</span><span class="dv">1</span>)</span></code></pre></div>
 <pre><code>##            gei     SE
 ## eybhc0 0.16024 0.0094</code></pre>
-<div class="sourceCode" id="cb346"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb346-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb346-1" tabindex="-1"></a><span class="fu">svygei</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z85 , eybhc0 <span class="sc">&gt;</span> <span class="dv">1</span>) , <span class="at">epsilon =</span> <span class="dv">0</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb341"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb341-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb341-1" tabindex="-1"></a><span class="fu">svygei</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z85 , eybhc0 <span class="sc">&gt;</span> <span class="dv">1</span>) , <span class="at">epsilon =</span> <span class="dv">0</span>)</span></code></pre></div>
 <pre><code>##            gei     SE
 ## eybhc0 0.12762 0.0033</code></pre>
-<div class="sourceCode" id="cb348"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb348-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb348-1" tabindex="-1"></a><span class="fu">svygei</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z85 , eybhc0 <span class="sc">&gt;</span> <span class="dv">1</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb343"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb343-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb343-1" tabindex="-1"></a><span class="fu">svygei</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z85 , eybhc0 <span class="sc">&gt;</span> <span class="dv">1</span>))</span></code></pre></div>
 <pre><code>##            gei     SE
 ## eybhc0 0.13372 0.0041</code></pre>
-<div class="sourceCode" id="cb350"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb350-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb350-1" tabindex="-1"></a><span class="fu">svygei</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z85 , eybhc0 <span class="sc">&gt;</span> <span class="dv">1</span>) , <span class="at">epsilon =</span> <span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb345"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb345-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb345-1" tabindex="-1"></a><span class="fu">svygei</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z85 , eybhc0 <span class="sc">&gt;</span> <span class="dv">1</span>) , <span class="at">epsilon =</span> <span class="dv">2</span>)</span></code></pre></div>
 <pre><code>##            gei     SE
 ## eybhc0 0.16764 0.0073</code></pre>
-<div class="sourceCode" id="cb352"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb352-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb352-1" tabindex="-1"></a><span class="fu">svygei</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z85 , eybhc0 <span class="sc">&gt;</span> <span class="dv">1</span>) , <span class="at">epsilon =</span> <span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb347"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb347-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb347-1" tabindex="-1"></a><span class="fu">svygei</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z85 , eybhc0 <span class="sc">&gt;</span> <span class="dv">1</span>) , <span class="at">epsilon =</span> <span class="dv">3</span>)</span></code></pre></div>
 <pre><code>##            gei     SE
 ## eybhc0 0.26095 0.0185</code></pre>
 <p>Replicate the author’s decomposition by population subgroup (work status) shown on PDF page 57..</p>
-<div class="sourceCode" id="cb354"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb354-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb354-1" tabindex="-1"></a><span class="co"># define work status (PDF page 22)</span></span>
-<span id="cb354-2"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb354-2" tabindex="-1"></a>z <span class="ot">&lt;-</span></span>
-<span id="cb354-3"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb354-3" tabindex="-1"></a>  <span class="fu">update</span>(z , <span class="at">wkstatus =</span> <span class="fu">c</span>(<span class="dv">1</span> , <span class="dv">1</span> , <span class="dv">1</span> , <span class="dv">1</span> , <span class="dv">2</span> , <span class="dv">3</span> , <span class="dv">2</span> , <span class="dv">2</span>)[<span class="fu">as.numeric</span>(esbu)])</span>
-<span id="cb354-4"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb354-4" tabindex="-1"></a>z <span class="ot">&lt;-</span></span>
-<span id="cb354-5"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb354-5" tabindex="-1"></a>  <span class="fu">update</span>(z , <span class="at">wkstatus =</span> <span class="fu">factor</span>(wkstatus , <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;1+ ft working&quot;</span> , <span class="st">&quot;no ft working&quot;</span> , <span class="st">&quot;elderly&quot;</span>)))</span>
-<span id="cb354-6"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb354-6" tabindex="-1"></a></span>
-<span id="cb354-7"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb354-7" tabindex="-1"></a><span class="co"># subset to 1991 and remove records with zero income</span></span>
-<span id="cb354-8"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb354-8" tabindex="-1"></a>z91 <span class="ot">&lt;-</span> <span class="fu">subset</span>(z , year <span class="sc">==</span> <span class="dv">1991</span> <span class="sc">&amp;</span> eybhc0 <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
-<span id="cb354-9"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb354-9" tabindex="-1"></a></span>
-<span id="cb354-10"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb354-10" tabindex="-1"></a><span class="co"># population share</span></span>
-<span id="cb354-11"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb354-11" tabindex="-1"></a><span class="fu">svymean</span>( <span class="sc">~</span> wkstatus, z91)</span></code></pre></div>
+<div class="sourceCode" id="cb349"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb349-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb349-1" tabindex="-1"></a><span class="co"># define work status (PDF page 22)</span></span>
+<span id="cb349-2"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb349-2" tabindex="-1"></a>z <span class="ot">&lt;-</span></span>
+<span id="cb349-3"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb349-3" tabindex="-1"></a>  <span class="fu">update</span>(z , <span class="at">wkstatus =</span> <span class="fu">c</span>(<span class="dv">1</span> , <span class="dv">1</span> , <span class="dv">1</span> , <span class="dv">1</span> , <span class="dv">2</span> , <span class="dv">3</span> , <span class="dv">2</span> , <span class="dv">2</span>)[<span class="fu">as.numeric</span>(esbu)])</span>
+<span id="cb349-4"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb349-4" tabindex="-1"></a>z <span class="ot">&lt;-</span></span>
+<span id="cb349-5"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb349-5" tabindex="-1"></a>  <span class="fu">update</span>(z , <span class="at">wkstatus =</span> <span class="fu">factor</span>(wkstatus , <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;1+ ft working&quot;</span> , <span class="st">&quot;no ft working&quot;</span> , <span class="st">&quot;elderly&quot;</span>)))</span>
+<span id="cb349-6"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb349-6" tabindex="-1"></a></span>
+<span id="cb349-7"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb349-7" tabindex="-1"></a><span class="co"># subset to 1991 and remove records with zero income</span></span>
+<span id="cb349-8"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb349-8" tabindex="-1"></a>z91 <span class="ot">&lt;-</span> <span class="fu">subset</span>(z , year <span class="sc">==</span> <span class="dv">1991</span> <span class="sc">&amp;</span> eybhc0 <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb349-9"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb349-9" tabindex="-1"></a></span>
+<span id="cb349-10"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb349-10" tabindex="-1"></a><span class="co"># population share</span></span>
+<span id="cb349-11"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb349-11" tabindex="-1"></a><span class="fu">svymean</span>( <span class="sc">~</span> wkstatus, z91)</span></code></pre></div>
 <pre><code>##                          mean     SE
 ## wkstatus1+ ft working 0.61724 0.0067
 ## wkstatusno ft working 0.20607 0.0059
 ## wkstatuselderly       0.17669 0.0046</code></pre>
-<div class="sourceCode" id="cb356"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb356-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb356-1" tabindex="-1"></a><span class="co"># mean</span></span>
-<span id="cb356-2"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb356-2" tabindex="-1"></a><span class="fu">svyby</span>( <span class="sc">~</span> eybhc0, <span class="sc">~</span> wkstatus, z91, svymean)</span></code></pre></div>
+<div class="sourceCode" id="cb351"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb351-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb351-1" tabindex="-1"></a><span class="co"># mean</span></span>
+<span id="cb351-2"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb351-2" tabindex="-1"></a><span class="fu">svyby</span>( <span class="sc">~</span> eybhc0, <span class="sc">~</span> wkstatus, z91, svymean)</span></code></pre></div>
 <pre><code>##                    wkstatus   eybhc0       se
 ## 1+ ft working 1+ ft working 278.8040 3.703790
 ## no ft working no ft working 151.6317 3.153968
 ## elderly             elderly 176.6045 4.661740</code></pre>
-<div class="sourceCode" id="cb358"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb358-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb358-1" tabindex="-1"></a><span class="co"># subgroup indices: ge_k</span></span>
-<span id="cb358-2"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb358-2" tabindex="-1"></a><span class="fu">svyby</span>( <span class="sc">~</span> eybhc0 , <span class="sc">~</span> wkstatus , z91 , svygei , <span class="at">epsilon =</span> <span class="sc">-</span><span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb353"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb353-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb353-1" tabindex="-1"></a><span class="co"># subgroup indices: ge_k</span></span>
+<span id="cb353-2"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb353-2" tabindex="-1"></a><span class="fu">svyby</span>( <span class="sc">~</span> eybhc0 , <span class="sc">~</span> wkstatus , z91 , svygei , <span class="at">epsilon =</span> <span class="sc">-</span><span class="dv">1</span>)</span></code></pre></div>
 <pre><code>##                    wkstatus     eybhc0          se
 ## 1+ ft working 1+ ft working  0.2300708  0.02853959
 ## no ft working no ft working 10.9231761 10.65482557
 ## elderly             elderly  0.1932164  0.02571991</code></pre>
-<div class="sourceCode" id="cb360"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb360-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb360-1" tabindex="-1"></a><span class="fu">svyby</span>( <span class="sc">~</span> eybhc0 , <span class="sc">~</span> wkstatus , z91 , svygei , <span class="at">epsilon =</span> <span class="dv">0</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb355"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb355-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb355-1" tabindex="-1"></a><span class="fu">svyby</span>( <span class="sc">~</span> eybhc0 , <span class="sc">~</span> wkstatus , z91 , svygei , <span class="at">epsilon =</span> <span class="dv">0</span>)</span></code></pre></div>
 <pre><code>##                    wkstatus    eybhc0          se
 ## 1+ ft working 1+ ft working 0.1536921 0.006955506
 ## no ft working no ft working 0.1836835 0.014740510
 ## elderly             elderly 0.1653658 0.016409770</code></pre>
-<div class="sourceCode" id="cb362"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb362-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb362-1" tabindex="-1"></a><span class="fu">svyby</span>( <span class="sc">~</span> eybhc0 , <span class="sc">~</span> wkstatus , z91 , svygei , <span class="at">epsilon =</span> <span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb357"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb357-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb357-1" tabindex="-1"></a><span class="fu">svyby</span>( <span class="sc">~</span> eybhc0 , <span class="sc">~</span> wkstatus , z91 , svygei , <span class="at">epsilon =</span> <span class="dv">1</span>)</span></code></pre></div>
 <pre><code>##                    wkstatus    eybhc0          se
 ## 1+ ft working 1+ ft working 0.1598558 0.008327994
 ## no ft working no ft working 0.1889909 0.016766120
 ## elderly             elderly 0.2023862 0.027787224</code></pre>
-<div class="sourceCode" id="cb364"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb364-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb364-1" tabindex="-1"></a><span class="fu">svyby</span>( <span class="sc">~</span> eybhc0 , <span class="sc">~</span> wkstatus , z91 , svygei , <span class="at">epsilon =</span> <span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb359"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb359-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb359-1" tabindex="-1"></a><span class="fu">svyby</span>( <span class="sc">~</span> eybhc0 , <span class="sc">~</span> wkstatus , z91 , svygei , <span class="at">epsilon =</span> <span class="dv">2</span>)</span></code></pre></div>
 <pre><code>##                    wkstatus    eybhc0         se
 ## 1+ ft working 1+ ft working 0.2130664 0.01546521
 ## no ft working no ft working 0.2846345 0.06016394
 ## elderly             elderly 0.3465088 0.07362898</code></pre>
-<div class="sourceCode" id="cb366"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb366-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb366-1" tabindex="-1"></a><span class="co"># GE decomposition</span></span>
-<span id="cb366-2"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb366-2" tabindex="-1"></a><span class="fu">svygeidec</span>( <span class="sc">~</span> eybhc0, <span class="sc">~</span> wkstatus, z91, <span class="at">epsilon =</span> <span class="sc">-</span><span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb361"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb361-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb361-1" tabindex="-1"></a><span class="co"># GE decomposition</span></span>
+<span id="cb361-2"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb361-2" tabindex="-1"></a><span class="fu">svygeidec</span>( <span class="sc">~</span> eybhc0, <span class="sc">~</span> wkstatus, z91, <span class="at">epsilon =</span> <span class="sc">-</span><span class="dv">1</span>)</span></code></pre></div>
 <pre><code>##         gei decomposition     SE
 ## total            3.682893 3.3999
 ## within           3.646572 3.3998
 ## between          0.036321 0.0028</code></pre>
-<div class="sourceCode" id="cb368"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb368-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb368-1" tabindex="-1"></a><span class="fu">svygeidec</span>( <span class="sc">~</span> eybhc0, <span class="sc">~</span> wkstatus, z91, <span class="at">epsilon =</span> <span class="dv">0</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb363"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb363-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb363-1" tabindex="-1"></a><span class="fu">svygeidec</span>( <span class="sc">~</span> eybhc0, <span class="sc">~</span> wkstatus, z91, <span class="at">epsilon =</span> <span class="dv">0</span>)</span></code></pre></div>
 <pre><code>##         gei decomposition     SE
 ## total            0.195236 0.0065
 ## within           0.161935 0.0061
 ## between          0.033301 0.0025</code></pre>
-<div class="sourceCode" id="cb370"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb370-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb370-1" tabindex="-1"></a><span class="fu">svygeidec</span>( <span class="sc">~</span> eybhc0, <span class="sc">~</span> wkstatus, z91, <span class="at">epsilon =</span> <span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb365"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb365-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb365-1" tabindex="-1"></a><span class="fu">svygeidec</span>( <span class="sc">~</span> eybhc0, <span class="sc">~</span> wkstatus, z91, <span class="at">epsilon =</span> <span class="dv">1</span>)</span></code></pre></div>
 <pre><code>##         gei decomposition     SE
 ## total            0.200390 0.0079
 ## within           0.169396 0.0076
 ## between          0.030994 0.0022</code></pre>
-<div class="sourceCode" id="cb372"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb372-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb372-1" tabindex="-1"></a><span class="fu">svygeidec</span>( <span class="sc">~</span> eybhc0, <span class="sc">~</span> wkstatus, z91, <span class="at">epsilon =</span> <span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb367"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb367-1"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#cb367-1" tabindex="-1"></a><span class="fu">svygeidec</span>( <span class="sc">~</span> eybhc0, <span class="sc">~</span> wkstatus, z91, <span class="at">epsilon =</span> <span class="dv">2</span>)</span></code></pre></div>
 <pre><code>##         gei decomposition     SE
 ## total            0.274325 0.0167
 ## within           0.245067 0.0164
