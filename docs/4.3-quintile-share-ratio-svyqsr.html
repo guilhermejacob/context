@@ -11,9 +11,9 @@
 <meta property="og:description" content="A book about the R convey package" />
 <meta name="github-repo" content="guilhermejacob/context" />
 
-<meta name="author" content="Guilherme Jacob, Anthony Damico, and Djalma Pessoa" />
+<meta name="author" content="By Guilherme Jacob, Anthony Damico, and Djalma Pessoa. The authors received no external funding for the convey software and this accompanying textbook." />
 
-<meta name="date" content="2023-10-20" />
+<meta name="date" content="2023-10-25" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -234,9 +234,9 @@ div.csl-indent {
 </ul></li>
 <li class="has-sub"><a href="5-richness.html#richness" id="toc-richness"><span class="toc-section-number">5</span> Richness</a>
 <ul>
-<li class="has-sub"><a href="5.1-richness-measures.html#richness-measures" id="toc-richness-measures"><span class="toc-section-number">5.1</span> Richness Measures</a>
+<li class="has-sub"><a href="5.1-richness-measures-svyrich.html#richness-measures-svyrich" id="toc-richness-measures-svyrich"><span class="toc-section-number">5.1</span> Richness Measures (svyrich)</a>
 <ul>
-<li><a href="5.1-richness-measures.html#monte-carlo-simulation-3" id="toc-monte-carlo-simulation-3"><span class="toc-section-number">5.1.1</span> Monte Carlo Simulation</a></li>
+<li><a href="5.1-richness-measures-svyrich.html#monte-carlo-simulation-3" id="toc-monte-carlo-simulation-3"><span class="toc-section-number">5.1.1</span> Monte Carlo Simulation</a></li>
 </ul></li>
 </ul></li>
 <li class="has-sub"><a href="6-future-research.html#future-research" id="toc-future-research"><span class="toc-section-number">6</span> Future Research</a>
@@ -258,6 +258,12 @@ div.csl-indent {
 <div class="col-sm-12">
 <div id="quintile-share-ratio-svyqsr" class="section level2" number="4.3">
 <h2><span class="header-section-number">4.3</span> Quintile Share Ratio (svyqsr)</h2>
+<div class="sourceCode" id="cb246"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb246-1"><a href="4.3-quintile-share-ratio-svyqsr.html#cb246-1" tabindex="-1"></a>✔</span>
+<span id="cb246-2"><a href="4.3-quintile-share-ratio-svyqsr.html#cb246-2" tabindex="-1"></a>✔️</span>
+<span id="cb246-3"><a href="4.3-quintile-share-ratio-svyqsr.html#cb246-3" tabindex="-1"></a>✔</span>
+<span id="cb246-4"><a href="4.3-quintile-share-ratio-svyqsr.html#cb246-4" tabindex="-1"></a>❌</span>
+<span id="cb246-5"><a href="4.3-quintile-share-ratio-svyqsr.html#cb246-5" tabindex="-1"></a>❌</span>
+<span id="cb246-6"><a href="4.3-quintile-share-ratio-svyqsr.html#cb246-6" tabindex="-1"></a>❌</span></code></pre></div>
 <p>Unlike the previous measure, the Quintile Share Ratio (QSR) is an inequality measure in itself, depending only on the income distribution to evaluate the degree of inequality. By definition, it can be described as the ratio between the income share held by the richest 20% and the poorest 20% of the population.</p>
 <p>In plain terms, it expresses how many times the wealthier part of the population are richer than the poorest part. For instance, a <span class="math inline">\(QSR = 4\)</span> implies that the upper class takes home 4 times as much of the total income as the poor.</p>
 <p>The QSR can be modified to a more general function of percentile share ratios. For instance, <span class="citation">Cobham, Schlogl, and Sumner (<label for="tufte-mn-64" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-64" class="margin-toggle">2015<span class="marginnote">Cobham, Alex, Luke Schlogl, and Andy Sumner. 2015. <span>“<span class="nocase">Inequality and the Tails: The Palma Proposition and Ratio Revisited</span>.”</span> Working Papers 143. United Nations, Department of Economics; Social Affairs. <a href="http://www.un.org/esa/desa/papers/2015/wp143_2015.pdf">http://www.un.org/esa/desa/papers/2015/wp143_2015.pdf</a>.</span>)</span> argues for using the Palma index, defined as the ratio between the share of the 10% richest over the share held by the poorest 40%. There are actually two ways to compute the Palma ratio with the <code>convey</code> package. One is using <code>convey::svyqsr</code> and the other is using <code>convey::svylorenz</code> - they won’t match exactly because of different estimators, but are asymptotically equal. Since the Palma ratio is the top 10% divided by the bottom 40%, in <code>convey::svyqsr</code> this could be achieved using <code>alpha1 = .40</code> and <code>alpha2 = .90</code>. Note that the <code>vardpoor::linqsr</code> function only accepts a single <code>alpha</code> parameter (defaulting to <code>0.2</code> and <code>1 - 0.2</code>), meaning the Palma index cannot presently be computed using that function.</p>
@@ -267,148 +273,148 @@ div.csl-indent {
 <h3><span class="header-section-number">4.3.1</span> Replication Example</h3>
 <p>The R <code>vardpoor</code> package <span class="citation">(<label for="tufte-mn-67" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-67" class="margin-toggle">Breidaks, Liberts, and Ivanova 2016<span class="marginnote">Breidaks, Juris, Martins Liberts, and Santa Ivanova. 2016. <span>“Vardpoor: Estimation of Indicators on Social Exclusion and Poverty and Its Linearization, Variance Estimation.”</span> Riga, Latvia: CSB.</span>)</span>, created by researchers at the Central Statistical Bureau of Latvia, includes a QSR coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.</p>
 <p>Load and prepare the same data set:</p>
-<div class="sourceCode" id="cb243"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb243-1"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-1" tabindex="-1"></a><span class="co"># load the convey package</span></span>
-<span id="cb243-2"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-2" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
-<span id="cb243-3"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-3" tabindex="-1"></a></span>
-<span id="cb243-4"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-4" tabindex="-1"></a><span class="co"># load the survey library</span></span>
-<span id="cb243-5"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-5" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
-<span id="cb243-6"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-6" tabindex="-1"></a></span>
-<span id="cb243-7"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-7" tabindex="-1"></a><span class="co"># load the vardpoor library</span></span>
-<span id="cb243-8"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-8" tabindex="-1"></a><span class="fu">library</span>(vardpoor)</span>
-<span id="cb243-9"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-9" tabindex="-1"></a></span>
-<span id="cb243-10"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-10" tabindex="-1"></a><span class="co"># load the laeken library</span></span>
-<span id="cb243-11"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-11" tabindex="-1"></a><span class="fu">library</span>(laeken)</span>
-<span id="cb243-12"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-12" tabindex="-1"></a></span>
-<span id="cb243-13"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-13" tabindex="-1"></a><span class="co"># load the synthetic EU statistics on income &amp; living conditions</span></span>
-<span id="cb243-14"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-14" tabindex="-1"></a><span class="fu">data</span>(eusilc)</span>
-<span id="cb243-15"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-15" tabindex="-1"></a></span>
-<span id="cb243-16"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-16" tabindex="-1"></a><span class="co"># make all column names lowercase</span></span>
-<span id="cb243-17"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-17" tabindex="-1"></a><span class="fu">names</span>(eusilc) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(eusilc))</span>
-<span id="cb243-18"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-18" tabindex="-1"></a></span>
-<span id="cb243-19"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-19" tabindex="-1"></a><span class="co"># add a column with the row number</span></span>
-<span id="cb243-20"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-20" tabindex="-1"></a>dati <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">data.table</span>(<span class="at">IDd =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(eusilc), eusilc)</span>
-<span id="cb243-21"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-21" tabindex="-1"></a></span>
-<span id="cb243-22"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-22" tabindex="-1"></a><span class="co"># calculate the qsr coefficient</span></span>
-<span id="cb243-23"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-23" tabindex="-1"></a><span class="co"># using the R vardpoor library</span></span>
-<span id="cb243-24"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-24" tabindex="-1"></a>varpoord_qsr_calculation <span class="ot">&lt;-</span></span>
-<span id="cb243-25"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-25" tabindex="-1"></a>  <span class="fu">varpoord</span>(</span>
-<span id="cb243-26"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-26" tabindex="-1"></a>    <span class="co"># analysis variable</span></span>
-<span id="cb243-27"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-27" tabindex="-1"></a>    <span class="at">Y =</span> <span class="st">&quot;eqincome&quot;</span>,</span>
-<span id="cb243-28"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-28" tabindex="-1"></a>    </span>
-<span id="cb243-29"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-29" tabindex="-1"></a>    <span class="co"># weights variable</span></span>
-<span id="cb243-30"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-30" tabindex="-1"></a>    <span class="at">w_final =</span> <span class="st">&quot;rb050&quot;</span>,</span>
-<span id="cb243-31"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-31" tabindex="-1"></a>    </span>
-<span id="cb243-32"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-32" tabindex="-1"></a>    <span class="co"># row number variable</span></span>
-<span id="cb243-33"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-33" tabindex="-1"></a>    <span class="at">ID_level1 =</span> <span class="st">&quot;IDd&quot;</span>,</span>
-<span id="cb243-34"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-34" tabindex="-1"></a>    </span>
-<span id="cb243-35"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-35" tabindex="-1"></a>    <span class="co"># row number variable</span></span>
-<span id="cb243-36"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-36" tabindex="-1"></a>    <span class="at">ID_level2 =</span> <span class="st">&quot;IDd&quot;</span>,</span>
-<span id="cb243-37"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-37" tabindex="-1"></a>    </span>
-<span id="cb243-38"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-38" tabindex="-1"></a>    <span class="co"># strata variable</span></span>
-<span id="cb243-39"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-39" tabindex="-1"></a>    <span class="at">H =</span> <span class="st">&quot;db040&quot;</span>,</span>
-<span id="cb243-40"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-40" tabindex="-1"></a>    </span>
-<span id="cb243-41"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-41" tabindex="-1"></a>    <span class="at">N_h =</span> <span class="cn">NULL</span> ,</span>
-<span id="cb243-42"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-42" tabindex="-1"></a>    </span>
-<span id="cb243-43"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-43" tabindex="-1"></a>    <span class="co"># clustering variable</span></span>
-<span id="cb243-44"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-44" tabindex="-1"></a>    <span class="at">PSU =</span> <span class="st">&quot;rb030&quot;</span>,</span>
-<span id="cb243-45"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-45" tabindex="-1"></a>    </span>
-<span id="cb243-46"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-46" tabindex="-1"></a>    <span class="co"># data.table</span></span>
-<span id="cb243-47"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-47" tabindex="-1"></a>    <span class="at">dataset =</span> dati,</span>
-<span id="cb243-48"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-48" tabindex="-1"></a>    </span>
-<span id="cb243-49"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-49" tabindex="-1"></a>    <span class="co"># qsr coefficient function</span></span>
-<span id="cb243-50"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-50" tabindex="-1"></a>    <span class="at">type =</span> <span class="st">&quot;linqsr&quot;</span>,</span>
-<span id="cb243-51"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-51" tabindex="-1"></a>    </span>
-<span id="cb243-52"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-52" tabindex="-1"></a>    <span class="co"># poverty threshold range</span></span>
-<span id="cb243-53"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-53" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="dv">20</span> ,</span>
-<span id="cb243-54"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-54" tabindex="-1"></a>    </span>
-<span id="cb243-55"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-55" tabindex="-1"></a>    <span class="co"># get linearized variable</span></span>
-<span id="cb243-56"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-56" tabindex="-1"></a>    <span class="at">outp_lin =</span> <span class="cn">TRUE</span></span>
-<span id="cb243-57"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-57" tabindex="-1"></a>    </span>
-<span id="cb243-58"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-58" tabindex="-1"></a>  )</span>
-<span id="cb243-59"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-59" tabindex="-1"></a></span>
-<span id="cb243-60"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-60" tabindex="-1"></a></span>
-<span id="cb243-61"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-61" tabindex="-1"></a></span>
-<span id="cb243-62"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-62" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
-<span id="cb243-63"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-63" tabindex="-1"></a><span class="co"># using our recommended setup</span></span>
-<span id="cb243-64"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-64" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span></span>
-<span id="cb243-65"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-65" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
-<span id="cb243-66"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-66" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
-<span id="cb243-67"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-67" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
-<span id="cb243-68"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-68" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
-<span id="cb243-69"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-69" tabindex="-1"></a>    <span class="at">data =</span> eusilc</span>
-<span id="cb243-70"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-70" tabindex="-1"></a>  )</span>
-<span id="cb243-71"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-71" tabindex="-1"></a></span>
-<span id="cb243-72"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-72" tabindex="-1"></a><span class="co"># immediately run the convey_prep function on it</span></span>
-<span id="cb243-73"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-73" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(des_eusilc)</span>
-<span id="cb243-74"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-74" tabindex="-1"></a></span>
-<span id="cb243-75"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-75" tabindex="-1"></a><span class="co"># coefficients do match</span></span>
-<span id="cb243-76"><a href="4.3-quintile-share-ratio-svyqsr.html#cb243-76" tabindex="-1"></a>varpoord_qsr_calculation<span class="sc">$</span>all_result<span class="sc">$</span>value</span></code></pre></div>
+<div class="sourceCode" id="cb247"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb247-1"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-1" tabindex="-1"></a><span class="co"># load the convey package</span></span>
+<span id="cb247-2"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-2" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
+<span id="cb247-3"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-3" tabindex="-1"></a></span>
+<span id="cb247-4"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-4" tabindex="-1"></a><span class="co"># load the survey library</span></span>
+<span id="cb247-5"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-5" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb247-6"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-6" tabindex="-1"></a></span>
+<span id="cb247-7"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-7" tabindex="-1"></a><span class="co"># load the vardpoor library</span></span>
+<span id="cb247-8"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-8" tabindex="-1"></a><span class="fu">library</span>(vardpoor)</span>
+<span id="cb247-9"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-9" tabindex="-1"></a></span>
+<span id="cb247-10"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-10" tabindex="-1"></a><span class="co"># load the laeken library</span></span>
+<span id="cb247-11"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-11" tabindex="-1"></a><span class="fu">library</span>(laeken)</span>
+<span id="cb247-12"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-12" tabindex="-1"></a></span>
+<span id="cb247-13"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-13" tabindex="-1"></a><span class="co"># load the synthetic EU statistics on income &amp; living conditions</span></span>
+<span id="cb247-14"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-14" tabindex="-1"></a><span class="fu">data</span>(eusilc)</span>
+<span id="cb247-15"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-15" tabindex="-1"></a></span>
+<span id="cb247-16"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-16" tabindex="-1"></a><span class="co"># make all column names lowercase</span></span>
+<span id="cb247-17"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-17" tabindex="-1"></a><span class="fu">names</span>(eusilc) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(eusilc))</span>
+<span id="cb247-18"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-18" tabindex="-1"></a></span>
+<span id="cb247-19"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-19" tabindex="-1"></a><span class="co"># add a column with the row number</span></span>
+<span id="cb247-20"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-20" tabindex="-1"></a>dati <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">data.table</span>(<span class="at">IDd =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(eusilc), eusilc)</span>
+<span id="cb247-21"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-21" tabindex="-1"></a></span>
+<span id="cb247-22"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-22" tabindex="-1"></a><span class="co"># calculate the qsr coefficient</span></span>
+<span id="cb247-23"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-23" tabindex="-1"></a><span class="co"># using the R vardpoor library</span></span>
+<span id="cb247-24"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-24" tabindex="-1"></a>varpoord_qsr_calculation <span class="ot">&lt;-</span></span>
+<span id="cb247-25"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-25" tabindex="-1"></a>  <span class="fu">varpoord</span>(</span>
+<span id="cb247-26"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-26" tabindex="-1"></a>    <span class="co"># analysis variable</span></span>
+<span id="cb247-27"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-27" tabindex="-1"></a>    <span class="at">Y =</span> <span class="st">&quot;eqincome&quot;</span>,</span>
+<span id="cb247-28"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-28" tabindex="-1"></a>    </span>
+<span id="cb247-29"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-29" tabindex="-1"></a>    <span class="co"># weights variable</span></span>
+<span id="cb247-30"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-30" tabindex="-1"></a>    <span class="at">w_final =</span> <span class="st">&quot;rb050&quot;</span>,</span>
+<span id="cb247-31"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-31" tabindex="-1"></a>    </span>
+<span id="cb247-32"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-32" tabindex="-1"></a>    <span class="co"># row number variable</span></span>
+<span id="cb247-33"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-33" tabindex="-1"></a>    <span class="at">ID_level1 =</span> <span class="st">&quot;IDd&quot;</span>,</span>
+<span id="cb247-34"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-34" tabindex="-1"></a>    </span>
+<span id="cb247-35"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-35" tabindex="-1"></a>    <span class="co"># row number variable</span></span>
+<span id="cb247-36"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-36" tabindex="-1"></a>    <span class="at">ID_level2 =</span> <span class="st">&quot;IDd&quot;</span>,</span>
+<span id="cb247-37"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-37" tabindex="-1"></a>    </span>
+<span id="cb247-38"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-38" tabindex="-1"></a>    <span class="co"># strata variable</span></span>
+<span id="cb247-39"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-39" tabindex="-1"></a>    <span class="at">H =</span> <span class="st">&quot;db040&quot;</span>,</span>
+<span id="cb247-40"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-40" tabindex="-1"></a>    </span>
+<span id="cb247-41"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-41" tabindex="-1"></a>    <span class="at">N_h =</span> <span class="cn">NULL</span> ,</span>
+<span id="cb247-42"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-42" tabindex="-1"></a>    </span>
+<span id="cb247-43"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-43" tabindex="-1"></a>    <span class="co"># clustering variable</span></span>
+<span id="cb247-44"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-44" tabindex="-1"></a>    <span class="at">PSU =</span> <span class="st">&quot;rb030&quot;</span>,</span>
+<span id="cb247-45"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-45" tabindex="-1"></a>    </span>
+<span id="cb247-46"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-46" tabindex="-1"></a>    <span class="co"># data.table</span></span>
+<span id="cb247-47"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-47" tabindex="-1"></a>    <span class="at">dataset =</span> dati,</span>
+<span id="cb247-48"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-48" tabindex="-1"></a>    </span>
+<span id="cb247-49"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-49" tabindex="-1"></a>    <span class="co"># qsr coefficient function</span></span>
+<span id="cb247-50"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-50" tabindex="-1"></a>    <span class="at">type =</span> <span class="st">&quot;linqsr&quot;</span>,</span>
+<span id="cb247-51"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-51" tabindex="-1"></a>    </span>
+<span id="cb247-52"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-52" tabindex="-1"></a>    <span class="co"># poverty threshold range</span></span>
+<span id="cb247-53"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-53" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="dv">20</span> ,</span>
+<span id="cb247-54"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-54" tabindex="-1"></a>    </span>
+<span id="cb247-55"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-55" tabindex="-1"></a>    <span class="co"># get linearized variable</span></span>
+<span id="cb247-56"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-56" tabindex="-1"></a>    <span class="at">outp_lin =</span> <span class="cn">TRUE</span></span>
+<span id="cb247-57"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-57" tabindex="-1"></a>    </span>
+<span id="cb247-58"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-58" tabindex="-1"></a>  )</span>
+<span id="cb247-59"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-59" tabindex="-1"></a></span>
+<span id="cb247-60"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-60" tabindex="-1"></a></span>
+<span id="cb247-61"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-61" tabindex="-1"></a></span>
+<span id="cb247-62"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-62" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
+<span id="cb247-63"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-63" tabindex="-1"></a><span class="co"># using our recommended setup</span></span>
+<span id="cb247-64"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-64" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span></span>
+<span id="cb247-65"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-65" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
+<span id="cb247-66"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-66" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
+<span id="cb247-67"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-67" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
+<span id="cb247-68"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-68" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
+<span id="cb247-69"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-69" tabindex="-1"></a>    <span class="at">data =</span> eusilc</span>
+<span id="cb247-70"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-70" tabindex="-1"></a>  )</span>
+<span id="cb247-71"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-71" tabindex="-1"></a></span>
+<span id="cb247-72"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-72" tabindex="-1"></a><span class="co"># immediately run the convey_prep function on it</span></span>
+<span id="cb247-73"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-73" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(des_eusilc)</span>
+<span id="cb247-74"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-74" tabindex="-1"></a></span>
+<span id="cb247-75"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-75" tabindex="-1"></a><span class="co"># coefficients do match</span></span>
+<span id="cb247-76"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-76" tabindex="-1"></a>varpoord_qsr_calculation<span class="sc">$</span>all_result<span class="sc">$</span>value</span></code></pre></div>
 <pre><code>## [1] 3.970004</code></pre>
-<div class="sourceCode" id="cb245"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb245-1"><a href="4.3-quintile-share-ratio-svyqsr.html#cb245-1" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">svyqsr</span>( <span class="sc">~</span> eqincome , des_eusilc))</span></code></pre></div>
+<div class="sourceCode" id="cb249"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb249-1"><a href="4.3-quintile-share-ratio-svyqsr.html#cb249-1" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">svyqsr</span>( <span class="sc">~</span> eqincome , des_eusilc))</span></code></pre></div>
 <pre><code>## eqincome 
 ## 3.970004</code></pre>
-<div class="sourceCode" id="cb247"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb247-1"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-1" tabindex="-1"></a><span class="co"># linearized variables do match</span></span>
-<span id="cb247-2"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-2" tabindex="-1"></a><span class="co"># vardpoor</span></span>
-<span id="cb247-3"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-3" tabindex="-1"></a>lin_qsr_varpoord <span class="ot">&lt;-</span> varpoord_qsr_calculation<span class="sc">$</span>lin_out<span class="sc">$</span>lin_qsr</span>
-<span id="cb247-4"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-4" tabindex="-1"></a><span class="co"># convey</span></span>
-<span id="cb247-5"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-5" tabindex="-1"></a>lin_qsr_convey <span class="ot">&lt;-</span></span>
-<span id="cb247-6"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-6" tabindex="-1"></a>  <span class="fu">as.numeric</span>(<span class="fu">attr</span>(<span class="fu">svyqsr</span>( <span class="sc">~</span> eqincome ,</span>
-<span id="cb247-7"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-7" tabindex="-1"></a>                          des_eusilc ,</span>
-<span id="cb247-8"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-8" tabindex="-1"></a>                          <span class="at">linearized =</span> <span class="cn">TRUE</span>) ,</span>
-<span id="cb247-9"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-9" tabindex="-1"></a>                  <span class="st">&quot;linearized&quot;</span>))</span>
-<span id="cb247-10"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-10" tabindex="-1"></a></span>
-<span id="cb247-11"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-11" tabindex="-1"></a><span class="co"># check equality</span></span>
-<span id="cb247-12"><a href="4.3-quintile-share-ratio-svyqsr.html#cb247-12" tabindex="-1"></a><span class="fu">all.equal</span>(lin_qsr_varpoord, lin_qsr_convey)</span></code></pre></div>
+<div class="sourceCode" id="cb251"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb251-1"><a href="4.3-quintile-share-ratio-svyqsr.html#cb251-1" tabindex="-1"></a><span class="co"># linearized variables do match</span></span>
+<span id="cb251-2"><a href="4.3-quintile-share-ratio-svyqsr.html#cb251-2" tabindex="-1"></a><span class="co"># vardpoor</span></span>
+<span id="cb251-3"><a href="4.3-quintile-share-ratio-svyqsr.html#cb251-3" tabindex="-1"></a>lin_qsr_varpoord <span class="ot">&lt;-</span> varpoord_qsr_calculation<span class="sc">$</span>lin_out<span class="sc">$</span>lin_qsr</span>
+<span id="cb251-4"><a href="4.3-quintile-share-ratio-svyqsr.html#cb251-4" tabindex="-1"></a><span class="co"># convey</span></span>
+<span id="cb251-5"><a href="4.3-quintile-share-ratio-svyqsr.html#cb251-5" tabindex="-1"></a>lin_qsr_convey <span class="ot">&lt;-</span></span>
+<span id="cb251-6"><a href="4.3-quintile-share-ratio-svyqsr.html#cb251-6" tabindex="-1"></a>  <span class="fu">as.numeric</span>(<span class="fu">attr</span>(<span class="fu">svyqsr</span>( <span class="sc">~</span> eqincome ,</span>
+<span id="cb251-7"><a href="4.3-quintile-share-ratio-svyqsr.html#cb251-7" tabindex="-1"></a>                          des_eusilc ,</span>
+<span id="cb251-8"><a href="4.3-quintile-share-ratio-svyqsr.html#cb251-8" tabindex="-1"></a>                          <span class="at">linearized =</span> <span class="cn">TRUE</span>) ,</span>
+<span id="cb251-9"><a href="4.3-quintile-share-ratio-svyqsr.html#cb251-9" tabindex="-1"></a>                  <span class="st">&quot;linearized&quot;</span>))</span>
+<span id="cb251-10"><a href="4.3-quintile-share-ratio-svyqsr.html#cb251-10" tabindex="-1"></a></span>
+<span id="cb251-11"><a href="4.3-quintile-share-ratio-svyqsr.html#cb251-11" tabindex="-1"></a><span class="co"># check equality</span></span>
+<span id="cb251-12"><a href="4.3-quintile-share-ratio-svyqsr.html#cb251-12" tabindex="-1"></a><span class="fu">all.equal</span>(lin_qsr_varpoord, lin_qsr_convey)</span></code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
-<div class="sourceCode" id="cb249"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb249-1"><a href="4.3-quintile-share-ratio-svyqsr.html#cb249-1" tabindex="-1"></a><span class="co"># variances do not match exactly</span></span>
-<span id="cb249-2"><a href="4.3-quintile-share-ratio-svyqsr.html#cb249-2" tabindex="-1"></a><span class="fu">attr</span>(<span class="fu">svyqsr</span>( <span class="sc">~</span> eqincome , des_eusilc) , <span class="st">&#39;var&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb253"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb253-1"><a href="4.3-quintile-share-ratio-svyqsr.html#cb253-1" tabindex="-1"></a><span class="co"># variances do not match exactly</span></span>
+<span id="cb253-2"><a href="4.3-quintile-share-ratio-svyqsr.html#cb253-2" tabindex="-1"></a><span class="fu">attr</span>(<span class="fu">svyqsr</span>( <span class="sc">~</span> eqincome , des_eusilc) , <span class="st">&#39;var&#39;</span>)</span></code></pre></div>
 <pre><code>##             eqincome
 ## eqincome 0.001810537</code></pre>
-<div class="sourceCode" id="cb251"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb251-1"><a href="4.3-quintile-share-ratio-svyqsr.html#cb251-1" tabindex="-1"></a>varpoord_qsr_calculation<span class="sc">$</span>all_result<span class="sc">$</span>var</span></code></pre></div>
+<div class="sourceCode" id="cb255"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb255-1"><a href="4.3-quintile-share-ratio-svyqsr.html#cb255-1" tabindex="-1"></a>varpoord_qsr_calculation<span class="sc">$</span>all_result<span class="sc">$</span>var</span></code></pre></div>
 <pre><code>## [1] 0.001807323</code></pre>
-<div class="sourceCode" id="cb253"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb253-1"><a href="4.3-quintile-share-ratio-svyqsr.html#cb253-1" tabindex="-1"></a><span class="co"># standard errors do not match exactly</span></span>
-<span id="cb253-2"><a href="4.3-quintile-share-ratio-svyqsr.html#cb253-2" tabindex="-1"></a>varpoord_qsr_calculation<span class="sc">$</span>all_result<span class="sc">$</span>se</span></code></pre></div>
+<div class="sourceCode" id="cb257"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb257-1"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-1" tabindex="-1"></a><span class="co"># standard errors do not match exactly</span></span>
+<span id="cb257-2"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-2" tabindex="-1"></a>varpoord_qsr_calculation<span class="sc">$</span>all_result<span class="sc">$</span>se</span></code></pre></div>
 <pre><code>## [1] 0.04251263</code></pre>
-<div class="sourceCode" id="cb255"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb255-1"><a href="4.3-quintile-share-ratio-svyqsr.html#cb255-1" tabindex="-1"></a><span class="fu">SE</span>(<span class="fu">svyqsr</span>( <span class="sc">~</span> eqincome , des_eusilc))</span></code></pre></div>
+<div class="sourceCode" id="cb259"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb259-1"><a href="4.3-quintile-share-ratio-svyqsr.html#cb259-1" tabindex="-1"></a><span class="fu">SE</span>(<span class="fu">svyqsr</span>( <span class="sc">~</span> eqincome , des_eusilc))</span></code></pre></div>
 <pre><code>##            eqincome
 ## eqincome 0.04255041</code></pre>
 <p>The variance estimate is computed by using the approximation defined in <a href="2.1-var.html#var">2.1</a>, while the linearized variable <span class="math inline">\(z\)</span> is defined by <a href="2-lin.html#lin">2</a>. The functions <code>convey::svyqsr</code> and <code>vardpoor::linqsr</code> produce the same linearized variable <span class="math inline">\(z\)</span>.</p>
 <p>However, the measures of uncertainty do not line up, because <code>library(vardpoor)</code> defaults to an ultimate cluster method that can be replicated with an alternative setup of the <code>survey.design</code> object.</p>
-<div class="sourceCode" id="cb257"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb257-1"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-1" tabindex="-1"></a><span class="co"># within each strata, sum up the weights</span></span>
-<span id="cb257-2"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-2" tabindex="-1"></a>cluster_sums <span class="ot">&lt;-</span></span>
-<span id="cb257-3"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-3" tabindex="-1"></a>  <span class="fu">aggregate</span>(eusilc<span class="sc">$</span>rb050 , <span class="fu">list</span>(eusilc<span class="sc">$</span>db040) , sum)</span>
-<span id="cb257-4"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-4" tabindex="-1"></a></span>
-<span id="cb257-5"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-5" tabindex="-1"></a><span class="co"># name the within-strata sums of weights the `cluster_sum`</span></span>
-<span id="cb257-6"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-6" tabindex="-1"></a><span class="fu">names</span>(cluster_sums) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;db040&quot;</span> , <span class="st">&quot;cluster_sum&quot;</span>)</span>
-<span id="cb257-7"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-7" tabindex="-1"></a></span>
-<span id="cb257-8"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-8" tabindex="-1"></a><span class="co"># merge this column back onto the data.frame</span></span>
-<span id="cb257-9"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-9" tabindex="-1"></a>eusilc <span class="ot">&lt;-</span> <span class="fu">merge</span>(eusilc , cluster_sums)</span>
-<span id="cb257-10"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-10" tabindex="-1"></a></span>
-<span id="cb257-11"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-11" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
-<span id="cb257-12"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-12" tabindex="-1"></a><span class="co"># with the fpc using the cluster sum</span></span>
-<span id="cb257-13"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-13" tabindex="-1"></a>des_eusilc_ultimate_cluster <span class="ot">&lt;-</span></span>
-<span id="cb257-14"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-14" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
-<span id="cb257-15"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-15" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
-<span id="cb257-16"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-16" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
-<span id="cb257-17"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-17" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
-<span id="cb257-18"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-18" tabindex="-1"></a>    <span class="at">data =</span> eusilc ,</span>
-<span id="cb257-19"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-19" tabindex="-1"></a>    <span class="at">fpc =</span> <span class="sc">~</span> cluster_sum</span>
-<span id="cb257-20"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-20" tabindex="-1"></a>  )</span>
-<span id="cb257-21"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-21" tabindex="-1"></a></span>
-<span id="cb257-22"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-22" tabindex="-1"></a><span class="co"># again, immediately run the convey_prep function on the `survey.design`</span></span>
-<span id="cb257-23"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-23" tabindex="-1"></a>des_eusilc_ultimate_cluster <span class="ot">&lt;-</span></span>
-<span id="cb257-24"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-24" tabindex="-1"></a>  <span class="fu">convey_prep</span>(des_eusilc_ultimate_cluster)</span>
-<span id="cb257-25"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-25" tabindex="-1"></a></span>
-<span id="cb257-26"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-26" tabindex="-1"></a><span class="co"># matches</span></span>
-<span id="cb257-27"><a href="4.3-quintile-share-ratio-svyqsr.html#cb257-27" tabindex="-1"></a><span class="fu">attr</span>(<span class="fu">svyqsr</span>( <span class="sc">~</span> eqincome , des_eusilc_ultimate_cluster) , <span class="st">&#39;var&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb261"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb261-1"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-1" tabindex="-1"></a><span class="co"># within each strata, sum up the weights</span></span>
+<span id="cb261-2"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-2" tabindex="-1"></a>cluster_sums <span class="ot">&lt;-</span></span>
+<span id="cb261-3"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-3" tabindex="-1"></a>  <span class="fu">aggregate</span>(eusilc<span class="sc">$</span>rb050 , <span class="fu">list</span>(eusilc<span class="sc">$</span>db040) , sum)</span>
+<span id="cb261-4"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-4" tabindex="-1"></a></span>
+<span id="cb261-5"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-5" tabindex="-1"></a><span class="co"># name the within-strata sums of weights the `cluster_sum`</span></span>
+<span id="cb261-6"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-6" tabindex="-1"></a><span class="fu">names</span>(cluster_sums) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;db040&quot;</span> , <span class="st">&quot;cluster_sum&quot;</span>)</span>
+<span id="cb261-7"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-7" tabindex="-1"></a></span>
+<span id="cb261-8"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-8" tabindex="-1"></a><span class="co"># merge this column back onto the data.frame</span></span>
+<span id="cb261-9"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-9" tabindex="-1"></a>eusilc <span class="ot">&lt;-</span> <span class="fu">merge</span>(eusilc , cluster_sums)</span>
+<span id="cb261-10"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-10" tabindex="-1"></a></span>
+<span id="cb261-11"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-11" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
+<span id="cb261-12"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-12" tabindex="-1"></a><span class="co"># with the fpc using the cluster sum</span></span>
+<span id="cb261-13"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-13" tabindex="-1"></a>des_eusilc_ultimate_cluster <span class="ot">&lt;-</span></span>
+<span id="cb261-14"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-14" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
+<span id="cb261-15"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-15" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
+<span id="cb261-16"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-16" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
+<span id="cb261-17"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-17" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
+<span id="cb261-18"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-18" tabindex="-1"></a>    <span class="at">data =</span> eusilc ,</span>
+<span id="cb261-19"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-19" tabindex="-1"></a>    <span class="at">fpc =</span> <span class="sc">~</span> cluster_sum</span>
+<span id="cb261-20"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-20" tabindex="-1"></a>  )</span>
+<span id="cb261-21"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-21" tabindex="-1"></a></span>
+<span id="cb261-22"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-22" tabindex="-1"></a><span class="co"># again, immediately run the convey_prep function on the `survey.design`</span></span>
+<span id="cb261-23"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-23" tabindex="-1"></a>des_eusilc_ultimate_cluster <span class="ot">&lt;-</span></span>
+<span id="cb261-24"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-24" tabindex="-1"></a>  <span class="fu">convey_prep</span>(des_eusilc_ultimate_cluster)</span>
+<span id="cb261-25"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-25" tabindex="-1"></a></span>
+<span id="cb261-26"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-26" tabindex="-1"></a><span class="co"># matches</span></span>
+<span id="cb261-27"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-27" tabindex="-1"></a><span class="fu">attr</span>(<span class="fu">svyqsr</span>( <span class="sc">~</span> eqincome , des_eusilc_ultimate_cluster) , <span class="st">&#39;var&#39;</span>)</span></code></pre></div>
 <pre><code>##             eqincome
 ## eqincome 0.001807323</code></pre>
-<div class="sourceCode" id="cb259"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb259-1"><a href="4.3-quintile-share-ratio-svyqsr.html#cb259-1" tabindex="-1"></a>varpoord_qsr_calculation<span class="sc">$</span>all_result<span class="sc">$</span>var</span></code></pre></div>
+<div class="sourceCode" id="cb263"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb263-1"><a href="4.3-quintile-share-ratio-svyqsr.html#cb263-1" tabindex="-1"></a>varpoord_qsr_calculation<span class="sc">$</span>all_result<span class="sc">$</span>var</span></code></pre></div>
 <pre><code>## [1] 0.001807323</code></pre>
-<div class="sourceCode" id="cb261"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb261-1"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-1" tabindex="-1"></a><span class="co"># matches</span></span>
-<span id="cb261-2"><a href="4.3-quintile-share-ratio-svyqsr.html#cb261-2" tabindex="-1"></a>varpoord_qsr_calculation<span class="sc">$</span>all_result<span class="sc">$</span>se</span></code></pre></div>
+<div class="sourceCode" id="cb265"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb265-1"><a href="4.3-quintile-share-ratio-svyqsr.html#cb265-1" tabindex="-1"></a><span class="co"># matches</span></span>
+<span id="cb265-2"><a href="4.3-quintile-share-ratio-svyqsr.html#cb265-2" tabindex="-1"></a>varpoord_qsr_calculation<span class="sc">$</span>all_result<span class="sc">$</span>se</span></code></pre></div>
 <pre><code>## [1] 0.04251263</code></pre>
-<div class="sourceCode" id="cb263"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb263-1"><a href="4.3-quintile-share-ratio-svyqsr.html#cb263-1" tabindex="-1"></a><span class="fu">SE</span>(<span class="fu">svyqsr</span>( <span class="sc">~</span> eqincome , des_eusilc_ultimate_cluster))</span></code></pre></div>
+<div class="sourceCode" id="cb267"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb267-1"><a href="4.3-quintile-share-ratio-svyqsr.html#cb267-1" tabindex="-1"></a><span class="fu">SE</span>(<span class="fu">svyqsr</span>( <span class="sc">~</span> eqincome , des_eusilc_ultimate_cluster))</span></code></pre></div>
 <pre><code>##            eqincome
 ## eqincome 0.04251263</code></pre>
 <p>For additional usage examples of <code>svyqsr</code>, type <code>?convey::svyqsr</code> in the R console.</p>

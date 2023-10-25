@@ -11,9 +11,9 @@
 <meta property="og:description" content="A book about the R convey package" />
 <meta name="github-repo" content="guilhermejacob/context" />
 
-<meta name="author" content="Guilherme Jacob, Anthony Damico, and Djalma Pessoa" />
+<meta name="author" content="By Guilherme Jacob, Anthony Damico, and Djalma Pessoa. The authors received no external funding for the convey software and this accompanying textbook." />
 
-<meta name="date" content="2023-10-20" />
+<meta name="date" content="2023-10-25" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -234,9 +234,9 @@ div.csl-indent {
 </ul></li>
 <li class="has-sub"><a href="5-richness.html#richness" id="toc-richness"><span class="toc-section-number">5</span> Richness</a>
 <ul>
-<li class="has-sub"><a href="5.1-richness-measures.html#richness-measures" id="toc-richness-measures"><span class="toc-section-number">5.1</span> Richness Measures</a>
+<li class="has-sub"><a href="5.1-richness-measures-svyrich.html#richness-measures-svyrich" id="toc-richness-measures-svyrich"><span class="toc-section-number">5.1</span> Richness Measures (svyrich)</a>
 <ul>
-<li><a href="5.1-richness-measures.html#monte-carlo-simulation-3" id="toc-monte-carlo-simulation-3"><span class="toc-section-number">5.1.1</span> Monte Carlo Simulation</a></li>
+<li><a href="5.1-richness-measures-svyrich.html#monte-carlo-simulation-3" id="toc-monte-carlo-simulation-3"><span class="toc-section-number">5.1.1</span> Monte Carlo Simulation</a></li>
 </ul></li>
 </ul></li>
 <li class="has-sub"><a href="6-future-research.html#future-research" id="toc-future-research"><span class="toc-section-number">6</span> Future Research</a>
@@ -258,6 +258,13 @@ div.csl-indent {
 <div class="col-sm-12">
 <div id="lorenz-curve-svylorenz" class="section level2" number="4.5">
 <h2><span class="header-section-number">4.5</span> Lorenz Curve (svylorenz)</h2>
+<div class="sourceCode" id="cb269"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb269-1"><a href="4.5-lorenz-curve-svylorenz.html#cb269-1" tabindex="-1"></a>✔️ graphical device <span class="cf">for</span> understanding inequality measurement</span>
+<span id="cb269-2"><a href="4.5-lorenz-curve-svylorenz.html#cb269-2" tabindex="-1"></a>✔️ simple to understand</span>
+<span id="cb269-3"><a href="4.5-lorenz-curve-svylorenz.html#cb269-3" tabindex="-1"></a>✔️ conveys information about inequality across the entire income distribution</span>
+<span id="cb269-4"><a href="4.5-lorenz-curve-svylorenz.html#cb269-4" tabindex="-1"></a>✔️ Lorenz dominance and inequality measure ordering</span>
+<span id="cb269-5"><a href="4.5-lorenz-curve-svylorenz.html#cb269-5" tabindex="-1"></a>❌ testing Lorenz dominance is difficult</span>
+<span id="cb269-6"><a href="4.5-lorenz-curve-svylorenz.html#cb269-6" tabindex="-1"></a>❌ can hide inequality <span class="cf">in</span> the top or bottom</span>
+<span id="cb269-7"><a href="4.5-lorenz-curve-svylorenz.html#cb269-7" tabindex="-1"></a>❌ cannot be summarised into a single number</span></code></pre></div>
 <p>Though not an inequality measure in itself, the Lorenz curve is a classic instrument of distribution analysis. This function associates a cumulative share of the population to the share of the total income earned. In mathematical terms,</p>
 <p><span class="math display">\[
 L(p) = \frac{\int_{-\infty}^{Q_p}yf(y)dy}{\int_{-\infty}^{+\infty}yf(y)dy}
@@ -294,57 +301,57 @@ L(p) = \frac{ \sum_{i \in S} w_i \cdot y_i \cdot \delta \{ y_i \le \widehat{Q}_p
 <div id="replication-example-8" class="section level3" number="4.5.1">
 <h3><span class="header-section-number">4.5.1</span> Replication Example</h3>
 <p>In October 2016, <span class="citation">(<label for="tufte-mn-70" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-70" class="margin-toggle">Jann 2016<span class="marginnote">Jann, Ben. 2016. <span>“<span class="nocase">Estimating Lorenz and concentration curves in Stata</span>.”</span> University of Bern Social Sciences Working Papers 15. University of Bern, Department of Social Sciences. <a href="https://ideas.repec.org/p/bss/wpaper/15.html">https://ideas.repec.org/p/bss/wpaper/15.html</a>.</span>)</span> released a pre-publication working paper to estimate Lorenz and concentration curves using stata. The example below reproduces the statistics presented in his section 4.1.</p>
-<div class="sourceCode" id="cb265"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb265-1"><a href="4.5-lorenz-curve-svylorenz.html#cb265-1" tabindex="-1"></a><span class="co"># load the convey package</span></span>
-<span id="cb265-2"><a href="4.5-lorenz-curve-svylorenz.html#cb265-2" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
-<span id="cb265-3"><a href="4.5-lorenz-curve-svylorenz.html#cb265-3" tabindex="-1"></a></span>
-<span id="cb265-4"><a href="4.5-lorenz-curve-svylorenz.html#cb265-4" tabindex="-1"></a><span class="co"># load the survey library</span></span>
-<span id="cb265-5"><a href="4.5-lorenz-curve-svylorenz.html#cb265-5" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
-<span id="cb265-6"><a href="4.5-lorenz-curve-svylorenz.html#cb265-6" tabindex="-1"></a></span>
-<span id="cb265-7"><a href="4.5-lorenz-curve-svylorenz.html#cb265-7" tabindex="-1"></a><span class="co"># load the stata-style webuse library</span></span>
-<span id="cb265-8"><a href="4.5-lorenz-curve-svylorenz.html#cb265-8" tabindex="-1"></a><span class="fu">library</span>(webuse)</span>
-<span id="cb265-9"><a href="4.5-lorenz-curve-svylorenz.html#cb265-9" tabindex="-1"></a></span>
-<span id="cb265-10"><a href="4.5-lorenz-curve-svylorenz.html#cb265-10" tabindex="-1"></a><span class="co"># load the NLSW 1988 data</span></span>
-<span id="cb265-11"><a href="4.5-lorenz-curve-svylorenz.html#cb265-11" tabindex="-1"></a><span class="fu">webuse</span>(<span class="st">&quot;nlsw88&quot;</span>)</span>
-<span id="cb265-12"><a href="4.5-lorenz-curve-svylorenz.html#cb265-12" tabindex="-1"></a></span>
-<span id="cb265-13"><a href="4.5-lorenz-curve-svylorenz.html#cb265-13" tabindex="-1"></a><span class="co"># coerce that `tbl_df` to a standard R `data.frame`</span></span>
-<span id="cb265-14"><a href="4.5-lorenz-curve-svylorenz.html#cb265-14" tabindex="-1"></a>nlsw88 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(nlsw88)</span>
-<span id="cb265-15"><a href="4.5-lorenz-curve-svylorenz.html#cb265-15" tabindex="-1"></a></span>
-<span id="cb265-16"><a href="4.5-lorenz-curve-svylorenz.html#cb265-16" tabindex="-1"></a><span class="co"># initiate a linearized survey design object</span></span>
-<span id="cb265-17"><a href="4.5-lorenz-curve-svylorenz.html#cb265-17" tabindex="-1"></a>des_nlsw88 <span class="ot">&lt;-</span> <span class="fu">svydesign</span>(<span class="at">ids =</span> <span class="sc">~</span> <span class="dv">1</span> , <span class="at">data =</span> nlsw88)</span></code></pre></div>
+<div class="sourceCode" id="cb270"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb270-1"><a href="4.5-lorenz-curve-svylorenz.html#cb270-1" tabindex="-1"></a><span class="co"># load the convey package</span></span>
+<span id="cb270-2"><a href="4.5-lorenz-curve-svylorenz.html#cb270-2" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
+<span id="cb270-3"><a href="4.5-lorenz-curve-svylorenz.html#cb270-3" tabindex="-1"></a></span>
+<span id="cb270-4"><a href="4.5-lorenz-curve-svylorenz.html#cb270-4" tabindex="-1"></a><span class="co"># load the survey library</span></span>
+<span id="cb270-5"><a href="4.5-lorenz-curve-svylorenz.html#cb270-5" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb270-6"><a href="4.5-lorenz-curve-svylorenz.html#cb270-6" tabindex="-1"></a></span>
+<span id="cb270-7"><a href="4.5-lorenz-curve-svylorenz.html#cb270-7" tabindex="-1"></a><span class="co"># load the stata-style webuse library</span></span>
+<span id="cb270-8"><a href="4.5-lorenz-curve-svylorenz.html#cb270-8" tabindex="-1"></a><span class="fu">library</span>(webuse)</span>
+<span id="cb270-9"><a href="4.5-lorenz-curve-svylorenz.html#cb270-9" tabindex="-1"></a></span>
+<span id="cb270-10"><a href="4.5-lorenz-curve-svylorenz.html#cb270-10" tabindex="-1"></a><span class="co"># load the NLSW 1988 data</span></span>
+<span id="cb270-11"><a href="4.5-lorenz-curve-svylorenz.html#cb270-11" tabindex="-1"></a><span class="fu">webuse</span>(<span class="st">&quot;nlsw88&quot;</span>)</span>
+<span id="cb270-12"><a href="4.5-lorenz-curve-svylorenz.html#cb270-12" tabindex="-1"></a></span>
+<span id="cb270-13"><a href="4.5-lorenz-curve-svylorenz.html#cb270-13" tabindex="-1"></a><span class="co"># coerce that `tbl_df` to a standard R `data.frame`</span></span>
+<span id="cb270-14"><a href="4.5-lorenz-curve-svylorenz.html#cb270-14" tabindex="-1"></a>nlsw88 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(nlsw88)</span>
+<span id="cb270-15"><a href="4.5-lorenz-curve-svylorenz.html#cb270-15" tabindex="-1"></a></span>
+<span id="cb270-16"><a href="4.5-lorenz-curve-svylorenz.html#cb270-16" tabindex="-1"></a><span class="co"># initiate a linearized survey design object</span></span>
+<span id="cb270-17"><a href="4.5-lorenz-curve-svylorenz.html#cb270-17" tabindex="-1"></a>des_nlsw88 <span class="ot">&lt;-</span> <span class="fu">svydesign</span>(<span class="at">ids =</span> <span class="sc">~</span> <span class="dv">1</span> , <span class="at">data =</span> nlsw88)</span></code></pre></div>
 <pre><code>## Warning in svydesign.default(ids = ~1, data = nlsw88): No weights or
 ## probabilities supplied, assuming equal probability</code></pre>
-<div class="sourceCode" id="cb267"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb267-1"><a href="4.5-lorenz-curve-svylorenz.html#cb267-1" tabindex="-1"></a><span class="co"># immediately run the `convey_prep` function on the survey design</span></span>
-<span id="cb267-2"><a href="4.5-lorenz-curve-svylorenz.html#cb267-2" tabindex="-1"></a>des_nlsw88 <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(des_nlsw88)</span>
-<span id="cb267-3"><a href="4.5-lorenz-curve-svylorenz.html#cb267-3" tabindex="-1"></a></span>
-<span id="cb267-4"><a href="4.5-lorenz-curve-svylorenz.html#cb267-4" tabindex="-1"></a><span class="co"># estimates lorenz curve</span></span>
-<span id="cb267-5"><a href="4.5-lorenz-curve-svylorenz.html#cb267-5" tabindex="-1"></a>result.lin <span class="ot">&lt;-</span></span>
-<span id="cb267-6"><a href="4.5-lorenz-curve-svylorenz.html#cb267-6" tabindex="-1"></a>  <span class="fu">svylorenz</span>( <span class="sc">~</span> wage,</span>
-<span id="cb267-7"><a href="4.5-lorenz-curve-svylorenz.html#cb267-7" tabindex="-1"></a>             des_nlsw88,</span>
-<span id="cb267-8"><a href="4.5-lorenz-curve-svylorenz.html#cb267-8" tabindex="-1"></a>             <span class="at">quantiles =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, .<span class="dv">05</span>),</span>
-<span id="cb267-9"><a href="4.5-lorenz-curve-svylorenz.html#cb267-9" tabindex="-1"></a>             <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
-<p><img src="context_files/figure-html/unnamed-chunk-60-1.png" width="672"  /></p>
-<div class="sourceCode" id="cb268"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb268-1"><a href="4.5-lorenz-curve-svylorenz.html#cb268-1" tabindex="-1"></a><span class="co"># note: most survey commands in R use Inf degrees of freedom by default</span></span>
-<span id="cb268-2"><a href="4.5-lorenz-curve-svylorenz.html#cb268-2" tabindex="-1"></a><span class="co"># stata generally uses the degrees of freedom of the survey design.</span></span>
-<span id="cb268-3"><a href="4.5-lorenz-curve-svylorenz.html#cb268-3" tabindex="-1"></a><span class="co"># therefore, while the degf() parameters passed to qt()</span></span>
-<span id="cb268-4"><a href="4.5-lorenz-curve-svylorenz.html#cb268-4" tabindex="-1"></a><span class="co"># serve to prove a precise replication of stata,</span></span>
-<span id="cb268-5"><a href="4.5-lorenz-curve-svylorenz.html#cb268-5" tabindex="-1"></a><span class="co"># it is generally not necessary</span></span>
-<span id="cb268-6"><a href="4.5-lorenz-curve-svylorenz.html#cb268-6" tabindex="-1"></a>section_four_one <span class="ot">&lt;-</span></span>
-<span id="cb268-7"><a href="4.5-lorenz-curve-svylorenz.html#cb268-7" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
-<span id="cb268-8"><a href="4.5-lorenz-curve-svylorenz.html#cb268-8" tabindex="-1"></a>    <span class="at">estimate =</span> <span class="fu">coef</span>(result.lin) ,</span>
-<span id="cb268-9"><a href="4.5-lorenz-curve-svylorenz.html#cb268-9" tabindex="-1"></a>    <span class="at">standard_error =</span> <span class="fu">SE</span>(result.lin) ,</span>
-<span id="cb268-10"><a href="4.5-lorenz-curve-svylorenz.html#cb268-10" tabindex="-1"></a>    <span class="at">ci_lower_bound =</span></span>
-<span id="cb268-11"><a href="4.5-lorenz-curve-svylorenz.html#cb268-11" tabindex="-1"></a>      <span class="fu">coef</span>(result.lin) <span class="sc">+</span></span>
-<span id="cb268-12"><a href="4.5-lorenz-curve-svylorenz.html#cb268-12" tabindex="-1"></a>      <span class="fu">SE</span>(result.lin) <span class="sc">*</span></span>
-<span id="cb268-13"><a href="4.5-lorenz-curve-svylorenz.html#cb268-13" tabindex="-1"></a>      <span class="fu">qt</span>(<span class="fl">0.025</span> , <span class="fu">degf</span>(<span class="fu">subset</span>(</span>
-<span id="cb268-14"><a href="4.5-lorenz-curve-svylorenz.html#cb268-14" tabindex="-1"></a>        des_nlsw88 , <span class="sc">!</span><span class="fu">is.na</span>(wage)</span>
-<span id="cb268-15"><a href="4.5-lorenz-curve-svylorenz.html#cb268-15" tabindex="-1"></a>      ))) ,</span>
-<span id="cb268-16"><a href="4.5-lorenz-curve-svylorenz.html#cb268-16" tabindex="-1"></a>    <span class="at">ci_upper_bound =</span></span>
-<span id="cb268-17"><a href="4.5-lorenz-curve-svylorenz.html#cb268-17" tabindex="-1"></a>      <span class="fu">coef</span>(result.lin) <span class="sc">+</span></span>
-<span id="cb268-18"><a href="4.5-lorenz-curve-svylorenz.html#cb268-18" tabindex="-1"></a>      <span class="fu">SE</span>(result.lin) <span class="sc">*</span></span>
-<span id="cb268-19"><a href="4.5-lorenz-curve-svylorenz.html#cb268-19" tabindex="-1"></a>      <span class="fu">qt</span>(<span class="fl">0.975</span> , <span class="fu">degf</span>(<span class="fu">subset</span>(</span>
-<span id="cb268-20"><a href="4.5-lorenz-curve-svylorenz.html#cb268-20" tabindex="-1"></a>        des_nlsw88 , <span class="sc">!</span><span class="fu">is.na</span>(wage)</span>
-<span id="cb268-21"><a href="4.5-lorenz-curve-svylorenz.html#cb268-21" tabindex="-1"></a>      )))</span>
-<span id="cb268-22"><a href="4.5-lorenz-curve-svylorenz.html#cb268-22" tabindex="-1"></a>  )</span></code></pre></div>
+<div class="sourceCode" id="cb272"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb272-1"><a href="4.5-lorenz-curve-svylorenz.html#cb272-1" tabindex="-1"></a><span class="co"># immediately run the `convey_prep` function on the survey design</span></span>
+<span id="cb272-2"><a href="4.5-lorenz-curve-svylorenz.html#cb272-2" tabindex="-1"></a>des_nlsw88 <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(des_nlsw88)</span>
+<span id="cb272-3"><a href="4.5-lorenz-curve-svylorenz.html#cb272-3" tabindex="-1"></a></span>
+<span id="cb272-4"><a href="4.5-lorenz-curve-svylorenz.html#cb272-4" tabindex="-1"></a><span class="co"># estimates lorenz curve</span></span>
+<span id="cb272-5"><a href="4.5-lorenz-curve-svylorenz.html#cb272-5" tabindex="-1"></a>result.lin <span class="ot">&lt;-</span></span>
+<span id="cb272-6"><a href="4.5-lorenz-curve-svylorenz.html#cb272-6" tabindex="-1"></a>  <span class="fu">svylorenz</span>( <span class="sc">~</span> wage,</span>
+<span id="cb272-7"><a href="4.5-lorenz-curve-svylorenz.html#cb272-7" tabindex="-1"></a>             des_nlsw88,</span>
+<span id="cb272-8"><a href="4.5-lorenz-curve-svylorenz.html#cb272-8" tabindex="-1"></a>             <span class="at">quantiles =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, .<span class="dv">05</span>),</span>
+<span id="cb272-9"><a href="4.5-lorenz-curve-svylorenz.html#cb272-9" tabindex="-1"></a>             <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p><img src="context_files/figure-html/unnamed-chunk-70-1.png" width="672"  /></p>
+<div class="sourceCode" id="cb273"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb273-1"><a href="4.5-lorenz-curve-svylorenz.html#cb273-1" tabindex="-1"></a><span class="co"># note: most survey commands in R use Inf degrees of freedom by default</span></span>
+<span id="cb273-2"><a href="4.5-lorenz-curve-svylorenz.html#cb273-2" tabindex="-1"></a><span class="co"># stata generally uses the degrees of freedom of the survey design.</span></span>
+<span id="cb273-3"><a href="4.5-lorenz-curve-svylorenz.html#cb273-3" tabindex="-1"></a><span class="co"># therefore, while the degf() parameters passed to qt()</span></span>
+<span id="cb273-4"><a href="4.5-lorenz-curve-svylorenz.html#cb273-4" tabindex="-1"></a><span class="co"># serve to prove a precise replication of stata,</span></span>
+<span id="cb273-5"><a href="4.5-lorenz-curve-svylorenz.html#cb273-5" tabindex="-1"></a><span class="co"># it is generally not necessary</span></span>
+<span id="cb273-6"><a href="4.5-lorenz-curve-svylorenz.html#cb273-6" tabindex="-1"></a>section_four_one <span class="ot">&lt;-</span></span>
+<span id="cb273-7"><a href="4.5-lorenz-curve-svylorenz.html#cb273-7" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb273-8"><a href="4.5-lorenz-curve-svylorenz.html#cb273-8" tabindex="-1"></a>    <span class="at">estimate =</span> <span class="fu">coef</span>(result.lin) ,</span>
+<span id="cb273-9"><a href="4.5-lorenz-curve-svylorenz.html#cb273-9" tabindex="-1"></a>    <span class="at">standard_error =</span> <span class="fu">SE</span>(result.lin) ,</span>
+<span id="cb273-10"><a href="4.5-lorenz-curve-svylorenz.html#cb273-10" tabindex="-1"></a>    <span class="at">ci_lower_bound =</span></span>
+<span id="cb273-11"><a href="4.5-lorenz-curve-svylorenz.html#cb273-11" tabindex="-1"></a>      <span class="fu">coef</span>(result.lin) <span class="sc">+</span></span>
+<span id="cb273-12"><a href="4.5-lorenz-curve-svylorenz.html#cb273-12" tabindex="-1"></a>      <span class="fu">SE</span>(result.lin) <span class="sc">*</span></span>
+<span id="cb273-13"><a href="4.5-lorenz-curve-svylorenz.html#cb273-13" tabindex="-1"></a>      <span class="fu">qt</span>(<span class="fl">0.025</span> , <span class="fu">degf</span>(<span class="fu">subset</span>(</span>
+<span id="cb273-14"><a href="4.5-lorenz-curve-svylorenz.html#cb273-14" tabindex="-1"></a>        des_nlsw88 , <span class="sc">!</span><span class="fu">is.na</span>(wage)</span>
+<span id="cb273-15"><a href="4.5-lorenz-curve-svylorenz.html#cb273-15" tabindex="-1"></a>      ))) ,</span>
+<span id="cb273-16"><a href="4.5-lorenz-curve-svylorenz.html#cb273-16" tabindex="-1"></a>    <span class="at">ci_upper_bound =</span></span>
+<span id="cb273-17"><a href="4.5-lorenz-curve-svylorenz.html#cb273-17" tabindex="-1"></a>      <span class="fu">coef</span>(result.lin) <span class="sc">+</span></span>
+<span id="cb273-18"><a href="4.5-lorenz-curve-svylorenz.html#cb273-18" tabindex="-1"></a>      <span class="fu">SE</span>(result.lin) <span class="sc">*</span></span>
+<span id="cb273-19"><a href="4.5-lorenz-curve-svylorenz.html#cb273-19" tabindex="-1"></a>      <span class="fu">qt</span>(<span class="fl">0.975</span> , <span class="fu">degf</span>(<span class="fu">subset</span>(</span>
+<span id="cb273-20"><a href="4.5-lorenz-curve-svylorenz.html#cb273-20" tabindex="-1"></a>        des_nlsw88 , <span class="sc">!</span><span class="fu">is.na</span>(wage)</span>
+<span id="cb273-21"><a href="4.5-lorenz-curve-svylorenz.html#cb273-21" tabindex="-1"></a>      )))</span>
+<span id="cb273-22"><a href="4.5-lorenz-curve-svylorenz.html#cb273-22" tabindex="-1"></a>  )</span></code></pre></div>
 <table>
 <thead>
 <tr class="header">

@@ -13,6 +13,16 @@ This chapter shows how poverty estimates and their sampling errors can be estima
 
 ## At Risk of Poverty Threshold (svyarpt)
 
+```{r eval=FALSE}
+✔️ commonly used by statistical agencies in the european union working group on statistics on income & living conditions (eurostat)
+✔️ not tied to the inflation rate nor to a basket of goods or consumable products
+✔️ generic calculation that can be broadly applied to different nations or regions
+✔️ easy to understand: defaults to 60% of median income
+❌ the 60% of median income used in ARPT might appear arbitrary for non-EU analyses
+❌ does not account for the intensity/severity of poverty
+❌ not really a poverty measure, but an estimated poverty threshold/poverty line
+```
+
 The at-risk-of-poverty threshold (ARPT) is a measure used to define the people whose incomes imply a low standard of living in comparison to the general living standards.  Even though some people are not below the effective poverty line, those below the ARPT can be considered "almost deprived".
 
 This measure is defined as $0.6$ times the median income for the entire population:
@@ -171,6 +181,15 @@ stopifnot(all.equal(varpoord_arpt_calculation$all_result$se ,
 For additional usage examples of `svyarpt`, type `?convey::svyarpt` in the R console.
 
 ## At Risk of Poverty Ratio (svyarpr)
+
+```{r eval=FALSE}
+✔️ EU standard like ARPT, easy to understand, interpret, and implement
+✔️ proportion of individuals below ARPT -- a "companion" function that uses svyarpt() internally
+✔️ measure is easy to understand
+❌ does not account for the intensity or inequality among the poor
+❌ not very common outside of the EU
+❌ just another name for the `svyfgt( g = 0 , thresh = "relq" )`
+```
 
 The at-risk-of-poverty rate (ARPR) is the share of persons with an income below the at-risk-of-poverty threshold (ARPT). The logic behind this measure is that although most people below the ARPT cannot be considered "poor", they are the ones most vulnerable to becoming poor in the event of a negative economic phenomenon like a recession.
 
@@ -477,6 +496,18 @@ For additional usage examples of `svyarpr`, type `?convey::svyarpr` in the R con
 
 ## Relative Median Income Ratio (svyrmir)
 
+```{r eval=FALSE}
+✔️ mainly useful for studies of the income of the elderly following EU definitions
+✔️ a ratio of medians
+✔️ less sensitive to outliers
+❌ solely a measure of medians and does not fully account for the income distribution
+❌ not very common outside of the EU
+❌ hard to interpret
+❌ not (necessarily) a dependency measure
+❌ not an inequality measure (fails the Pigou-Dalton principle)
+❌ not (exactly) a poverty measure (fails the poverty-focus axiom)
+```
+
 The relative median income ratio (RMIR) is the ratio of the median income of people aged above a value (65) to the median of people aged below the same value. In mathematical terms,
 
 $$
@@ -641,6 +672,14 @@ For additional usage examples of `svyrmir`, type `?convey::svyrmir` in the R con
 
 ## Relative Median Poverty Gap (svyrmpg)
 
+```{r eval=FALSE}
+✔️ how poor are those below the ARPT?
+✔️ median poverty gap expressed as a percentage of the threshold
+✔️ useful for understanding the depth of poverty
+❌ not common outside of the EU
+❌ not immediately interpretable in terms of income
+```
+
 The relative median poverty gap (RMPG) is the relative difference between the median income of people having income below the ARPT and the ARPT itself:
 
 $$
@@ -799,6 +838,14 @@ varpoord_rmpg_calculation$all_result$se))
 For additional usage examples of `svyrmpg`, type `?convey::svyrmpg` in the R console.
 
 ## Median Income Below the At Risk of Poverty Threshold  (svypoormed)
+
+```{r eval=FALSE}
+✔️ median income among those below the threshold
+✔️ useful for understanding the depth of poverty
+✔️ related to the RMPG
+❌ not very common outside the EU
+❌ not immediately interpretable in terms of the poverty gap
+```
 
 Median income below the at-risk-of-poverty-threshold (POORMED) is median of incomes of people having the income below the ARPT:
 
@@ -959,6 +1006,16 @@ stopifnot(all.equal(
 For additional usage examples of `svypoormed`, type `?convey::svypoormed` in the R console.
 
 ## Foster-Greer-Thorbecke class (svyfgt, svyfgtdec)
+
+```{r eval=FALSE}
+✔️ used widely because encompasses interpretable measures
+✔️ allows an arbitrary poverty threshold
+✔️ can incorporate intensity and inequality among the poor
+✔️ when `g >= 2`, measure can be decomposed in interpretable measures of extension, intensity and inequality in poverty
+❌ scales are dependent on `g`
+❌ becomes increasingly difficult to interpret as `g` parameter grows
+❌ no component that allows for time to exit poverty, unlike the watts index
+```
 
 @foster1984 proposed a family of indicators to measure poverty.  This class of $FGT$ measures, can be defined as
 
@@ -1420,6 +1477,15 @@ stopifnot( abs( rowMeans(est.coverage) - 0.95 ) < 0.015 )
 For additional usage examples of `svyfgt` and `svyfgtdec`, type `?convey::svyfgt` or `?convey::svyfgtdec` in the R console.
 
 ## Watts poverty measure (svywatts, svywattsdec)
+
+```{r eval=FALSE}
+✔️ time to exit poverty interpretation: watts score divided by a growth rate
+✔️ sensitive to intensity and inequality among the poor
+✔️ can be decomposed into interpretable measures
+❌ not defined for individuals with zero or negative incomes
+❌ interpretation is not very straightforward
+❌ less common than the FGT measures nowadays
+```
 
 The measure proposed in @watts1968 satisfies a number of desirable poverty measurement axioms and is known to be one of the first distribution-sensitive poverty measures, as noted by @haughton2009. It is defined as:
 
