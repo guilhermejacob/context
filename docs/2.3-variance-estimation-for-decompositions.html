@@ -5,7 +5,7 @@
 <meta charset="utf-8" />
 <meta name="generator" content="pandoc" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="Chapter 5 Richness | Poverty and Inequality with Complex Survey Data" />
+<meta property="og:title" content="2.3 Variance Estimation for Decompositions | Poverty and Inequality with Complex Survey Data" />
 <meta property="og:type" content="book" />
 
 <meta property="og:description" content="A book about the R convey package" />
@@ -24,7 +24,7 @@ MathJax.Hub.Config({
 
 <meta name="description" content="A book about the R convey package">
 
-<title>Chapter 5 Richness | Poverty and Inequality with Complex Survey Data</title>
+<title>2.3 Variance Estimation for Decompositions | Poverty and Inequality with Complex Survey Data</title>
 
 <link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte-background.css" rel="stylesheet" />
@@ -248,36 +248,28 @@ div.csl-indent {
 </div>
 <div class="row">
 <div class="col-sm-12">
-<div id="richness" class="section level1" number="5">
-<h1><span class="header-section-number">Chapter 5</span> Richness</h1>
-<p>Richness (or Affluence) measures provide another approach for understanding
-income concentration. Unlike inequality measures, that are sensitive to the
-changes over the entire income distribution, richness measures are restricted
-to the top.</p>
-<p>In that sense, they work like “inverted” poverty measures: while the poverty
-focus axiom states that poverty measures should be insensitive to changes
-in the incomes of the non-poor, the richness focus
-axiom states that richness measures should remain unaltered by changes in the
-incomes of the non-rich.</p>
-<p>Also like poverty measures, richness measures also rely on a “richness threshold”:
-those above that threshold are regarded as rich, while those below are regarded
-as non-rich.<label for="tufte-sn-8" class="margin-toggle sidenote-number">8</label><input type="checkbox" id="tufte-sn-8" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">8</span> Not necessarily, but including the poor</span>
-Like for poverty measurement, these richness thresholds can be somewhat arbitrary;
-<span class="citation">Medeiros (<label for="tufte-mn-99" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-99" class="margin-toggle">2006<span class="marginnote">Medeiros, Marcelo. 2006. <span>“<span class="nocase">The Rich and the Poor: The Construction of an Affluence Line from the Poverty Line</span>.”</span> <em>Social Indicators Research</em> 78 (1): 1–18. <a href="https://doi.org/10.1007/s11205-005-7156-1">https://doi.org/10.1007/s11205-005-7156-1</a>.</span>)</span> provide a nice review of proposed richness thresholds and also propose
-one possible approach with practical and theoretical grounds.</p>
-<p><span class="citation">Peichl, Schaefer, and Scheicher (<label for="tufte-mn-100" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-100" class="margin-toggle">2010<span class="marginnote">Peichl, Andreas, Thilo Schaefer, and Christoph Scheicher. 2010. <span>“<span class="nocase">Measuring Richness and Poverty: A micro data application to Europe and Germany</span>.”</span> <em>Review of Income and Wealth</em> 56 (3): 597–619. https://doi.org/<a href="https://doi.org/10.1111/j.1475-4991.2010.00404.x">https://doi.org/10.1111/j.1475-4991.2010.00404.x</a>.</span>)</span> presented an axiomatic study of richness measures. They classify
-richness measures in two types depending on the effect of income transfers among
-the rich.
-A <em>concave</em> measure follows the concave transfer axiom (T1): the measure should
-increase when a progressive transfer occurs among two rich individuals.
-On the other hand, a <em>convex</em> measure follows the convex transfer axiom (T2):
-the measure should <em>decrease</em> when a progressive transfer occurs among two rich
-individuals.</p>
-<p>The reasoning behind the concave transfer axiom is that such progressive transfer would make the income distribution among the rich more internally homogeneous. By clustering the incomes and assets of the rich away from the rest of society, the distribution of income becomes more polarized. On the other hand, the convex transfer axiom means that a progressive transfer among rich individuals reduces inequality among them, so the convex inequality measure should register a reduction. In a sense, concave measures are related to the income polarization approach, meaning that increases in income polarization should increase the value of the richness measure, while convex measures are related to the income inequality approach, meaning that a reduction in inequality among the rich should also result in a reduction of a convex richness measure.</p>
+<div id="variance-estimation-for-decompositions" class="section level2" number="2.3">
+<h2><span class="header-section-number">2.3</span> Variance Estimation for Decompositions</h2>
+<p>Some inequality and multidimensional poverty measures can be decomposed. The decomposition methods in the <code>convey</code> library are limited to group decomposition for inequality measures and sub-indices decomposition for poverty measures.</p>
+<p>For instance, the generalized entropy index is an inequality measure that can be decomposed into between and within group components. This sheds light on a very simple question: <em>of the overall inequality, how much can be explained by inequalities between groups and within groups?</em> Since this measure is additively decomposable, one can get estimates of the coefficients, SEs and covariance between components. For a more practical approach, see <span class="citation">Lima (<label for="tufte-mn-13" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-13" class="margin-toggle">2013<span class="marginnote">Lima, Luis Cristovao Ferreira. 2013. <span>“<span class="nocase">The Persistent Inequality in the Great Brazilian Cities: The Case of Brasília</span>.”</span> MPRA Papers 50938. University of Brasília. <a href="https://mpra.ub.uni-muenchen.de/50938/">https://mpra.ub.uni-muenchen.de/50938/</a>.</span>)</span>.
+For poverty measures, a sub-indices decomposition example is the decomposition of the FGT <span class="citation">(<label for="tufte-mn-14" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-14" class="margin-toggle">Foster, Greer, and Thorbecke 1984<span class="marginnote">Foster, James, Joel Greer, and Erik Thorbecke. 1984. <span>“A Class of Decomposable Poverty Measures.”</span> <em>Econometrica</em> 52 (3): 761–66. <a href="http://www.jstor.org/stable/1913475">http://www.jstor.org/stable/1913475</a>.</span>)</span> measure
+into extension, intensity and inequality components. This allows researchers to explain how each components accounts
+for the difference between this measure over time and across domains.</p>
+<p>The Alkire-Foster class of multidimensional poverty indices (not implemented in the <code>convey</code> library) can be decomposed by both dimensions and by groups, showing how much each group and each dimension contributes to poverty overall. Multidimensional poverty techniques can sometimes help economic and policy analysts understand more precisely who is more affected by inequality and poverty, and how those disparities manifest.</p>
+<p>The result of decomposition estimation is a vector of component estimates.
+In this sense, in addition to the variance estimate for each component,
+the variance estimation should also account for the covariances across components.
+This is handled directly through each decomposition function, like <code>svygeidec</code> and <code>svyfgtdec</code>.
+These functions produce estimates of the variance-covariance matrices using either
+influence functions or replication-based methods.
+For examples of the decompositions functions, we direct the reader to the section
+about the specific decomposition function.</p>
+
 </div>
+<!-- </div> -->
 <p style="text-align: center;">
-<a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html"><button class="btn btn-default">Previous</button></a>
-<a href="5.1-richness-measures-svyrich.html"><button class="btn btn-default">Next</button></a>
+<a href="2.2-replication-based-variance-estimation.html"><button class="btn btn-default">Previous</button></a>
+<a href="3-poverty.html"><button class="btn btn-default">Next</button></a>
 </p>
 </div>
 </div>
