@@ -203,12 +203,11 @@ For additional usage examples of `svygpg`, type `?convey::svygpg` in the R conso
 ## Quintile Share Ratio (svyqsr)
 
 ```{r eval=FALSE}
-✔️
-✔️
-✔️
-❌
-❌
-❌
+✔️ Easy to understand
+✔️ Can be adapted into other more commonly used variants, like the Palma ratio
+✔️ Can be interpreted using a Lorenz curve
+❌ Fails the Pigou-Dalton Principle (depending on the donor and recipient position in the income distribution)
+❌ Focuses on specific parts of the income  distribution, not the entire distribution
 ```
 
 
@@ -372,7 +371,9 @@ For additional usage examples of `svyqsr`, type `?convey::svyqsr` in the R conso
 
 ## Lorenz Curve-based Measures
 
-
+In the following, we discuss the Lorenz curve, a graphical tool for describing inequality
+in the income distribution, and two inequality measures directly related to it: 
+the Gini index and the Zenga index.
 
 ## Lorenz Curve (svylorenz)
 
@@ -682,9 +683,7 @@ Proposed by @zenga2007, the Zenga index is another inequality measure related to
 Z = 1 - \int_{0}^{1} \frac{L(p)}{p} \cdot \frac{ 1 - p }{ 1 - L(p) } dp 
 \]
 
-In practice, `convey` uses the @barabesi2016 estimator, based on the finite population Zenga index, and a variance estimator derived using Deville's [-@deville1999] influence function method.
-
-Alternatively, @langel2011 uses an estimator based on smoothed quantiles and a variance estimator based on the @demnati2004 linearization method. However, @barabesi2016 finds that both estimators behave very similarly.
+\noindent where $L(p)$ is the Lorenz curve ordinate at population share $p$.
 
 The intuition behind the Zenga index is based on argument similar to the Quintile Share Ratio or the Palma index.  While the QSR and Palma indices are based on ratios of lower and upper shares, the Zenga scores (but not the measure itself!) is the ratio of lower and upper means. The Zenga index is the average of those scores.
 
@@ -692,9 +691,11 @@ For a given p, when the mean income of the poorest is not much smaller than the 
 
 Take the mean income of the poorest 20% of a population: this is the lower mean. The "complement" is the mean income of the richest 80%: this is the upper mean. If the lower mean is \$100 and the upper mean is \$1,000, then the respective point on the Zenga curve would associate the fraction $20$% to $1 - ( \$100 / \$1,000 ) = 0.9$.  In other words, $Z(20\%) = 90\%$.
 
-In this case, we took a fixed $p = 20$%; however, the full Zenga curve would be computed varying $p$ from $0$% to $100$%.  Then, the Zenga index is the integral of this curve in the interval $(0,1)$.
+In this case, we took a fixed $p = 20$%; however, the full Zenga curve would be computed varying $p$ from $0$% to $100$%.  Then, the Zenga index is the integral of this curve in the interval $(0,1)$. In other words, the Zenga index is the mean of the Y axis of the Zenga coordinates/scores.
+Unlike the relationship between the Gini coefficient and the Lorenz curve, this allows for a more straightforward graphical interpretation (see Figure 1 from @langel2011) of the Zenga index.
 
-Unlike the relationship between the Gini coefficient and the Lorenz curve, this allows for a more straightforward graphical interpretation (see Figure 1 from @langel2011) of the Zenga index. In fact, the Zenga index is the mean of the Y axis of the Zenga coordinates.
+In practice, `convey` uses the @barabesi2016 estimators, based on the finite population Zenga index and using Deville's [-@deville1999] influence function method for variance estimation.
+Alternatively, @langel2011 uses an estimator based on smoothed quantiles and a variance estimator based on the @demnati2004 linearization method. However, @barabesi2016 finds that both estimators behave very similarly.
 
 According to @langel2011, "the Zenga index is significantly less affected by extreme observations than the Gini index. This is a very important advantage of the Zenga index because inference from income data is often confronted with extreme values".
 
@@ -884,6 +885,15 @@ Our estimated 95% CIs cover the parameter 94.52% of the time, which is very clos
 
 ## Social Welfare Function-based Measures
 
+A social welfare function (SWF) is a function that associates an income distribution function
+to a social welfare score.
+In line with @dalton1920 tradition, the most well-known SWF case is the Atkinson index, 
+discussed in the next subsection.
+The Atkinson index is not the only SWF-based inequality measure --- 
+@dalton1920 had already presented another SWF-based inequality measure.
+However, the Atkinson index was shown to follow a broader set of important inequality 
+measurement axioms.
+
 ## Atkinson index (svyatk)
 
 ```{r eval=FALSE}
@@ -897,7 +907,7 @@ Our estimated 95% CIs cover the parameter 94.52% of the time, which is very clos
 
 @dalton1920 pointed out one of the most important facts about the economic theory
 of income inequality measurement: every income inequality measure has an implicit
-social welfare function (SWF).^[This is the subject of an interesting discussion between the British and the Italian schools of inequality measurement.]
+SWF.^[This is the subject of an interesting discussion between the British and the Italian schools of inequality measurement.]
 More formally, @atkinson1970 represent the SWF by an additively
 separable and symmetric function
 

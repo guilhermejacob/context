@@ -6,7 +6,12 @@ output:
 
 
 
-# Variance Estimation {#lin}
+# Variance Estimation {#var}
+
+This section explains the details of the variance estimation methodologies
+for the measures implemented in the `sonvey` package.
+
+## The Variance Estimator using Linearization MEthods {#lin}
 
 In what follows, we often use the linearization method as a tool to produce an approximation for the variance of an estimator. From the linearized variable $z$ of an estimator $T$, we get from the expression \@ref(var) an estimate of the variance of $T$.
 
@@ -41,10 +46,6 @@ $$
 we are also able to linearize the RMPG.
 
 
-
-## The Variance Estimator {#var}
-
-
 Using the notation in @osier2009, the variance of the estimator $T(\hat{M})$ can approximated by:
 
 \begin{equation}
@@ -63,11 +64,9 @@ where, $\delta_k$ is the Dirac measure in $k$: $\delta_k(i)=1$ if and only if $i
 
 This **derivative** is called the **Influence Function** and was introduced in the area of **Robust Statistics**. 
 
+### Influence Functions
 
-
-## Influence Functions
-
-Some measures of poverty and income concentration are defined by non-differentiable functions, so that it is not always possible to use Taylor linearization to estimate variances. An alternative is to use **influence functions** as described in @deville1999 and @osier2009. The `convey` library implements this methodology to work with `survey.design` objects and also with `svyrep.design` objects.
+Some measures of poverty and income concentration are defined by non-differentiable functions, so that it is not always possible to use Taylor Series Linearization (TSL) to estimate variances. An alternative is to use **influence functions** as described in @deville1999 and @osier2009. The `convey` library implements this methodology to work with `survey.design` objects.^[Influence functions can also be estimated with `svyrep.design` objects, but they are not used for variance estimation in these cases.]
 
 Some examples of these measures are:
 
@@ -84,7 +83,7 @@ $qsr=\frac{\sum_U 1(y_i>q_{.80})}{\sum_U 1(y_i\leq q_{.20})}$
 $1+G=\frac{2\sum_U (r_i-1)y_i}{N\sum_Uy_i}$
 where $r_i$ is the rank of $y_i$.
 
-Note that it is not possible to use Taylor linearization for these measures because they rely on quantiles or, in the case of the Gini coefficient, a function of ranks.  Therefore, we instead follow the approach proposed by Deville (1999) based upon influence functions.
+Note that it is not possible to use TSL for these measures because they rely on quantiles or, in the case of the Gini coefficient, a function of ranks.  Therefore, we instead follow the approach proposed by Deville (1999) based upon influence functions.
 
 
 Let $U$ be a population of size $N$ and $M$ be a measure that allocates mass one to the set composed by one unit, that is $M(i)=M_i= 1$ if $i\in U$ and $M(i)=0$ if $i\notin U$.
@@ -121,7 +120,7 @@ $\hat{F}(x)=T(\hat{M})=\frac{\int 1(y\leq x)d\hat{M}}{\int{d\hat{M}}}=\frac{\sum
 
 
 
-### Influence Function Examples
+#### Examples of Influence Functions of Differentiable Measures
 
 
 - Total:
@@ -143,11 +142,7 @@ IR_k(M)&=I\left(\frac{U}{V}\right)_k(M)=\frac{V(M)\times IU_k(M)-U(M)\times IV_k
 $$
 
 
-## Linearization
-
-
-
-### Linearization Examples Using the Influence Function
+#### Examples of Influence Functions for Non-Differentiable Measures
 
 
 - At-risk-of-poverty threshold:
@@ -183,24 +178,9 @@ $m$ - median income;
 $f$ - income density function;
 
 
+## Replication-Based Variance Estimation
 
-
-## Decomposition
-
-Some inequality and multidimensional poverty measures can be decomposed. The decomposition methods in the `convey` library are limited to group decomposition.
-
-For instance, the generalized entropy index can be decomposed into between and within group components. This sheds light on a very simple question: _of the overall inequality, how much can be explained by inequalities between groups and within groups?_ Since this measure is additively decomposable, one can get estimates of the coefficients, SEs and covariance between components. For a more practical approach, see [@lima2013].
-
-The Alkire-Foster class of multidimensional poverty indices (not implemented in the `convey` library) can be decomposed by both dimensions and by groups, showing how much each group and each dimension contributes to poverty overall.  Multidimensional poverty techniques can sometimes help economic and policy analysts understand more precisely who is more affected by inequality and poverty, and how those disparities manifest.
-
-### Decomposition Example
-
-
-
-
-## Replication Designs
-
-All major functions in the `convey` library have S3 methods  for the classes: `survey.design`, `svyrep.design` and `DBIdesign`. When the argument `design` is  a survey design with replicate weights created by the `survey` library, `convey` uses the method `svrepdesign`. 
+All major functions in the `convey` library have S3 methods  for the classes: `survey.design`, `svyrep.design` and `DBIdesign`. When the argument `design` is  a survey design object with replicate weights created by the `survey` library, `convey` uses the method `svrepdesign`. 
 
 Considering the remarks in [@W85],  p. 163, concerning the deficiency of the `Jackknife` method in estimating the variance of `quantiles`, we adopted the bootstrap method instead. 
 
@@ -208,3 +188,25 @@ The function `bootVar` from the `laeken` library [@R-laeken], also uses the boot
 
 
 ### Replication Design Example
+
+
+## Variance Estimation for Decompositions
+
+Some inequality and multidimensional poverty measures can be decomposed. The decomposition methods in the `convey` library are limited to group decomposition for inequality measures and sub-indices decomposition for poverty measures.
+
+For instance, the generalized entropy index is an inequality measure that can be decomposed into between and within group components. This sheds light on a very simple question: _of the overall inequality, how much can be explained by inequalities between groups and within groups?_ Since this measure is additively decomposable, one can get estimates of the coefficients, SEs and covariance between components. For a more practical approach, see @lima2013.
+For poverty measures, a sub-indices decomposition example is the decomposition of the FGT [@foster1984] measure 
+into extension, intensity and inequality components. This allows researchers to explain how each components accounts 
+for the difference between this measure over time and across domains.
+
+The Alkire-Foster class of multidimensional poverty indices (not implemented in the `convey` library) can be decomposed by both dimensions and by groups, showing how much each group and each dimension contributes to poverty overall.  Multidimensional poverty techniques can sometimes help economic and policy analysts understand more precisely who is more affected by inequality and poverty, and how those disparities manifest.
+
+The result of decomposition estimation is a vector of component estimates.
+In this sense, in addition to the variance estimate for each component, 
+the variance estimation should also account for the covariances across components.
+This is handled directly through each decomposition function, like `svygeidec` and `svyfgtdec`.
+These functions produce estimates of the variance-covariance matrices using either 
+influence functions or replication-based methods. 
+For examples of the decompositions functions, we direct the reader to the section
+about the specific decomposition function.
+
