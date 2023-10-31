@@ -191,6 +191,52 @@ The function `bootVar` from the `laeken` library [@R-laeken], also uses the boot
 
 ### Replication Design Example
 
+```{r}
+# load libraries
+library( survey )
+library( convey )
+library( laeken ) # for the dataset
+
+# get laeken eusilc data
+data( eusilc ) ; names( eusilc ) <- tolower( names( eusilc ) )
+
+# survey design object for TSL/ifluence function variance estimation
+des_eusilc <- svydesign( ids = ~rb030 , strata = ~db040 ,  weights = ~rb050 , data = eusilc )
+des_eusilc <- convey_prep( des_eusilc )
+
+# influence function SE estimate for the gini index
+convey:::svygini.survey.design( ~eqincome , design = des_eusilc )
+
+# create survey design object for replicate-based variance estimation
+des_eusilc_rep <- as.svrepdesign( des_eusilc , type = "bootstrap" )
+des_eusilc_rep <- convey_prep( des_eusilc_rep )
+
+# replicate-based (bootstrao) SE estimate for the gini index
+# with option to keep replicates
+( gini.repstat <- convey:::svygini.svyrep.design( ~eqincome , design = des_eusilc_rep , return.replicates = TRUE ) )
+```
+
+To understand how that variance is estimated, we can look at the replicates:
+
+```{r}
+# collect gini bootstrap replicates
+( gini.reps <- gini.repstat$replicates )
+```
+
+These are resampling (bootstrap) replicates. With them, we can look at the variance of these replicates to get an estimate the gini estimator's variance:
+
+```{r}
+# variance estimate
+des.scale <- des_eusilc_rep$scale
+meantheta <- mean( gini.reps )[[1]]
+v <- sum( ( gini.reps - meantheta )^2 ) * des.scale
+
+# SE estimate
+( gini.se <- ( sqrt( v ) ) )
+
+# compare estimates
+identical( gini.se , SE( gini.repstat )[[1]] )
+```
 
 ## Variance Estimation for Decompositions
 
