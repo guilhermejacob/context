@@ -174,3 +174,145 @@ svygini( ~ py010n , design = des_eusilc , na.rm = TRUE)
 svygini( ~ py010n , design = des_eusilc_rep)
 svygini( ~ py010n , design = des_eusilc_rep , na.rm = TRUE)
 ```
+
+
+## The Current Population Survey (CPS)
+
+Sponsored jointly by the U.S. Census Bureau and the U.S. Bureau of Labor Statistics (BLS), the Current Population Survey is the primary source of labor force statistics for the population of the United States.
+
+This section downloads, imports, and prepares the most current microdata for analysis.
+
+
+Download and unzip the 2023 file:
+
+```{r}
+library(httr)
+
+tf <- tempfile()
+
+this_url <-
+  "https://www2.census.gov/programs-surveys/cps/datasets/2023/march/asecpub23sas.zip"
+
+GET(this_url , write_disk(tf) , progress())
+
+unzipped_files <- unzip(tf , exdir = tempdir())
+```
+
+Import all four files:
+
+```{r}
+library(haven)
+
+four_tbl <- lapply(unzipped_files , read_sas)
+
+four_df <- lapply(four_tbl , data.frame)
+
+four_df <-
+  lapply(four_df , function(w) {
+    names(w) <- tolower(names(w))
+    w
+  })
+
+household_df <-
+  four_df[[grep('hhpub' , basename(unzipped_files))]]
+family_df <-
+  four_df[[grep('ffpub' , basename(unzipped_files))]]
+person_df <-
+  four_df[[grep('pppub' , basename(unzipped_files))]]
+repwgts_df <-
+  four_df[[grep('repwgt' , basename(unzipped_files))]]
+```
+
+Divide weights:
+
+```{r}
+household_df[, 'hsup_wgt'] <- household_df[, 'hsup_wgt'] / 100
+family_df[, 'fsup_wgt'] <- family_df[, 'fsup_wgt'] / 100
+for (j in c('marsupwt' , 'a_ernlwt' , 'a_fnlwgt'))
+  person_df[, j] <- person_df[, j] / 100
+```
+
+Merge these four files:
+
+```{r}
+names(family_df)[names(family_df) == 'fh_seq'] <- 'h_seq'
+names(person_df)[names(person_df) == 'ph_seq'] <- 'h_seq'
+names(person_df)[names(person_df) == 'phf_seq'] <- 'ffpos'
+
+hh_fm_df <- merge(household_df , family_df)
+hh_fm_pr_df <- merge(hh_fm_df , person_df)
+cps_df <- merge(hh_fm_pr_df , repwgts_df)
+
+stopifnot(nrow(cps_df) == nrow(person_df))
+```
+
+Construct a complex sample survey design:
+
+```{r}
+library(survey)
+
+cps_design <-
+  svrepdesign(
+    weights = ~ marsupwt ,
+    repweights = "pwwgt[1-9]" ,
+    type = "Fay" ,
+    rho = (1 - 1 / sqrt(4)) ,
+    data = cps_df ,
+    combined.weights = TRUE ,
+    mse = TRUE
+  )
+```
+
+Run the `convey_prep()` function on the full design:
+
+```{r}
+cps_design <- convey_prep(cps_design)
+```
+
+### Household-level Analysis of the CPS
+
+Limit the CPS person-level design to the household reference person, then calculate the gini coefficient with total household income:
+
+```{r}
+cps_household_design <- subset(cps_design , a_exprrp %in% 1:2)
+
+(cps_household_gini <- svygini(~ htotval , cps_household_design))
+
+# match 2022 household gini coefficient
+# https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-income-households/h04.xlsx
+stopifnot(round(coef(cps_household_gini) , 3) == 0.488)
+
+# match 2022 household gini margin of error
+# https://www.census.gov/content/dam/Census/newsroom/press-kits/2023/iphi/20230912-iphi-slides-income.pdf#page=13
+stopifnot(round(
+  coef(cps_household_gini) - confint(cps_household_gini , level = 0.9)[1] ,
+  4
+) == 0.0033) 
+```
+
+### Family-level Analysis of the CPS
+
+Limit the CPS person-level design to the family reference person of primary families, then calculate the gini coefficient with total family income:
+
+```{r}
+cps_family_design <-
+  subset(cps_design , a_famrel %in% 1 & a_famtyp %in% 1)
+
+(cps_family_gini <- svygini(~ ftotval , cps_family_design))
+
+# match 2022 family gini coefficient
+# https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-income-families/f04.xlsx
+stopifnot(round(coef(cps_family_gini) , 3) == 0.458)
+```
+
+### Full-time Full Year Worker Analysis of the CPS
+
+Limit the CPS person-level design to full-time, full year workers, then calculate the gini coefficient with both total personal income and then total earnings:
+
+```{r}
+cps_ftfy_worker_design <- subset(cps_design , wewkrs %in% 1)
+
+svygini(~ ptotval , cps_ftfy_worker_design)
+
+svygini(~ pearnval , cps_ftfy_worker_design)
+```

@@ -13,7 +13,7 @@
 
 <meta name="author" content="By Guilherme Jacob, Anthony Damico, and Djalma Pessoa. The authors received no external funding for the convey software and this accompanying textbook." />
 
-<meta name="date" content="2023-11-02" />
+<meta name="date" content="2023-11-03" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -140,6 +140,12 @@ div.csl-indent {
 <li><a href="1.1-install.html#install" id="toc-install"><span class="toc-section-number">1.1</span> Installation</a></li>
 <li><a href="1.2-survey.html#survey" id="toc-survey"><span class="toc-section-number">1.2</span> Complex surveys and statistical inference</a></li>
 <li><a href="1.3-usage-examples.html#usage-examples" id="toc-usage-examples"><span class="toc-section-number">1.3</span> Usage Examples</a></li>
+<li class="has-sub"><a href="1.4-the-current-population-survey-cps.html#the-current-population-survey-cps" id="toc-the-current-population-survey-cps"><span class="toc-section-number">1.4</span> The Current Population Survey (CPS)</a>
+<ul>
+<li><a href="1.4-the-current-population-survey-cps.html#household-level-analysis-of-the-cps" id="toc-household-level-analysis-of-the-cps"><span class="toc-section-number">1.4.1</span> Household-level Analysis of the CPS</a></li>
+<li><a href="1.4-the-current-population-survey-cps.html#family-level-analysis-of-the-cps" id="toc-family-level-analysis-of-the-cps"><span class="toc-section-number">1.4.2</span> Family-level Analysis of the CPS</a></li>
+<li><a href="1.4-the-current-population-survey-cps.html#full-time-full-year-worker-analysis-of-the-cps" id="toc-full-time-full-year-worker-analysis-of-the-cps"><span class="toc-section-number">1.4.3</span> Full-time Full Year Worker Analysis of the CPS</a></li>
+</ul></li>
 </ul></li>
 <li class="has-sub"><a href="2-var.html#var" id="toc-var"><span class="toc-section-number">2</span> Variance Estimation</a>
 <ul>
@@ -265,36 +271,36 @@ tends to be positive, which results in a conservative variance estimator for the
 <p>Then, how can we estimate the covariance? The <code>survey</code> package already provides an
 approach for that using the <code>svyby</code>function. Based on the <code>?survey::svyby</code> examples,
 we have:</p>
-<div class="sourceCode" id="cb445"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb445-1"><a href="6.2-covariance-matrix.html#cb445-1" tabindex="-1"></a><span class="co"># load the survey library</span></span>
-<span id="cb445-2"><a href="6.2-covariance-matrix.html#cb445-2" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
-<span id="cb445-3"><a href="6.2-covariance-matrix.html#cb445-3" tabindex="-1"></a></span>
-<span id="cb445-4"><a href="6.2-covariance-matrix.html#cb445-4" tabindex="-1"></a><span class="co">#  load data set</span></span>
-<span id="cb445-5"><a href="6.2-covariance-matrix.html#cb445-5" tabindex="-1"></a><span class="fu">data</span>( api )</span>
-<span id="cb445-6"><a href="6.2-covariance-matrix.html#cb445-6" tabindex="-1"></a></span>
-<span id="cb445-7"><a href="6.2-covariance-matrix.html#cb445-7" tabindex="-1"></a><span class="co"># declare sampling design</span></span>
-<span id="cb445-8"><a href="6.2-covariance-matrix.html#cb445-8" tabindex="-1"></a>dclus1 <span class="ot">&lt;-</span> <span class="fu">svydesign</span>( <span class="at">id=</span><span class="sc">~</span>dnum, <span class="at">weights=</span><span class="sc">~</span>pw, <span class="at">data=</span>apiclus1, <span class="at">fpc=</span><span class="sc">~</span>fpc )</span>
-<span id="cb445-9"><a href="6.2-covariance-matrix.html#cb445-9" tabindex="-1"></a></span>
-<span id="cb445-10"><a href="6.2-covariance-matrix.html#cb445-10" tabindex="-1"></a><span class="co"># estimate means</span></span>
-<span id="cb445-11"><a href="6.2-covariance-matrix.html#cb445-11" tabindex="-1"></a>mns <span class="ot">&lt;-</span><span class="fu">svyby</span>(<span class="sc">~</span>api99, <span class="sc">~</span>stype, dclus1, svymean,<span class="at">covmat=</span><span class="cn">TRUE</span>)</span>
-<span id="cb445-12"><a href="6.2-covariance-matrix.html#cb445-12" tabindex="-1"></a></span>
-<span id="cb445-13"><a href="6.2-covariance-matrix.html#cb445-13" tabindex="-1"></a><span class="co"># collect variacnce-covariance matrix of estimates</span></span>
-<span id="cb445-14"><a href="6.2-covariance-matrix.html#cb445-14" tabindex="-1"></a>( m <span class="ot">&lt;-</span> <span class="fu">vcov</span>( mns ) )</span></code></pre></div>
+<div class="sourceCode" id="cb454"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb454-1"><a href="6.2-covariance-matrix.html#cb454-1" tabindex="-1"></a><span class="co"># load the survey library</span></span>
+<span id="cb454-2"><a href="6.2-covariance-matrix.html#cb454-2" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb454-3"><a href="6.2-covariance-matrix.html#cb454-3" tabindex="-1"></a></span>
+<span id="cb454-4"><a href="6.2-covariance-matrix.html#cb454-4" tabindex="-1"></a><span class="co">#  load data set</span></span>
+<span id="cb454-5"><a href="6.2-covariance-matrix.html#cb454-5" tabindex="-1"></a><span class="fu">data</span>( api )</span>
+<span id="cb454-6"><a href="6.2-covariance-matrix.html#cb454-6" tabindex="-1"></a></span>
+<span id="cb454-7"><a href="6.2-covariance-matrix.html#cb454-7" tabindex="-1"></a><span class="co"># declare sampling design</span></span>
+<span id="cb454-8"><a href="6.2-covariance-matrix.html#cb454-8" tabindex="-1"></a>dclus1 <span class="ot">&lt;-</span> <span class="fu">svydesign</span>( <span class="at">id=</span><span class="sc">~</span>dnum, <span class="at">weights=</span><span class="sc">~</span>pw, <span class="at">data=</span>apiclus1, <span class="at">fpc=</span><span class="sc">~</span>fpc )</span>
+<span id="cb454-9"><a href="6.2-covariance-matrix.html#cb454-9" tabindex="-1"></a></span>
+<span id="cb454-10"><a href="6.2-covariance-matrix.html#cb454-10" tabindex="-1"></a><span class="co"># estimate means</span></span>
+<span id="cb454-11"><a href="6.2-covariance-matrix.html#cb454-11" tabindex="-1"></a>mns <span class="ot">&lt;-</span><span class="fu">svyby</span>(<span class="sc">~</span>api99, <span class="sc">~</span>stype, dclus1, svymean,<span class="at">covmat=</span><span class="cn">TRUE</span>)</span>
+<span id="cb454-12"><a href="6.2-covariance-matrix.html#cb454-12" tabindex="-1"></a></span>
+<span id="cb454-13"><a href="6.2-covariance-matrix.html#cb454-13" tabindex="-1"></a><span class="co"># collect variacnce-covariance matrix of estimates</span></span>
+<span id="cb454-14"><a href="6.2-covariance-matrix.html#cb454-14" tabindex="-1"></a>( m <span class="ot">&lt;-</span> <span class="fu">vcov</span>( mns ) )</span></code></pre></div>
 <pre><code>##          E         H         M
 ## E 520.5973  573.0404  684.6562
 ## H 573.0404 1744.2317  747.1989
 ## M 684.6562  747.1989 1060.1954</code></pre>
-<div class="sourceCode" id="cb447"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb447-1"><a href="6.2-covariance-matrix.html#cb447-1" tabindex="-1"></a><span class="co"># compute variance terms</span></span>
-<span id="cb447-2"><a href="6.2-covariance-matrix.html#cb447-2" tabindex="-1"></a>var.naive <span class="ot">&lt;-</span> <span class="fu">sum</span>( <span class="fu">diag</span>( m[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>),<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>)] ) )</span>
-<span id="cb447-3"><a href="6.2-covariance-matrix.html#cb447-3" tabindex="-1"></a>cov.term <span class="ot">&lt;-</span> <span class="fu">sum</span>( <span class="fu">diag</span>( m[ <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>),<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">1</span>)] ) )</span>
-<span id="cb447-4"><a href="6.2-covariance-matrix.html#cb447-4" tabindex="-1"></a></span>
-<span id="cb447-5"><a href="6.2-covariance-matrix.html#cb447-5" tabindex="-1"></a><span class="co"># &quot;naive&quot; SE of the difference</span></span>
-<span id="cb447-6"><a href="6.2-covariance-matrix.html#cb447-6" tabindex="-1"></a><span class="fu">sqrt</span>( var.naive )</span></code></pre></div>
+<div class="sourceCode" id="cb456"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb456-1"><a href="6.2-covariance-matrix.html#cb456-1" tabindex="-1"></a><span class="co"># compute variance terms</span></span>
+<span id="cb456-2"><a href="6.2-covariance-matrix.html#cb456-2" tabindex="-1"></a>var.naive <span class="ot">&lt;-</span> <span class="fu">sum</span>( <span class="fu">diag</span>( m[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>),<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>)] ) )</span>
+<span id="cb456-3"><a href="6.2-covariance-matrix.html#cb456-3" tabindex="-1"></a>cov.term <span class="ot">&lt;-</span> <span class="fu">sum</span>( <span class="fu">diag</span>( m[ <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>),<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">1</span>)] ) )</span>
+<span id="cb456-4"><a href="6.2-covariance-matrix.html#cb456-4" tabindex="-1"></a></span>
+<span id="cb456-5"><a href="6.2-covariance-matrix.html#cb456-5" tabindex="-1"></a><span class="co"># &quot;naive&quot; SE of the difference</span></span>
+<span id="cb456-6"><a href="6.2-covariance-matrix.html#cb456-6" tabindex="-1"></a><span class="fu">sqrt</span>( var.naive )</span></code></pre></div>
 <pre><code>## [1] 39.75918</code></pre>
-<div class="sourceCode" id="cb449"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb449-1"><a href="6.2-covariance-matrix.html#cb449-1" tabindex="-1"></a><span class="co"># SE of the difference</span></span>
-<span id="cb449-2"><a href="6.2-covariance-matrix.html#cb449-2" tabindex="-1"></a><span class="fu">sqrt</span>( var.naive <span class="sc">-</span> cov.term )</span></code></pre></div>
+<div class="sourceCode" id="cb458"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb458-1"><a href="6.2-covariance-matrix.html#cb458-1" tabindex="-1"></a><span class="co"># SE of the difference</span></span>
+<span id="cb458-2"><a href="6.2-covariance-matrix.html#cb458-2" tabindex="-1"></a><span class="fu">sqrt</span>( var.naive <span class="sc">-</span> cov.term )</span></code></pre></div>
 <pre><code>## [1] 14.54236</code></pre>
-<div class="sourceCode" id="cb451"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb451-1"><a href="6.2-covariance-matrix.html#cb451-1" tabindex="-1"></a><span class="co">#... or using svycontrast</span></span>
-<span id="cb451-2"><a href="6.2-covariance-matrix.html#cb451-2" tabindex="-1"></a><span class="fu">svycontrast</span>( mns , <span class="fu">c</span>(<span class="at">E =</span> <span class="dv">1</span>, <span class="at">M =</span> <span class="sc">-</span><span class="dv">1</span>) )</span></code></pre></div>
+<div class="sourceCode" id="cb460"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb460-1"><a href="6.2-covariance-matrix.html#cb460-1" tabindex="-1"></a><span class="co">#... or using svycontrast</span></span>
+<span id="cb460-2"><a href="6.2-covariance-matrix.html#cb460-2" tabindex="-1"></a><span class="fu">svycontrast</span>( mns , <span class="fu">c</span>(<span class="at">E =</span> <span class="dv">1</span>, <span class="at">M =</span> <span class="sc">-</span><span class="dv">1</span>) )</span></code></pre></div>
 <pre><code>##          contrast     SE
 ## contrast -0.80833 14.542</code></pre>
 <p>Notice that, because the covariance terms are positive, the (actual) variance of
@@ -305,76 +311,76 @@ In the next section, we show an example with the Gini index.</p>
 <div id="example-calculation-1" class="section level3" number="6.2.1">
 <h3><span class="header-section-number">6.2.1</span> Example Calculation</h3>
 <p>We start by showing what has been implemented — the resampling based approach:</p>
-<div class="sourceCode" id="cb453"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb453-1"><a href="6.2-covariance-matrix.html#cb453-1" tabindex="-1"></a><span class="co"># load the convey package</span></span>
-<span id="cb453-2"><a href="6.2-covariance-matrix.html#cb453-2" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
-<span id="cb453-3"><a href="6.2-covariance-matrix.html#cb453-3" tabindex="-1"></a></span>
-<span id="cb453-4"><a href="6.2-covariance-matrix.html#cb453-4" tabindex="-1"></a><span class="co"># load the survey library</span></span>
-<span id="cb453-5"><a href="6.2-covariance-matrix.html#cb453-5" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
-<span id="cb453-6"><a href="6.2-covariance-matrix.html#cb453-6" tabindex="-1"></a></span>
-<span id="cb453-7"><a href="6.2-covariance-matrix.html#cb453-7" tabindex="-1"></a><span class="co"># load the laeken library</span></span>
-<span id="cb453-8"><a href="6.2-covariance-matrix.html#cb453-8" tabindex="-1"></a><span class="fu">library</span>(laeken)</span>
-<span id="cb453-9"><a href="6.2-covariance-matrix.html#cb453-9" tabindex="-1"></a></span>
-<span id="cb453-10"><a href="6.2-covariance-matrix.html#cb453-10" tabindex="-1"></a><span class="co"># load the synthetic EU statistics on income &amp; living conditions</span></span>
-<span id="cb453-11"><a href="6.2-covariance-matrix.html#cb453-11" tabindex="-1"></a><span class="fu">data</span>(eusilc)</span>
-<span id="cb453-12"><a href="6.2-covariance-matrix.html#cb453-12" tabindex="-1"></a></span>
-<span id="cb453-13"><a href="6.2-covariance-matrix.html#cb453-13" tabindex="-1"></a><span class="co"># make all column names lowercase</span></span>
-<span id="cb453-14"><a href="6.2-covariance-matrix.html#cb453-14" tabindex="-1"></a><span class="fu">names</span>(eusilc) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(eusilc))</span>
-<span id="cb453-15"><a href="6.2-covariance-matrix.html#cb453-15" tabindex="-1"></a></span>
-<span id="cb453-16"><a href="6.2-covariance-matrix.html#cb453-16" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
-<span id="cb453-17"><a href="6.2-covariance-matrix.html#cb453-17" tabindex="-1"></a><span class="co"># using our recommended setup</span></span>
-<span id="cb453-18"><a href="6.2-covariance-matrix.html#cb453-18" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span></span>
-<span id="cb453-19"><a href="6.2-covariance-matrix.html#cb453-19" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
-<span id="cb453-20"><a href="6.2-covariance-matrix.html#cb453-20" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
-<span id="cb453-21"><a href="6.2-covariance-matrix.html#cb453-21" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
-<span id="cb453-22"><a href="6.2-covariance-matrix.html#cb453-22" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
-<span id="cb453-23"><a href="6.2-covariance-matrix.html#cb453-23" tabindex="-1"></a>    <span class="at">data =</span> eusilc</span>
-<span id="cb453-24"><a href="6.2-covariance-matrix.html#cb453-24" tabindex="-1"></a>  )</span>
-<span id="cb453-25"><a href="6.2-covariance-matrix.html#cb453-25" tabindex="-1"></a></span>
-<span id="cb453-26"><a href="6.2-covariance-matrix.html#cb453-26" tabindex="-1"></a><span class="co"># create bootstrap-based design object</span></span>
-<span id="cb453-27"><a href="6.2-covariance-matrix.html#cb453-27" tabindex="-1"></a>des_eusilc_rep <span class="ot">&lt;-</span> <span class="fu">as.svrepdesign</span>( des_eusilc , <span class="at">type =</span> <span class="st">&quot;bootstrap&quot;</span> )</span>
-<span id="cb453-28"><a href="6.2-covariance-matrix.html#cb453-28" tabindex="-1"></a></span>
-<span id="cb453-29"><a href="6.2-covariance-matrix.html#cb453-29" tabindex="-1"></a><span class="co"># immediately run the convey_prep function on it</span></span>
-<span id="cb453-30"><a href="6.2-covariance-matrix.html#cb453-30" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>( des_eusilc )</span>
-<span id="cb453-31"><a href="6.2-covariance-matrix.html#cb453-31" tabindex="-1"></a>des_eusilc_rep <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(des_eusilc_rep)</span>
-<span id="cb453-32"><a href="6.2-covariance-matrix.html#cb453-32" tabindex="-1"></a></span>
-<span id="cb453-33"><a href="6.2-covariance-matrix.html#cb453-33" tabindex="-1"></a><span class="co"># estimate gini by gender, with and without covariance matrices</span></span>
-<span id="cb453-34"><a href="6.2-covariance-matrix.html#cb453-34" tabindex="-1"></a>ginis.rep <span class="ot">&lt;-</span> <span class="fu">svyby</span>( <span class="sc">~</span> py010n , <span class="sc">~</span>rb090 , des_eusilc_rep , svygini , <span class="at">na.rm =</span> <span class="cn">TRUE</span> , <span class="at">covmat =</span> <span class="cn">TRUE</span> )</span>
-<span id="cb453-35"><a href="6.2-covariance-matrix.html#cb453-35" tabindex="-1"></a>ginis.rep.nocov <span class="ot">&lt;-</span> <span class="fu">svyby</span>( <span class="sc">~</span> py010n , <span class="sc">~</span>rb090 , des_eusilc_rep , svygini , <span class="at">na.rm =</span> <span class="cn">TRUE</span> , <span class="at">covmat =</span> <span class="cn">FALSE</span> )</span>
-<span id="cb453-36"><a href="6.2-covariance-matrix.html#cb453-36" tabindex="-1"></a></span>
-<span id="cb453-37"><a href="6.2-covariance-matrix.html#cb453-37" tabindex="-1"></a><span class="co"># variance of the gini difference: naive</span></span>
-<span id="cb453-38"><a href="6.2-covariance-matrix.html#cb453-38" tabindex="-1"></a><span class="fu">svycontrast</span>( ginis.rep.nocov , <span class="fu">quote</span>( <span class="st">`</span><span class="at">male</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">female</span><span class="st">`</span> ) )</span></code></pre></div>
+<div class="sourceCode" id="cb462"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb462-1"><a href="6.2-covariance-matrix.html#cb462-1" tabindex="-1"></a><span class="co"># load the convey package</span></span>
+<span id="cb462-2"><a href="6.2-covariance-matrix.html#cb462-2" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
+<span id="cb462-3"><a href="6.2-covariance-matrix.html#cb462-3" tabindex="-1"></a></span>
+<span id="cb462-4"><a href="6.2-covariance-matrix.html#cb462-4" tabindex="-1"></a><span class="co"># load the survey library</span></span>
+<span id="cb462-5"><a href="6.2-covariance-matrix.html#cb462-5" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb462-6"><a href="6.2-covariance-matrix.html#cb462-6" tabindex="-1"></a></span>
+<span id="cb462-7"><a href="6.2-covariance-matrix.html#cb462-7" tabindex="-1"></a><span class="co"># load the laeken library</span></span>
+<span id="cb462-8"><a href="6.2-covariance-matrix.html#cb462-8" tabindex="-1"></a><span class="fu">library</span>(laeken)</span>
+<span id="cb462-9"><a href="6.2-covariance-matrix.html#cb462-9" tabindex="-1"></a></span>
+<span id="cb462-10"><a href="6.2-covariance-matrix.html#cb462-10" tabindex="-1"></a><span class="co"># load the synthetic EU statistics on income &amp; living conditions</span></span>
+<span id="cb462-11"><a href="6.2-covariance-matrix.html#cb462-11" tabindex="-1"></a><span class="fu">data</span>(eusilc)</span>
+<span id="cb462-12"><a href="6.2-covariance-matrix.html#cb462-12" tabindex="-1"></a></span>
+<span id="cb462-13"><a href="6.2-covariance-matrix.html#cb462-13" tabindex="-1"></a><span class="co"># make all column names lowercase</span></span>
+<span id="cb462-14"><a href="6.2-covariance-matrix.html#cb462-14" tabindex="-1"></a><span class="fu">names</span>(eusilc) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(eusilc))</span>
+<span id="cb462-15"><a href="6.2-covariance-matrix.html#cb462-15" tabindex="-1"></a></span>
+<span id="cb462-16"><a href="6.2-covariance-matrix.html#cb462-16" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
+<span id="cb462-17"><a href="6.2-covariance-matrix.html#cb462-17" tabindex="-1"></a><span class="co"># using our recommended setup</span></span>
+<span id="cb462-18"><a href="6.2-covariance-matrix.html#cb462-18" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span></span>
+<span id="cb462-19"><a href="6.2-covariance-matrix.html#cb462-19" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
+<span id="cb462-20"><a href="6.2-covariance-matrix.html#cb462-20" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
+<span id="cb462-21"><a href="6.2-covariance-matrix.html#cb462-21" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
+<span id="cb462-22"><a href="6.2-covariance-matrix.html#cb462-22" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
+<span id="cb462-23"><a href="6.2-covariance-matrix.html#cb462-23" tabindex="-1"></a>    <span class="at">data =</span> eusilc</span>
+<span id="cb462-24"><a href="6.2-covariance-matrix.html#cb462-24" tabindex="-1"></a>  )</span>
+<span id="cb462-25"><a href="6.2-covariance-matrix.html#cb462-25" tabindex="-1"></a></span>
+<span id="cb462-26"><a href="6.2-covariance-matrix.html#cb462-26" tabindex="-1"></a><span class="co"># create bootstrap-based design object</span></span>
+<span id="cb462-27"><a href="6.2-covariance-matrix.html#cb462-27" tabindex="-1"></a>des_eusilc_rep <span class="ot">&lt;-</span> <span class="fu">as.svrepdesign</span>( des_eusilc , <span class="at">type =</span> <span class="st">&quot;bootstrap&quot;</span> )</span>
+<span id="cb462-28"><a href="6.2-covariance-matrix.html#cb462-28" tabindex="-1"></a></span>
+<span id="cb462-29"><a href="6.2-covariance-matrix.html#cb462-29" tabindex="-1"></a><span class="co"># immediately run the convey_prep function on it</span></span>
+<span id="cb462-30"><a href="6.2-covariance-matrix.html#cb462-30" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>( des_eusilc )</span>
+<span id="cb462-31"><a href="6.2-covariance-matrix.html#cb462-31" tabindex="-1"></a>des_eusilc_rep <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(des_eusilc_rep)</span>
+<span id="cb462-32"><a href="6.2-covariance-matrix.html#cb462-32" tabindex="-1"></a></span>
+<span id="cb462-33"><a href="6.2-covariance-matrix.html#cb462-33" tabindex="-1"></a><span class="co"># estimate gini by gender, with and without covariance matrices</span></span>
+<span id="cb462-34"><a href="6.2-covariance-matrix.html#cb462-34" tabindex="-1"></a>ginis.rep <span class="ot">&lt;-</span> <span class="fu">svyby</span>( <span class="sc">~</span> py010n , <span class="sc">~</span>rb090 , des_eusilc_rep , svygini , <span class="at">na.rm =</span> <span class="cn">TRUE</span> , <span class="at">covmat =</span> <span class="cn">TRUE</span> )</span>
+<span id="cb462-35"><a href="6.2-covariance-matrix.html#cb462-35" tabindex="-1"></a>ginis.rep.nocov <span class="ot">&lt;-</span> <span class="fu">svyby</span>( <span class="sc">~</span> py010n , <span class="sc">~</span>rb090 , des_eusilc_rep , svygini , <span class="at">na.rm =</span> <span class="cn">TRUE</span> , <span class="at">covmat =</span> <span class="cn">FALSE</span> )</span>
+<span id="cb462-36"><a href="6.2-covariance-matrix.html#cb462-36" tabindex="-1"></a></span>
+<span id="cb462-37"><a href="6.2-covariance-matrix.html#cb462-37" tabindex="-1"></a><span class="co"># variance of the gini difference: naive</span></span>
+<span id="cb462-38"><a href="6.2-covariance-matrix.html#cb462-38" tabindex="-1"></a><span class="fu">svycontrast</span>( ginis.rep.nocov , <span class="fu">quote</span>( <span class="st">`</span><span class="at">male</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">female</span><span class="st">`</span> ) )</span></code></pre></div>
 <pre><code>## Warning in vcov.svyby(stat): Only diagonal elements of vcov() available</code></pre>
 <pre><code>##             nlcon     SE
 ## contrast -0.15006 0.0065</code></pre>
-<div class="sourceCode" id="cb456"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb456-1"><a href="6.2-covariance-matrix.html#cb456-1" tabindex="-1"></a><span class="co"># variance of the gini difference: accounting for covariance</span></span>
-<span id="cb456-2"><a href="6.2-covariance-matrix.html#cb456-2" tabindex="-1"></a><span class="fu">svycontrast</span>( ginis.rep , <span class="fu">quote</span>( <span class="st">`</span><span class="at">male</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">female</span><span class="st">`</span> ) )</span></code></pre></div>
+<div class="sourceCode" id="cb465"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb465-1"><a href="6.2-covariance-matrix.html#cb465-1" tabindex="-1"></a><span class="co"># variance of the gini difference: accounting for covariance</span></span>
+<span id="cb465-2"><a href="6.2-covariance-matrix.html#cb465-2" tabindex="-1"></a><span class="fu">svycontrast</span>( ginis.rep , <span class="fu">quote</span>( <span class="st">`</span><span class="at">male</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">female</span><span class="st">`</span> ) )</span></code></pre></div>
 <pre><code>##             nlcon     SE
 ## contrast -0.15006 0.0068</code></pre>
 <p>While not implemented yet, a linearization-based approach can be applied using:</p>
-<div class="sourceCode" id="cb458"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb458-1"><a href="6.2-covariance-matrix.html#cb458-1" tabindex="-1"></a><span class="co"># estimate gini by gender, with and without covariance matrices</span></span>
-<span id="cb458-2"><a href="6.2-covariance-matrix.html#cb458-2" tabindex="-1"></a>ginis.lin.nocov <span class="ot">&lt;-</span> <span class="fu">svyby</span>( <span class="sc">~</span> py010n , <span class="sc">~</span>rb090 , des_eusilc , svygini , <span class="at">na.rm =</span> <span class="cn">TRUE</span> , <span class="at">covmat =</span> <span class="cn">FALSE</span> )</span>
-<span id="cb458-3"><a href="6.2-covariance-matrix.html#cb458-3" tabindex="-1"></a>gini.female <span class="ot">&lt;-</span> <span class="fu">svygini</span>( <span class="sc">~</span> py010n , <span class="fu">subset</span>( des_eusilc , rb090 <span class="sc">==</span> <span class="st">&quot;female&quot;</span> ), <span class="at">na.rm =</span> <span class="cn">TRUE</span> , <span class="at">influence =</span> <span class="cn">TRUE</span> )</span>
-<span id="cb458-4"><a href="6.2-covariance-matrix.html#cb458-4" tabindex="-1"></a>gini.male   <span class="ot">&lt;-</span> <span class="fu">svygini</span>( <span class="sc">~</span> py010n , <span class="fu">subset</span>( des_eusilc , rb090 <span class="sc">==</span> <span class="st">&quot;male&quot;</span> ), <span class="at">na.rm =</span> <span class="cn">TRUE</span> , <span class="at">influence =</span> <span class="cn">TRUE</span> )</span>
-<span id="cb458-5"><a href="6.2-covariance-matrix.html#cb458-5" tabindex="-1"></a></span>
-<span id="cb458-6"><a href="6.2-covariance-matrix.html#cb458-6" tabindex="-1"></a><span class="co"># variance of the gini difference: naive</span></span>
-<span id="cb458-7"><a href="6.2-covariance-matrix.html#cb458-7" tabindex="-1"></a>linmat <span class="ot">&lt;-</span> <span class="fu">rep</span>( <span class="dv">0</span> , <span class="fu">nrow</span>( des_eusilc<span class="sc">$</span>variables ) )</span>
-<span id="cb458-8"><a href="6.2-covariance-matrix.html#cb458-8" tabindex="-1"></a>linmat[ <span class="fu">attr</span>( gini.female , <span class="st">&quot;index&quot;</span> ) ] <span class="ot">&lt;-</span> <span class="fu">attr</span>( gini.female , <span class="st">&quot;influence&quot;</span> )</span>
-<span id="cb458-9"><a href="6.2-covariance-matrix.html#cb458-9" tabindex="-1"></a>linmat[ <span class="fu">attr</span>( gini.male , <span class="st">&quot;index&quot;</span> ) ] <span class="ot">&lt;-</span> <span class="fu">attr</span>( gini.male , <span class="st">&quot;influence&quot;</span> )</span>
-<span id="cb458-10"><a href="6.2-covariance-matrix.html#cb458-10" tabindex="-1"></a>linmat <span class="ot">&lt;-</span> linmat <span class="sc">*</span> des_eusilc<span class="sc">$</span>prob</span>
-<span id="cb458-11"><a href="6.2-covariance-matrix.html#cb458-11" tabindex="-1"></a>lintot <span class="ot">&lt;-</span> <span class="fu">svyby</span>( linmat , <span class="sc">~</span>rb090 , des_eusilc , svytotal , <span class="at">covmat =</span> <span class="cn">TRUE</span> )</span>
-<span id="cb458-12"><a href="6.2-covariance-matrix.html#cb458-12" tabindex="-1"></a></span>
-<span id="cb458-13"><a href="6.2-covariance-matrix.html#cb458-13" tabindex="-1"></a><span class="co"># collect covariance matrix</span></span>
-<span id="cb458-14"><a href="6.2-covariance-matrix.html#cb458-14" tabindex="-1"></a>( m <span class="ot">&lt;-</span> <span class="fu">vcov</span>( lintot ) )</span></code></pre></div>
+<div class="sourceCode" id="cb467"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb467-1"><a href="6.2-covariance-matrix.html#cb467-1" tabindex="-1"></a><span class="co"># estimate gini by gender, with and without covariance matrices</span></span>
+<span id="cb467-2"><a href="6.2-covariance-matrix.html#cb467-2" tabindex="-1"></a>ginis.lin.nocov <span class="ot">&lt;-</span> <span class="fu">svyby</span>( <span class="sc">~</span> py010n , <span class="sc">~</span>rb090 , des_eusilc , svygini , <span class="at">na.rm =</span> <span class="cn">TRUE</span> , <span class="at">covmat =</span> <span class="cn">FALSE</span> )</span>
+<span id="cb467-3"><a href="6.2-covariance-matrix.html#cb467-3" tabindex="-1"></a>gini.female <span class="ot">&lt;-</span> <span class="fu">svygini</span>( <span class="sc">~</span> py010n , <span class="fu">subset</span>( des_eusilc , rb090 <span class="sc">==</span> <span class="st">&quot;female&quot;</span> ), <span class="at">na.rm =</span> <span class="cn">TRUE</span> , <span class="at">influence =</span> <span class="cn">TRUE</span> )</span>
+<span id="cb467-4"><a href="6.2-covariance-matrix.html#cb467-4" tabindex="-1"></a>gini.male   <span class="ot">&lt;-</span> <span class="fu">svygini</span>( <span class="sc">~</span> py010n , <span class="fu">subset</span>( des_eusilc , rb090 <span class="sc">==</span> <span class="st">&quot;male&quot;</span> ), <span class="at">na.rm =</span> <span class="cn">TRUE</span> , <span class="at">influence =</span> <span class="cn">TRUE</span> )</span>
+<span id="cb467-5"><a href="6.2-covariance-matrix.html#cb467-5" tabindex="-1"></a></span>
+<span id="cb467-6"><a href="6.2-covariance-matrix.html#cb467-6" tabindex="-1"></a><span class="co"># variance of the gini difference: naive</span></span>
+<span id="cb467-7"><a href="6.2-covariance-matrix.html#cb467-7" tabindex="-1"></a>linmat <span class="ot">&lt;-</span> <span class="fu">rep</span>( <span class="dv">0</span> , <span class="fu">nrow</span>( des_eusilc<span class="sc">$</span>variables ) )</span>
+<span id="cb467-8"><a href="6.2-covariance-matrix.html#cb467-8" tabindex="-1"></a>linmat[ <span class="fu">attr</span>( gini.female , <span class="st">&quot;index&quot;</span> ) ] <span class="ot">&lt;-</span> <span class="fu">attr</span>( gini.female , <span class="st">&quot;influence&quot;</span> )</span>
+<span id="cb467-9"><a href="6.2-covariance-matrix.html#cb467-9" tabindex="-1"></a>linmat[ <span class="fu">attr</span>( gini.male , <span class="st">&quot;index&quot;</span> ) ] <span class="ot">&lt;-</span> <span class="fu">attr</span>( gini.male , <span class="st">&quot;influence&quot;</span> )</span>
+<span id="cb467-10"><a href="6.2-covariance-matrix.html#cb467-10" tabindex="-1"></a>linmat <span class="ot">&lt;-</span> linmat <span class="sc">*</span> des_eusilc<span class="sc">$</span>prob</span>
+<span id="cb467-11"><a href="6.2-covariance-matrix.html#cb467-11" tabindex="-1"></a>lintot <span class="ot">&lt;-</span> <span class="fu">svyby</span>( linmat , <span class="sc">~</span>rb090 , des_eusilc , svytotal , <span class="at">covmat =</span> <span class="cn">TRUE</span> )</span>
+<span id="cb467-12"><a href="6.2-covariance-matrix.html#cb467-12" tabindex="-1"></a></span>
+<span id="cb467-13"><a href="6.2-covariance-matrix.html#cb467-13" tabindex="-1"></a><span class="co"># collect covariance matrix</span></span>
+<span id="cb467-14"><a href="6.2-covariance-matrix.html#cb467-14" tabindex="-1"></a>( m <span class="ot">&lt;-</span> <span class="fu">vcov</span>( lintot ) )</span></code></pre></div>
 <pre><code>##                male       female
 ## male   2.954413e-05 2.764584e-10
 ## female 2.764584e-10 2.292063e-05</code></pre>
-<div class="sourceCode" id="cb460"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb460-1"><a href="6.2-covariance-matrix.html#cb460-1" tabindex="-1"></a><span class="co"># SE of the gini difference: naive</span></span>
-<span id="cb460-2"><a href="6.2-covariance-matrix.html#cb460-2" tabindex="-1"></a><span class="fu">SE</span>( <span class="fu">svycontrast</span>( ginis.lin.nocov , <span class="fu">quote</span>( <span class="st">`</span><span class="at">male</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">female</span><span class="st">`</span> ) ) )</span></code></pre></div>
+<div class="sourceCode" id="cb469"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb469-1"><a href="6.2-covariance-matrix.html#cb469-1" tabindex="-1"></a><span class="co"># SE of the gini difference: naive</span></span>
+<span id="cb469-2"><a href="6.2-covariance-matrix.html#cb469-2" tabindex="-1"></a><span class="fu">SE</span>( <span class="fu">svycontrast</span>( ginis.lin.nocov , <span class="fu">quote</span>( <span class="st">`</span><span class="at">male</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">female</span><span class="st">`</span> ) ) )</span></code></pre></div>
 <pre><code>## Warning in vcov.svyby(stat): Only diagonal elements of vcov() available</code></pre>
 <pre><code>##    contrast 
 ## 0.007243256</code></pre>
-<div class="sourceCode" id="cb463"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb463-1"><a href="6.2-covariance-matrix.html#cb463-1" tabindex="-1"></a><span class="co"># SE of the gini difference: accounting for covariance</span></span>
-<span id="cb463-2"><a href="6.2-covariance-matrix.html#cb463-2" tabindex="-1"></a><span class="fu">SE</span>( <span class="fu">svycontrast</span>( lintot , <span class="fu">quote</span>( <span class="st">`</span><span class="at">male</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">female</span><span class="st">`</span> ) ) )</span></code></pre></div>
+<div class="sourceCode" id="cb472"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb472-1"><a href="6.2-covariance-matrix.html#cb472-1" tabindex="-1"></a><span class="co"># SE of the gini difference: accounting for covariance</span></span>
+<span id="cb472-2"><a href="6.2-covariance-matrix.html#cb472-2" tabindex="-1"></a><span class="fu">SE</span>( <span class="fu">svycontrast</span>( lintot , <span class="fu">quote</span>( <span class="st">`</span><span class="at">male</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">female</span><span class="st">`</span> ) ) )</span></code></pre></div>
 <pre><code>##    contrast 
 ## 0.007243218</code></pre>
 
