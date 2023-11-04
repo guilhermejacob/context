@@ -5,7 +5,7 @@
 <meta charset="utf-8" />
 <meta name="generator" content="pandoc" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="1.3 Usage Examples | Poverty and Inequality with Complex Survey Data" />
+<meta property="og:title" content="7.1 Example Calculation | Poverty and Inequality with Complex Survey Data" />
 <meta property="og:type" content="book" />
 
 <meta property="og:description" content="A book about the R convey package" />
@@ -24,7 +24,7 @@ MathJax.Hub.Config({
 
 <meta name="description" content="A book about the R convey package">
 
-<title>1.3 Usage Examples | Poverty and Inequality with Complex Survey Data</title>
+<title>7.1 Example Calculation | Poverty and Inequality with Complex Survey Data</title>
 
 <link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte-background.css" rel="stylesheet" />
@@ -251,114 +251,86 @@ div.csl-indent {
 </div>
 <div class="row">
 <div class="col-sm-12">
-<div id="usage-examples" class="section level2" number="1.3">
-<h2><span class="header-section-number">1.3</span> Usage Examples</h2>
-<p>In the following example, we’ve loaded the data set <code>eusilc</code> from the R library <a href="https://CRAN.R-project.org/package=laeken">laeken</a> <span class="citation">(<label for="tufte-mn-6" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-6" class="margin-toggle">Alfons and Templ 2013<span class="marginnote">Alfons, Andreas, and Matthias Templ. 2013. <span>“Estimation of Social Exclusion Indicators from Complex Surveys: The <span>R</span> Package <span class="nocase">laeken</span>.”</span> <em>Journal of Statistical Software</em> 54 (15): 1–25. <a href="http://www.jstatsoft.org/v54/i15/">http://www.jstatsoft.org/v54/i15/</a>.</span>)</span>.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="1.3-usage-examples.html#cb3-1" tabindex="-1"></a><span class="fu">library</span>(laeken)</span>
-<span id="cb3-2"><a href="1.3-usage-examples.html#cb3-2" tabindex="-1"></a><span class="fu">data</span>(eusilc)</span></code></pre></div>
-<p>Next, we create an object of class <code>survey.design</code> using the function <code>svydesign</code> of the <code>survey</code> library:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="1.3-usage-examples.html#cb4-1" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
-<span id="cb4-2"><a href="1.3-usage-examples.html#cb4-2" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span></span>
-<span id="cb4-3"><a href="1.3-usage-examples.html#cb4-3" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
-<span id="cb4-4"><a href="1.3-usage-examples.html#cb4-4" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030,</span>
-<span id="cb4-5"><a href="1.3-usage-examples.html#cb4-5" tabindex="-1"></a>    <span class="at">strata =</span>  <span class="sc">~</span> db040,</span>
-<span id="cb4-6"><a href="1.3-usage-examples.html#cb4-6" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050,</span>
-<span id="cb4-7"><a href="1.3-usage-examples.html#cb4-7" tabindex="-1"></a>    <span class="at">data =</span> eusilc</span>
-<span id="cb4-8"><a href="1.3-usage-examples.html#cb4-8" tabindex="-1"></a>  )</span></code></pre></div>
-<p>Right after the creation of the design object <code>des_eusilc</code>, we should use the function <code>convey_prep</code> that adds an attribute to the survey design which saves information on the design object based upon the whole sample, needed to work with subset designs.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="1.3-usage-examples.html#cb5-1" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
-<span id="cb5-2"><a href="1.3-usage-examples.html#cb5-2" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(des_eusilc)</span></code></pre></div>
-<p>To estimate the at-risk-of-poverty rate, we use the function <code>svyarpt</code>:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="1.3-usage-examples.html#cb6-1" tabindex="-1"></a><span class="fu">svyarpr</span>( <span class="sc">~</span> eqIncome, <span class="at">design =</span> des_eusilc)</span></code></pre></div>
-<pre><code>            arpr     SE
-eqIncome 0.14444 0.0028</code></pre>
-<p>To estimate the at-risk-of-poverty rate across domains defined by the variable <code>db040</code> we use:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="1.3-usage-examples.html#cb8-1" tabindex="-1"></a><span class="fu">svyby</span>(</span>
-<span id="cb8-2"><a href="1.3-usage-examples.html#cb8-2" tabindex="-1"></a>  <span class="sc">~</span> eqIncome,</span>
-<span id="cb8-3"><a href="1.3-usage-examples.html#cb8-3" tabindex="-1"></a>  <span class="at">by =</span> <span class="sc">~</span> db040,</span>
-<span id="cb8-4"><a href="1.3-usage-examples.html#cb8-4" tabindex="-1"></a>  <span class="at">design =</span> des_eusilc,</span>
-<span id="cb8-5"><a href="1.3-usage-examples.html#cb8-5" tabindex="-1"></a>  <span class="at">FUN =</span> svyarpr,</span>
-<span id="cb8-6"><a href="1.3-usage-examples.html#cb8-6" tabindex="-1"></a>  <span class="at">deff =</span> <span class="cn">FALSE</span></span>
-<span id="cb8-7"><a href="1.3-usage-examples.html#cb8-7" tabindex="-1"></a>)</span></code></pre></div>
-<pre><code>                      db040  eqIncome          se
-Burgenland       Burgenland 0.1953984 0.017202852
-Carinthia         Carinthia 0.1308627 0.010606502
-Lower Austria Lower Austria 0.1384362 0.006513217
-Salzburg           Salzburg 0.1378734 0.011581408
-Styria               Styria 0.1437464 0.007453192
-Tyrol                 Tyrol 0.1530819 0.009884094
-Upper Austria Upper Austria 0.1088977 0.005933094
-Vienna               Vienna 0.1723468 0.007684540
-Vorarlberg       Vorarlberg 0.1653731 0.013756389</code></pre>
-<p>Using the same data set, we estimate the quintile share ratio:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="1.3-usage-examples.html#cb10-1" tabindex="-1"></a><span class="co"># for the whole population</span></span>
-<span id="cb10-2"><a href="1.3-usage-examples.html#cb10-2" tabindex="-1"></a><span class="fu">svyqsr</span>( <span class="sc">~</span> eqIncome, <span class="at">design =</span> des_eusilc, <span class="at">alpha1 =</span> .<span class="dv">20</span>)</span></code></pre></div>
-<pre><code>          qsr     SE
-eqIncome 3.97 0.0426</code></pre>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="1.3-usage-examples.html#cb12-1" tabindex="-1"></a><span class="co"># for domains</span></span>
-<span id="cb12-2"><a href="1.3-usage-examples.html#cb12-2" tabindex="-1"></a><span class="fu">svyby</span>(</span>
-<span id="cb12-3"><a href="1.3-usage-examples.html#cb12-3" tabindex="-1"></a>  <span class="sc">~</span> eqIncome,</span>
-<span id="cb12-4"><a href="1.3-usage-examples.html#cb12-4" tabindex="-1"></a>  <span class="at">by =</span> <span class="sc">~</span> db040,</span>
-<span id="cb12-5"><a href="1.3-usage-examples.html#cb12-5" tabindex="-1"></a>  <span class="at">design =</span> des_eusilc,</span>
-<span id="cb12-6"><a href="1.3-usage-examples.html#cb12-6" tabindex="-1"></a>  <span class="at">FUN =</span> svyqsr,</span>
-<span id="cb12-7"><a href="1.3-usage-examples.html#cb12-7" tabindex="-1"></a>  <span class="at">alpha1 =</span> .<span class="dv">20</span>,</span>
-<span id="cb12-8"><a href="1.3-usage-examples.html#cb12-8" tabindex="-1"></a>  <span class="at">deff =</span> <span class="cn">FALSE</span></span>
-<span id="cb12-9"><a href="1.3-usage-examples.html#cb12-9" tabindex="-1"></a>)</span></code></pre></div>
-<pre><code>                      db040 eqIncome         se
-Burgenland       Burgenland 5.008486 0.32755685
-Carinthia         Carinthia 3.562404 0.10909726
-Lower Austria Lower Austria 3.824539 0.08783599
-Salzburg           Salzburg 3.768393 0.17015086
-Styria               Styria 3.464305 0.09364800
-Tyrol                 Tyrol 3.586046 0.13629739
-Upper Austria Upper Austria 3.668289 0.09310624
-Vienna               Vienna 4.654743 0.13135731
-Vorarlberg       Vorarlberg 4.366511 0.20532075</code></pre>
-<p>These functions can be used as S3 methods for the classes <code>survey.design</code> and <code>svyrep.design</code>.</p>
-<p>Let’s create a design object of class <code>svyrep.design</code> and run the function <code>convey_prep</code> on it:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="1.3-usage-examples.html#cb14-1" tabindex="-1"></a>des_eusilc_rep <span class="ot">&lt;-</span> <span class="fu">as.svrepdesign</span>(des_eusilc, <span class="at">type =</span> <span class="st">&quot;bootstrap&quot;</span>)</span>
-<span id="cb14-2"><a href="1.3-usage-examples.html#cb14-2" tabindex="-1"></a>des_eusilc_rep <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(des_eusilc_rep)</span></code></pre></div>
-<p>The function <code>svyarpr</code> produces matching coefficients and near-identical standard errors on the replication design:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="1.3-usage-examples.html#cb15-1" tabindex="-1"></a><span class="fu">svyarpr</span>( <span class="sc">~</span> eqIncome, <span class="at">design =</span> des_eusilc_rep)</span></code></pre></div>
-<pre><code>            arpr     SE
-eqIncome 0.14444 0.0025</code></pre>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="1.3-usage-examples.html#cb17-1" tabindex="-1"></a><span class="fu">svyby</span>(</span>
-<span id="cb17-2"><a href="1.3-usage-examples.html#cb17-2" tabindex="-1"></a>  <span class="sc">~</span> eqIncome,</span>
-<span id="cb17-3"><a href="1.3-usage-examples.html#cb17-3" tabindex="-1"></a>  <span class="at">by =</span> <span class="sc">~</span> db040,</span>
-<span id="cb17-4"><a href="1.3-usage-examples.html#cb17-4" tabindex="-1"></a>  <span class="at">design =</span> des_eusilc_rep,</span>
-<span id="cb17-5"><a href="1.3-usage-examples.html#cb17-5" tabindex="-1"></a>  <span class="at">FUN =</span> svyarpr,</span>
-<span id="cb17-6"><a href="1.3-usage-examples.html#cb17-6" tabindex="-1"></a>  <span class="at">deff =</span> <span class="cn">FALSE</span></span>
-<span id="cb17-7"><a href="1.3-usage-examples.html#cb17-7" tabindex="-1"></a>)</span></code></pre></div>
-<pre><code>                      db040  eqIncome se.eqIncome
-Burgenland       Burgenland 0.1953984 0.016713791
-Carinthia         Carinthia 0.1308627 0.012061625
-Lower Austria Lower Austria 0.1384362 0.007294696
-Salzburg           Salzburg 0.1378734 0.010050357
-Styria               Styria 0.1437464 0.008558783
-Tyrol                 Tyrol 0.1530819 0.010328225
-Upper Austria Upper Austria 0.1088977 0.006212301
-Vienna               Vienna 0.1723468 0.007259732
-Vorarlberg       Vorarlberg 0.1653731 0.012792618</code></pre>
-<p>The functions of the convey <code>library</code> are called in a similar way to the functions in <code>survey</code> library.</p>
-<p>It is also possible to deal with missing values by using the argument <code>na.rm</code>.</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="1.3-usage-examples.html#cb19-1" tabindex="-1"></a><span class="co"># survey.design using a variable with missings</span></span>
-<span id="cb19-2"><a href="1.3-usage-examples.html#cb19-2" tabindex="-1"></a><span class="fu">svygini</span>( <span class="sc">~</span> py010n , <span class="at">design =</span> des_eusilc)</span></code></pre></div>
-<pre><code>       gini SE
-py010n   NA NA</code></pre>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="1.3-usage-examples.html#cb21-1" tabindex="-1"></a><span class="fu">svygini</span>( <span class="sc">~</span> py010n , <span class="at">design =</span> des_eusilc , <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
-<pre><code>          gini     SE
-py010n 0.64606 0.0036</code></pre>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="1.3-usage-examples.html#cb23-1" tabindex="-1"></a><span class="co"># svyrep.design using a variable with missings</span></span>
-<span id="cb23-2"><a href="1.3-usage-examples.html#cb23-2" tabindex="-1"></a><span class="fu">svygini</span>( <span class="sc">~</span> py010n , <span class="at">design =</span> des_eusilc_rep)</span></code></pre></div>
-<pre><code>       gini SE
-py010n   NA NA</code></pre>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="1.3-usage-examples.html#cb25-1" tabindex="-1"></a><span class="fu">svygini</span>( <span class="sc">~</span> py010n , <span class="at">design =</span> des_eusilc_rep , <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
-<pre><code>          gini     SE
-py010n 0.64606 0.0043</code></pre>
+<div id="example-calculation-1" class="section level2" number="7.1">
+<h2><span class="header-section-number">7.1</span> Example Calculation</h2>
+<p>We start by showing what has been implemented — the resampling based approach:</p>
+<div class="sourceCode" id="cb472"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb472-1"><a href="7.1-example-calculation-1.html#cb472-1" tabindex="-1"></a><span class="co"># load the convey package</span></span>
+<span id="cb472-2"><a href="7.1-example-calculation-1.html#cb472-2" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
+<span id="cb472-3"><a href="7.1-example-calculation-1.html#cb472-3" tabindex="-1"></a></span>
+<span id="cb472-4"><a href="7.1-example-calculation-1.html#cb472-4" tabindex="-1"></a><span class="co"># load the survey library</span></span>
+<span id="cb472-5"><a href="7.1-example-calculation-1.html#cb472-5" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb472-6"><a href="7.1-example-calculation-1.html#cb472-6" tabindex="-1"></a></span>
+<span id="cb472-7"><a href="7.1-example-calculation-1.html#cb472-7" tabindex="-1"></a><span class="co"># load the laeken library</span></span>
+<span id="cb472-8"><a href="7.1-example-calculation-1.html#cb472-8" tabindex="-1"></a><span class="fu">library</span>(laeken)</span>
+<span id="cb472-9"><a href="7.1-example-calculation-1.html#cb472-9" tabindex="-1"></a></span>
+<span id="cb472-10"><a href="7.1-example-calculation-1.html#cb472-10" tabindex="-1"></a><span class="co"># load the synthetic EU statistics on income &amp; living conditions</span></span>
+<span id="cb472-11"><a href="7.1-example-calculation-1.html#cb472-11" tabindex="-1"></a><span class="fu">data</span>(eusilc)</span>
+<span id="cb472-12"><a href="7.1-example-calculation-1.html#cb472-12" tabindex="-1"></a></span>
+<span id="cb472-13"><a href="7.1-example-calculation-1.html#cb472-13" tabindex="-1"></a><span class="co"># make all column names lowercase</span></span>
+<span id="cb472-14"><a href="7.1-example-calculation-1.html#cb472-14" tabindex="-1"></a><span class="fu">names</span>(eusilc) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(eusilc))</span>
+<span id="cb472-15"><a href="7.1-example-calculation-1.html#cb472-15" tabindex="-1"></a></span>
+<span id="cb472-16"><a href="7.1-example-calculation-1.html#cb472-16" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
+<span id="cb472-17"><a href="7.1-example-calculation-1.html#cb472-17" tabindex="-1"></a><span class="co"># using our recommended setup</span></span>
+<span id="cb472-18"><a href="7.1-example-calculation-1.html#cb472-18" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span></span>
+<span id="cb472-19"><a href="7.1-example-calculation-1.html#cb472-19" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
+<span id="cb472-20"><a href="7.1-example-calculation-1.html#cb472-20" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
+<span id="cb472-21"><a href="7.1-example-calculation-1.html#cb472-21" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
+<span id="cb472-22"><a href="7.1-example-calculation-1.html#cb472-22" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
+<span id="cb472-23"><a href="7.1-example-calculation-1.html#cb472-23" tabindex="-1"></a>    <span class="at">data =</span> eusilc</span>
+<span id="cb472-24"><a href="7.1-example-calculation-1.html#cb472-24" tabindex="-1"></a>  )</span>
+<span id="cb472-25"><a href="7.1-example-calculation-1.html#cb472-25" tabindex="-1"></a></span>
+<span id="cb472-26"><a href="7.1-example-calculation-1.html#cb472-26" tabindex="-1"></a><span class="co"># create bootstrap-based design object</span></span>
+<span id="cb472-27"><a href="7.1-example-calculation-1.html#cb472-27" tabindex="-1"></a>des_eusilc_rep <span class="ot">&lt;-</span> <span class="fu">as.svrepdesign</span>( des_eusilc , <span class="at">type =</span> <span class="st">&quot;bootstrap&quot;</span> )</span>
+<span id="cb472-28"><a href="7.1-example-calculation-1.html#cb472-28" tabindex="-1"></a></span>
+<span id="cb472-29"><a href="7.1-example-calculation-1.html#cb472-29" tabindex="-1"></a><span class="co"># immediately run the convey_prep function on it</span></span>
+<span id="cb472-30"><a href="7.1-example-calculation-1.html#cb472-30" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>( des_eusilc )</span>
+<span id="cb472-31"><a href="7.1-example-calculation-1.html#cb472-31" tabindex="-1"></a>des_eusilc_rep <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(des_eusilc_rep)</span>
+<span id="cb472-32"><a href="7.1-example-calculation-1.html#cb472-32" tabindex="-1"></a></span>
+<span id="cb472-33"><a href="7.1-example-calculation-1.html#cb472-33" tabindex="-1"></a><span class="co"># estimate gini by gender, with and without covariance matrices</span></span>
+<span id="cb472-34"><a href="7.1-example-calculation-1.html#cb472-34" tabindex="-1"></a>ginis.rep <span class="ot">&lt;-</span> <span class="fu">svyby</span>( <span class="sc">~</span> py010n , <span class="sc">~</span>rb090 , des_eusilc_rep , svygini , <span class="at">na.rm =</span> <span class="cn">TRUE</span> , <span class="at">covmat =</span> <span class="cn">TRUE</span> )</span>
+<span id="cb472-35"><a href="7.1-example-calculation-1.html#cb472-35" tabindex="-1"></a>ginis.rep.nocov <span class="ot">&lt;-</span> <span class="fu">svyby</span>( <span class="sc">~</span> py010n , <span class="sc">~</span>rb090 , des_eusilc_rep , svygini , <span class="at">na.rm =</span> <span class="cn">TRUE</span> , <span class="at">covmat =</span> <span class="cn">FALSE</span> )</span>
+<span id="cb472-36"><a href="7.1-example-calculation-1.html#cb472-36" tabindex="-1"></a></span>
+<span id="cb472-37"><a href="7.1-example-calculation-1.html#cb472-37" tabindex="-1"></a><span class="co"># variance of the gini difference: naive</span></span>
+<span id="cb472-38"><a href="7.1-example-calculation-1.html#cb472-38" tabindex="-1"></a><span class="fu">svycontrast</span>( ginis.rep.nocov , <span class="fu">quote</span>( <span class="st">`</span><span class="at">male</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">female</span><span class="st">`</span> ) )</span></code></pre></div>
+<pre><code>## Warning in vcov.svyby(stat): Only diagonal elements of vcov() available</code></pre>
+<pre><code>##             nlcon     SE
+## contrast -0.15006 0.0065</code></pre>
+<div class="sourceCode" id="cb475"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb475-1"><a href="7.1-example-calculation-1.html#cb475-1" tabindex="-1"></a><span class="co"># variance of the gini difference: accounting for covariance</span></span>
+<span id="cb475-2"><a href="7.1-example-calculation-1.html#cb475-2" tabindex="-1"></a><span class="fu">svycontrast</span>( ginis.rep , <span class="fu">quote</span>( <span class="st">`</span><span class="at">male</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">female</span><span class="st">`</span> ) )</span></code></pre></div>
+<pre><code>##             nlcon     SE
+## contrast -0.15006 0.0068</code></pre>
+<p>While not implemented yet, a linearization-based approach can be applied using:</p>
+<div class="sourceCode" id="cb477"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb477-1"><a href="7.1-example-calculation-1.html#cb477-1" tabindex="-1"></a><span class="co"># estimate gini by gender, with and without covariance matrices</span></span>
+<span id="cb477-2"><a href="7.1-example-calculation-1.html#cb477-2" tabindex="-1"></a>ginis.lin.nocov <span class="ot">&lt;-</span> <span class="fu">svyby</span>( <span class="sc">~</span> py010n , <span class="sc">~</span>rb090 , des_eusilc , svygini , <span class="at">na.rm =</span> <span class="cn">TRUE</span> , <span class="at">covmat =</span> <span class="cn">FALSE</span> )</span>
+<span id="cb477-3"><a href="7.1-example-calculation-1.html#cb477-3" tabindex="-1"></a>gini.female <span class="ot">&lt;-</span> <span class="fu">svygini</span>( <span class="sc">~</span> py010n , <span class="fu">subset</span>( des_eusilc , rb090 <span class="sc">==</span> <span class="st">&quot;female&quot;</span> ), <span class="at">na.rm =</span> <span class="cn">TRUE</span> , <span class="at">influence =</span> <span class="cn">TRUE</span> )</span>
+<span id="cb477-4"><a href="7.1-example-calculation-1.html#cb477-4" tabindex="-1"></a>gini.male   <span class="ot">&lt;-</span> <span class="fu">svygini</span>( <span class="sc">~</span> py010n , <span class="fu">subset</span>( des_eusilc , rb090 <span class="sc">==</span> <span class="st">&quot;male&quot;</span> ), <span class="at">na.rm =</span> <span class="cn">TRUE</span> , <span class="at">influence =</span> <span class="cn">TRUE</span> )</span>
+<span id="cb477-5"><a href="7.1-example-calculation-1.html#cb477-5" tabindex="-1"></a></span>
+<span id="cb477-6"><a href="7.1-example-calculation-1.html#cb477-6" tabindex="-1"></a><span class="co"># variance of the gini difference: naive</span></span>
+<span id="cb477-7"><a href="7.1-example-calculation-1.html#cb477-7" tabindex="-1"></a>linmat <span class="ot">&lt;-</span> <span class="fu">rep</span>( <span class="dv">0</span> , <span class="fu">nrow</span>( des_eusilc<span class="sc">$</span>variables ) )</span>
+<span id="cb477-8"><a href="7.1-example-calculation-1.html#cb477-8" tabindex="-1"></a>linmat[ <span class="fu">attr</span>( gini.female , <span class="st">&quot;index&quot;</span> ) ] <span class="ot">&lt;-</span> <span class="fu">attr</span>( gini.female , <span class="st">&quot;influence&quot;</span> )</span>
+<span id="cb477-9"><a href="7.1-example-calculation-1.html#cb477-9" tabindex="-1"></a>linmat[ <span class="fu">attr</span>( gini.male , <span class="st">&quot;index&quot;</span> ) ] <span class="ot">&lt;-</span> <span class="fu">attr</span>( gini.male , <span class="st">&quot;influence&quot;</span> )</span>
+<span id="cb477-10"><a href="7.1-example-calculation-1.html#cb477-10" tabindex="-1"></a>linmat <span class="ot">&lt;-</span> linmat <span class="sc">*</span> des_eusilc<span class="sc">$</span>prob</span>
+<span id="cb477-11"><a href="7.1-example-calculation-1.html#cb477-11" tabindex="-1"></a>lintot <span class="ot">&lt;-</span> <span class="fu">svyby</span>( linmat , <span class="sc">~</span>rb090 , des_eusilc , svytotal , <span class="at">covmat =</span> <span class="cn">TRUE</span> )</span>
+<span id="cb477-12"><a href="7.1-example-calculation-1.html#cb477-12" tabindex="-1"></a></span>
+<span id="cb477-13"><a href="7.1-example-calculation-1.html#cb477-13" tabindex="-1"></a><span class="co"># collect covariance matrix</span></span>
+<span id="cb477-14"><a href="7.1-example-calculation-1.html#cb477-14" tabindex="-1"></a>( m <span class="ot">&lt;-</span> <span class="fu">vcov</span>( lintot ) )</span></code></pre></div>
+<pre><code>##                male       female
+## male   2.954413e-05 2.764584e-10
+## female 2.764584e-10 2.292063e-05</code></pre>
+<div class="sourceCode" id="cb479"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb479-1"><a href="7.1-example-calculation-1.html#cb479-1" tabindex="-1"></a><span class="co"># SE of the gini difference: naive</span></span>
+<span id="cb479-2"><a href="7.1-example-calculation-1.html#cb479-2" tabindex="-1"></a><span class="fu">SE</span>( <span class="fu">svycontrast</span>( ginis.lin.nocov , <span class="fu">quote</span>( <span class="st">`</span><span class="at">male</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">female</span><span class="st">`</span> ) ) )</span></code></pre></div>
+<pre><code>## Warning in vcov.svyby(stat): Only diagonal elements of vcov() available</code></pre>
+<pre><code>##    contrast 
+## 0.007243256</code></pre>
+<div class="sourceCode" id="cb482"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb482-1"><a href="7.1-example-calculation-1.html#cb482-1" tabindex="-1"></a><span class="co"># SE of the gini difference: accounting for covariance</span></span>
+<span id="cb482-2"><a href="7.1-example-calculation-1.html#cb482-2" tabindex="-1"></a><span class="fu">SE</span>( <span class="fu">svycontrast</span>( lintot , <span class="fu">quote</span>( <span class="st">`</span><span class="at">male</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">female</span><span class="st">`</span> ) ) )</span></code></pre></div>
+<pre><code>##    contrast 
+## 0.007243218</code></pre>
+
 </div>
+<!-- </div> -->
 <p style="text-align: center;">
-<a href="1.2-survey.html"><button class="btn btn-default">Previous</button></a>
-<a href="1.4-the-current-population-survey-cps.html"><button class="btn btn-default">Next</button></a>
+<a href="7-covariance-matrix.html"><button class="btn btn-default">Previous</button></a>
 </p>
 </div>
 </div>
