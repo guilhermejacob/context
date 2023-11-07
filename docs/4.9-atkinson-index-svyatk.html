@@ -13,7 +13,7 @@
 
 <meta name="author" content="By Guilherme Jacob, Anthony Damico, and Djalma Pessoa. The authors received no external funding for the convey software and this accompanying textbook." />
 
-<meta name="date" content="2023-11-04" />
+<meta name="date" content="2023-11-07" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -253,12 +253,12 @@ div.csl-indent {
 <div class="col-sm-12">
 <div id="atkinson-index-svyatk" class="section level2" number="4.9">
 <h2><span class="header-section-number">4.9</span> Atkinson index (svyatk)</h2>
-<div class="sourceCode" id="cb340"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb340-1"><a href="4.9-atkinson-index-svyatk.html#cb340-1" tabindex="-1"></a>✔️ is defined <span class="cf">in</span> terms of an interpretable utility <span class="cf">function</span></span>
-<span id="cb340-2"><a href="4.9-atkinson-index-svyatk.html#cb340-2" tabindex="-1"></a>✔️ has a <span class="fu">direct</span> (but non<span class="sc">-</span>linear) relationship to <span class="st">`</span><span class="at">svygei</span><span class="st">`</span></span>
-<span id="cb340-3"><a href="4.9-atkinson-index-svyatk.html#cb340-3" tabindex="-1"></a>✔️ has an interpretable inequality aversion parameter</span>
-<span id="cb340-4"><a href="4.9-atkinson-index-svyatk.html#cb340-4" tabindex="-1"></a>❌ does not handle zeroes or negative incomes</span>
-<span id="cb340-5"><a href="4.9-atkinson-index-svyatk.html#cb340-5" tabindex="-1"></a>❌ the decomposition interpretation is not exactly the same as the GEI, but very <span class="fu">similar</span> (not implemented, though)</span>
-<span id="cb340-6"><a href="4.9-atkinson-index-svyatk.html#cb340-6" tabindex="-1"></a>❌ not very common</span></code></pre></div>
+<div class="sourceCode" id="cb339"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb339-1"><a href="4.9-atkinson-index-svyatk.html#cb339-1" tabindex="-1"></a>✔️ is defined <span class="cf">in</span> terms of an interpretable utility <span class="cf">function</span></span>
+<span id="cb339-2"><a href="4.9-atkinson-index-svyatk.html#cb339-2" tabindex="-1"></a>✔️ has a <span class="fu">direct</span> (but non<span class="sc">-</span>linear) relationship to <span class="st">`</span><span class="at">svygei</span><span class="st">`</span></span>
+<span id="cb339-3"><a href="4.9-atkinson-index-svyatk.html#cb339-3" tabindex="-1"></a>✔️ has an interpretable inequality aversion parameter</span>
+<span id="cb339-4"><a href="4.9-atkinson-index-svyatk.html#cb339-4" tabindex="-1"></a>❌ does not handle zeroes or negative incomes</span>
+<span id="cb339-5"><a href="4.9-atkinson-index-svyatk.html#cb339-5" tabindex="-1"></a>❌ the decomposition interpretation is not exactly the same as the GEI, but very <span class="fu">similar</span> (not implemented, though)</span>
+<span id="cb339-6"><a href="4.9-atkinson-index-svyatk.html#cb339-6" tabindex="-1"></a>❌ not very common</span></code></pre></div>
 <p><span class="citation">Dalton (<label for="tufte-mn-85" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-85" class="margin-toggle">1920<span class="marginnote">Dalton, Hugh. 1920. <span>“The Measurement of the Inequality of Incomes.”</span> <em>The Economic Journal</em> 30 (September). <a href="https://doi.org/10.2307/2223525">https://doi.org/10.2307/2223525</a>.</span>)</span> pointed out one of the most important facts about the economic theory
 of income inequality measurement: every income inequality measure has an implicit
 SWF.<label for="tufte-sn-6" class="margin-toggle sidenote-number">6</label><input type="checkbox" id="tufte-sn-6" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">6</span> This is the subject of an interesting discussion between the British and the Italian schools of inequality measurement.</span>
@@ -326,38 +326,38 @@ the equivalent plug-in estimator we use comes from <span class="citation">Biewen
 <h3><span class="header-section-number">4.9.1</span> Replication Example</h3>
 <p>In July 2006, <span class="citation">Jenkins (<label for="tufte-mn-92" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-92" class="margin-toggle">2008<span class="marginnote">Jenkins, Stephen. 2008. <span>“Estimation and Interpretation of Measures of Inequality, Poverty, and Social Welfare Using Stata.”</span> North American Stata Users' Group Meetings 2006. Stata Users Group. <a href="http://EconPapers.repec.org/RePEc:boc:asug06:16">http://EconPapers.repec.org/RePEc:boc:asug06:16</a>.</span>)</span> presented at the North American Stata Users’ Group Meetings on the stata Atkinson Index command. The example below reproduces those statistics.</p>
 <p>Load and prepare the same data set:</p>
-<div class="sourceCode" id="cb341"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb341-1"><a href="4.9-atkinson-index-svyatk.html#cb341-1" tabindex="-1"></a><span class="co"># load the convey package</span></span>
-<span id="cb341-2"><a href="4.9-atkinson-index-svyatk.html#cb341-2" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
-<span id="cb341-3"><a href="4.9-atkinson-index-svyatk.html#cb341-3" tabindex="-1"></a></span>
-<span id="cb341-4"><a href="4.9-atkinson-index-svyatk.html#cb341-4" tabindex="-1"></a><span class="co"># load the survey library</span></span>
-<span id="cb341-5"><a href="4.9-atkinson-index-svyatk.html#cb341-5" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
-<span id="cb341-6"><a href="4.9-atkinson-index-svyatk.html#cb341-6" tabindex="-1"></a></span>
-<span id="cb341-7"><a href="4.9-atkinson-index-svyatk.html#cb341-7" tabindex="-1"></a><span class="co"># load the foreign library</span></span>
-<span id="cb341-8"><a href="4.9-atkinson-index-svyatk.html#cb341-8" tabindex="-1"></a><span class="fu">library</span>(foreign)</span>
-<span id="cb341-9"><a href="4.9-atkinson-index-svyatk.html#cb341-9" tabindex="-1"></a></span>
-<span id="cb341-10"><a href="4.9-atkinson-index-svyatk.html#cb341-10" tabindex="-1"></a><span class="co"># create a temporary file on the local disk</span></span>
-<span id="cb341-11"><a href="4.9-atkinson-index-svyatk.html#cb341-11" tabindex="-1"></a>tf <span class="ot">&lt;-</span> <span class="fu">tempfile</span>()</span>
-<span id="cb341-12"><a href="4.9-atkinson-index-svyatk.html#cb341-12" tabindex="-1"></a></span>
-<span id="cb341-13"><a href="4.9-atkinson-index-svyatk.html#cb341-13" tabindex="-1"></a><span class="co"># store the location of the presentation file</span></span>
-<span id="cb341-14"><a href="4.9-atkinson-index-svyatk.html#cb341-14" tabindex="-1"></a>presentation_zip <span class="ot">&lt;-</span></span>
-<span id="cb341-15"><a href="4.9-atkinson-index-svyatk.html#cb341-15" tabindex="-1"></a>  <span class="st">&quot;http://repec.org/nasug2006/nasug2006_jenkins.zip&quot;</span></span>
-<span id="cb341-16"><a href="4.9-atkinson-index-svyatk.html#cb341-16" tabindex="-1"></a></span>
-<span id="cb341-17"><a href="4.9-atkinson-index-svyatk.html#cb341-17" tabindex="-1"></a><span class="co"># download jenkins&#39; presentation to the temporary file</span></span>
-<span id="cb341-18"><a href="4.9-atkinson-index-svyatk.html#cb341-18" tabindex="-1"></a><span class="fu">download.file</span>(presentation_zip , tf , <span class="at">mode =</span> <span class="st">&#39;wb&#39;</span>)</span>
-<span id="cb341-19"><a href="4.9-atkinson-index-svyatk.html#cb341-19" tabindex="-1"></a></span>
-<span id="cb341-20"><a href="4.9-atkinson-index-svyatk.html#cb341-20" tabindex="-1"></a><span class="co"># unzip the contents of the archive</span></span>
-<span id="cb341-21"><a href="4.9-atkinson-index-svyatk.html#cb341-21" tabindex="-1"></a>presentation_files <span class="ot">&lt;-</span> <span class="fu">unzip</span>(tf , <span class="at">exdir =</span> <span class="fu">tempdir</span>())</span>
-<span id="cb341-22"><a href="4.9-atkinson-index-svyatk.html#cb341-22" tabindex="-1"></a></span>
-<span id="cb341-23"><a href="4.9-atkinson-index-svyatk.html#cb341-23" tabindex="-1"></a><span class="co"># load the institute for fiscal studies&#39; 1981, 1985, and 1991 data.frame objects</span></span>
-<span id="cb341-24"><a href="4.9-atkinson-index-svyatk.html#cb341-24" tabindex="-1"></a>x81 <span class="ot">&lt;-</span></span>
-<span id="cb341-25"><a href="4.9-atkinson-index-svyatk.html#cb341-25" tabindex="-1"></a>  <span class="fu">read.dta</span>(<span class="fu">grep</span>(<span class="st">&quot;ifs81&quot;</span> , presentation_files , <span class="at">value =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb341-26"><a href="4.9-atkinson-index-svyatk.html#cb341-26" tabindex="-1"></a>x85 <span class="ot">&lt;-</span></span>
-<span id="cb341-27"><a href="4.9-atkinson-index-svyatk.html#cb341-27" tabindex="-1"></a>  <span class="fu">read.dta</span>(<span class="fu">grep</span>(<span class="st">&quot;ifs85&quot;</span> , presentation_files , <span class="at">value =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb341-28"><a href="4.9-atkinson-index-svyatk.html#cb341-28" tabindex="-1"></a>x91 <span class="ot">&lt;-</span></span>
-<span id="cb341-29"><a href="4.9-atkinson-index-svyatk.html#cb341-29" tabindex="-1"></a>  <span class="fu">read.dta</span>(<span class="fu">grep</span>(<span class="st">&quot;ifs91&quot;</span> , presentation_files , <span class="at">value =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb341-30"><a href="4.9-atkinson-index-svyatk.html#cb341-30" tabindex="-1"></a></span>
-<span id="cb341-31"><a href="4.9-atkinson-index-svyatk.html#cb341-31" tabindex="-1"></a><span class="co"># stack each of these three years of data into a single data.frame</span></span>
-<span id="cb341-32"><a href="4.9-atkinson-index-svyatk.html#cb341-32" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rbind</span>(x81 , x85 , x91)</span></code></pre></div>
+<div class="sourceCode" id="cb340"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb340-1"><a href="4.9-atkinson-index-svyatk.html#cb340-1" tabindex="-1"></a><span class="co"># load the convey package</span></span>
+<span id="cb340-2"><a href="4.9-atkinson-index-svyatk.html#cb340-2" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
+<span id="cb340-3"><a href="4.9-atkinson-index-svyatk.html#cb340-3" tabindex="-1"></a></span>
+<span id="cb340-4"><a href="4.9-atkinson-index-svyatk.html#cb340-4" tabindex="-1"></a><span class="co"># load the survey library</span></span>
+<span id="cb340-5"><a href="4.9-atkinson-index-svyatk.html#cb340-5" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb340-6"><a href="4.9-atkinson-index-svyatk.html#cb340-6" tabindex="-1"></a></span>
+<span id="cb340-7"><a href="4.9-atkinson-index-svyatk.html#cb340-7" tabindex="-1"></a><span class="co"># load the foreign library</span></span>
+<span id="cb340-8"><a href="4.9-atkinson-index-svyatk.html#cb340-8" tabindex="-1"></a><span class="fu">library</span>(foreign)</span>
+<span id="cb340-9"><a href="4.9-atkinson-index-svyatk.html#cb340-9" tabindex="-1"></a></span>
+<span id="cb340-10"><a href="4.9-atkinson-index-svyatk.html#cb340-10" tabindex="-1"></a><span class="co"># create a temporary file on the local disk</span></span>
+<span id="cb340-11"><a href="4.9-atkinson-index-svyatk.html#cb340-11" tabindex="-1"></a>tf <span class="ot">&lt;-</span> <span class="fu">tempfile</span>()</span>
+<span id="cb340-12"><a href="4.9-atkinson-index-svyatk.html#cb340-12" tabindex="-1"></a></span>
+<span id="cb340-13"><a href="4.9-atkinson-index-svyatk.html#cb340-13" tabindex="-1"></a><span class="co"># store the location of the presentation file</span></span>
+<span id="cb340-14"><a href="4.9-atkinson-index-svyatk.html#cb340-14" tabindex="-1"></a>presentation_zip <span class="ot">&lt;-</span></span>
+<span id="cb340-15"><a href="4.9-atkinson-index-svyatk.html#cb340-15" tabindex="-1"></a>  <span class="st">&quot;http://repec.org/nasug2006/nasug2006_jenkins.zip&quot;</span></span>
+<span id="cb340-16"><a href="4.9-atkinson-index-svyatk.html#cb340-16" tabindex="-1"></a></span>
+<span id="cb340-17"><a href="4.9-atkinson-index-svyatk.html#cb340-17" tabindex="-1"></a><span class="co"># download jenkins&#39; presentation to the temporary file</span></span>
+<span id="cb340-18"><a href="4.9-atkinson-index-svyatk.html#cb340-18" tabindex="-1"></a><span class="fu">download.file</span>(presentation_zip , tf , <span class="at">mode =</span> <span class="st">&#39;wb&#39;</span>)</span>
+<span id="cb340-19"><a href="4.9-atkinson-index-svyatk.html#cb340-19" tabindex="-1"></a></span>
+<span id="cb340-20"><a href="4.9-atkinson-index-svyatk.html#cb340-20" tabindex="-1"></a><span class="co"># unzip the contents of the archive</span></span>
+<span id="cb340-21"><a href="4.9-atkinson-index-svyatk.html#cb340-21" tabindex="-1"></a>presentation_files <span class="ot">&lt;-</span> <span class="fu">unzip</span>(tf , <span class="at">exdir =</span> <span class="fu">tempdir</span>())</span>
+<span id="cb340-22"><a href="4.9-atkinson-index-svyatk.html#cb340-22" tabindex="-1"></a></span>
+<span id="cb340-23"><a href="4.9-atkinson-index-svyatk.html#cb340-23" tabindex="-1"></a><span class="co"># load the institute for fiscal studies&#39; 1981, 1985, and 1991 data.frame objects</span></span>
+<span id="cb340-24"><a href="4.9-atkinson-index-svyatk.html#cb340-24" tabindex="-1"></a>x81 <span class="ot">&lt;-</span></span>
+<span id="cb340-25"><a href="4.9-atkinson-index-svyatk.html#cb340-25" tabindex="-1"></a>  <span class="fu">read.dta</span>(<span class="fu">grep</span>(<span class="st">&quot;ifs81&quot;</span> , presentation_files , <span class="at">value =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb340-26"><a href="4.9-atkinson-index-svyatk.html#cb340-26" tabindex="-1"></a>x85 <span class="ot">&lt;-</span></span>
+<span id="cb340-27"><a href="4.9-atkinson-index-svyatk.html#cb340-27" tabindex="-1"></a>  <span class="fu">read.dta</span>(<span class="fu">grep</span>(<span class="st">&quot;ifs85&quot;</span> , presentation_files , <span class="at">value =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb340-28"><a href="4.9-atkinson-index-svyatk.html#cb340-28" tabindex="-1"></a>x91 <span class="ot">&lt;-</span></span>
+<span id="cb340-29"><a href="4.9-atkinson-index-svyatk.html#cb340-29" tabindex="-1"></a>  <span class="fu">read.dta</span>(<span class="fu">grep</span>(<span class="st">&quot;ifs91&quot;</span> , presentation_files , <span class="at">value =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb340-30"><a href="4.9-atkinson-index-svyatk.html#cb340-30" tabindex="-1"></a></span>
+<span id="cb340-31"><a href="4.9-atkinson-index-svyatk.html#cb340-31" tabindex="-1"></a><span class="co"># stack each of these three years of data into a single data.frame</span></span>
+<span id="cb340-32"><a href="4.9-atkinson-index-svyatk.html#cb340-32" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rbind</span>(x81 , x85 , x91)</span></code></pre></div>
 <p>Replicate the author’s survey design statement from stata code..</p>
 <pre><code>. * account for clustering within HHs 
 . version 8: svyset [pweight = wgt], psu(hrn)
@@ -365,11 +365,11 @@ pweight is wgt
 psu is hrn
 construct an</code></pre>
 <p>.. into R code:</p>
-<div class="sourceCode" id="cb343"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb343-1"><a href="4.9-atkinson-index-svyatk.html#cb343-1" tabindex="-1"></a><span class="co"># initiate a linearized survey design object</span></span>
-<span id="cb343-2"><a href="4.9-atkinson-index-svyatk.html#cb343-2" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">svydesign</span>( <span class="sc">~</span> hrn , <span class="at">data =</span> x , <span class="at">weights =</span> <span class="sc">~</span> wgt)</span>
-<span id="cb343-3"><a href="4.9-atkinson-index-svyatk.html#cb343-3" tabindex="-1"></a></span>
-<span id="cb343-4"><a href="4.9-atkinson-index-svyatk.html#cb343-4" tabindex="-1"></a><span class="co"># immediately run the `convey_prep` function on the survey design</span></span>
-<span id="cb343-5"><a href="4.9-atkinson-index-svyatk.html#cb343-5" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(y)</span></code></pre></div>
+<div class="sourceCode" id="cb342"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb342-1"><a href="4.9-atkinson-index-svyatk.html#cb342-1" tabindex="-1"></a><span class="co"># initiate a linearized survey design object</span></span>
+<span id="cb342-2"><a href="4.9-atkinson-index-svyatk.html#cb342-2" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">svydesign</span>( <span class="sc">~</span> hrn , <span class="at">data =</span> x , <span class="at">weights =</span> <span class="sc">~</span> wgt)</span>
+<span id="cb342-3"><a href="4.9-atkinson-index-svyatk.html#cb342-3" tabindex="-1"></a></span>
+<span id="cb342-4"><a href="4.9-atkinson-index-svyatk.html#cb342-4" tabindex="-1"></a><span class="co"># immediately run the `convey_prep` function on the survey design</span></span>
+<span id="cb342-5"><a href="4.9-atkinson-index-svyatk.html#cb342-5" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(y)</span></code></pre></div>
 <p>Replicate the author’s subset statement and each of his svyatk results with stata..</p>
 <pre><code>. svyatk x if year == 1981
  
@@ -391,21 +391,21 @@ A(2)     |  .2755788   .02597608    10.61    0.000      .2246666    .326491
 A(2.5)   |  .4992701   .06754311     7.39    0.000       .366888   .6316522
 ---------------------------------------------------------------------------</code></pre>
 <p>..using R code:</p>
-<div class="sourceCode" id="cb345"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb345-1"><a href="4.9-atkinson-index-svyatk.html#cb345-1" tabindex="-1"></a>z81 <span class="ot">&lt;-</span> <span class="fu">subset</span>(z , year <span class="sc">==</span> <span class="dv">1981</span>)</span>
-<span id="cb345-2"><a href="4.9-atkinson-index-svyatk.html#cb345-2" tabindex="-1"></a></span>
-<span id="cb345-3"><a href="4.9-atkinson-index-svyatk.html#cb345-3" tabindex="-1"></a><span class="fu">svyatk</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z81 , eybhc0 <span class="sc">&gt;</span> <span class="dv">0</span>) , <span class="at">epsilon =</span> <span class="fl">0.5</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb344"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb344-1"><a href="4.9-atkinson-index-svyatk.html#cb344-1" tabindex="-1"></a>z81 <span class="ot">&lt;-</span> <span class="fu">subset</span>(z , year <span class="sc">==</span> <span class="dv">1981</span>)</span>
+<span id="cb344-2"><a href="4.9-atkinson-index-svyatk.html#cb344-2" tabindex="-1"></a></span>
+<span id="cb344-3"><a href="4.9-atkinson-index-svyatk.html#cb344-3" tabindex="-1"></a><span class="fu">svyatk</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z81 , eybhc0 <span class="sc">&gt;</span> <span class="dv">0</span>) , <span class="at">epsilon =</span> <span class="fl">0.5</span>)</span></code></pre></div>
 <pre><code>##        atkinson     SE
 ## eybhc0 0.054324 0.0011</code></pre>
-<div class="sourceCode" id="cb347"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb347-1"><a href="4.9-atkinson-index-svyatk.html#cb347-1" tabindex="-1"></a><span class="fu">svyatk</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z81 , eybhc0 <span class="sc">&gt;</span> <span class="dv">0</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb346"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb346-1"><a href="4.9-atkinson-index-svyatk.html#cb346-1" tabindex="-1"></a><span class="fu">svyatk</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z81 , eybhc0 <span class="sc">&gt;</span> <span class="dv">0</span>))</span></code></pre></div>
 <pre><code>##        atkinson     SE
 ## eybhc0    0.108 0.0025</code></pre>
-<div class="sourceCode" id="cb349"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb349-1"><a href="4.9-atkinson-index-svyatk.html#cb349-1" tabindex="-1"></a><span class="fu">svyatk</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z81 , eybhc0 <span class="sc">&gt;</span> <span class="dv">0</span>) , <span class="at">epsilon =</span> <span class="fl">1.5</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb348"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb348-1"><a href="4.9-atkinson-index-svyatk.html#cb348-1" tabindex="-1"></a><span class="fu">svyatk</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z81 , eybhc0 <span class="sc">&gt;</span> <span class="dv">0</span>) , <span class="at">epsilon =</span> <span class="fl">1.5</span>)</span></code></pre></div>
 <pre><code>##        atkinson     SE
 ## eybhc0  0.17018 0.0067</code></pre>
-<div class="sourceCode" id="cb351"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb351-1"><a href="4.9-atkinson-index-svyatk.html#cb351-1" tabindex="-1"></a><span class="fu">svyatk</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z81 , eybhc0 <span class="sc">&gt;</span> <span class="dv">0</span>) , <span class="at">epsilon =</span> <span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb350"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb350-1"><a href="4.9-atkinson-index-svyatk.html#cb350-1" tabindex="-1"></a><span class="fu">svyatk</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z81 , eybhc0 <span class="sc">&gt;</span> <span class="dv">0</span>) , <span class="at">epsilon =</span> <span class="dv">2</span>)</span></code></pre></div>
 <pre><code>##        atkinson    SE
 ## eybhc0  0.27558 0.026</code></pre>
-<div class="sourceCode" id="cb353"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb353-1"><a href="4.9-atkinson-index-svyatk.html#cb353-1" tabindex="-1"></a><span class="fu">svyatk</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z81 , eybhc0 <span class="sc">&gt;</span> <span class="dv">0</span>) , <span class="at">epsilon =</span> <span class="fl">2.5</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb352"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb352-1"><a href="4.9-atkinson-index-svyatk.html#cb352-1" tabindex="-1"></a><span class="fu">svyatk</span>( <span class="sc">~</span> eybhc0 , <span class="fu">subset</span>(z81 , eybhc0 <span class="sc">&gt;</span> <span class="dv">0</span>) , <span class="at">epsilon =</span> <span class="fl">2.5</span>)</span></code></pre></div>
 <pre><code>##        atkinson     SE
 ## eybhc0  0.49927 0.0675</code></pre>
 <p>Confirm this replication applies for subsetted objects as well, comparing stata code..</p>
@@ -427,21 +427,21 @@ A(2)     |  .2443206   .01425258    17.14    0.000      .2163861   .2722552
 A(2.5)   |   .394787   .04155221     9.50    0.000      .3133461   .4762278
 ---------------------------------------------------------------------------</code></pre>
 <p>..to R code:</p>
-<div class="sourceCode" id="cb356"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb356-1"><a href="4.9-atkinson-index-svyatk.html#cb356-1" tabindex="-1"></a>z81_two <span class="ot">&lt;-</span> <span class="fu">subset</span>(z , year <span class="sc">==</span> <span class="dv">1981</span> <span class="sc">&amp;</span> eybhc0 <span class="sc">&gt;</span> <span class="dv">1</span>)</span>
-<span id="cb356-2"><a href="4.9-atkinson-index-svyatk.html#cb356-2" tabindex="-1"></a></span>
-<span id="cb356-3"><a href="4.9-atkinson-index-svyatk.html#cb356-3" tabindex="-1"></a><span class="fu">svyatk</span>( <span class="sc">~</span> eybhc0 , z81_two , <span class="at">epsilon =</span> <span class="fl">0.5</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb355"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb355-1"><a href="4.9-atkinson-index-svyatk.html#cb355-1" tabindex="-1"></a>z81_two <span class="ot">&lt;-</span> <span class="fu">subset</span>(z , year <span class="sc">==</span> <span class="dv">1981</span> <span class="sc">&amp;</span> eybhc0 <span class="sc">&gt;</span> <span class="dv">1</span>)</span>
+<span id="cb355-2"><a href="4.9-atkinson-index-svyatk.html#cb355-2" tabindex="-1"></a></span>
+<span id="cb355-3"><a href="4.9-atkinson-index-svyatk.html#cb355-3" tabindex="-1"></a><span class="fu">svyatk</span>( <span class="sc">~</span> eybhc0 , z81_two , <span class="at">epsilon =</span> <span class="fl">0.5</span>)</span></code></pre></div>
 <pre><code>##        atkinson     SE
 ## eybhc0 0.054006 0.0011</code></pre>
-<div class="sourceCode" id="cb358"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb358-1"><a href="4.9-atkinson-index-svyatk.html#cb358-1" tabindex="-1"></a><span class="fu">svyatk</span>( <span class="sc">~</span> eybhc0 , z81_two)</span></code></pre></div>
+<div class="sourceCode" id="cb357"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb357-1"><a href="4.9-atkinson-index-svyatk.html#cb357-1" tabindex="-1"></a><span class="fu">svyatk</span>( <span class="sc">~</span> eybhc0 , z81_two)</span></code></pre></div>
 <pre><code>##        atkinson     SE
 ## eybhc0  0.10661 0.0022</code></pre>
-<div class="sourceCode" id="cb360"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb360-1"><a href="4.9-atkinson-index-svyatk.html#cb360-1" tabindex="-1"></a><span class="fu">svyatk</span>( <span class="sc">~</span> eybhc0 , z81_two , <span class="at">epsilon =</span> <span class="fl">1.5</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb359"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb359-1"><a href="4.9-atkinson-index-svyatk.html#cb359-1" tabindex="-1"></a><span class="fu">svyatk</span>( <span class="sc">~</span> eybhc0 , z81_two , <span class="at">epsilon =</span> <span class="fl">1.5</span>)</span></code></pre></div>
 <pre><code>##        atkinson     SE
 ## eybhc0  0.16383 0.0048</code></pre>
-<div class="sourceCode" id="cb362"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb362-1"><a href="4.9-atkinson-index-svyatk.html#cb362-1" tabindex="-1"></a><span class="fu">svyatk</span>( <span class="sc">~</span> eybhc0 , z81_two , <span class="at">epsilon =</span> <span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb361"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb361-1"><a href="4.9-atkinson-index-svyatk.html#cb361-1" tabindex="-1"></a><span class="fu">svyatk</span>( <span class="sc">~</span> eybhc0 , z81_two , <span class="at">epsilon =</span> <span class="dv">2</span>)</span></code></pre></div>
 <pre><code>##        atkinson     SE
 ## eybhc0  0.24432 0.0143</code></pre>
-<div class="sourceCode" id="cb364"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb364-1"><a href="4.9-atkinson-index-svyatk.html#cb364-1" tabindex="-1"></a><span class="fu">svyatk</span>( <span class="sc">~</span> eybhc0 , z81_two , <span class="at">epsilon =</span> <span class="fl">2.5</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb363"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb363-1"><a href="4.9-atkinson-index-svyatk.html#cb363-1" tabindex="-1"></a><span class="fu">svyatk</span>( <span class="sc">~</span> eybhc0 , z81_two , <span class="at">epsilon =</span> <span class="fl">2.5</span>)</span></code></pre></div>
 <pre><code>##        atkinson     SE
 ## eybhc0  0.39479 0.0416</code></pre>
 <p>For additional usage examples of <code>svyatk</code>, type <code>?convey::svyatk</code> in the R console.</p>
