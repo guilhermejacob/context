@@ -176,11 +176,11 @@ svygini( ~ py010n , design = des_eusilc_rep , na.rm = TRUE)
 ```
 
 
-## The Current Population Survey (CPS)
+## Current Population Survey (CPS)
 
 Sponsored jointly by the U.S. Census Bureau and the U.S. Bureau of Labor Statistics (BLS), the Current Population Survey is the primary source of labor force statistics for the population of the United States.
 
-This section downloads, imports, and prepares the most current microdata for analysis.
+This section downloads, imports, and prepares the most current microdata for analysis, then reproduces some statistics and margin of error terms from the U.S. Census Bureau.
 
 
 Download and unzip the 2023 file:
@@ -269,7 +269,7 @@ Run the `convey_prep()` function on the full design:
 cps_design <- convey_prep(cps_design)
 ```
 
-### Household-level Analysis of the CPS
+### Household-level
 
 Limit the CPS person-level design to the household reference person, then calculate the gini coefficient with total household income:
 
@@ -290,7 +290,7 @@ stopifnot(round(
 ) == 0.0033) 
 ```
 
-### Family-level Analysis of the CPS
+### Family-level
 
 Limit the CPS person-level design to the family reference person of primary families, then calculate the gini coefficient with total family income:
 
@@ -305,7 +305,7 @@ cps_family_design <-
 stopifnot(round(coef(cps_family_gini) , 3) == 0.458)
 ```
 
-### Full-time Full Year Worker Analysis of the CPS
+### Worker Earnings
 
 Limit the CPS person-level design to full-time, full year workers, then calculate the gini coefficient with both total personal income and then total earnings:
 
@@ -315,4 +315,124 @@ cps_ftfy_worker_design <- subset(cps_design , wewkrs %in% 1)
 svygini(~ ptotval , cps_ftfy_worker_design)
 
 svygini(~ pearnval , cps_ftfy_worker_design)
+```
+
+
+## Pesquisa Nacional por Amostra de Domicílios Contínua (PNAD-Continua)
+
+Administered by the Instituto Brasileiro de Geografia e Estatística (IBGE), the Pesquisa Nacional por Amostra de Domicílios Contínua is the primary source of labor force statistics for the population of Brazil.
+
+This section downloads, imports, and prepares the most current microdata for analysis, then reproduces some statistics and margin of error terms from IBGE.
+
+
+Download and import the 2022 file:
+
+```{r}
+library(PNADcIBGE)
+
+pnadc_df <- get_pnadc( 2022 , interview = 5 , design = FALSE , labels = FALSE )
+
+names( pnadc_df ) <- tolower( names( pnadc_df ) )
+```
+
+Recode a number of variables:
+```{r}
+pnadc_df <-
+	transform(
+		pnadc_df ,
+		
+		household_id = paste0( upa , v1008 , v1014 ) ,
+		
+		deflated_labor_income = vd4019 * co2 ,
+		
+		deflated_other_source_income = vd4048 * co2e
+	)
+
+labor_income_sum_df <-
+	aggregate(
+		cbind( household_deflated_labor_income = deflated_labor_income ) ~ household_id ,
+		data = pnadc_df[ !( pnadc_df[ , 'vd2002' ] %in% 17:19 ) , ] ,
+		sum ,
+		na.rm = TRUE
+	)
+
+other_income_sum_df <-
+	aggregate(
+		cbind( household_deflated_other_source_income = deflated_other_source_income ) ~ household_id ,
+		data = pnadc_df[ !( pnadc_df[ , 'vd2002' ] %in% 17:19 ) , ] ,
+		sum ,
+		na.rm = TRUE
+	)
+
+before_nrow <- nrow( pnadc_df )
+pnadc_df <- merge( pnadc_df , labor_income_sum_df , all.x = TRUE )
+pnadc_df <- merge( pnadc_df , other_income_sum_df , all.x = TRUE )
+stopifnot( nrow( pnadc_df ) == before_nrow )	
+
+pnadc_df[ is.na( pnadc_df[ , 'household_deflated_labor_income' ] ) , 'household_deflated_labor_income' ] <- 0
+pnadc_df[ is.na( pnadc_df[ , 'household_deflated_other_source_income' ] ) , 'household_deflated_other_source_income' ] <- 0
+
+
+pnadc_df <-
+	transform(
+		pnadc_df ,
+		
+		deflated_per_capita_income =
+			( household_deflated_labor_income + household_deflated_other_source_income ) / vd2003
+			
+	)
+```
+
+Construct a complex sample survey design:
+
+```{r}
+library(survey)
+
+pnadc_design <- 
+	svrepdesign(
+		data = pnadc_df ,
+		weight = ~v1032,
+		type = "bootstrap" , 
+		repweights = "v1032[0-9]{3}" ,
+		mse = TRUE
+	)
+```
+
+Run the `convey_prep()` function on the full design:
+
+```{r}
+pnadc_design <- convey_prep(pnadc_design)
+```
+
+### Per Capita-level
+
+Calculate the gini coefficient with per capita income:
+
+```{r}
+# https://sidra.ibge.gov.br/tabela/7435#/n1/all/v/all/p/last%201/d/v10681%203,v10682%201/l/v,p,t/resultado
+
+(pnadc_per_capita_gini <- svygini(~ deflated_per_capita_income , pnadc_design , na.rm = TRUE))
+
+# match 2022 per_capita gini coefficient
+stopifnot(round(coef(pnadc_per_capita_gini) , 3) == 0.518)
+
+# match 2022 per_capita gini coefficient of variation
+stopifnot(round(cv(pnadc_per_capita_gini),3) == 0.006) 
+```
+
+### Worker Earnings
+
+Calculate the gini coefficient with total earnings:
+
+```{r}
+# https://sidra.ibge.gov.br/tabela/7453#/n1/all/v/all/p/last%201/d/v10806%203,v10807%201/l/v,p,t/resultado
+
+(pnadc_earnings_gini <- svygini(~ deflated_labor_income , pnadc_design , na.rm = TRUE ))
+
+# match 2022 earnings gini coefficient
+# https://sidra.ibge.gov.br/tabela/7453#/n1/all/v/all/p/last%201/d/v10806%203,v10807%201/l/v,p,t/resultado
+stopifnot(round(coef(pnadc_earnings_gini) , 3) == 0.486)
+
+# match 2022 earnings gini coefficient of variation
+stopifnot(round(cv(pnadc_earnings_gini),3) == 0.007) 
 ```
