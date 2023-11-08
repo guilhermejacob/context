@@ -185,7 +185,7 @@ This section downloads, imports, and prepares the most current microdata for ana
 
 Download and unzip the 2023 file:
 
-```{r}
+```{r, results = 'hide'}
 library(httr)
 
 tf <- tempfile()
@@ -200,7 +200,7 @@ unzipped_files <- unzip(tf , exdir = tempdir())
 
 Import all four files:
 
-```{r}
+```{r, results = 'hide'}
 library(haven)
 
 four_tbl <- lapply(unzipped_files , read_sas)
@@ -225,7 +225,7 @@ repwgts_df <-
 
 Divide weights:
 
-```{r}
+```{r, results = 'hide'}
 household_df[, 'hsup_wgt'] <- household_df[, 'hsup_wgt'] / 100
 family_df[, 'fsup_wgt'] <- family_df[, 'fsup_wgt'] / 100
 for (j in c('marsupwt' , 'a_ernlwt' , 'a_fnlwgt'))
@@ -234,7 +234,7 @@ for (j in c('marsupwt' , 'a_ernlwt' , 'a_fnlwgt'))
 
 Merge these four files:
 
-```{r}
+```{r, results = 'hide'}
 names(family_df)[names(family_df) == 'fh_seq'] <- 'h_seq'
 names(person_df)[names(person_df) == 'ph_seq'] <- 'h_seq'
 names(person_df)[names(person_df) == 'phf_seq'] <- 'ffpos'
@@ -248,7 +248,7 @@ stopifnot(nrow(cps_df) == nrow(person_df))
 
 Construct a complex sample survey design:
 
-```{r}
+```{r, results = 'hide'}
 library(survey)
 
 cps_design <-
@@ -265,7 +265,7 @@ cps_design <-
 
 Run the `convey_prep()` function on the full design:
 
-```{r}
+```{r, results = 'hide'}
 cps_design <- convey_prep(cps_design)
 ```
 
@@ -276,7 +276,7 @@ Limit the CPS person-level design to the household reference person, then calcul
 ```{r}
 cps_household_design <- subset(cps_design , a_exprrp %in% 1:2)
 
-(cps_household_gini <- svygini(~ htotval , cps_household_design))
+(cps_household_gini <- svygini( ~ htotval , cps_household_design))
 
 # match 2022 household gini coefficient
 # https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-income-households/h04.xlsx
@@ -298,7 +298,7 @@ Limit the CPS person-level design to the family reference person of primary fami
 cps_family_design <-
   subset(cps_design , a_famrel %in% 1 & a_famtyp %in% 1)
 
-(cps_family_gini <- svygini(~ ftotval , cps_family_design))
+(cps_family_gini <- svygini( ~ ftotval , cps_family_design))
 
 # match 2022 family gini coefficient
 # https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-income-families/f04.xlsx
@@ -312,9 +312,9 @@ Limit the CPS person-level design to full-time, full year workers, then calculat
 ```{r}
 cps_ftfy_worker_design <- subset(cps_design , wewkrs %in% 1)
 
-svygini(~ ptotval , cps_ftfy_worker_design)
+svygini( ~ ptotval , cps_ftfy_worker_design)
 
-svygini(~ pearnval , cps_ftfy_worker_design)
+svygini( ~ pearnval , cps_ftfy_worker_design)
 ```
 
 
@@ -327,80 +327,88 @@ This section downloads, imports, and prepares the most current microdata for ana
 
 Download and import the 2022 file:
 
-```{r}
+```{r, results = 'hide'}
 library(PNADcIBGE)
 
-pnadc_df <- get_pnadc( 2022 , interview = 5 , design = FALSE , labels = FALSE )
+pnadc_df <-
+  get_pnadc(2022 ,
+            interview = 5 ,
+            design = FALSE ,
+            labels = FALSE)
 
-names( pnadc_df ) <- tolower( names( pnadc_df ) )
+names(pnadc_df) <- tolower(names(pnadc_df))
 ```
 
 Recode a number of variables:
-```{r}
+```{r, results = 'hide'}
 pnadc_df <-
-	transform(
-		pnadc_df ,
-		
-		household_id = paste0( upa , v1008 , v1014 ) ,
-		
-		deflated_labor_income = vd4019 * co2 ,
-		
-		deflated_other_source_income = vd4048 * co2e
-	)
+  transform(
+    pnadc_df ,
+    
+    household_id = paste0(upa , v1008 , v1014) ,
+    
+    deflated_labor_income = vd4019 * co2 ,
+    
+    deflated_other_source_income = vd4048 * co2e
+  )
 
 labor_income_sum_df <-
-	aggregate(
-		cbind( household_deflated_labor_income = deflated_labor_income ) ~ household_id ,
-		data = pnadc_df[ !( pnadc_df[ , 'vd2002' ] %in% 17:19 ) , ] ,
-		sum ,
-		na.rm = TRUE
-	)
+  aggregate(
+    cbind(household_deflated_labor_income = deflated_labor_income) ~ household_id ,
+    data = pnadc_df[!(pnadc_df[, 'vd2002'] %in% 17:19) ,] ,
+    sum ,
+    na.rm = TRUE
+  )
 
 other_income_sum_df <-
-	aggregate(
-		cbind( household_deflated_other_source_income = deflated_other_source_income ) ~ household_id ,
-		data = pnadc_df[ !( pnadc_df[ , 'vd2002' ] %in% 17:19 ) , ] ,
-		sum ,
-		na.rm = TRUE
-	)
+  aggregate(
+    cbind(household_deflated_other_source_income = deflated_other_source_income) ~ household_id ,
+    data = pnadc_df[!(pnadc_df[, 'vd2002'] %in% 17:19) ,] ,
+    sum ,
+    na.rm = TRUE
+  )
 
-before_nrow <- nrow( pnadc_df )
-pnadc_df <- merge( pnadc_df , labor_income_sum_df , all.x = TRUE )
-pnadc_df <- merge( pnadc_df , other_income_sum_df , all.x = TRUE )
-stopifnot( nrow( pnadc_df ) == before_nrow )	
+before_nrow <- nrow(pnadc_df)
+pnadc_df <- merge(pnadc_df , labor_income_sum_df , all.x = TRUE)
+pnadc_df <- merge(pnadc_df , other_income_sum_df , all.x = TRUE)
+stopifnot(nrow(pnadc_df) == before_nrow)
 
-pnadc_df[ is.na( pnadc_df[ , 'household_deflated_labor_income' ] ) , 'household_deflated_labor_income' ] <- 0
-pnadc_df[ is.na( pnadc_df[ , 'household_deflated_other_source_income' ] ) , 'household_deflated_other_source_income' ] <- 0
+pnadc_df[is.na(pnadc_df[, 'household_deflated_labor_income']) , 'household_deflated_labor_income'] <-
+  0
+pnadc_df[is.na(pnadc_df[, 'household_deflated_other_source_income']) , 'household_deflated_other_source_income'] <-
+  0
 
 
 pnadc_df <-
-	transform(
-		pnadc_df ,
-		
-		deflated_per_capita_income =
-			( household_deflated_labor_income + household_deflated_other_source_income ) / vd2003
-			
-	)
+  transform(
+    pnadc_df ,
+    
+    deflated_per_capita_income =
+      (
+        household_deflated_labor_income + household_deflated_other_source_income
+      ) / vd2003
+    
+  )
 ```
 
 Construct a complex sample survey design:
 
-```{r}
+```{r, results = 'hide'}
 library(survey)
 
-pnadc_design <- 
-	svrepdesign(
-		data = pnadc_df ,
-		weight = ~v1032,
-		type = "bootstrap" , 
-		repweights = "v1032[0-9]{3}" ,
-		mse = TRUE
-	)
+pnadc_design <-
+  svrepdesign(
+    data = pnadc_df ,
+    weight = ~ v1032,
+    type = "bootstrap" ,
+    repweights = "v1032[0-9]{3}" ,
+    mse = TRUE
+  )
 ```
 
 Run the `convey_prep()` function on the full design:
 
-```{r}
+```{r, results = 'hide'}
 pnadc_design <- convey_prep(pnadc_design)
 ```
 
@@ -411,13 +419,16 @@ Calculate the gini coefficient with per capita income:
 ```{r}
 # https://sidra.ibge.gov.br/tabela/7435#/n1/all/v/all/p/last%201/d/v10681%203,v10682%201/l/v,p,t/resultado
 
-(pnadc_per_capita_gini <- svygini(~ deflated_per_capita_income , pnadc_design , na.rm = TRUE))
+(
+  pnadc_per_capita_gini <-
+    svygini( ~ deflated_per_capita_income , pnadc_design , na.rm = TRUE)
+)
 
 # match 2022 per_capita gini coefficient
 stopifnot(round(coef(pnadc_per_capita_gini) , 3) == 0.518)
 
 # match 2022 per_capita gini coefficient of variation
-stopifnot(round(cv(pnadc_per_capita_gini),3) == 0.006) 
+stopifnot(round(cv(pnadc_per_capita_gini), 3) == 0.006) 
 ```
 
 ### Worker Earnings
@@ -427,11 +438,12 @@ Calculate the gini coefficient with total earnings:
 ```{r}
 # https://sidra.ibge.gov.br/tabela/7453#/n1/all/v/all/p/last%201/d/v10806%203,v10807%201/l/v,p,t/resultado
 
-(pnadc_earnings_gini <- svygini(~ deflated_labor_income , pnadc_design , na.rm = TRUE ))
+(pnadc_earnings_gini <-
+   svygini( ~ deflated_labor_income , pnadc_design , na.rm = TRUE))
 
 # match 2022 earnings gini coefficient
 stopifnot(round(coef(pnadc_earnings_gini) , 3) == 0.486)
 
 # match 2022 earnings gini coefficient of variation
-stopifnot(round(cv(pnadc_earnings_gini),3) == 0.007) 
+stopifnot(round(cv(pnadc_earnings_gini), 3) == 0.007) 
 ```

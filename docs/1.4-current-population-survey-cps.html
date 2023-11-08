@@ -148,7 +148,7 @@ div.csl-indent {
 </ul></li>
 <li class="has-sub"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-continua.html#pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-continua" id="toc-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-continua"><span class="toc-section-number">1.5</span> Pesquisa Nacional por Amostra de Domicílios Contínua (PNAD-Continua)</a>
 <ul>
-<li><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-continua.html#household-level-1" id="toc-household-level-1"><span class="toc-section-number">1.5.1</span> Household-level</a></li>
+<li><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-continua.html#per-capita-level" id="toc-per-capita-level"><span class="toc-section-number">1.5.1</span> Per Capita-level</a></li>
 <li><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-continua.html#worker-earnings-1" id="toc-worker-earnings-1"><span class="toc-section-number">1.5.2</span> Worker Earnings</a></li>
 </ul></li>
 </ul></li>
@@ -259,7 +259,7 @@ div.csl-indent {
 <div id="current-population-survey-cps" class="section level2" number="1.4">
 <h2><span class="header-section-number">1.4</span> Current Population Survey (CPS)</h2>
 <p>Sponsored jointly by the U.S. Census Bureau and the U.S. Bureau of Labor Statistics (BLS), the Current Population Survey is the primary source of labor force statistics for the population of the United States.</p>
-<p>This section downloads, imports, and prepares the most current microdata for analysis.</p>
+<p>This section downloads, imports, and prepares the most current microdata for analysis, then reproduces some statistics and margin of error terms from the U.S. Census Bureau.</p>
 <p>Download and unzip the 2023 file:</p>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="1.4-current-population-survey-cps.html#cb27-1" tabindex="-1"></a><span class="fu">library</span>(httr)</span>
 <span id="cb27-2"><a href="1.4-current-population-survey-cps.html#cb27-2" tabindex="-1"></a></span>
@@ -269,105 +269,99 @@ div.csl-indent {
 <span id="cb27-6"><a href="1.4-current-population-survey-cps.html#cb27-6" tabindex="-1"></a>  <span class="st">&quot;https://www2.census.gov/programs-surveys/cps/datasets/2023/march/asecpub23sas.zip&quot;</span></span>
 <span id="cb27-7"><a href="1.4-current-population-survey-cps.html#cb27-7" tabindex="-1"></a></span>
 <span id="cb27-8"><a href="1.4-current-population-survey-cps.html#cb27-8" tabindex="-1"></a><span class="fu">GET</span>(this_url , <span class="fu">write_disk</span>(tf))</span></code></pre></div>
-<pre><code>## Response [https://www2.census.gov/programs-surveys/cps/datasets/2023/march/asecpub23sas.zip]
-##   Date: 2023-11-07 18:12
-##   Status: 200
-##   Content-Type: application/zip
-##   Size: 176 MB
-## &lt;ON DISK&gt;  C:\Users\AnthonyD\AppData\Local\Temp\RtmpKOLV87\file3350197b5f3f</code></pre>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="1.4-current-population-survey-cps.html#cb29-1" tabindex="-1"></a>unzipped_files <span class="ot">&lt;-</span> <span class="fu">unzip</span>(tf , <span class="at">exdir =</span> <span class="fu">tempdir</span>())</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="1.4-current-population-survey-cps.html#cb28-1" tabindex="-1"></a>unzipped_files <span class="ot">&lt;-</span> <span class="fu">unzip</span>(tf , <span class="at">exdir =</span> <span class="fu">tempdir</span>())</span></code></pre></div>
 <p>Import all four files:</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="1.4-current-population-survey-cps.html#cb30-1" tabindex="-1"></a><span class="fu">library</span>(haven)</span>
-<span id="cb30-2"><a href="1.4-current-population-survey-cps.html#cb30-2" tabindex="-1"></a></span>
-<span id="cb30-3"><a href="1.4-current-population-survey-cps.html#cb30-3" tabindex="-1"></a>four_tbl <span class="ot">&lt;-</span> <span class="fu">lapply</span>(unzipped_files , read_sas)</span>
-<span id="cb30-4"><a href="1.4-current-population-survey-cps.html#cb30-4" tabindex="-1"></a></span>
-<span id="cb30-5"><a href="1.4-current-population-survey-cps.html#cb30-5" tabindex="-1"></a>four_df <span class="ot">&lt;-</span> <span class="fu">lapply</span>(four_tbl , data.frame)</span>
-<span id="cb30-6"><a href="1.4-current-population-survey-cps.html#cb30-6" tabindex="-1"></a></span>
-<span id="cb30-7"><a href="1.4-current-population-survey-cps.html#cb30-7" tabindex="-1"></a>four_df <span class="ot">&lt;-</span></span>
-<span id="cb30-8"><a href="1.4-current-population-survey-cps.html#cb30-8" tabindex="-1"></a>  <span class="fu">lapply</span>(four_df , <span class="cf">function</span>(w) {</span>
-<span id="cb30-9"><a href="1.4-current-population-survey-cps.html#cb30-9" tabindex="-1"></a>    <span class="fu">names</span>(w) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(w))</span>
-<span id="cb30-10"><a href="1.4-current-population-survey-cps.html#cb30-10" tabindex="-1"></a>    w</span>
-<span id="cb30-11"><a href="1.4-current-population-survey-cps.html#cb30-11" tabindex="-1"></a>  })</span>
-<span id="cb30-12"><a href="1.4-current-population-survey-cps.html#cb30-12" tabindex="-1"></a></span>
-<span id="cb30-13"><a href="1.4-current-population-survey-cps.html#cb30-13" tabindex="-1"></a>household_df <span class="ot">&lt;-</span></span>
-<span id="cb30-14"><a href="1.4-current-population-survey-cps.html#cb30-14" tabindex="-1"></a>  four_df[[<span class="fu">grep</span>(<span class="st">&#39;hhpub&#39;</span> , <span class="fu">basename</span>(unzipped_files))]]</span>
-<span id="cb30-15"><a href="1.4-current-population-survey-cps.html#cb30-15" tabindex="-1"></a>family_df <span class="ot">&lt;-</span></span>
-<span id="cb30-16"><a href="1.4-current-population-survey-cps.html#cb30-16" tabindex="-1"></a>  four_df[[<span class="fu">grep</span>(<span class="st">&#39;ffpub&#39;</span> , <span class="fu">basename</span>(unzipped_files))]]</span>
-<span id="cb30-17"><a href="1.4-current-population-survey-cps.html#cb30-17" tabindex="-1"></a>person_df <span class="ot">&lt;-</span></span>
-<span id="cb30-18"><a href="1.4-current-population-survey-cps.html#cb30-18" tabindex="-1"></a>  four_df[[<span class="fu">grep</span>(<span class="st">&#39;pppub&#39;</span> , <span class="fu">basename</span>(unzipped_files))]]</span>
-<span id="cb30-19"><a href="1.4-current-population-survey-cps.html#cb30-19" tabindex="-1"></a>repwgts_df <span class="ot">&lt;-</span></span>
-<span id="cb30-20"><a href="1.4-current-population-survey-cps.html#cb30-20" tabindex="-1"></a>  four_df[[<span class="fu">grep</span>(<span class="st">&#39;repwgt&#39;</span> , <span class="fu">basename</span>(unzipped_files))]]</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="1.4-current-population-survey-cps.html#cb29-1" tabindex="-1"></a><span class="fu">library</span>(haven)</span>
+<span id="cb29-2"><a href="1.4-current-population-survey-cps.html#cb29-2" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="1.4-current-population-survey-cps.html#cb29-3" tabindex="-1"></a>four_tbl <span class="ot">&lt;-</span> <span class="fu">lapply</span>(unzipped_files , read_sas)</span>
+<span id="cb29-4"><a href="1.4-current-population-survey-cps.html#cb29-4" tabindex="-1"></a></span>
+<span id="cb29-5"><a href="1.4-current-population-survey-cps.html#cb29-5" tabindex="-1"></a>four_df <span class="ot">&lt;-</span> <span class="fu">lapply</span>(four_tbl , data.frame)</span>
+<span id="cb29-6"><a href="1.4-current-population-survey-cps.html#cb29-6" tabindex="-1"></a></span>
+<span id="cb29-7"><a href="1.4-current-population-survey-cps.html#cb29-7" tabindex="-1"></a>four_df <span class="ot">&lt;-</span></span>
+<span id="cb29-8"><a href="1.4-current-population-survey-cps.html#cb29-8" tabindex="-1"></a>  <span class="fu">lapply</span>(four_df , <span class="cf">function</span>(w) {</span>
+<span id="cb29-9"><a href="1.4-current-population-survey-cps.html#cb29-9" tabindex="-1"></a>    <span class="fu">names</span>(w) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(w))</span>
+<span id="cb29-10"><a href="1.4-current-population-survey-cps.html#cb29-10" tabindex="-1"></a>    w</span>
+<span id="cb29-11"><a href="1.4-current-population-survey-cps.html#cb29-11" tabindex="-1"></a>  })</span>
+<span id="cb29-12"><a href="1.4-current-population-survey-cps.html#cb29-12" tabindex="-1"></a></span>
+<span id="cb29-13"><a href="1.4-current-population-survey-cps.html#cb29-13" tabindex="-1"></a>household_df <span class="ot">&lt;-</span></span>
+<span id="cb29-14"><a href="1.4-current-population-survey-cps.html#cb29-14" tabindex="-1"></a>  four_df[[<span class="fu">grep</span>(<span class="st">&#39;hhpub&#39;</span> , <span class="fu">basename</span>(unzipped_files))]]</span>
+<span id="cb29-15"><a href="1.4-current-population-survey-cps.html#cb29-15" tabindex="-1"></a>family_df <span class="ot">&lt;-</span></span>
+<span id="cb29-16"><a href="1.4-current-population-survey-cps.html#cb29-16" tabindex="-1"></a>  four_df[[<span class="fu">grep</span>(<span class="st">&#39;ffpub&#39;</span> , <span class="fu">basename</span>(unzipped_files))]]</span>
+<span id="cb29-17"><a href="1.4-current-population-survey-cps.html#cb29-17" tabindex="-1"></a>person_df <span class="ot">&lt;-</span></span>
+<span id="cb29-18"><a href="1.4-current-population-survey-cps.html#cb29-18" tabindex="-1"></a>  four_df[[<span class="fu">grep</span>(<span class="st">&#39;pppub&#39;</span> , <span class="fu">basename</span>(unzipped_files))]]</span>
+<span id="cb29-19"><a href="1.4-current-population-survey-cps.html#cb29-19" tabindex="-1"></a>repwgts_df <span class="ot">&lt;-</span></span>
+<span id="cb29-20"><a href="1.4-current-population-survey-cps.html#cb29-20" tabindex="-1"></a>  four_df[[<span class="fu">grep</span>(<span class="st">&#39;repwgt&#39;</span> , <span class="fu">basename</span>(unzipped_files))]]</span></code></pre></div>
 <p>Divide weights:</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="1.4-current-population-survey-cps.html#cb31-1" tabindex="-1"></a>household_df[, <span class="st">&#39;hsup_wgt&#39;</span>] <span class="ot">&lt;-</span> household_df[, <span class="st">&#39;hsup_wgt&#39;</span>] <span class="sc">/</span> <span class="dv">100</span></span>
-<span id="cb31-2"><a href="1.4-current-population-survey-cps.html#cb31-2" tabindex="-1"></a>family_df[, <span class="st">&#39;fsup_wgt&#39;</span>] <span class="ot">&lt;-</span> family_df[, <span class="st">&#39;fsup_wgt&#39;</span>] <span class="sc">/</span> <span class="dv">100</span></span>
-<span id="cb31-3"><a href="1.4-current-population-survey-cps.html#cb31-3" tabindex="-1"></a><span class="cf">for</span> (j <span class="cf">in</span> <span class="fu">c</span>(<span class="st">&#39;marsupwt&#39;</span> , <span class="st">&#39;a_ernlwt&#39;</span> , <span class="st">&#39;a_fnlwgt&#39;</span>))</span>
-<span id="cb31-4"><a href="1.4-current-population-survey-cps.html#cb31-4" tabindex="-1"></a>  person_df[, j] <span class="ot">&lt;-</span> person_df[, j] <span class="sc">/</span> <span class="dv">100</span></span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="1.4-current-population-survey-cps.html#cb30-1" tabindex="-1"></a>household_df[, <span class="st">&#39;hsup_wgt&#39;</span>] <span class="ot">&lt;-</span> household_df[, <span class="st">&#39;hsup_wgt&#39;</span>] <span class="sc">/</span> <span class="dv">100</span></span>
+<span id="cb30-2"><a href="1.4-current-population-survey-cps.html#cb30-2" tabindex="-1"></a>family_df[, <span class="st">&#39;fsup_wgt&#39;</span>] <span class="ot">&lt;-</span> family_df[, <span class="st">&#39;fsup_wgt&#39;</span>] <span class="sc">/</span> <span class="dv">100</span></span>
+<span id="cb30-3"><a href="1.4-current-population-survey-cps.html#cb30-3" tabindex="-1"></a><span class="cf">for</span> (j <span class="cf">in</span> <span class="fu">c</span>(<span class="st">&#39;marsupwt&#39;</span> , <span class="st">&#39;a_ernlwt&#39;</span> , <span class="st">&#39;a_fnlwgt&#39;</span>))</span>
+<span id="cb30-4"><a href="1.4-current-population-survey-cps.html#cb30-4" tabindex="-1"></a>  person_df[, j] <span class="ot">&lt;-</span> person_df[, j] <span class="sc">/</span> <span class="dv">100</span></span></code></pre></div>
 <p>Merge these four files:</p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="1.4-current-population-survey-cps.html#cb32-1" tabindex="-1"></a><span class="fu">names</span>(family_df)[<span class="fu">names</span>(family_df) <span class="sc">==</span> <span class="st">&#39;fh_seq&#39;</span>] <span class="ot">&lt;-</span> <span class="st">&#39;h_seq&#39;</span></span>
-<span id="cb32-2"><a href="1.4-current-population-survey-cps.html#cb32-2" tabindex="-1"></a><span class="fu">names</span>(person_df)[<span class="fu">names</span>(person_df) <span class="sc">==</span> <span class="st">&#39;ph_seq&#39;</span>] <span class="ot">&lt;-</span> <span class="st">&#39;h_seq&#39;</span></span>
-<span id="cb32-3"><a href="1.4-current-population-survey-cps.html#cb32-3" tabindex="-1"></a><span class="fu">names</span>(person_df)[<span class="fu">names</span>(person_df) <span class="sc">==</span> <span class="st">&#39;phf_seq&#39;</span>] <span class="ot">&lt;-</span> <span class="st">&#39;ffpos&#39;</span></span>
-<span id="cb32-4"><a href="1.4-current-population-survey-cps.html#cb32-4" tabindex="-1"></a></span>
-<span id="cb32-5"><a href="1.4-current-population-survey-cps.html#cb32-5" tabindex="-1"></a>hh_fm_df <span class="ot">&lt;-</span> <span class="fu">merge</span>(household_df , family_df)</span>
-<span id="cb32-6"><a href="1.4-current-population-survey-cps.html#cb32-6" tabindex="-1"></a>hh_fm_pr_df <span class="ot">&lt;-</span> <span class="fu">merge</span>(hh_fm_df , person_df)</span>
-<span id="cb32-7"><a href="1.4-current-population-survey-cps.html#cb32-7" tabindex="-1"></a>cps_df <span class="ot">&lt;-</span> <span class="fu">merge</span>(hh_fm_pr_df , repwgts_df)</span>
-<span id="cb32-8"><a href="1.4-current-population-survey-cps.html#cb32-8" tabindex="-1"></a></span>
-<span id="cb32-9"><a href="1.4-current-population-survey-cps.html#cb32-9" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">nrow</span>(cps_df) <span class="sc">==</span> <span class="fu">nrow</span>(person_df))</span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="1.4-current-population-survey-cps.html#cb31-1" tabindex="-1"></a><span class="fu">names</span>(family_df)[<span class="fu">names</span>(family_df) <span class="sc">==</span> <span class="st">&#39;fh_seq&#39;</span>] <span class="ot">&lt;-</span> <span class="st">&#39;h_seq&#39;</span></span>
+<span id="cb31-2"><a href="1.4-current-population-survey-cps.html#cb31-2" tabindex="-1"></a><span class="fu">names</span>(person_df)[<span class="fu">names</span>(person_df) <span class="sc">==</span> <span class="st">&#39;ph_seq&#39;</span>] <span class="ot">&lt;-</span> <span class="st">&#39;h_seq&#39;</span></span>
+<span id="cb31-3"><a href="1.4-current-population-survey-cps.html#cb31-3" tabindex="-1"></a><span class="fu">names</span>(person_df)[<span class="fu">names</span>(person_df) <span class="sc">==</span> <span class="st">&#39;phf_seq&#39;</span>] <span class="ot">&lt;-</span> <span class="st">&#39;ffpos&#39;</span></span>
+<span id="cb31-4"><a href="1.4-current-population-survey-cps.html#cb31-4" tabindex="-1"></a></span>
+<span id="cb31-5"><a href="1.4-current-population-survey-cps.html#cb31-5" tabindex="-1"></a>hh_fm_df <span class="ot">&lt;-</span> <span class="fu">merge</span>(household_df , family_df)</span>
+<span id="cb31-6"><a href="1.4-current-population-survey-cps.html#cb31-6" tabindex="-1"></a>hh_fm_pr_df <span class="ot">&lt;-</span> <span class="fu">merge</span>(hh_fm_df , person_df)</span>
+<span id="cb31-7"><a href="1.4-current-population-survey-cps.html#cb31-7" tabindex="-1"></a>cps_df <span class="ot">&lt;-</span> <span class="fu">merge</span>(hh_fm_pr_df , repwgts_df)</span>
+<span id="cb31-8"><a href="1.4-current-population-survey-cps.html#cb31-8" tabindex="-1"></a></span>
+<span id="cb31-9"><a href="1.4-current-population-survey-cps.html#cb31-9" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">nrow</span>(cps_df) <span class="sc">==</span> <span class="fu">nrow</span>(person_df))</span></code></pre></div>
 <p>Construct a complex sample survey design:</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="1.4-current-population-survey-cps.html#cb33-1" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
-<span id="cb33-2"><a href="1.4-current-population-survey-cps.html#cb33-2" tabindex="-1"></a></span>
-<span id="cb33-3"><a href="1.4-current-population-survey-cps.html#cb33-3" tabindex="-1"></a>cps_design <span class="ot">&lt;-</span></span>
-<span id="cb33-4"><a href="1.4-current-population-survey-cps.html#cb33-4" tabindex="-1"></a>  <span class="fu">svrepdesign</span>(</span>
-<span id="cb33-5"><a href="1.4-current-population-survey-cps.html#cb33-5" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> marsupwt ,</span>
-<span id="cb33-6"><a href="1.4-current-population-survey-cps.html#cb33-6" tabindex="-1"></a>    <span class="at">repweights =</span> <span class="st">&quot;pwwgt[1-9]&quot;</span> ,</span>
-<span id="cb33-7"><a href="1.4-current-population-survey-cps.html#cb33-7" tabindex="-1"></a>    <span class="at">type =</span> <span class="st">&quot;Fay&quot;</span> ,</span>
-<span id="cb33-8"><a href="1.4-current-population-survey-cps.html#cb33-8" tabindex="-1"></a>    <span class="at">rho =</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="dv">1</span> <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">4</span>)) ,</span>
-<span id="cb33-9"><a href="1.4-current-population-survey-cps.html#cb33-9" tabindex="-1"></a>    <span class="at">data =</span> cps_df ,</span>
-<span id="cb33-10"><a href="1.4-current-population-survey-cps.html#cb33-10" tabindex="-1"></a>    <span class="at">combined.weights =</span> <span class="cn">TRUE</span> ,</span>
-<span id="cb33-11"><a href="1.4-current-population-survey-cps.html#cb33-11" tabindex="-1"></a>    <span class="at">mse =</span> <span class="cn">TRUE</span></span>
-<span id="cb33-12"><a href="1.4-current-population-survey-cps.html#cb33-12" tabindex="-1"></a>  )</span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="1.4-current-population-survey-cps.html#cb32-1" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb32-2"><a href="1.4-current-population-survey-cps.html#cb32-2" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="1.4-current-population-survey-cps.html#cb32-3" tabindex="-1"></a>cps_design <span class="ot">&lt;-</span></span>
+<span id="cb32-4"><a href="1.4-current-population-survey-cps.html#cb32-4" tabindex="-1"></a>  <span class="fu">svrepdesign</span>(</span>
+<span id="cb32-5"><a href="1.4-current-population-survey-cps.html#cb32-5" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> marsupwt ,</span>
+<span id="cb32-6"><a href="1.4-current-population-survey-cps.html#cb32-6" tabindex="-1"></a>    <span class="at">repweights =</span> <span class="st">&quot;pwwgt[1-9]&quot;</span> ,</span>
+<span id="cb32-7"><a href="1.4-current-population-survey-cps.html#cb32-7" tabindex="-1"></a>    <span class="at">type =</span> <span class="st">&quot;Fay&quot;</span> ,</span>
+<span id="cb32-8"><a href="1.4-current-population-survey-cps.html#cb32-8" tabindex="-1"></a>    <span class="at">rho =</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="dv">1</span> <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">4</span>)) ,</span>
+<span id="cb32-9"><a href="1.4-current-population-survey-cps.html#cb32-9" tabindex="-1"></a>    <span class="at">data =</span> cps_df ,</span>
+<span id="cb32-10"><a href="1.4-current-population-survey-cps.html#cb32-10" tabindex="-1"></a>    <span class="at">combined.weights =</span> <span class="cn">TRUE</span> ,</span>
+<span id="cb32-11"><a href="1.4-current-population-survey-cps.html#cb32-11" tabindex="-1"></a>    <span class="at">mse =</span> <span class="cn">TRUE</span></span>
+<span id="cb32-12"><a href="1.4-current-population-survey-cps.html#cb32-12" tabindex="-1"></a>  )</span></code></pre></div>
 <p>Run the <code>convey_prep()</code> function on the full design:</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="1.4-current-population-survey-cps.html#cb34-1" tabindex="-1"></a>cps_design <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(cps_design)</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="1.4-current-population-survey-cps.html#cb33-1" tabindex="-1"></a>cps_design <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(cps_design)</span></code></pre></div>
 <div id="household-level" class="section level3" number="1.4.1">
 <h3><span class="header-section-number">1.4.1</span> Household-level</h3>
 <p>Limit the CPS person-level design to the household reference person, then calculate the gini coefficient with total household income:</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="1.4-current-population-survey-cps.html#cb35-1" tabindex="-1"></a>cps_household_design <span class="ot">&lt;-</span> <span class="fu">subset</span>(cps_design , a_exprrp <span class="sc">%in%</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)</span>
-<span id="cb35-2"><a href="1.4-current-population-survey-cps.html#cb35-2" tabindex="-1"></a></span>
-<span id="cb35-3"><a href="1.4-current-population-survey-cps.html#cb35-3" tabindex="-1"></a>(cps_household_gini <span class="ot">&lt;-</span> <span class="fu">svygini</span>(<span class="sc">~</span> htotval , cps_household_design))</span></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="1.4-current-population-survey-cps.html#cb34-1" tabindex="-1"></a>cps_household_design <span class="ot">&lt;-</span> <span class="fu">subset</span>(cps_design , a_exprrp <span class="sc">%in%</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)</span>
+<span id="cb34-2"><a href="1.4-current-population-survey-cps.html#cb34-2" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="1.4-current-population-survey-cps.html#cb34-3" tabindex="-1"></a>(cps_household_gini <span class="ot">&lt;-</span> <span class="fu">svygini</span>( <span class="sc">~</span> htotval , cps_household_design))</span></code></pre></div>
 <pre><code>##            gini    SE
 ## htotval 0.48846 0.002</code></pre>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="1.4-current-population-survey-cps.html#cb37-1" tabindex="-1"></a><span class="co"># match 2022 household gini coefficient</span></span>
-<span id="cb37-2"><a href="1.4-current-population-survey-cps.html#cb37-2" tabindex="-1"></a><span class="co"># https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-income-households/h04.xlsx</span></span>
-<span id="cb37-3"><a href="1.4-current-population-survey-cps.html#cb37-3" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">coef</span>(cps_household_gini) , <span class="dv">3</span>) <span class="sc">==</span> <span class="fl">0.488</span>)</span>
-<span id="cb37-4"><a href="1.4-current-population-survey-cps.html#cb37-4" tabindex="-1"></a></span>
-<span id="cb37-5"><a href="1.4-current-population-survey-cps.html#cb37-5" tabindex="-1"></a><span class="co"># match 2022 household gini margin of error</span></span>
-<span id="cb37-6"><a href="1.4-current-population-survey-cps.html#cb37-6" tabindex="-1"></a><span class="co"># https://www.census.gov/content/dam/Census/newsroom/press-kits/2023/iphi/20230912-iphi-slides-income.pdf#page=13</span></span>
-<span id="cb37-7"><a href="1.4-current-population-survey-cps.html#cb37-7" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(</span>
-<span id="cb37-8"><a href="1.4-current-population-survey-cps.html#cb37-8" tabindex="-1"></a>  <span class="fu">coef</span>(cps_household_gini) <span class="sc">-</span> <span class="fu">confint</span>(cps_household_gini , <span class="at">level =</span> <span class="fl">0.9</span>)[<span class="dv">1</span>] ,</span>
-<span id="cb37-9"><a href="1.4-current-population-survey-cps.html#cb37-9" tabindex="-1"></a>  <span class="dv">4</span></span>
-<span id="cb37-10"><a href="1.4-current-population-survey-cps.html#cb37-10" tabindex="-1"></a>) <span class="sc">==</span> <span class="fl">0.0033</span>) </span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="1.4-current-population-survey-cps.html#cb36-1" tabindex="-1"></a><span class="co"># match 2022 household gini coefficient</span></span>
+<span id="cb36-2"><a href="1.4-current-population-survey-cps.html#cb36-2" tabindex="-1"></a><span class="co"># https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-income-households/h04.xlsx</span></span>
+<span id="cb36-3"><a href="1.4-current-population-survey-cps.html#cb36-3" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">coef</span>(cps_household_gini) , <span class="dv">3</span>) <span class="sc">==</span> <span class="fl">0.488</span>)</span>
+<span id="cb36-4"><a href="1.4-current-population-survey-cps.html#cb36-4" tabindex="-1"></a></span>
+<span id="cb36-5"><a href="1.4-current-population-survey-cps.html#cb36-5" tabindex="-1"></a><span class="co"># match 2022 household gini margin of error</span></span>
+<span id="cb36-6"><a href="1.4-current-population-survey-cps.html#cb36-6" tabindex="-1"></a><span class="co"># https://www.census.gov/content/dam/Census/newsroom/press-kits/2023/iphi/20230912-iphi-slides-income.pdf#page=13</span></span>
+<span id="cb36-7"><a href="1.4-current-population-survey-cps.html#cb36-7" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(</span>
+<span id="cb36-8"><a href="1.4-current-population-survey-cps.html#cb36-8" tabindex="-1"></a>  <span class="fu">coef</span>(cps_household_gini) <span class="sc">-</span> <span class="fu">confint</span>(cps_household_gini , <span class="at">level =</span> <span class="fl">0.9</span>)[<span class="dv">1</span>] ,</span>
+<span id="cb36-9"><a href="1.4-current-population-survey-cps.html#cb36-9" tabindex="-1"></a>  <span class="dv">4</span></span>
+<span id="cb36-10"><a href="1.4-current-population-survey-cps.html#cb36-10" tabindex="-1"></a>) <span class="sc">==</span> <span class="fl">0.0033</span>) </span></code></pre></div>
 </div>
 <div id="family-level" class="section level3" number="1.4.2">
 <h3><span class="header-section-number">1.4.2</span> Family-level</h3>
 <p>Limit the CPS person-level design to the family reference person of primary families, then calculate the gini coefficient with total family income:</p>
-<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="1.4-current-population-survey-cps.html#cb38-1" tabindex="-1"></a>cps_family_design <span class="ot">&lt;-</span></span>
-<span id="cb38-2"><a href="1.4-current-population-survey-cps.html#cb38-2" tabindex="-1"></a>  <span class="fu">subset</span>(cps_design , a_famrel <span class="sc">%in%</span> <span class="dv">1</span> <span class="sc">&amp;</span> a_famtyp <span class="sc">%in%</span> <span class="dv">1</span>)</span>
-<span id="cb38-3"><a href="1.4-current-population-survey-cps.html#cb38-3" tabindex="-1"></a></span>
-<span id="cb38-4"><a href="1.4-current-population-survey-cps.html#cb38-4" tabindex="-1"></a>(cps_family_gini <span class="ot">&lt;-</span> <span class="fu">svygini</span>(<span class="sc">~</span> ftotval , cps_family_design))</span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="1.4-current-population-survey-cps.html#cb37-1" tabindex="-1"></a>cps_family_design <span class="ot">&lt;-</span></span>
+<span id="cb37-2"><a href="1.4-current-population-survey-cps.html#cb37-2" tabindex="-1"></a>  <span class="fu">subset</span>(cps_design , a_famrel <span class="sc">%in%</span> <span class="dv">1</span> <span class="sc">&amp;</span> a_famtyp <span class="sc">%in%</span> <span class="dv">1</span>)</span>
+<span id="cb37-3"><a href="1.4-current-population-survey-cps.html#cb37-3" tabindex="-1"></a></span>
+<span id="cb37-4"><a href="1.4-current-population-survey-cps.html#cb37-4" tabindex="-1"></a>(cps_family_gini <span class="ot">&lt;-</span> <span class="fu">svygini</span>( <span class="sc">~</span> ftotval , cps_family_design))</span></code></pre></div>
 <pre><code>##            gini     SE
 ## ftotval 0.45816 0.0023</code></pre>
-<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="1.4-current-population-survey-cps.html#cb40-1" tabindex="-1"></a><span class="co"># match 2022 family gini coefficient</span></span>
-<span id="cb40-2"><a href="1.4-current-population-survey-cps.html#cb40-2" tabindex="-1"></a><span class="co"># https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-income-families/f04.xlsx</span></span>
-<span id="cb40-3"><a href="1.4-current-population-survey-cps.html#cb40-3" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">coef</span>(cps_family_gini) , <span class="dv">3</span>) <span class="sc">==</span> <span class="fl">0.458</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="1.4-current-population-survey-cps.html#cb39-1" tabindex="-1"></a><span class="co"># match 2022 family gini coefficient</span></span>
+<span id="cb39-2"><a href="1.4-current-population-survey-cps.html#cb39-2" tabindex="-1"></a><span class="co"># https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-income-families/f04.xlsx</span></span>
+<span id="cb39-3"><a href="1.4-current-population-survey-cps.html#cb39-3" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">coef</span>(cps_family_gini) , <span class="dv">3</span>) <span class="sc">==</span> <span class="fl">0.458</span>)</span></code></pre></div>
 </div>
 <div id="worker-earnings" class="section level3" number="1.4.3">
 <h3><span class="header-section-number">1.4.3</span> Worker Earnings</h3>
 <p>Limit the CPS person-level design to full-time, full year workers, then calculate the gini coefficient with both total personal income and then total earnings:</p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="1.4-current-population-survey-cps.html#cb41-1" tabindex="-1"></a>cps_ftfy_worker_design <span class="ot">&lt;-</span> <span class="fu">subset</span>(cps_design , wewkrs <span class="sc">%in%</span> <span class="dv">1</span>)</span>
-<span id="cb41-2"><a href="1.4-current-population-survey-cps.html#cb41-2" tabindex="-1"></a></span>
-<span id="cb41-3"><a href="1.4-current-population-survey-cps.html#cb41-3" tabindex="-1"></a><span class="fu">svygini</span>(<span class="sc">~</span> ptotval , cps_ftfy_worker_design)</span></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="1.4-current-population-survey-cps.html#cb40-1" tabindex="-1"></a>cps_ftfy_worker_design <span class="ot">&lt;-</span> <span class="fu">subset</span>(cps_design , wewkrs <span class="sc">%in%</span> <span class="dv">1</span>)</span>
+<span id="cb40-2"><a href="1.4-current-population-survey-cps.html#cb40-2" tabindex="-1"></a></span>
+<span id="cb40-3"><a href="1.4-current-population-survey-cps.html#cb40-3" tabindex="-1"></a><span class="fu">svygini</span>( <span class="sc">~</span> ptotval , cps_ftfy_worker_design)</span></code></pre></div>
 <pre><code>##            gini     SE
 ## ptotval 0.41809 0.0025</code></pre>
-<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="1.4-current-population-survey-cps.html#cb43-1" tabindex="-1"></a><span class="fu">svygini</span>(<span class="sc">~</span> pearnval , cps_ftfy_worker_design)</span></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="1.4-current-population-survey-cps.html#cb42-1" tabindex="-1"></a><span class="fu">svygini</span>( <span class="sc">~</span> pearnval , cps_ftfy_worker_design)</span></code></pre></div>
 <pre><code>##           gini     SE
 ## pearnval 0.412 0.0026</code></pre>
 </div>
