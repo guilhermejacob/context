@@ -1,8 +1,6 @@
 # Inequality Measurement {#inequality}
 
-```{r results='hide', echo=FALSE}
-set.seed(2019)
-```
+
 
 Another problem faced by societies is inequality. Economic inequality can have several different meanings, including (but not limited to) income, education, resources, opportunities, and well-being. Usually, studies on economic inequality focus on income distribution.
 
@@ -33,7 +31,8 @@ In the end, the choice is mostly subjective and there is no consensus of which m
 
 ## The Gender Pay Gap (svygpg)
 
-```{r eval=FALSE}
+
+```r
 ✔️ easy to understand
 ✔️ the difference of men and women average wages expressed as a fraction of average men wages
 ✔️ alternatively: the average women wage is `( 1 - GPG ) x average men wage`
@@ -62,13 +61,39 @@ The R `vardpoor` package [@vardpoor], created by researchers at the Central Stat
 
 Load and prepare the same data set:
 
-```{r}
+
+```r
 # load the convey package
 library(convey)
 
 # load the survey library
 library(survey)
+```
 
+```
+## Carregando pacotes exigidos: grid
+```
+
+```
+## Carregando pacotes exigidos: Matrix
+```
+
+```
+## Carregando pacotes exigidos: survival
+```
+
+```
+## 
+## Attaching package: 'survey'
+```
+
+```
+## The following object is masked from 'package:graphics':
+## 
+##     dotchart
+```
+
+```r
 # load the vardpoor library
 library(vardpoor)
 
@@ -141,8 +166,22 @@ des_eusilc <- convey_prep(des_eusilc)
 
 # coefficients do match
 varpoord_gpg_calculation$all_result$value
-coef(svygpg( ~ eqincome , des_eusilc , sex = ~ rb090)) * 100
+```
 
+```
+## [1] 7.645389
+```
+
+```r
+coef(svygpg( ~ eqincome , des_eusilc , sex = ~ rb090)) * 100
+```
+
+```
+##  eqincome 
+## -8.278297
+```
+
+```r
 # linearized variables do match
 # vardpoor
 lin_gpg_varpoord <- varpoord_gpg_calculation$lin_out$lin_gpg
@@ -152,21 +191,54 @@ lin_gpg_convey <-
 
 # check equality
 all.equal(lin_gpg_varpoord, 100 * lin_gpg_convey[, 1])
+```
 
+```
+## [1] "Mean relative difference: 2.172419"
+```
+
+```r
 # variances do not match exactly
 attr(svygpg( ~ eqincome , des_eusilc , sex = ~ rb090) , 'var') * 10000
-varpoord_gpg_calculation$all_result$var
+```
 
+```
+##           eqincome
+## eqincome 0.8926311
+```
+
+```r
+varpoord_gpg_calculation$all_result$var
+```
+
+```
+## [1] 0.6482346
+```
+
+```r
 # standard errors do not match exactly
 varpoord_gpg_calculation$all_result$se
+```
+
+```
+## [1] 0.8051301
+```
+
+```r
 SE(svygpg( ~ eqincome , des_eusilc , sex = ~ rb090)) * 100
+```
+
+```
+##           eqincome
+## eqincome 0.9447916
 ```
 
 The variance estimate is computed by using the approximation defined in \@ref(var), while the linearized variable $z$ is defined by \@ref(lin). The functions `convey::svygpg` and `vardpoor::lingpg` produce the same linearized variable $z$.
 
 However, the measures of uncertainty do not line up, because `library(vardpoor)` defaults to an ultimate cluster method that can be replicated with an alternative setup of the `survey.design` object.
 
-```{r}
+
+```r
 # within each strata, sum up the weights
 cluster_sums <-
   aggregate(eusilc$rb050 , list(eusilc$db040) , sum)
@@ -195,18 +267,45 @@ des_eusilc_ultimate_cluster <-
 # matches
 attr(svygpg( ~ eqincome , des_eusilc_ultimate_cluster , sex = ~ rb090) ,
      'var') * 10000
-varpoord_gpg_calculation$all_result$var
+```
 
+```
+##           eqincome
+## eqincome 0.8910413
+```
+
+```r
+varpoord_gpg_calculation$all_result$var
+```
+
+```
+## [1] 0.6482346
+```
+
+```r
 # matches
 varpoord_gpg_calculation$all_result$se
+```
+
+```
+## [1] 0.8051301
+```
+
+```r
 SE(svygpg( ~ eqincome , des_eusilc_ultimate_cluster , sex = ~ rb090)) * 100
+```
+
+```
+##           eqincome
+## eqincome 0.9439499
 ```
 
 For additional usage examples of `svygpg`, type `?convey::svygpg` in the R console.
 
 ## Quintile Share Ratio (svyqsr)
 
-```{r eval=FALSE}
+
+```r
 ✔️ Easy to understand
 ✔️ Can be adapted into other more commonly used variants, like the Palma ratio
 ✔️ Can be interpreted using a Lorenz curve
@@ -231,7 +330,8 @@ The R `vardpoor` package [@vardpoor], created by researchers at the Central Stat
 
 Load and prepare the same data set:
 
-```{r}
+
+```r
 # load the convey package
 library(convey)
 
@@ -308,8 +408,22 @@ des_eusilc <- convey_prep(des_eusilc)
 
 # coefficients do match
 varpoord_qsr_calculation$all_result$value
-coef(svyqsr( ~ eqincome , des_eusilc))
+```
 
+```
+## [1] 3.970004
+```
+
+```r
+coef(svyqsr( ~ eqincome , des_eusilc))
+```
+
+```
+## eqincome 
+## 3.970004
+```
+
+```r
 # linearized variables do match
 # vardpoor
 lin_qsr_varpoord <- varpoord_qsr_calculation$lin_out$lin_qsr
@@ -322,21 +436,54 @@ lin_qsr_convey <-
 
 # check equality
 all.equal(lin_qsr_varpoord, lin_qsr_convey)
+```
 
+```
+## [1] TRUE
+```
+
+```r
 # variances do not match exactly
 attr(svyqsr( ~ eqincome , des_eusilc) , 'var')
-varpoord_qsr_calculation$all_result$var
+```
 
+```
+##             eqincome
+## eqincome 0.001810537
+```
+
+```r
+varpoord_qsr_calculation$all_result$var
+```
+
+```
+## [1] 0.001807323
+```
+
+```r
 # standard errors do not match exactly
 varpoord_qsr_calculation$all_result$se
+```
+
+```
+## [1] 0.04251263
+```
+
+```r
 SE(svyqsr( ~ eqincome , des_eusilc))
+```
+
+```
+##            eqincome
+## eqincome 0.04255041
 ```
 
 The variance estimate is computed by using the approximation defined in \@ref(var), while the linearized variable $z$ is defined by \@ref(lin). The functions `convey::svyqsr` and `vardpoor::linqsr` produce the same linearized variable $z$.
 
 However, the measures of uncertainty do not line up, because `library(vardpoor)` defaults to an ultimate cluster method that can be replicated with an alternative setup of the `survey.design` object.
 
-```{r}
+
+```r
 # within each strata, sum up the weights
 cluster_sums <-
   aggregate(eusilc$rb050 , list(eusilc$db040) , sum)
@@ -364,11 +511,37 @@ des_eusilc_ultimate_cluster <-
 
 # matches
 attr(svyqsr( ~ eqincome , des_eusilc_ultimate_cluster) , 'var')
-varpoord_qsr_calculation$all_result$var
+```
 
+```
+##             eqincome
+## eqincome 0.001807323
+```
+
+```r
+varpoord_qsr_calculation$all_result$var
+```
+
+```
+## [1] 0.001807323
+```
+
+```r
 # matches
 varpoord_qsr_calculation$all_result$se
+```
+
+```
+## [1] 0.04251263
+```
+
+```r
 SE(svyqsr( ~ eqincome , des_eusilc_ultimate_cluster))
+```
+
+```
+##            eqincome
+## eqincome 0.04251263
 ```
 
 For additional usage examples of `svyqsr`, type `?convey::svyqsr` in the R console.
@@ -381,7 +554,8 @@ the Gini index and the Zenga index.
 
 ## Lorenz Curve (svylorenz)
 
-```{r eval=FALSE}
+
+```r
 ✔️ graphical device for understanding inequality measurement
 ✔️ simple to understand
 ✔️ conveys information about inequality across the entire income distribution
@@ -433,7 +607,8 @@ Yet, this formula is used to calculate specific points of the curve and their re
 
 In October 2016, [@jann2016] released a pre-publication working paper to estimate Lorenz and concentration curves using stata.  The example below reproduces the statistics presented in his section 4.1.
 
-```{r}
+
+```r
 # load the convey package
 library(convey)
 
@@ -451,7 +626,14 @@ nlsw88 <- data.frame(nlsw88)
 
 # initiate a linearized survey design object
 des_nlsw88 <- svydesign(ids = ~ 1 , data = nlsw88)
+```
 
+```
+## Warning in svydesign.default(ids = ~1, data = nlsw88): No weights or
+## probabilities supplied, assuming equal probability
+```
+
+```r
 # immediately run the `convey_prep` function on the survey design
 des_nlsw88 <- convey_prep(des_nlsw88)
 
@@ -461,8 +643,11 @@ result.lin <-
              des_nlsw88,
              quantiles = seq(0, 1, .05),
              na.rm = TRUE)
+```
 
+<img src="03-inequality_files/figure-html/unnamed-chunk-9-1.png" width="672"  />
 
+```r
 # note: most survey commands in R use Inf degrees of freedom by default
 # stata generally uses the degrees of freedom of the survey design.
 # therefore, while the degf() parameters passed to qt()
@@ -487,10 +672,30 @@ section_four_one <-
   )
 ```
 
-```{r echo=FALSE}
-knitr::kable(section_four_one ,
-             booktabs = TRUE)
-```
+
+|        |  estimate| standard_error| ci_lower_bound| ci_upper_bound|
+|:-------|---------:|--------------:|--------------:|--------------:|
+|L(0)    | 0.0000000|      0.0000000|      0.0000000|      0.0000000|
+|L(0.05) | 0.0151060|      0.0004159|      0.0142904|      0.0159216|
+|L(0.1)  | 0.0342651|      0.0007021|      0.0328882|      0.0356420|
+|L(0.15) | 0.0558635|      0.0010096|      0.0538836|      0.0578434|
+|L(0.2)  | 0.0801846|      0.0014032|      0.0774329|      0.0829363|
+|L(0.25) | 0.1067687|      0.0017315|      0.1033732|      0.1101642|
+|L(0.3)  | 0.1356307|      0.0021301|      0.1314535|      0.1398078|
+|L(0.35) | 0.1670287|      0.0025182|      0.1620903|      0.1719670|
+|L(0.4)  | 0.2005501|      0.0029161|      0.1948315|      0.2062687|
+|L(0.45) | 0.2369209|      0.0033267|      0.2303971|      0.2434447|
+|L(0.5)  | 0.2759734|      0.0037423|      0.2686347|      0.2833121|
+|L(0.55) | 0.3180215|      0.0041626|      0.3098585|      0.3261844|
+|L(0.6)  | 0.3633071|      0.0045833|      0.3543192|      0.3722950|
+|L(0.65) | 0.4125183|      0.0050056|      0.4027021|      0.4223345|
+|L(0.7)  | 0.4657641|      0.0054137|      0.4551478|      0.4763804|
+|L(0.75) | 0.5241784|      0.0058003|      0.5128039|      0.5355529|
+|L(0.8)  | 0.5880894|      0.0062464|      0.5758401|      0.6003388|
+|L(0.85) | 0.6577051|      0.0066148|      0.6447333|      0.6706769|
+|L(0.9)  | 0.7346412|      0.0068289|      0.7212497|      0.7480328|
+|L(0.95) | 0.8265786|      0.0062686|      0.8142857|      0.8388715|
+|L(1)    | 1.0000000|      0.0000000|      1.0000000|      1.0000000|
 
 
 For additional usage examples of `svylorenz`, type `?convey::svylorenz` in the R console.
@@ -498,7 +703,8 @@ For additional usage examples of `svylorenz`, type `?convey::svylorenz` in the R
 
 ## Gini index (svygini)
 
-```{r eval=FALSE}
+
+```r
 ✔️ direct relationship with the Lorenz curve
 ✔️ most used inequality measure
 ✔️ [0,1]-bounded, easy to compare
@@ -535,7 +741,8 @@ The R `vardpoor` package [@vardpoor], created by researchers at the Central Stat
 
 Load and prepare the same data set:
 
-```{r}
+
+```r
 # load the convey package
 library(convey)
 
@@ -609,8 +816,22 @@ des_eusilc <- convey_prep(des_eusilc)
 
 # coefficients do match
 varpoord_gini_calculation$all_result$value
-coef(svygini( ~ eqincome , des_eusilc)) * 100
+```
 
+```
+## [1] 26.49652
+```
+
+```r
+coef(svygini( ~ eqincome , des_eusilc)) * 100
+```
+
+```
+## eqincome 
+## 26.49652
+```
+
+```r
 # linearized variables do match
 # varpoord
 lin_gini_varpoord <- varpoord_gini_calculation$lin_out$lin_gini
@@ -620,21 +841,54 @@ lin_gini_convey <-
 
 # check equality
 all.equal(lin_gini_varpoord , (100 * as.numeric(lin_gini_convey)))
+```
 
+```
+## [1] TRUE
+```
+
+```r
 # variances do not match exactly
 attr(svygini( ~ eqincome , des_eusilc) , 'var') * 10000
-varpoord_gini_calculation$all_result$var
+```
 
+```
+##            eqincome
+## eqincome 0.03790739
+```
+
+```r
+varpoord_gini_calculation$all_result$var
+```
+
+```
+## [1] 0.03783931
+```
+
+```r
 # standard errors do not match exactly
 varpoord_gini_calculation$all_result$se
+```
+
+```
+## [1] 0.1945233
+```
+
+```r
 SE(svygini( ~ eqincome , des_eusilc)) * 100
+```
+
+```
+##           eqincome
+## eqincome 0.1946982
 ```
 
 The variance estimate is computed by using the approximation defined in \@ref(var), while the linearized variable $z$ is defined by \@ref(lin). The functions `convey::svygini` and `vardpoor::lingini` produce the same linearized variable $z$.
 
 However, the measures of uncertainty do not line up, because `library(vardpoor)` defaults to an ultimate cluster method that can be replicated with an alternative setup of the `survey.design` object.
 
-```{r}
+
+```r
 # within each strata, sum up the weights
 cluster_sums <-
   aggregate(eusilc$rb050 , list(eusilc$db040) , sum)
@@ -662,16 +916,43 @@ des_eusilc_ultimate_cluster <-
 
 # matches
 attr(svygini( ~ eqincome , des_eusilc_ultimate_cluster) , 'var') * 10000
-varpoord_gini_calculation$all_result$var
+```
 
+```
+##            eqincome
+## eqincome 0.03783931
+```
+
+```r
+varpoord_gini_calculation$all_result$var
+```
+
+```
+## [1] 0.03783931
+```
+
+```r
 # matches
 varpoord_gini_calculation$all_result$se
+```
+
+```
+## [1] 0.1945233
+```
+
+```r
 SE(svygini( ~ eqincome , des_eusilc_ultimate_cluster)) * 100
+```
+
+```
+##           eqincome
+## eqincome 0.1945233
 ```
 
 ## Zenga index (svyzenga)
 
-```{r eval=FALSE}
+
+```r
 ✔️ [0,1]-bounded
 ✔️ can account for zero incomes
 ✔️ not extremely sensitive to top incomes
@@ -711,7 +992,8 @@ While it is not possible to reproduce the exact results because their simulation
 
 Load and prepare the data set:
 
-```{r}
+
+```r
 library(convey)
 library(survey)
 library(parallel)
@@ -793,7 +1075,8 @@ pop.df <-
 
 For the Monte Carlo experiment, we take `5000` samples of (expected) size `1000` using Poisson sampling^[but not Conditional Poisson Sampling.]:
 
-```{r}
+
+```r
 # set up monte carlo attributes
 mc.rep <- 5000L
 n.size = 1000L
@@ -830,7 +1113,8 @@ survey.list <-
 
 ... and estimate the Zenga index using each sample:
 
-```{r}
+
+```r
 # estimate zenga index for each sample
 zenga.estimate.list <-
   lapply(survey.list ,
@@ -844,7 +1128,8 @@ zenga.estimate.list <-
 
 Then, we evaluate the Percentage Relative Bias (PRB) of the Zenga index estimator. Under this scenario, the PRB of the Zenga index estimator is 0.3397%, a result similar to the `0.321` shown in Table 2.
 
-```{r}
+
+```r
 # compute the (finite population) Zenga index parameter
 theta.pop <-
   convey:::CalcZenga(pop.df$x , ifelse(pop.df$x > 0 , 1 , 0))
@@ -856,23 +1141,45 @@ theta.exp <- mean(sapply(zenga.estimate.list , coef))
 # estimate the percentage relative bias
 100 * (theta.exp / theta.pop - 1)
 ```
+
+```
+## [1] 0.3396837
+```
 Then, we evaluate the PRB of the variance estimator of the Zenga index estimator. Under this scenario, the PRB of the Zenga index variance estimator is -0.4954%, another result similar to the `-0.600` shown in Table 2.
 
-```{r}
+
+```r
 # estimate the variance of the Zenga index estimator
 # using the variance of the estimates
 (vartheta.popest <- var(sapply(zenga.estimate.list , coef)))
+```
 
+```
+## [1] 9.47244e-05
+```
+
+```r
 # estimate the expected value of the Zenga index variance estimator
 # using the expected of the variance estimates
 (vartheta.exp <- mean(sapply(zenga.estimate.list , vcov)))
+```
 
+```
+## [1] 9.425515e-05
+```
+
+```r
 # estimate the percentage relative bias
 100 * (vartheta.exp / vartheta.popest - 1)
 ```
+
+```
+## [1] -0.4953863
+```
 Next, we evaluate the Percentage Coverage Rate (PCR). In theory, under repeated sampling, the estimated 95% CIs should cover the population parameter 95% of the time. We can evaluate that using:
 
-```{r}
+
+```r
 # estimate confidence intervals of the Zenga index
 # for each of the samples
 est.cis <-
@@ -882,6 +1189,12 @@ est.cis <-
 # evaluate
 prop.table(table((theta.pop > est.cis[, 1]) &
                    (theta.pop < est.cis[, 2])))
+```
+
+```
+## 
+##  FALSE   TRUE 
+## 0.0548 0.9452
 ```
 
 Our estimated 95% CIs cover the parameter 94.52% of the time, which is very close to the nominal rate and also similar to the `94.5` PCR shown in Table 2.
@@ -900,7 +1213,8 @@ measurement axioms.
 
 ## Atkinson index (svyatk)
 
-```{r eval=FALSE}
+
+```r
 ✔️ is defined in terms of an interpretable utility function
 ✔️ has a direct (but non-linear) relationship to `svygei`
 ✔️ has an interpretable inequality aversion parameter
@@ -992,7 +1306,8 @@ the equivalent plug-in estimator we use comes from @biewen2003:
 In July 2006, @jenkins2006 presented at the North American Stata Users' Group Meetings on the stata Atkinson Index command. The example below reproduces those statistics.
 
 Load and prepare the same data set:
-```{r}
+
+```r
 # load the convey package
 library(convey)
 
@@ -1039,7 +1354,8 @@ construct an
 .. into R code:
 
 
-```{r}
+
+```r
 # initiate a linearized survey design object
 y <- svydesign( ~ hrn , data = x , weights = ~ wgt)
 
@@ -1072,14 +1388,52 @@ A(2.5)   |  .4992701   .06754311     7.39    0.000       .366888   .6316522
 
 ..using R code:
 
-```{r}
+
+```r
 z81 <- subset(z , year == 1981)
 
 svyatk( ~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = 0.5)
+```
+
+```
+##        atkinson     SE
+## eybhc0 0.054324 0.0011
+```
+
+```r
 svyatk( ~ eybhc0 , subset(z81 , eybhc0 > 0))
+```
+
+```
+##        atkinson     SE
+## eybhc0    0.108 0.0025
+```
+
+```r
 svyatk( ~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = 1.5)
+```
+
+```
+##        atkinson     SE
+## eybhc0  0.17018 0.0067
+```
+
+```r
 svyatk( ~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = 2)
+```
+
+```
+##        atkinson    SE
+## eybhc0  0.27558 0.026
+```
+
+```r
 svyatk( ~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = 2.5)
+```
+
+```
+##        atkinson     SE
+## eybhc0  0.49927 0.0675
 ```
 
 Confirm this replication applies for subsetted objects as well, comparing stata code..
@@ -1105,14 +1459,52 @@ A(2.5)   |   .394787   .04155221     9.50    0.000      .3133461   .4762278
 
 ..to R code:
 
-```{r}
+
+```r
 z81_two <- subset(z , year == 1981 & eybhc0 > 1)
 
 svyatk( ~ eybhc0 , z81_two , epsilon = 0.5)
+```
+
+```
+##        atkinson     SE
+## eybhc0 0.054006 0.0011
+```
+
+```r
 svyatk( ~ eybhc0 , z81_two)
+```
+
+```
+##        atkinson     SE
+## eybhc0  0.10661 0.0022
+```
+
+```r
 svyatk( ~ eybhc0 , z81_two , epsilon = 1.5)
+```
+
+```
+##        atkinson     SE
+## eybhc0  0.16383 0.0048
+```
+
+```r
 svyatk( ~ eybhc0 , z81_two , epsilon = 2)
+```
+
+```
+##        atkinson     SE
+## eybhc0  0.24432 0.0143
+```
+
+```r
 svyatk( ~ eybhc0 , z81_two , epsilon = 2.5)
+```
+
+```
+##        atkinson     SE
+## eybhc0  0.39479 0.0416
 ```
 
 For additional usage examples of `svyatk`, type `?convey::svyatk` in the R console.
@@ -1161,7 +1553,8 @@ Therefore, the entropy-based inequality measure increases as a person's income $
 
 ## Generalized Entropy and Decomposition (svygei, svygeidec)
 
-```{r eval=FALSE}
+
+```r
 ✔️ flexible inequality-aversion parameter -- varying its epsilon parameter can highlight the effect of inequality in different parts of the income distribution
 ✔️ can be group-decomposed into within-inequality and between-inequality
 ✔️ this parameter can also be (somewhat) tuned to be less affected by outliers
@@ -1220,7 +1613,8 @@ I ( \mathbf{y} ) &= I_{Within} + I_{Between} \\
 In July 2006, @jenkins2006 presented at the North American Stata Users' Group Meetings on the stata Generalized Entropy Index command. The example below reproduces those statistics.
 
 Load and prepare the same data set:
-```{r}
+
+```r
 # load the convey package
 library(convey)
 
@@ -1267,7 +1661,8 @@ construct an
 .. into R code:
 
 
-```{r}
+
+```r
 # initiate a linearized survey design object
 y <- svydesign( ~ hrn , data = x , weights = ~ wgt)
 
@@ -1300,15 +1695,53 @@ GE(3)    |  .1739994   .00662015    26.28    0.000      .1610242   .1869747
 
 ..using R code:
 
-```{r}
+
+```r
 z81 <- subset(z , year == 1981)
 
 svygei( ~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = -1)
+```
+
+```
+##            gei     SE
+## eybhc0 0.19021 0.0247
+```
+
+```r
 svygei( ~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = 0)
+```
+
+```
+##            gei     SE
+## eybhc0 0.11429 0.0028
+```
+
+```r
 svygei( ~ eybhc0 , subset(z81 , eybhc0 > 0))
+```
+
+```
+##            gei     SE
+## eybhc0 0.11169 0.0023
+```
+
+```r
 svygei( ~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = 2)
+```
+
+```
+##            gei     SE
+## eybhc0 0.12879 0.0033
+```
+
+```r
 svygei( ~ eybhc0 , subset(z81 , eybhc0 > 0) , epsilon = 3)
-```	
+```
+
+```
+##          gei     SE
+## eybhc0 0.174 0.0066
+```
 
 Confirm this replication applies for subsetted objects as well.  Compare stata output..
 
@@ -1334,21 +1767,57 @@ GE(3)    |  .2609507   .01850689    14.10    0.000      .2246779   .2972235
 
 ..to R code:
 
-```{r}
+
+```r
 z85 <- subset(z , year == 1985)
 
 svygei( ~ eybhc0 , subset(z85 , eybhc0 > 1) , epsilon = -1)
+```
+
+```
+##            gei     SE
+## eybhc0 0.16024 0.0094
+```
+
+```r
 svygei( ~ eybhc0 , subset(z85 , eybhc0 > 1) , epsilon = 0)
+```
+
+```
+##            gei     SE
+## eybhc0 0.12762 0.0033
+```
+
+```r
 svygei( ~ eybhc0 , subset(z85 , eybhc0 > 1))
+```
+
+```
+##            gei     SE
+## eybhc0 0.13372 0.0041
+```
+
+```r
 svygei( ~ eybhc0 , subset(z85 , eybhc0 > 1) , epsilon = 2)
+```
+
+```
+##            gei     SE
+## eybhc0 0.16764 0.0073
+```
+
+```r
 svygei( ~ eybhc0 , subset(z85 , eybhc0 > 1) , epsilon = 3)
 ```
 
+```
+##            gei     SE
+## eybhc0 0.26095 0.0185
+```
+
 Replicate the author's decomposition by population subgroup (work status) shown on PDF page 57..
-```{r}
 
-
-
+```r
 # define work status (PDF page 22)
 z <-
   update(z , wkstatus = c(1 , 1 , 1 , 1 , 2 , 3 , 2 , 2)[as.numeric(esbu)])
@@ -1360,28 +1829,123 @@ z91 <- subset(z , year == 1991 & eybhc0 > 0)
 
 # population share
 svymean( ~ wkstatus, z91)
+```
 
+```
+##                          mean     SE
+## wkstatus1+ ft working 0.61724 0.0067
+## wkstatusno ft working 0.20607 0.0059
+## wkstatuselderly       0.17669 0.0046
+```
+
+```r
 # mean
 svyby( ~ eybhc0, ~ wkstatus, z91, svymean)
+```
 
+```
+##                    wkstatus   eybhc0       se
+## 1+ ft working 1+ ft working 278.8040 3.703790
+## no ft working no ft working 151.6317 3.153968
+## elderly             elderly 176.6045 4.661740
+```
+
+```r
 # subgroup indices: ge_k
 svyby( ~ eybhc0 , ~ wkstatus , z91 , svygei , epsilon = -1)
-svyby( ~ eybhc0 , ~ wkstatus , z91 , svygei , epsilon = 0)
-svyby( ~ eybhc0 , ~ wkstatus , z91 , svygei , epsilon = 1)
-svyby( ~ eybhc0 , ~ wkstatus , z91 , svygei , epsilon = 2)
+```
 
+```
+##                    wkstatus     eybhc0          se
+## 1+ ft working 1+ ft working  0.2300708  0.02853959
+## no ft working no ft working 10.9231761 10.65482557
+## elderly             elderly  0.1932164  0.02571991
+```
+
+```r
+svyby( ~ eybhc0 , ~ wkstatus , z91 , svygei , epsilon = 0)
+```
+
+```
+##                    wkstatus    eybhc0          se
+## 1+ ft working 1+ ft working 0.1536921 0.006955506
+## no ft working no ft working 0.1836835 0.014740510
+## elderly             elderly 0.1653658 0.016409770
+```
+
+```r
+svyby( ~ eybhc0 , ~ wkstatus , z91 , svygei , epsilon = 1)
+```
+
+```
+##                    wkstatus    eybhc0          se
+## 1+ ft working 1+ ft working 0.1598558 0.008327994
+## no ft working no ft working 0.1889909 0.016766120
+## elderly             elderly 0.2023862 0.027787224
+```
+
+```r
+svyby( ~ eybhc0 , ~ wkstatus , z91 , svygei , epsilon = 2)
+```
+
+```
+##                    wkstatus    eybhc0         se
+## 1+ ft working 1+ ft working 0.2130664 0.01546521
+## no ft working no ft working 0.2846345 0.06016394
+## elderly             elderly 0.3465088 0.07362898
+```
+
+```r
 # GE decomposition
 svygeidec( ~ eybhc0, ~ wkstatus, z91, epsilon = -1)
+```
+
+```
+##         gei decomposition     SE
+## total            3.682893 3.3999
+## within           3.646572 3.3998
+## between          0.036321 0.0028
+```
+
+```r
 svygeidec( ~ eybhc0, ~ wkstatus, z91, epsilon = 0)
+```
+
+```
+##         gei decomposition     SE
+## total            0.195236 0.0065
+## within           0.161935 0.0061
+## between          0.033301 0.0025
+```
+
+```r
 svygeidec( ~ eybhc0, ~ wkstatus, z91, epsilon = 1)
+```
+
+```
+##         gei decomposition     SE
+## total            0.200390 0.0079
+## within           0.169396 0.0076
+## between          0.030994 0.0022
+```
+
+```r
 svygeidec( ~ eybhc0, ~ wkstatus, z91, epsilon = 2)
+```
+
+```
+##         gei decomposition     SE
+## total            0.274325 0.0167
+## within           0.245067 0.0164
+## between          0.029258 0.0021
 ```
 
 For additional usage examples of `svygei` or `svygeidec`, type `?convey::svygei` or `?convey::svygeidec` in the R console.
 
 ## J-Divergence and Decomposition (svyjdiv, svyjdivdec)
 
-```{r eval=FALSE}
+
+```r
 ✔️ can be interpreted in terms of GEI indices
 ✔️ can be group-decomposed into within-inequality and between-inequality
 ✔️ does not need to (explicitly) choose inequality aversion parameters
@@ -1413,25 +1977,50 @@ J_W &= \sum_{g \in G} \bigg[ \frac{Y_g}{Y} GE^{(1)}_g + \frac{N_g}{N} GE^{(0)}_g
 
 First, we should check that the finite-population values make sense. The J-divergence can be seen as the sum of $GE^{(0)}$ and $GE^{(1)}$. So, taking the starting population from the `svyzenga` section of this text, we have:
 
-```{r}
+
+```r
 # compute finite population J-divergence
 (jdivt.pop <-
    (convey:::CalcJDiv(pop.df$x , ifelse(pop.df$x > 0 , 1 , 0))))
+```
 
+```
+## [1] 0.4332649
+```
+
+```r
 # compute finite population GE indices
 (gei0.pop <-
     convey:::CalcGEI(pop.df$x , ifelse(pop.df$x > 0 , 1 , 0) , 0))
+```
+
+```
+## [1] 0.2215037
+```
+
+```r
 (gei1.pop <-
     convey:::CalcGEI(pop.df$x , ifelse(pop.df$x > 0 , 1 , 0) , 1))
+```
 
+```
+## [1] 0.2117612
+```
+
+```r
 # check equality; should be true
 all.equal(jdivt.pop , gei0.pop + gei1.pop)
+```
+
+```
+## [1] TRUE
 ```
 As expected, the J-divergence matches the sum of GEs in the finite population. And as we've checked the GE measures before, the J-divergence computation function seems safe.
 
 In order to assess the estimators implemented in `svyjdiv` and `svyjdivdec`, we can run a Monte Carlo experiment. Using the same samples we used in the `svyzenga` replication example, we have:
 
-```{r}
+
+```r
 # estimate J-divergence with each sample
 jdiv.estimate.list <-
   lapply(survey.list ,
@@ -1444,31 +2033,65 @@ jdiv.estimate.list <-
 # compute the (finite population overall) J-divergence
 (theta.pop <-
     convey:::CalcJDiv(pop.df$x , ifelse(pop.df$x > 0 , 1 , 0)))
+```
 
+```
+## [1] 0.4332649
+```
+
+```r
 # estimate the expected value of the J-divergence estimator
 # using the average of the estimates
 (theta.exp <- mean(sapply(jdiv.estimate.list , coef)))
+```
 
+```
+## [1] 0.4327823
+```
+
+```r
 # estimate the percentage relative bias
 100 * (theta.exp / theta.pop - 1)
 ```
 
-```{r}
+```
+## [1] -0.1113765
+```
+
+
+```r
 # estimate the variance of the J-divergence estimator
 # using the variance of the estimates
 (vartheta.popest <- var(sapply(jdiv.estimate.list , coef)))
+```
 
+```
+## [1] 0.0005434848
+```
+
+```r
 # estimate the expected value of the J-divergence index variance estimator
 # using the expected of the variance estimates
 (vartheta.exp <- mean(sapply(jdiv.estimate.list , vcov)))
+```
 
+```
+## [1] 0.0005342947
+```
+
+```r
 # estimate the percentage relative bias of the variance estimator
 100 * (vartheta.exp / vartheta.popest - 1)
 ```
 
+```
+## [1] -1.690964
+```
+
 For the decomposition, we repeat the same procedure:
 
-```{r}
+
+```r
 # estimate J-divergence decomposition with each sample
 jdivdec.estimate.list <-
   lapply(survey.list ,
@@ -1501,26 +2124,52 @@ jdivb.pop <-
 jdivw.pop <- jdivt.pop - jdivb.pop
 
 (theta.pop <- c(jdivt.pop , jdivw.pop , jdivb.pop))
+```
 
+```
+## [1] 0.433264877 0.428398928 0.004865949
+```
+
+```r
 # estimate the expected value of the J-divergence decomposition estimator
 # using the average of the estimates
 (theta.exp <- rowMeans(sapply(jdivdec.estimate.list , coef)))
+```
 
+```
+##       total      within     between 
+## 0.432782322 0.427480257 0.005302065
+```
+
+```r
 # estimate the percentage relative bias
 100 * (theta.exp / theta.pop - 1)
+```
+
+```
+##      total     within    between 
+## -0.1113765 -0.2144430  8.9626164
 ```
 The estimated PRB for the total is the same as before, so we will focus on the within and between components. While the within component has a small relative bias (-0.21%), the between component PRB is significant, amounting to 8.96%.
 
 For the variance estimator, we do:
 
-```{r}
+
+```r
 # estimate the variance of the J-divergence estimator
 # using the variance of the estimates
 (vartheta.popest <-
    diag(var(t(
      sapply(jdivdec.estimate.list , coef)
    ))))
+```
 
+```
+##        total       within      between 
+## 5.434848e-04 5.391901e-04 8.750879e-06
+```
+
+```r
 # estimate the expected value of the J-divergence index variance estimator
 # using the expected of the variance estimates
 (vartheta.exp <-
@@ -1528,23 +2177,42 @@ For the variance estimator, we do:
       diag(vcov(
         z
       )))))
+```
 
+```
+##        total       within      between 
+## 5.342947e-04 5.286750e-04 8.891772e-06
+```
+
+```r
 # estimate the percentage relative bias of the variance estimator
 100 * (vartheta.exp / vartheta.popest - 1)
+```
+
+```
+##     total    within   between 
+## -1.690964 -1.950177  1.610034
 ```
 
 The PRB of the variance estimators for both components are small: -1.95% for the within component and 1.61% for the between component. 
 
 Now, how much should we care about the between component bias? Our simulations show that the Squared Bias of this estimator accounts for less than 2% of its Mean Squared Error:
 
-```{r}
+
+```r
 theta.bias2 <- (theta.exp - theta.pop) ^ 2
 theta.mse <- theta.bias2 + vartheta.popest
 100 * (theta.bias2 / theta.mse)
 ```
+
+```
+##      total     within    between 
+## 0.04282728 0.15627854 2.12723212
+```
 Next, we evaluate the Percentage Coverage Rate (PCR). In theory, under repeated sampling, the estimated 95% CIs should cover the population parameter 95% of the time. We can evaluate that using:
 
-```{r}
+
+```r
 # estimate confidence intervals of the Zenga index
 # for each of the samples
 est.coverage <-
@@ -1554,6 +2222,11 @@ est.coverage <-
 
 # evaluate
 colMeans(est.coverage)
+```
+
+```
+##   total  within between 
+##  0.9390  0.9376  0.9108
 ```
 Our coverages are not too far from the nominal coverage level of 95%, however the bias of the between component estimator can affect its coverage rate.
 

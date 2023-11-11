@@ -1,0 +1,107 @@
+Household income ratios at selected percentiles
+
+Some of the remaining differences might be explained by differences in the estimators used.
+
+90th/10th: 12.63
+
+```
+> ( q1 <- svyquantile(~htotval,cps_household_design,quantiles=c(.1,.9), na.rm = TRUE ) )
+$htotval
+    quantile ci.2.5 ci.97.5        se
+0.1    17064  16551   17653  278.9879
+0.9   216177 212811  219120 1597.2183
+
+attr(,"hasci")
+[1] TRUE
+attr(,"class")
+[1] "newsvyquantile"
+> coef( q1 )[[2]] / coef( q1 )[[1]]
+[1] 12.6686
+```
+
+90th/50th: 2.90
+
+```
+> ( q2 <- svyquantile(~htotval,cps_household_design,quantiles=c(.5,.9), na.rm = TRUE ) )
+$htotval
+    quantile ci.2.5 ci.97.5        se
+0.5    74282  73250   75018  447.5958
+0.9   216177 212811  219120 1597.2183
+
+attr(,"hasci")
+[1] TRUE
+attr(,"class")
+[1] "newsvyquantile"
+> coef( q2 )[[2]] / coef( q2 )[[1]]
+[1] 2.910221
+```
+
+50th/10th: 4.36
+
+```
+> ( q3 <- svyquantile(~htotval,cps_household_design,quantiles=c(.1,.5), na.rm = TRUE ) )
+$htotval
+    quantile ci.2.5 ci.97.5       se
+0.1    17064  16551   17653 278.9879
+0.5    74282  73250   75018 447.5958
+
+attr(,"hasci")
+[1] TRUE
+attr(,"class")
+[1] "newsvyquantile"
+> coef( q3 )[[2]] / coef( q3 )[[1]]
+[1] 4.353141
+```
+
+Mean logarithmic deviation of income: 0.637
+
+fixing zero incomes:
+
+```
+cps_household_design <- subset(cps_design , a_exprrp %in% 1:2)
+cps_household_design <- update( cps_household_design , htotval = ifelse( htotval < 0 , NA , htotval ) )
+cps_household_design <- update( cps_household_design , htotval.fix = ifelse( htotval == 0 , 1 , htotval ) )
+```
+
+```
+> svygei( ~ htotval.fix , cps_household_design , epsilon = 0 , na.rm = TRUE )
+                gei     SE
+htotval.fix 0.63457 0.0084
+```
+
+
+Theil: 0.440
+
+```
+> svygei( ~ htotval.fix , cps_household_design , na.rm = TRUE )
+                gei     SE
+htotval.fix 0.44013 0.0051
+```
+
+Atkinson
+
+e=0.25: 0.106
+
+```
+> svyatk( ~ htotval.fix , cps_household_design , epsilon = 0.25 , na.rm = TRUE )
+            atkinson    SE
+htotval.fix  0.10595 0.001
+```
+
+e=0.50: 0.207
+
+```
+> svyatk( ~ htotval.fix , cps_household_design , epsilon = 0.5 , na.rm = TRUE )
+            atkinson     SE
+htotval.fix  0.20737 0.0017
+```
+
+e=0.75: 0.315
+
+```
+> svyatk( ~ htotval.fix , cps_household_design , epsilon = 0.75 , na.rm = TRUE )
+            atkinson     SE
+htotval.fix  0.31516 0.0024
+```
+
+

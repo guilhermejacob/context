@@ -13,7 +13,7 @@
 
 <meta name="author" content="By Guilherme Jacob, Anthony Damico, and Djalma Pessoa. The authors received no external funding for the convey software and this accompanying textbook." />
 
-<meta name="date" content="2023-11-07" />
+<meta name="date" content="2023-11-11" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -258,11 +258,11 @@ div.csl-indent {
 <div class="col-sm-12">
 <div id="median-income-below-the-at-risk-of-poverty-threshold-svypoormed" class="section level2" number="3.5">
 <h2><span class="header-section-number">3.5</span> Median Income Below the At Risk of Poverty Threshold (svypoormed)</h2>
-<div class="sourceCode" id="cb157"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb157-1"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb157-1" tabindex="-1"></a>✔️ median income among those below the threshold</span>
-<span id="cb157-2"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb157-2" tabindex="-1"></a>✔️ useful <span class="cf">for</span> understanding the depth of poverty</span>
-<span id="cb157-3"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb157-3" tabindex="-1"></a>✔️ related to the RMPG</span>
-<span id="cb157-4"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb157-4" tabindex="-1"></a>❌ not very common outside the EU</span>
-<span id="cb157-5"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb157-5" tabindex="-1"></a>❌ not immediately interpretable <span class="cf">in</span> terms of the poverty gap</span></code></pre></div>
+<div class="sourceCode" id="cb171"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb171-1"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb171-1" tabindex="-1"></a>✔️ median income among those below the threshold</span>
+<span id="cb171-2"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb171-2" tabindex="-1"></a>✔️ useful <span class="cf">for</span> understanding the depth of poverty</span>
+<span id="cb171-3"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb171-3" tabindex="-1"></a>✔️ related to the RMPG</span>
+<span id="cb171-4"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb171-4" tabindex="-1"></a>❌ not very common outside the EU</span>
+<span id="cb171-5"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb171-5" tabindex="-1"></a>❌ not immediately interpretable <span class="cf">in</span> terms of the poverty gap</span></code></pre></div>
 <p>Median income below the at-risk-of-poverty-threshold (POORMED) is median of incomes of people having the income below the ARPT:</p>
 <p><span class="math display">\[
 poormed = median\{y_i; y_i&lt; arpt\}
@@ -273,145 +273,145 @@ The details of the linearization of the POORMED are discussed by <span class="ci
 <h3><span class="header-section-number">3.5.1</span> Replication Example</h3>
 <p>The R <code>vardpoor</code> package <span class="citation">(<label for="tufte-mn-39" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-39" class="margin-toggle">Breidaks, Liberts, and Ivanova 2016<span class="marginnote">Breidaks, Juris, Martins Liberts, and Santa Ivanova. 2016. <span>“Vardpoor: Estimation of Indicators on Social Exclusion and Poverty and Its Linearization, Variance Estimation.”</span> Riga, Latvia: CSB.</span>)</span>, created by researchers at the Central Statistical Bureau of Latvia, includes a POORMED coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.</p>
 <p>Load and prepare the same data set:</p>
-<div class="sourceCode" id="cb158"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb158-1"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-1" tabindex="-1"></a><span class="co"># load the convey package</span></span>
-<span id="cb158-2"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-2" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
-<span id="cb158-3"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-3" tabindex="-1"></a></span>
-<span id="cb158-4"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-4" tabindex="-1"></a><span class="co"># load the survey library</span></span>
-<span id="cb158-5"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-5" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
-<span id="cb158-6"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-6" tabindex="-1"></a></span>
-<span id="cb158-7"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-7" tabindex="-1"></a><span class="co"># load the vardpoor library</span></span>
-<span id="cb158-8"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-8" tabindex="-1"></a><span class="fu">library</span>(vardpoor)</span>
-<span id="cb158-9"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-9" tabindex="-1"></a></span>
-<span id="cb158-10"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-10" tabindex="-1"></a><span class="co"># load the vardpoor library</span></span>
-<span id="cb158-11"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-11" tabindex="-1"></a><span class="fu">library</span>(laeken)</span>
-<span id="cb158-12"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-12" tabindex="-1"></a></span>
-<span id="cb158-13"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-13" tabindex="-1"></a><span class="co"># load the synthetic EU statistics on income &amp; living conditions</span></span>
-<span id="cb158-14"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-14" tabindex="-1"></a><span class="fu">data</span>(eusilc)</span>
-<span id="cb158-15"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-15" tabindex="-1"></a></span>
-<span id="cb158-16"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-16" tabindex="-1"></a><span class="co"># make all column names lowercase</span></span>
-<span id="cb158-17"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-17" tabindex="-1"></a><span class="fu">names</span>(eusilc) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(eusilc))</span>
-<span id="cb158-18"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-18" tabindex="-1"></a></span>
-<span id="cb158-19"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-19" tabindex="-1"></a><span class="co"># add a column with the row number</span></span>
-<span id="cb158-20"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-20" tabindex="-1"></a>dati <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">data.table</span>(<span class="at">IDd =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(eusilc), eusilc)</span>
-<span id="cb158-21"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-21" tabindex="-1"></a></span>
-<span id="cb158-22"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-22" tabindex="-1"></a><span class="co"># calculate the poormed coefficient</span></span>
-<span id="cb158-23"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-23" tabindex="-1"></a><span class="co"># using the R vardpoor library</span></span>
-<span id="cb158-24"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-24" tabindex="-1"></a>varpoord_poormed_calculation <span class="ot">&lt;-</span></span>
-<span id="cb158-25"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-25" tabindex="-1"></a>  <span class="fu">varpoord</span>(</span>
-<span id="cb158-26"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-26" tabindex="-1"></a>    <span class="co"># analysis variable</span></span>
-<span id="cb158-27"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-27" tabindex="-1"></a>    <span class="at">Y =</span> <span class="st">&quot;eqincome&quot;</span>,</span>
-<span id="cb158-28"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-28" tabindex="-1"></a>    </span>
-<span id="cb158-29"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-29" tabindex="-1"></a>    <span class="co"># weights variable</span></span>
-<span id="cb158-30"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-30" tabindex="-1"></a>    <span class="at">w_final =</span> <span class="st">&quot;rb050&quot;</span>,</span>
-<span id="cb158-31"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-31" tabindex="-1"></a>    </span>
-<span id="cb158-32"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-32" tabindex="-1"></a>    <span class="co"># row number variable</span></span>
-<span id="cb158-33"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-33" tabindex="-1"></a>    <span class="at">ID_level1 =</span> <span class="st">&quot;IDd&quot;</span>,</span>
-<span id="cb158-34"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-34" tabindex="-1"></a>    </span>
-<span id="cb158-35"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-35" tabindex="-1"></a>    <span class="co"># row number variable</span></span>
-<span id="cb158-36"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-36" tabindex="-1"></a>    <span class="at">ID_level2 =</span> <span class="st">&quot;IDd&quot;</span>,</span>
-<span id="cb158-37"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-37" tabindex="-1"></a>    </span>
-<span id="cb158-38"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-38" tabindex="-1"></a>    <span class="co"># strata variable</span></span>
-<span id="cb158-39"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-39" tabindex="-1"></a>    <span class="at">H =</span> <span class="st">&quot;db040&quot;</span>,</span>
-<span id="cb158-40"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-40" tabindex="-1"></a>    </span>
-<span id="cb158-41"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-41" tabindex="-1"></a>    <span class="at">N_h =</span> <span class="cn">NULL</span> ,</span>
-<span id="cb158-42"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-42" tabindex="-1"></a>    </span>
-<span id="cb158-43"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-43" tabindex="-1"></a>    <span class="co"># clustering variable</span></span>
-<span id="cb158-44"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-44" tabindex="-1"></a>    <span class="at">PSU =</span> <span class="st">&quot;rb030&quot;</span>,</span>
-<span id="cb158-45"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-45" tabindex="-1"></a>    </span>
-<span id="cb158-46"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-46" tabindex="-1"></a>    <span class="co"># data.table</span></span>
-<span id="cb158-47"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-47" tabindex="-1"></a>    <span class="at">dataset =</span> dati,</span>
-<span id="cb158-48"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-48" tabindex="-1"></a>    </span>
-<span id="cb158-49"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-49" tabindex="-1"></a>    <span class="co"># poormed coefficient function</span></span>
-<span id="cb158-50"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-50" tabindex="-1"></a>    <span class="at">type =</span> <span class="st">&quot;linpoormed&quot;</span>,</span>
-<span id="cb158-51"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-51" tabindex="-1"></a>    </span>
-<span id="cb158-52"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-52" tabindex="-1"></a>    <span class="co"># get linearized variable</span></span>
-<span id="cb158-53"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-53" tabindex="-1"></a>    <span class="at">outp_lin =</span> <span class="cn">TRUE</span></span>
-<span id="cb158-54"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-54" tabindex="-1"></a>    </span>
-<span id="cb158-55"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-55" tabindex="-1"></a>  )</span>
-<span id="cb158-56"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-56" tabindex="-1"></a></span>
-<span id="cb158-57"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-57" tabindex="-1"></a></span>
-<span id="cb158-58"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-58" tabindex="-1"></a></span>
-<span id="cb158-59"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-59" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
-<span id="cb158-60"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-60" tabindex="-1"></a><span class="co"># using our recommended setup</span></span>
-<span id="cb158-61"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-61" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span></span>
-<span id="cb158-62"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-62" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
-<span id="cb158-63"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-63" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
-<span id="cb158-64"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-64" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
-<span id="cb158-65"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-65" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
-<span id="cb158-66"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-66" tabindex="-1"></a>    <span class="at">data =</span> eusilc</span>
-<span id="cb158-67"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-67" tabindex="-1"></a>  )</span>
-<span id="cb158-68"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-68" tabindex="-1"></a></span>
-<span id="cb158-69"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-69" tabindex="-1"></a><span class="co"># immediately run the convey_prep function on it</span></span>
-<span id="cb158-70"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-70" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(des_eusilc)</span>
-<span id="cb158-71"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-71" tabindex="-1"></a></span>
-<span id="cb158-72"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-72" tabindex="-1"></a><span class="co"># coefficients do match</span></span>
-<span id="cb158-73"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb158-73" tabindex="-1"></a>varpoord_poormed_calculation<span class="sc">$</span>all_result<span class="sc">$</span>value</span></code></pre></div>
+<div class="sourceCode" id="cb172"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb172-1"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-1" tabindex="-1"></a><span class="co"># load the convey package</span></span>
+<span id="cb172-2"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-2" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
+<span id="cb172-3"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-3" tabindex="-1"></a></span>
+<span id="cb172-4"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-4" tabindex="-1"></a><span class="co"># load the survey library</span></span>
+<span id="cb172-5"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-5" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb172-6"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-6" tabindex="-1"></a></span>
+<span id="cb172-7"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-7" tabindex="-1"></a><span class="co"># load the vardpoor library</span></span>
+<span id="cb172-8"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-8" tabindex="-1"></a><span class="fu">library</span>(vardpoor)</span>
+<span id="cb172-9"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-9" tabindex="-1"></a></span>
+<span id="cb172-10"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-10" tabindex="-1"></a><span class="co"># load the vardpoor library</span></span>
+<span id="cb172-11"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-11" tabindex="-1"></a><span class="fu">library</span>(laeken)</span>
+<span id="cb172-12"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-12" tabindex="-1"></a></span>
+<span id="cb172-13"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-13" tabindex="-1"></a><span class="co"># load the synthetic EU statistics on income &amp; living conditions</span></span>
+<span id="cb172-14"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-14" tabindex="-1"></a><span class="fu">data</span>(eusilc)</span>
+<span id="cb172-15"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-15" tabindex="-1"></a></span>
+<span id="cb172-16"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-16" tabindex="-1"></a><span class="co"># make all column names lowercase</span></span>
+<span id="cb172-17"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-17" tabindex="-1"></a><span class="fu">names</span>(eusilc) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(eusilc))</span>
+<span id="cb172-18"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-18" tabindex="-1"></a></span>
+<span id="cb172-19"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-19" tabindex="-1"></a><span class="co"># add a column with the row number</span></span>
+<span id="cb172-20"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-20" tabindex="-1"></a>dati <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">data.table</span>(<span class="at">IDd =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(eusilc), eusilc)</span>
+<span id="cb172-21"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-21" tabindex="-1"></a></span>
+<span id="cb172-22"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-22" tabindex="-1"></a><span class="co"># calculate the poormed coefficient</span></span>
+<span id="cb172-23"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-23" tabindex="-1"></a><span class="co"># using the R vardpoor library</span></span>
+<span id="cb172-24"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-24" tabindex="-1"></a>varpoord_poormed_calculation <span class="ot">&lt;-</span></span>
+<span id="cb172-25"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-25" tabindex="-1"></a>  <span class="fu">varpoord</span>(</span>
+<span id="cb172-26"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-26" tabindex="-1"></a>    <span class="co"># analysis variable</span></span>
+<span id="cb172-27"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-27" tabindex="-1"></a>    <span class="at">Y =</span> <span class="st">&quot;eqincome&quot;</span>,</span>
+<span id="cb172-28"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-28" tabindex="-1"></a>    </span>
+<span id="cb172-29"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-29" tabindex="-1"></a>    <span class="co"># weights variable</span></span>
+<span id="cb172-30"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-30" tabindex="-1"></a>    <span class="at">w_final =</span> <span class="st">&quot;rb050&quot;</span>,</span>
+<span id="cb172-31"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-31" tabindex="-1"></a>    </span>
+<span id="cb172-32"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-32" tabindex="-1"></a>    <span class="co"># row number variable</span></span>
+<span id="cb172-33"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-33" tabindex="-1"></a>    <span class="at">ID_level1 =</span> <span class="st">&quot;IDd&quot;</span>,</span>
+<span id="cb172-34"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-34" tabindex="-1"></a>    </span>
+<span id="cb172-35"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-35" tabindex="-1"></a>    <span class="co"># row number variable</span></span>
+<span id="cb172-36"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-36" tabindex="-1"></a>    <span class="at">ID_level2 =</span> <span class="st">&quot;IDd&quot;</span>,</span>
+<span id="cb172-37"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-37" tabindex="-1"></a>    </span>
+<span id="cb172-38"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-38" tabindex="-1"></a>    <span class="co"># strata variable</span></span>
+<span id="cb172-39"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-39" tabindex="-1"></a>    <span class="at">H =</span> <span class="st">&quot;db040&quot;</span>,</span>
+<span id="cb172-40"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-40" tabindex="-1"></a>    </span>
+<span id="cb172-41"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-41" tabindex="-1"></a>    <span class="at">N_h =</span> <span class="cn">NULL</span> ,</span>
+<span id="cb172-42"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-42" tabindex="-1"></a>    </span>
+<span id="cb172-43"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-43" tabindex="-1"></a>    <span class="co"># clustering variable</span></span>
+<span id="cb172-44"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-44" tabindex="-1"></a>    <span class="at">PSU =</span> <span class="st">&quot;rb030&quot;</span>,</span>
+<span id="cb172-45"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-45" tabindex="-1"></a>    </span>
+<span id="cb172-46"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-46" tabindex="-1"></a>    <span class="co"># data.table</span></span>
+<span id="cb172-47"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-47" tabindex="-1"></a>    <span class="at">dataset =</span> dati,</span>
+<span id="cb172-48"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-48" tabindex="-1"></a>    </span>
+<span id="cb172-49"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-49" tabindex="-1"></a>    <span class="co"># poormed coefficient function</span></span>
+<span id="cb172-50"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-50" tabindex="-1"></a>    <span class="at">type =</span> <span class="st">&quot;linpoormed&quot;</span>,</span>
+<span id="cb172-51"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-51" tabindex="-1"></a>    </span>
+<span id="cb172-52"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-52" tabindex="-1"></a>    <span class="co"># get linearized variable</span></span>
+<span id="cb172-53"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-53" tabindex="-1"></a>    <span class="at">outp_lin =</span> <span class="cn">TRUE</span></span>
+<span id="cb172-54"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-54" tabindex="-1"></a>    </span>
+<span id="cb172-55"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-55" tabindex="-1"></a>  )</span>
+<span id="cb172-56"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-56" tabindex="-1"></a></span>
+<span id="cb172-57"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-57" tabindex="-1"></a></span>
+<span id="cb172-58"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-58" tabindex="-1"></a></span>
+<span id="cb172-59"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-59" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
+<span id="cb172-60"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-60" tabindex="-1"></a><span class="co"># using our recommended setup</span></span>
+<span id="cb172-61"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-61" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span></span>
+<span id="cb172-62"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-62" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
+<span id="cb172-63"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-63" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
+<span id="cb172-64"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-64" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
+<span id="cb172-65"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-65" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
+<span id="cb172-66"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-66" tabindex="-1"></a>    <span class="at">data =</span> eusilc</span>
+<span id="cb172-67"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-67" tabindex="-1"></a>  )</span>
+<span id="cb172-68"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-68" tabindex="-1"></a></span>
+<span id="cb172-69"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-69" tabindex="-1"></a><span class="co"># immediately run the convey_prep function on it</span></span>
+<span id="cb172-70"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-70" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(des_eusilc)</span>
+<span id="cb172-71"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-71" tabindex="-1"></a></span>
+<span id="cb172-72"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-72" tabindex="-1"></a><span class="co"># coefficients do match</span></span>
+<span id="cb172-73"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-73" tabindex="-1"></a>varpoord_poormed_calculation<span class="sc">$</span>all_result<span class="sc">$</span>value</span></code></pre></div>
 <pre><code>## [1] 8803.735</code></pre>
-<div class="sourceCode" id="cb160"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb160-1"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb160-1" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">svypoormed</span>( <span class="sc">~</span> eqincome , des_eusilc))</span></code></pre></div>
+<div class="sourceCode" id="cb174"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb174-1"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb174-1" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">svypoormed</span>( <span class="sc">~</span> eqincome , des_eusilc))</span></code></pre></div>
 <pre><code>## eqincome 
 ## 8803.735</code></pre>
-<div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb162-1"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb162-1" tabindex="-1"></a><span class="co"># linearized variables do match</span></span>
-<span id="cb162-2"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb162-2" tabindex="-1"></a><span class="co"># vardpoor</span></span>
-<span id="cb162-3"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb162-3" tabindex="-1"></a>lin_poormed_varpoord <span class="ot">&lt;-</span></span>
-<span id="cb162-4"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb162-4" tabindex="-1"></a>  varpoord_poormed_calculation<span class="sc">$</span>lin_out<span class="sc">$</span>lin_poormed</span>
-<span id="cb162-5"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb162-5" tabindex="-1"></a><span class="co"># convey</span></span>
-<span id="cb162-6"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb162-6" tabindex="-1"></a>lin_poormed_convey <span class="ot">&lt;-</span></span>
-<span id="cb162-7"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb162-7" tabindex="-1"></a>  <span class="fu">attr</span>(<span class="fu">svypoormed</span>( <span class="sc">~</span> eqincome , des_eusilc), <span class="st">&quot;lin&quot;</span>)</span>
-<span id="cb162-8"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb162-8" tabindex="-1"></a></span>
-<span id="cb162-9"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb162-9" tabindex="-1"></a><span class="co"># check equality</span></span>
-<span id="cb162-10"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb162-10" tabindex="-1"></a><span class="fu">all.equal</span>(lin_poormed_varpoord, lin_poormed_convey)</span></code></pre></div>
+<div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb176-1"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb176-1" tabindex="-1"></a><span class="co"># linearized variables do match</span></span>
+<span id="cb176-2"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb176-2" tabindex="-1"></a><span class="co"># vardpoor</span></span>
+<span id="cb176-3"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb176-3" tabindex="-1"></a>lin_poormed_varpoord <span class="ot">&lt;-</span></span>
+<span id="cb176-4"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb176-4" tabindex="-1"></a>  varpoord_poormed_calculation<span class="sc">$</span>lin_out<span class="sc">$</span>lin_poormed</span>
+<span id="cb176-5"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb176-5" tabindex="-1"></a><span class="co"># convey</span></span>
+<span id="cb176-6"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb176-6" tabindex="-1"></a>lin_poormed_convey <span class="ot">&lt;-</span></span>
+<span id="cb176-7"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb176-7" tabindex="-1"></a>  <span class="fu">attr</span>(<span class="fu">svypoormed</span>( <span class="sc">~</span> eqincome , des_eusilc), <span class="st">&quot;lin&quot;</span>)</span>
+<span id="cb176-8"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb176-8" tabindex="-1"></a></span>
+<span id="cb176-9"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb176-9" tabindex="-1"></a><span class="co"># check equality</span></span>
+<span id="cb176-10"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb176-10" tabindex="-1"></a><span class="fu">all.equal</span>(lin_poormed_varpoord, lin_poormed_convey)</span></code></pre></div>
 <pre><code>## [1] &quot;names for current but not for target&quot;</code></pre>
-<div class="sourceCode" id="cb164"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb164-1"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb164-1" tabindex="-1"></a><span class="co"># variances do not match exactly</span></span>
-<span id="cb164-2"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb164-2" tabindex="-1"></a><span class="fu">attr</span>(<span class="fu">svypoormed</span>( <span class="sc">~</span> eqincome , des_eusilc) , <span class="st">&#39;var&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb178"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb178-1"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb178-1" tabindex="-1"></a><span class="co"># variances do not match exactly</span></span>
+<span id="cb178-2"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb178-2" tabindex="-1"></a><span class="fu">attr</span>(<span class="fu">svypoormed</span>( <span class="sc">~</span> eqincome , des_eusilc) , <span class="st">&#39;var&#39;</span>)</span></code></pre></div>
 <pre><code>##          eqincome
 ## eqincome  5311.47</code></pre>
-<div class="sourceCode" id="cb166"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb166-1"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb166-1" tabindex="-1"></a>varpoord_poormed_calculation<span class="sc">$</span>all_result<span class="sc">$</span>var</span></code></pre></div>
+<div class="sourceCode" id="cb180"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb180-1"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb180-1" tabindex="-1"></a>varpoord_poormed_calculation<span class="sc">$</span>all_result<span class="sc">$</span>var</span></code></pre></div>
 <pre><code>## [1] 5302.086</code></pre>
-<div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb168-1"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb168-1" tabindex="-1"></a><span class="co"># standard errors do not match exactly</span></span>
-<span id="cb168-2"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb168-2" tabindex="-1"></a>varpoord_poormed_calculation<span class="sc">$</span>all_result<span class="sc">$</span>se</span></code></pre></div>
+<div class="sourceCode" id="cb182"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb182-1"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb182-1" tabindex="-1"></a><span class="co"># standard errors do not match exactly</span></span>
+<span id="cb182-2"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb182-2" tabindex="-1"></a>varpoord_poormed_calculation<span class="sc">$</span>all_result<span class="sc">$</span>se</span></code></pre></div>
 <pre><code>## [1] 72.81542</code></pre>
-<div class="sourceCode" id="cb170"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb170-1"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb170-1" tabindex="-1"></a><span class="fu">SE</span>(<span class="fu">svypoormed</span>( <span class="sc">~</span> eqincome , des_eusilc))</span></code></pre></div>
+<div class="sourceCode" id="cb184"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb184-1"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb184-1" tabindex="-1"></a><span class="fu">SE</span>(<span class="fu">svypoormed</span>( <span class="sc">~</span> eqincome , des_eusilc))</span></code></pre></div>
 <pre><code>##          eqincome
 ## eqincome 72.87983</code></pre>
 <p>The variance estimate is computed by using the approximation defined in <a href="2-var.html#var">2</a>, while the linearized variable <span class="math inline">\(z\)</span> is defined by <a href="2.1-lin.html#lin">2.1</a>. The functions <code>convey::svypoormed</code> and <code>vardpoor::linpoormed</code> produce the same linearized variable <span class="math inline">\(z\)</span>.</p>
 <p>However, the measures of uncertainty do not line up, because <code>library(vardpoor)</code> defaults to an ultimate cluster method that can be replicated with an alternative setup of the <code>survey.design</code> object.</p>
-<div class="sourceCode" id="cb172"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb172-1"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-1" tabindex="-1"></a><span class="co"># within each strata, sum up the weights</span></span>
-<span id="cb172-2"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-2" tabindex="-1"></a>cluster_sums <span class="ot">&lt;-</span></span>
-<span id="cb172-3"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-3" tabindex="-1"></a>  <span class="fu">aggregate</span>(eusilc<span class="sc">$</span>rb050 , <span class="fu">list</span>(eusilc<span class="sc">$</span>db040) , sum)</span>
-<span id="cb172-4"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-4" tabindex="-1"></a></span>
-<span id="cb172-5"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-5" tabindex="-1"></a><span class="co"># name the within-strata sums of weights the `cluster_sum`</span></span>
-<span id="cb172-6"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-6" tabindex="-1"></a><span class="fu">names</span>(cluster_sums) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;db040&quot;</span> , <span class="st">&quot;cluster_sum&quot;</span>)</span>
-<span id="cb172-7"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-7" tabindex="-1"></a></span>
-<span id="cb172-8"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-8" tabindex="-1"></a><span class="co"># merge this column back onto the data.frame</span></span>
-<span id="cb172-9"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-9" tabindex="-1"></a>eusilc <span class="ot">&lt;-</span> <span class="fu">merge</span>(eusilc , cluster_sums)</span>
-<span id="cb172-10"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-10" tabindex="-1"></a></span>
-<span id="cb172-11"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-11" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
-<span id="cb172-12"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-12" tabindex="-1"></a><span class="co"># with the fpc using the cluster sum</span></span>
-<span id="cb172-13"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-13" tabindex="-1"></a>des_eusilc_ultimate_cluster <span class="ot">&lt;-</span></span>
-<span id="cb172-14"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-14" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
-<span id="cb172-15"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-15" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
-<span id="cb172-16"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-16" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
-<span id="cb172-17"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-17" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
-<span id="cb172-18"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-18" tabindex="-1"></a>    <span class="at">data =</span> eusilc ,</span>
-<span id="cb172-19"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-19" tabindex="-1"></a>    <span class="at">fpc =</span> <span class="sc">~</span> cluster_sum</span>
-<span id="cb172-20"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-20" tabindex="-1"></a>  )</span>
-<span id="cb172-21"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-21" tabindex="-1"></a></span>
-<span id="cb172-22"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-22" tabindex="-1"></a><span class="co"># again, immediately run the convey_prep function on the `survey.design`</span></span>
-<span id="cb172-23"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-23" tabindex="-1"></a>des_eusilc_ultimate_cluster <span class="ot">&lt;-</span></span>
-<span id="cb172-24"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-24" tabindex="-1"></a>  <span class="fu">convey_prep</span>(des_eusilc_ultimate_cluster)</span>
-<span id="cb172-25"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-25" tabindex="-1"></a></span>
-<span id="cb172-26"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-26" tabindex="-1"></a></span>
-<span id="cb172-27"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-27" tabindex="-1"></a><span class="co"># matches</span></span>
-<span id="cb172-28"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-28" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all.equal</span>(</span>
-<span id="cb172-29"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-29" tabindex="-1"></a>  <span class="fu">attr</span>(<span class="fu">svypoormed</span>(<span class="sc">~</span> eqincome , des_eusilc_ultimate_cluster) , <span class="st">&#39;var&#39;</span>)[<span class="dv">1</span>],</span>
-<span id="cb172-30"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-30" tabindex="-1"></a>  varpoord_poormed_calculation<span class="sc">$</span>all_result<span class="sc">$</span>var</span>
-<span id="cb172-31"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-31" tabindex="-1"></a>))</span>
-<span id="cb172-32"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-32" tabindex="-1"></a></span>
-<span id="cb172-33"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-33" tabindex="-1"></a><span class="co"># matches</span></span>
-<span id="cb172-34"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-34" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all.equal</span>(</span>
-<span id="cb172-35"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-35" tabindex="-1"></a>  <span class="fu">SE</span>(<span class="fu">svypoormed</span>(<span class="sc">~</span> eqincome , des_eusilc_ultimate_cluster))[<span class="dv">1</span>],</span>
-<span id="cb172-36"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-36" tabindex="-1"></a>  varpoord_poormed_calculation<span class="sc">$</span>all_result<span class="sc">$</span>se</span>
-<span id="cb172-37"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb172-37" tabindex="-1"></a>))</span></code></pre></div>
+<div class="sourceCode" id="cb186"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb186-1"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-1" tabindex="-1"></a><span class="co"># within each strata, sum up the weights</span></span>
+<span id="cb186-2"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-2" tabindex="-1"></a>cluster_sums <span class="ot">&lt;-</span></span>
+<span id="cb186-3"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-3" tabindex="-1"></a>  <span class="fu">aggregate</span>(eusilc<span class="sc">$</span>rb050 , <span class="fu">list</span>(eusilc<span class="sc">$</span>db040) , sum)</span>
+<span id="cb186-4"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-4" tabindex="-1"></a></span>
+<span id="cb186-5"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-5" tabindex="-1"></a><span class="co"># name the within-strata sums of weights the `cluster_sum`</span></span>
+<span id="cb186-6"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-6" tabindex="-1"></a><span class="fu">names</span>(cluster_sums) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;db040&quot;</span> , <span class="st">&quot;cluster_sum&quot;</span>)</span>
+<span id="cb186-7"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-7" tabindex="-1"></a></span>
+<span id="cb186-8"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-8" tabindex="-1"></a><span class="co"># merge this column back onto the data.frame</span></span>
+<span id="cb186-9"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-9" tabindex="-1"></a>eusilc <span class="ot">&lt;-</span> <span class="fu">merge</span>(eusilc , cluster_sums)</span>
+<span id="cb186-10"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-10" tabindex="-1"></a></span>
+<span id="cb186-11"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-11" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
+<span id="cb186-12"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-12" tabindex="-1"></a><span class="co"># with the fpc using the cluster sum</span></span>
+<span id="cb186-13"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-13" tabindex="-1"></a>des_eusilc_ultimate_cluster <span class="ot">&lt;-</span></span>
+<span id="cb186-14"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-14" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
+<span id="cb186-15"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-15" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
+<span id="cb186-16"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-16" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
+<span id="cb186-17"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-17" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
+<span id="cb186-18"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-18" tabindex="-1"></a>    <span class="at">data =</span> eusilc ,</span>
+<span id="cb186-19"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-19" tabindex="-1"></a>    <span class="at">fpc =</span> <span class="sc">~</span> cluster_sum</span>
+<span id="cb186-20"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-20" tabindex="-1"></a>  )</span>
+<span id="cb186-21"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-21" tabindex="-1"></a></span>
+<span id="cb186-22"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-22" tabindex="-1"></a><span class="co"># again, immediately run the convey_prep function on the `survey.design`</span></span>
+<span id="cb186-23"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-23" tabindex="-1"></a>des_eusilc_ultimate_cluster <span class="ot">&lt;-</span></span>
+<span id="cb186-24"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-24" tabindex="-1"></a>  <span class="fu">convey_prep</span>(des_eusilc_ultimate_cluster)</span>
+<span id="cb186-25"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-25" tabindex="-1"></a></span>
+<span id="cb186-26"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-26" tabindex="-1"></a></span>
+<span id="cb186-27"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-27" tabindex="-1"></a><span class="co"># matches</span></span>
+<span id="cb186-28"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-28" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all.equal</span>(</span>
+<span id="cb186-29"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-29" tabindex="-1"></a>  <span class="fu">attr</span>(<span class="fu">svypoormed</span>(<span class="sc">~</span> eqincome , des_eusilc_ultimate_cluster) , <span class="st">&#39;var&#39;</span>)[<span class="dv">1</span>],</span>
+<span id="cb186-30"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-30" tabindex="-1"></a>  varpoord_poormed_calculation<span class="sc">$</span>all_result<span class="sc">$</span>var</span>
+<span id="cb186-31"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-31" tabindex="-1"></a>))</span>
+<span id="cb186-32"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-32" tabindex="-1"></a></span>
+<span id="cb186-33"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-33" tabindex="-1"></a><span class="co"># matches</span></span>
+<span id="cb186-34"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-34" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all.equal</span>(</span>
+<span id="cb186-35"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-35" tabindex="-1"></a>  <span class="fu">SE</span>(<span class="fu">svypoormed</span>(<span class="sc">~</span> eqincome , des_eusilc_ultimate_cluster))[<span class="dv">1</span>],</span>
+<span id="cb186-36"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-36" tabindex="-1"></a>  varpoord_poormed_calculation<span class="sc">$</span>all_result<span class="sc">$</span>se</span>
+<span id="cb186-37"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#cb186-37" tabindex="-1"></a>))</span></code></pre></div>
 <p>For additional usage examples of <code>svypoormed</code>, type <code>?convey::svypoormed</code> in the R console.</p>
 </div>
 </div>

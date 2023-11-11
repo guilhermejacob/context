@@ -5,9 +5,7 @@ output:
 ---
 # Poverty Indices {#poverty}
 
-```{r results='hide', echo=FALSE}
-set.seed(2018)
-```
+
 
 Poverty has been a topic of conversation throughout human history. As @ravallion2016 points out, Aristotle and Confucius discussed ideas about poverty. In fact, Aristotle's ideas influenced Thomas Aquinas, one of the pillars of Western philosophy. Since then, societies changed, modifying the theories of justice underlying the idea of poverty.
 
@@ -17,7 +15,8 @@ This chapter shows how poverty estimates and their sampling errors can be estima
 
 ## At Risk of Poverty Threshold (svyarpt)
 
-```{r eval=FALSE}
+
+```r
 ✔️ commonly used by statistical agencies in the european union working group on statistics on income & living conditions (eurostat)
 ✔️ not tied to the inflation rate nor to a basket of goods or consumable products
 ✔️ generic calculation that can be broadly applied to different nations or regions
@@ -44,13 +43,39 @@ The R `vardpoor` package [@vardpoor], created by researchers at the Central Stat
 
 Load and prepare the same data set:
 
-```{r}
+
+```r
 # load the convey package
 library(convey)
 
 # load the survey library
 library(survey)
+```
 
+```
+## Carregando pacotes exigidos: grid
+```
+
+```
+## Carregando pacotes exigidos: Matrix
+```
+
+```
+## Carregando pacotes exigidos: survival
+```
+
+```
+## 
+## Attaching package: 'survey'
+```
+
+```
+## The following object is masked from 'package:graphics':
+## 
+##     dotchart
+```
+
+```r
 # load the vardpoor library
 library(vardpoor)
 
@@ -116,8 +141,22 @@ des_eusilc <- convey_prep(des_eusilc)
 
 # coefficients do match
 varpoord_arpt_calculation$all_result$value
-coef(svyarpt( ~ eqincome , des_eusilc))
+```
 
+```
+## [1] 10859.24
+```
+
+```r
+coef(svyarpt( ~ eqincome , des_eusilc))
+```
+
+```
+## eqincome 
+## 10859.24
+```
+
+```r
 # linearized variables do match
 # vardpoor
 lin_arpt_varpoord <- varpoord_arpt_calculation$lin_out$lin_arpt
@@ -126,21 +165,54 @@ lin_arpt_convey <- attr(svyarpt( ~ eqincome , des_eusilc), "lin")
 
 # check equality
 all.equal(lin_arpt_varpoord, lin_arpt_convey)
+```
 
+```
+## [1] TRUE
+```
+
+```r
 # variances do not match exactly
 attr(svyarpt( ~ eqincome , des_eusilc) , 'var')
-varpoord_arpt_calculation$all_result$var
+```
 
+```
+##          eqincome
+## eqincome 2564.027
+```
+
+```r
+varpoord_arpt_calculation$all_result$var
+```
+
+```
+## [1] 2559.442
+```
+
+```r
 # standard errors do not match exactly
 varpoord_arpt_calculation$all_result$se
+```
+
+```
+## [1] 50.59093
+```
+
+```r
 SE(svyarpt( ~ eqincome , des_eusilc))
+```
+
+```
+##          eqincome
+## eqincome 50.63622
 ```
 
 The variance estimate is computed by using the approximation defined in \@ref(var), while the linearized variable $z$ is defined by \@ref(lin). The functions `convey::svyarpt` and `vardpoor::linarpt` produce the same linearized variable $z$.
 
 However, the measures of uncertainty do not line up, because `library(vardpoor)` defaults to an ultimate cluster method that can be replicated with an alternative setup of the `survey.design` object.
 
-```{r}
+
+```r
 # within each strata, sum up the weights
 cluster_sums <-
   aggregate(eusilc$rb050 , list(eusilc$db040) , sum)
@@ -179,14 +251,14 @@ stopifnot(all.equal(varpoord_arpt_calculation$all_result$se ,
                     SE(
                       svyarpt( ~ eqincome , des_eusilc_ultimate_cluster)
                     )[1]))
-
 ```
 
 For additional usage examples of `svyarpt`, type `?convey::svyarpt` in the R console.
 
 ## At Risk of Poverty Ratio (svyarpr)
 
-```{r eval=FALSE}
+
+```r
 ✔️ EU standard like ARPT, easy to understand, interpret, and implement
 ✔️ proportion of individuals below ARPT -- a "companion" function that uses svyarpt() internally
 ✔️ measure is easy to understand
@@ -207,7 +279,8 @@ The R `vardpoor` package [@vardpoor], created by researchers at the Central Stat
 
 Load and prepare the same data set:
 
-```{r}
+
+```r
 # load the convey package
 library(convey)
 
@@ -280,8 +353,22 @@ des_eusilc <- convey_prep(des_eusilc)
 
 # coefficients do match
 varpoord_arpr_calculation$all_result$value
-coef(svyarpr( ~ eqincome , des_eusilc)) * 100
+```
 
+```
+## [1] 14.44422
+```
+
+```r
+coef(svyarpr( ~ eqincome , des_eusilc)) * 100
+```
+
+```
+## eqincome 
+## 14.44422
+```
+
+```r
 # linearized variables do not match
 # because Fprime is the derivative wrt
 # to the estimated threshold, not the estimated quantile
@@ -295,22 +382,53 @@ lin_arpr_convey <- attr(svyarpr( ~ eqincome , des_eusilc), "lin")
 
 # check equality
 all.equal(lin_arpr_varpoord, 100 * lin_arpr_convey)
+```
 
+```
+## [1] "Mean relative difference: 0.2264738"
+```
 
-
+```r
 # variances do not match exactly
 attr(svyarpr( ~ eqincome , des_eusilc) , 'var') * 10000
-varpoord_arpr_calculation$all_result$var
+```
 
+```
+##            eqincome
+## eqincome 0.07599778
+```
+
+```r
+varpoord_arpr_calculation$all_result$var
+```
+
+```
+## [1] 0.08718569
+```
+
+```r
 # standard errors do not match exactly
 varpoord_arpr_calculation$all_result$se
+```
+
+```
+## [1] 0.2952722
+```
+
+```r
 SE(svyarpr( ~ eqincome , des_eusilc)) * 100
+```
+
+```
+##           eqincome
+## eqincome 0.2756769
 ```
 The variance estimate is computed by using the approximation defined in \@ref(var), while the linearized variable $z$ is defined by \@ref(lin). The functions `convey::svyarpr` and `vardpoor::linarpr` produce the same linearized variable $z$.
 
 However, the measures of uncertainty do not line up. One of the reasons is that `library(vardpoor)` defaults to an ultimate cluster method that can be replicated with an alternative setup of the `survey.design` object.
 
-```{r}
+
+```r
 # within each strata, sum up the weights
 cluster_sums <-
   aggregate(eusilc$rb050 , list(eusilc$db040) , sum)
@@ -338,11 +456,37 @@ des_eusilc_ultimate_cluster <-
 
 # does not match
 attr(svyarpr( ~ eqincome , des_eusilc_ultimate_cluster) , 'var') * 10000
-varpoord_arpr_calculation$all_result$var
+```
 
+```
+##            eqincome
+## eqincome 0.07586194
+```
+
+```r
+varpoord_arpr_calculation$all_result$var
+```
+
+```
+## [1] 0.08718569
+```
+
+```r
 # does not match
 varpoord_arpr_calculation$all_result$se
+```
+
+```
+## [1] 0.2952722
+```
+
+```r
 SE(svyarpr( ~ eqincome , des_eusilc_ultimate_cluster)) * 100
+```
+
+```
+##           eqincome
+## eqincome 0.2754305
 ```
 
 Still, there is a difference in the estimates. This is discussed in detail in [this issue](https://github.com/ajdamico/convey/issues/372). 
@@ -350,9 +494,24 @@ In order to still provide additional examples for our code, we proceed with a Mo
 
 Using the `eusilcP` data from the `simPop` package [@R-simPop], we can compute the actual value of the at risk of poverty rate for that population:
 
-```{r}
+
+```r
 # load libraries
 library(sampling)
+```
+
+```
+## 
+## Attaching package: 'sampling'
+```
+
+```
+## The following objects are masked from 'package:survival':
+## 
+##     cluster, strata
+```
+
+```r
 library(survey)
 library(convey)
 library(parallel)
@@ -371,12 +530,16 @@ thresh.pop <- .60 * q50.pop
 # compute population at risk of poverty rate
 (theta.pop <-
     mean(eusilcP$eqIncome <= thresh.pop , na.rm = TRUE))
+```
 
+```
+## [1] 0.1469295
 ```
 
 Now, to study the distribution of the estimator under a particular sampling design, we select 5000 samples under one-stage cluster sampling of 100 households using the `cluster` function from the `sampling` package [@R-sampling], and use the `svyarpr` function to estimate the ARPR for each of those samples:
 
-```{r}
+
+```r
 # define the number of monte carlo replicates
 mc.rep <- 5000L
 
@@ -439,32 +602,63 @@ stopCluster(cl)
 
 Then, we evaluate the Percentage Relative Bias (PRB) of the ARPR estimator. Under this scenario, the PRB of the ARPR estimator is -0.19830%.
 
-```{r}
+
+```r
 # estimate the expected value of the ARPR estimator
 # using the average of the estimates
 (theta.exp <- mean(sapply(arpr.estimate.list , coef)))
+```
 
+```
+## [1] 0.1466381
+```
+
+```r
 # estimate the percentage relative bias
 (percentage_relative_bias_arpr <- 100 * (theta.exp / theta.pop - 1))
+```
 
+```
+## [1] -0.1982981
+```
+
+```r
 stopifnot(round(percentage_relative_bias_arpr , 4) == -0.19830)
-
 ```
 
 For the variance estimator, we have:
 
-```{r}
+
+```r
 # estimate the variance of the ARPR estimator
 # using the empirical variance of the estimates
 (vartheta.popest <- var(sapply(arpr.estimate.list , coef)))
+```
 
+```
+## [1] 0.0001048728
+```
+
+```r
 # estimate the expected value of the ARPR variance estimator
 # using the (estimated) expected value of the variance estimates
 (vartheta.exp <- mean(sapply(arpr.estimate.list , vcov)))
+```
 
+```
+## [1] 0.0001081994
+```
+
+```r
 # estimate the percentage relative bias of the variance estimator
 ( percentage_relative_bias_variance <- 100 *  (vartheta.exp / vartheta.popest - 1) )
+```
 
+```
+## [1] 3.172023
+```
+
+```r
 stopifnot( round( percentage_relative_bias_variance , 4 ) == 3.1720 ) 
 ```
 
@@ -472,16 +666,22 @@ Under this scenario, the PRB of the ARPR variance estimator is 3.1720%.
 
 Our simulation shows that the Bias Ratio of this estimator is approximately 2%:
 
-```{r}
+
+```r
 # compute bias ratio
 100 * abs( theta.exp - theta.pop ) / sqrt( vartheta.popest )
+```
+
+```
+## [1] 2.84509
 ```
 
 \noindent if the normal approximation holds, a small bias ratio still allows for approximately valid estimates of the confidence intervals.
 
 Next, we evaluate the Percentage Coverage Rate (PCR). In theory, under repeated sampling, the estimated 95% CIs should cover the population parameter approximately 95% of the time. We can evaluate that using:
 
-```{r}
+
+```r
 # estimate confidence intervals of the ARPR
 # for each of the samples
 est.coverage <-
@@ -491,7 +691,13 @@ est.coverage <-
 
 # evaluate empirical coverage
 (empirical_coverage <- mean(est.coverage))
+```
 
+```
+## [1] 0.9516
+```
+
+```r
 stopifnot(round(empirical_coverage , 2) == 0.95)
 ```
 Our coverages are not too far from the nominal coverage level of 95%.
@@ -500,7 +706,8 @@ For additional usage examples of `svyarpr`, type `?convey::svyarpr` in the R con
 
 ## Relative Median Income Ratio (svyrmir)
 
-```{r eval=FALSE}
+
+```r
 ✔️ mainly useful for studies of the income of the elderly following EU definitions
 ✔️ a ratio of medians
 ✔️ less sensitive to outliers
@@ -528,7 +735,8 @@ The R `vardpoor` package [@vardpoor], created by researchers at the Central Stat
 
 Load and prepare the same data set:
 
-```{r}
+
+```r
 # load the convey package
 library(convey)
 
@@ -605,8 +813,22 @@ des_eusilc <- convey_prep(des_eusilc)
 
 # coefficients do match
 varpoord_rmir_calculation$all_result$value
-coef(svyrmir( ~ eqincome , des_eusilc, age = ~ age))
+```
 
+```
+## [1] 0.9330361
+```
+
+```r
+coef(svyrmir( ~ eqincome , des_eusilc, age = ~ age))
+```
+
+```
+##  eqincome 
+## 0.9330361
+```
+
+```r
 # linearized variables do match
 # vardpoor
 lin_rmir_varpoord <- varpoord_rmir_calculation$lin_out$lin_rmir
@@ -616,21 +838,54 @@ lin_rmir_convey <-
 
 # check equality
 all.equal(lin_rmir_varpoord, lin_rmir_convey[, 1])
+```
 
+```
+## [1] TRUE
+```
+
+```r
 # variances do not match exactly
 attr(svyrmir( ~ eqincome , des_eusilc, age = ~ age) , 'var')
-varpoord_rmir_calculation$all_result$var
+```
 
+```
+##             eqincome
+## eqincome 0.000127444
+```
+
+```r
+varpoord_rmir_calculation$all_result$var
+```
+
+```
+## [1] 0.0001272137
+```
+
+```r
 # standard errors do not match exactly
 varpoord_rmir_calculation$all_result$se
+```
+
+```
+## [1] 0.0112789
+```
+
+```r
 SE(svyrmir( ~ eqincome , des_eusilc , age = ~ age)) 
+```
+
+```
+##            eqincome
+## eqincome 0.01128911
 ```
 
 The variance estimate is computed by using the approximation defined in \@ref(var), while the linearized variable $z$ is defined by \@ref(lin). The functions `convey::svyrmir` and `vardpoor::linrmir` produce the same linearized variable $z$.
 
 However, the measures of uncertainty do not line up, because `library(vardpoor)` defaults to an ultimate cluster method that can be replicated with an alternative setup of the `survey.design` object.
 
-```{r}
+
+```r
 # within each strata, sum up the weights
 cluster_sums <-
   aggregate(eusilc$rb050 , list(eusilc$db040) , sum)
@@ -676,7 +931,8 @@ For additional usage examples of `svyrmir`, type `?convey::svyrmir` in the R con
 
 ## Relative Median Poverty Gap (svyrmpg)
 
-```{r eval=FALSE}
+
+```r
 ✔️ how poor are those below the ARPT?
 ✔️ median poverty gap expressed as a percentage of the threshold
 ✔️ useful for understanding the depth of poverty
@@ -699,7 +955,8 @@ The R `vardpoor` package [@vardpoor], created by researchers at the Central Stat
 
 Load and prepare the same data set:
 
-```{r}
+
+```r
 # load the convey package
 library(convey)
 
@@ -773,8 +1030,22 @@ des_eusilc <- convey_prep(des_eusilc)
 
 # coefficients do match
 varpoord_rmpg_calculation$all_result$value
-coef(svyrmpg( ~ eqincome , des_eusilc)) * 100
+```
 
+```
+## [1] 18.9286
+```
+
+```r
+coef(svyrmpg( ~ eqincome , des_eusilc)) * 100
+```
+
+```
+## eqincome 
+##  18.9286
+```
+
+```r
 # linearized variables do match
 # vardpoor
 lin_rmpg_varpoord <- varpoord_rmpg_calculation$lin_out$lin_rmpg
@@ -783,21 +1054,54 @@ lin_rmpg_convey <- attr(svyrmpg( ~ eqincome , des_eusilc), "lin")
 
 # check equality
 all.equal(lin_rmpg_varpoord, 100 * lin_rmpg_convey[, 1])
+```
 
+```
+## [1] TRUE
+```
+
+```r
 # variances do not match exactly
 attr(svyrmpg( ~ eqincome , des_eusilc) , 'var') * 10000
-varpoord_rmpg_calculation$all_result$var
+```
 
+```
+##          eqincome
+## eqincome 0.332234
+```
+
+```r
+varpoord_rmpg_calculation$all_result$var
+```
+
+```
+## [1] 0.3316454
+```
+
+```r
 # standard errors do not match exactly
 varpoord_rmpg_calculation$all_result$se
+```
+
+```
+## [1] 0.5758866
+```
+
+```r
 SE(svyrmpg( ~ eqincome , des_eusilc)) * 100
+```
+
+```
+##           eqincome
+## eqincome 0.5763974
 ```
 
 The variance estimate is computed by using the approximation defined in \@ref(var), while the linearized variable $z$ is defined by \@ref(lin). The functions `convey::svyrmpg` and `vardpoor::linrmpg` produce the same linearized variable $z$.
 
 However, the measures of uncertainty do not line up, because `library(vardpoor)` defaults to an ultimate cluster method that can be replicated with an alternative setup of the `survey.design` object.
 
-```{r}
+
+```r
 # within each strata, sum up the weights
 cluster_sums <-
   aggregate(eusilc$rb050 , list(eusilc$db040) , sum)
@@ -836,14 +1140,14 @@ stopifnot(all.equal(SE(
   svyrmpg(~ eqincome , des_eusilc_ultimate_cluster)
 )[1] * 100 ,
 varpoord_rmpg_calculation$all_result$se))
-
 ```
 
 For additional usage examples of `svyrmpg`, type `?convey::svyrmpg` in the R console.
 
 ## Median Income Below the At Risk of Poverty Threshold  (svypoormed)
 
-```{r eval=FALSE}
+
+```r
 ✔️ median income among those below the threshold
 ✔️ useful for understanding the depth of poverty
 ✔️ related to the RMPG
@@ -866,7 +1170,8 @@ The R `vardpoor` package [@vardpoor], created by researchers at the Central Stat
 
 Load and prepare the same data set:
 
-```{r}
+
+```r
 # load the convey package
 library(convey)
 
@@ -940,8 +1245,22 @@ des_eusilc <- convey_prep(des_eusilc)
 
 # coefficients do match
 varpoord_poormed_calculation$all_result$value
-coef(svypoormed( ~ eqincome , des_eusilc))
+```
 
+```
+## [1] 8803.735
+```
+
+```r
+coef(svypoormed( ~ eqincome , des_eusilc))
+```
+
+```
+## eqincome 
+## 8803.735
+```
+
+```r
 # linearized variables do match
 # vardpoor
 lin_poormed_varpoord <-
@@ -952,21 +1271,54 @@ lin_poormed_convey <-
 
 # check equality
 all.equal(lin_poormed_varpoord, lin_poormed_convey)
+```
 
+```
+## [1] "names for current but not for target"
+```
+
+```r
 # variances do not match exactly
 attr(svypoormed( ~ eqincome , des_eusilc) , 'var')
-varpoord_poormed_calculation$all_result$var
+```
 
+```
+##          eqincome
+## eqincome  5311.47
+```
+
+```r
+varpoord_poormed_calculation$all_result$var
+```
+
+```
+## [1] 5302.086
+```
+
+```r
 # standard errors do not match exactly
 varpoord_poormed_calculation$all_result$se
+```
+
+```
+## [1] 72.81542
+```
+
+```r
 SE(svypoormed( ~ eqincome , des_eusilc))
+```
+
+```
+##          eqincome
+## eqincome 72.87983
 ```
 
 The variance estimate is computed by using the approximation defined in \@ref(var), while the linearized variable $z$ is defined by \@ref(lin). The functions `convey::svypoormed` and `vardpoor::linpoormed` produce the same linearized variable $z$.
 
 However, the measures of uncertainty do not line up, because `library(vardpoor)` defaults to an ultimate cluster method that can be replicated with an alternative setup of the `survey.design` object.
 
-```{r}
+
+```r
 # within each strata, sum up the weights
 cluster_sums <-
   aggregate(eusilc$rb050 , list(eusilc$db040) , sum)
@@ -1004,14 +1356,14 @@ stopifnot(all.equal(
   SE(svypoormed(~ eqincome , des_eusilc_ultimate_cluster))[1],
   varpoord_poormed_calculation$all_result$se
 ))
-
 ```
 
 For additional usage examples of `svypoormed`, type `?convey::svypoormed` in the R console.
 
 ## Foster-Greer-Thorbecke class (svyfgt, svyfgtdec)
 
-```{r eval=FALSE}
+
+```r
 ✔️ used widely because encompasses interpretable measures
 ✔️ allows an arbitrary poverty threshold
 ✔️ can incorporate intensity and inequality among the poor
@@ -1062,30 +1414,60 @@ Next, we give some examples of the function `svyfgt` to estimate the values of t
 
 Consider first the poverty threshold fixed ($\gamma=0$) in the value $10000$. The headcount ratio (FGT0) is
 
-```{r comment=NA}
+
+```r
 svyfgt( ~ eqincome, des_eusilc, g = 0, abs_thresh = 10000)
+```
+
+```
+            fgt0     SE
+eqincome 0.11444 0.0027
 ```
 
 The poverty gap ratio (FGT(1)) ($\gamma=1$) index for the poverty threshold fixed at the same value is
 
-```{r comment=NA}
+
+```r
 svyfgt( ~ eqincome, des_eusilc, g = 1, abs_thresh = 10000)
+```
+
+```
+             fgt1     SE
+eqincome 0.032085 0.0011
 ```
 
 To estimate the FGT(0) with the poverty threshold fixed at $0.6* MED$, we first fix the argument `type_thresh="relq"` and then use the default values for `percent` and `order`:
 
-```{r comment=NA}
+
+```r
 svyfgt( ~ eqincome, des_eusilc, g = 0, type_thresh = "relq")
+```
+
+```
+            fgt0     SE
+eqincome 0.14444 0.0028
 ```
 This matches the estimate obtained by:
 
-```{r comment=NA}
+
+```r
 svyarpr( ~ eqincome, design = des_eusilc, .5, .6)
+```
+
+```
+            arpr     SE
+eqincome 0.14444 0.0028
 ```
 To estimate the poverty gap ratio with the poverty threshold equal to $0.6*MEAN$, we use:
 
-```{r comment=NA}
+
+```r
 svyfgt( ~ eqincome, des_eusilc, g = 1, type_thresh = "relm")
+```
+
+```
+             fgt1     SE
+eqincome 0.051187 0.0011
 ```
 
 ---
@@ -1097,7 +1479,8 @@ In July 2006, @jenkins2006 presented at the North American Stata Users' Group Me
 In order to match the presentation's results using the `svyfgt` function from the `convey` library, the poverty threshold was considered absolute despite being directly estimated from the survey sample.  This effectively treats the variance of the estimated poverty threshold as zero; `svyfgt` does not account for the uncertainty of the poverty threshold when the level has been stated as absolute with the `abs_thresh=` parameter.  In general, we would instead recommend using either `relq` or `relm` in the `type_thresh=` parameter in order to account for the added uncertainty of the poverty threshold calculation.  This example serves only to show that `svyfgt` behaves properly as compared to other software.
 
 Load and prepare the same data set:
-```{r}
+
+```r
 # load the convey package
 library(convey)
 
@@ -1152,7 +1535,8 @@ Replicate the author's survey design statement from stata code..
 
 .. into R code:
 
-```{r}
+
+```r
 # initiate a linearized survey design object
 y <- svydesign( ~ hrn , data = x , weights = ~ wgt)
 
@@ -1213,7 +1597,8 @@ Number of PSUs   =    5254          Population size  = 5.6e+07
 
 ..using R code:
 
-```{r}
+
+```r
 headcount_81 <-
   svyfgt( ~ eybhc0 ,
           subset(z , year == 1981) ,
@@ -1285,7 +1670,8 @@ Number of PSUs   =    7476          Population size  = 5.5e+07
 
 ..to R code:
 
-```{r}
+
+```r
 norm_pov_81 <-
   svyfgt( ~ eybhc0 ,
           subset(z , year == 1981) ,
@@ -1308,7 +1694,8 @@ stopifnot(round(norm_pov_81_ci[2] , 5) == .02980)
 To provide a example for our code, we proceed with a Monte Carlo experiment. 
 Using the `eusilcP` data from the `simPop` package [@R-simPop], we can compute the actual values of the FGT components for that population:
 
-```{r}
+
+```r
 # load libraries
 library(sampling)
 library(survey)
@@ -1341,13 +1728,19 @@ theta.pop <-
     "gei(poor;epsilon=2)" =  gei.poor
   )
 theta.pop
+```
 
+```
+##                fgt2                fgt0                fgt1                 igr 
+##          0.01571192          0.11412691          0.03259544          0.28560699 
+## gei(poor;epsilon=2) 
+##          0.34386588
 ```
 
 Now, to study the distribution of the estimator under a particular sampling design, we select 5000 samples under one-stage cluster sampling of 100 households using the `cluster` function from the `sampling` package [@R-sampling], and use the `svyfgtdec` function to estimate the FGT components for each of those samples:
 
-```{r}
 
+```r
 # define the number of monte carlo replicates
 mc.rep <- 5000L
 
@@ -1411,31 +1804,69 @@ stopCluster(cl)
 
 The PRB of each component is estimated using the code below. Notice that PRBs are relatively small, with absolute values below 1%, with the largest bias in the GEI index component.
 
-```{r}
+
+```r
 # repeat true population values
 (theta.pop)
+```
 
+```
+##                fgt2                fgt0                fgt1                 igr 
+##          0.01571192          0.11412691          0.03259544          0.28560699 
+## gei(poor;epsilon=2) 
+##          0.34386588
+```
+
+```r
 # estimate the expected values of the components estimators
 # using the average of the estimates
 (theta.exp <- rowMeans(sapply(fgtdec.estimate.list , coef)))
+```
 
+```
+##                fgt2                fgt0                fgt1                 igr 
+##          0.01577844          0.11432776          0.03269125          0.28591312 
+## gei(poor;epsilon=2) 
+##          0.34234370
+```
+
+```r
 # estimate the percentage relative bias
 (percentage_relative_bias <- 100 * (theta.exp / theta.pop - 1))
+```
 
+```
+##                fgt2                fgt0                fgt1                 igr 
+##           0.4233956           0.1759893           0.2939132           0.1071867 
+## gei(poor;epsilon=2) 
+##          -0.4426679
+```
+
+```r
 stopifnot(abs(percentage_relative_bias) < 1) 
 ```
 
 For the variance estimators, we estimate the PRB using the code below. 
 Note that the bias is still relatively small, with absolute values of the PRB below 5%.
 
-```{r}
+
+```r
 # estimate the variance of the components estimators
 # using the empirical variance of the estimates
 (vartheta.popest <-
    diag(var(t(
      sapply(fgtdec.estimate.list , coef)
    ))))
+```
 
+```
+##                fgt2                fgt0                fgt1                 igr 
+##        6.447720e-06        1.015546e-04        1.468049e-05        4.753320e-04 
+## gei(poor;epsilon=2) 
+##        1.841360e-03
+```
+
+```r
 # estimate the expected value of the Watts index variance estimator
 # using the (estimated) expected value of the variance estimates
 (vartheta.exp <-
@@ -1443,30 +1874,68 @@ Note that the bias is still relatively small, with absolute values of the PRB be
       diag(vcov(
         z
       )))))
+```
 
+```
+##                fgt2                fgt0                fgt1                 igr 
+##        6.462904e-06        1.014859e-04        1.473047e-05        4.923412e-04 
+## gei(poor;epsilon=2) 
+##        1.911158e-03
+```
+
+```r
 # estimate the percentage relative bias of the variance estimators
 (percentage_relative_bias_variance <- 100 *  (vartheta.exp / vartheta.popest - 1))
+```
 
+```
+##                fgt2                fgt0                fgt1                 igr 
+##          0.23548684         -0.06759586          0.34047392          3.57838870 
+## gei(poor;epsilon=2) 
+##          3.79052600
+```
+
+```r
 stopifnot(abs(percentage_relative_bias_variance) < 5)
 ```
 
 Regarding the MSE of the decomposition estimator, the squared bias accounts for less than 0.1% of the MSE.
 This means that, with a good estimate of the variance, we should be able to have a good approximation for the MSE.
 
-```{r}
+
+```r
 # estimate MSE
 theta.bias2 <- (theta.exp - theta.pop) ^ 2
 (theta.mse <- theta.bias2 + vartheta.popest)
+```
 
+```
+##                fgt2                fgt0                fgt1                 igr 
+##        6.452146e-06        1.015949e-04        1.468967e-05        4.754257e-04 
+## gei(poor;epsilon=2) 
+##        1.843678e-03
+```
+
+```r
 # squared bias component of the MSE
 ( squared_bias_over_mse <- 100 * (theta.bias2 / theta.mse) )
+```
 
+```
+##                fgt2                fgt0                fgt1                 igr 
+##          0.06858780          0.03970787          0.06247986          0.01971227 
+## gei(poor;epsilon=2) 
+##          0.12567511
+```
+
+```r
 stopifnot( squared_bias_over_mse < 1 )
 ```
 
 The CIs based on the normal approximation work reasonably well for all components. The code below shows that the coverage rates are close to the 95% nominal coverage rate.
 
-```{r}
+
+```r
 # estimate confidence intervals of the Watts index
 # for each of the samples
 est.coverage <-
@@ -1482,7 +1951,8 @@ For additional usage examples of `svyfgt` and `svyfgtdec`, type `?convey::svyfgt
 
 ## Watts poverty measure (svywatts, svywattsdec)
 
-```{r eval=FALSE}
+
+```r
 ✔️ time to exit poverty interpretation: watts score divided by a growth rate
 ✔️ sensitive to intensity and inequality among the poor
 ✔️ can be decomposed into interpretable measures
@@ -1529,7 +1999,8 @@ As @murdoch1998 points out, if the income among the poor is equally distributed 
 To provide a example for our code, we proceed with a Monte Carlo experiment. 
 Using the `eusilcP` data from the `simPop` package [@R-simPop], we can compute the actual value of the Watts index for that population:
 
-```{r}
+
+```r
 # load libraries
 library(sampling)
 library(survey)
@@ -1543,15 +2014,16 @@ data("eusilcP" , package = "simPop")
 inc.pos <- eusilcP$eqIncome[eusilcP$eqIncome > 0]
 (theta.pop <-
     mean(ifelse(inc.pos <= 10000 , log(10000 /  inc.pos) , 0) , na.rm = TRUE))
+```
 
+```
+## [1] 0.05025374
 ```
 
 Now, to study the distribution of the estimator under a particular sampling design, we select 5000 samples under one-stage cluster sampling of 100 households using the `cluster` function from the `sampling` package [@R-sampling], and use the `svywatts` function to estimate the Watts index for each of those samples:
 
-```{r}
 
-
-
+```r
 # define the number of monte carlo replicates
 mc.rep <- 5000L
 
@@ -1612,36 +2084,67 @@ watts.estimate.list <-
   clusterApply(cl, seq_len(mc.rep) , watts_sim_fun)
 
 stopCluster(cl)
-
 ```
 
 Then, we evaluate the Percentage Relative Bias (PRB) of the Watts index estimator. Under this scenario, the PRB of the Watts index estimator is 0.3772%.
 
-```{r}
+
+```r
 # estimate the expected value of the Watts index estimator
 # using the average of the estimates
 (theta.exp <- mean(sapply(watts.estimate.list , coef)))
+```
 
+```
+## [1] 0.05044329
+```
+
+```r
 # estimate the percentage relative bias
 (percentage_relative_bias <- 100 * (theta.exp / theta.pop - 1) )
+```
 
+```
+## [1] 0.377195
+```
+
+```r
 stopifnot( round( percentage_relative_bias , 4 ) == 0.3772)
 ```
 
 For the variance estimator, we have:
 
-```{r}
+
+```r
 # estimate the variance of the Watts index estimator
 # using the empirical variance of the estimates
 (vartheta.popest <- var(sapply(watts.estimate.list , coef)))
+```
 
+```
+## [1] 6.141434e-05
+```
+
+```r
 # estimate the expected value of the Watts index variance estimator
 # using the (estimated) expected value of the variance estimates
 (vartheta.exp <- mean(sapply(watts.estimate.list , vcov)))
+```
 
+```
+## [1] 6.100902e-05
+```
+
+```r
 # estimate the percentage relative bias of the variance estimator
 (percentage_relative_bias_variance <- 100 *  (vartheta.exp / vartheta.popest - 1))
+```
 
+```
+## [1] -0.6599717
+```
+
+```r
 stopifnot(round(percentage_relative_bias_variance, 4) == -0.6600)
 ```
 
@@ -1649,17 +2152,25 @@ Under this scenario, the PRB of the Watts index variance estimator is -0.6600%.
 
 Our simulations show that the Squared Bias of this estimator accounts for less than 0.1% of its Mean Squared Error:
 
-```{r}
+
+```r
 theta.bias2 <- (theta.exp - theta.pop) ^ 2
 theta.mse <- theta.bias2 + vartheta.popest
 (squared_bias_over_mse <- 100 * (theta.bias2 / theta.mse))
+```
 
+```
+## [1] 0.05847158
+```
+
+```r
 stopifnot(squared_bias_over_mse < 0.1)
 ```
 
 Next, we evaluate the Percentage Coverage Rate (PCR). In theory, under repeated sampling, the estimated 95% CIs should cover the population parameter approximately 95% of the time. We can evaluate that using:
 
-```{r}
+
+```r
 # estimate confidence intervals of the Watts index
 # for each of the samples
 est.coverage <-
@@ -1669,14 +2180,21 @@ est.coverage <-
 
 # evaluate empirical coverage
 (empirical_coverage <- mean(est.coverage))
+```
 
+```
+## [1] 0.9268
+```
+
+```r
 stopifnot(abs(empirical_coverage  - 0.95) < 0.025)
 ```
 Our coverages are not too far from the nominal coverage level of 95%.
 
 For the Watts index decomposition, we start by computing the (true) population values of the components:
 
-```{r}
+
+```r
 # compute population value of the Watts index decomposition
 inc.pos <- eusilcP$eqIncome[eusilcP$eqIncome > 0]
 wdec1 <-
@@ -1696,9 +2214,17 @@ theta.pop <-
 theta.pop
 ```
 
+```
+##                watts                 fgt0 watts pov. gap ratio 
+##           0.05025374           0.11399096           0.33497664 
+##          theil(poor) 
+##           0.10588056
+```
+
 Then, using the same sampling strategy of the `svywatts`, we compute the `svywattsdec` for each sample:
 
-```{r}
+
+```r
 # simulation function
 wattsdec_sim_fun <- function(this.iter) {
   
@@ -1756,36 +2282,73 @@ wattsdec.estimate.list <-
   clusterApply(cl, seq_len(mc.rep) , wattsdec_sim_fun)
 
 stopCluster(cl)
-
 ```
 
 The PRB of each component is estimated using the code below. Notice that PRBs are relatively small, with absolute values below 1%, with the largest bias in the Theil index component.
 
-```{r}
+
+```r
 # repeat true population values
 (theta.pop)
+```
 
+```
+##                watts                 fgt0 watts pov. gap ratio 
+##           0.05025374           0.11399096           0.33497664 
+##          theil(poor) 
+##           0.10588056
+```
+
+```r
 # estimate the expected values of the components estimators
 # using the average of the estimates
 (theta.exp <- rowMeans(sapply(wattsdec.estimate.list , coef)))
+```
 
+```
+##                watts                 fgt0 watts pov. gap ratio 
+##           0.05044329           0.11418992           0.33584759 
+##          theil(poor) 
+##           0.10584416
+```
+
+```r
 # estimate the percentage relative bias
 (percentage_relative_bias <- 100 * (theta.exp / theta.pop - 1))
+```
 
+```
+##                watts                 fgt0 watts pov. gap ratio 
+##           0.37719501           0.17453750           0.26000223 
+##          theil(poor) 
+##          -0.03437576
+```
+
+```r
 stopifnot(abs(percentage_relative_bias) < 1)
 ```
 
 For the variance estimators, we estimate the PRB using the code below. 
 Note that the bias of the variance estimators is still relatively small, with absolute value of the Watts variance estimator's PRB below 1% and all four components variance estimators below 5%.
 
-```{r}
+
+```r
 # estimate the variance of the components estimators
 # using the empirical variance of the estimates
 (vartheta.popest <-
    diag(var(t(
      sapply(wattsdec.estimate.list , coef)
    ))))
+```
 
+```
+##                watts                 fgt0 watts pov. gap ratio 
+##         6.141434e-05         1.015260e-04         9.241259e-04 
+##          theil(poor) 
+##         1.108525e-03
+```
+
+```r
 # estimate the expected value of the Watts index variance estimator
 # using the (estimated) expected value of the variance estimates
 (vartheta.exp <-
@@ -1793,32 +2356,69 @@ Note that the bias of the variance estimators is still relatively small, with ab
       diag(vcov(
         z
       )))))
+```
 
+```
+##                watts                 fgt0 watts pov. gap ratio 
+##         6.100902e-05         1.013968e-04         9.613831e-04 
+##          theil(poor) 
+##         1.070018e-03
+```
+
+```r
 # estimate the percentage relative bias of the variance estimators
 (percentage_relative_bias <-
     100 *  (vartheta.exp / vartheta.popest - 1))
+```
 
+```
+##                watts                 fgt0 watts pov. gap ratio 
+##           -0.6599717           -0.1273107            4.0316155 
+##          theil(poor) 
+##           -3.4736907
+```
+
+```r
 stopifnot(abs(percentage_relative_bias[1]) < 1 & all(abs(percentage_relative_bias) < 5))
 ```
 
 Regarding the MSE, the squared bias accounts for less than 0.1% of the MSE. 
 This means that, with a good estimate of the variance, we should be able to have a good approximation for the MSE.
 
-```{r}
+
+```r
 # estimate MSE
 theta.bias2 <- (theta.exp - theta.pop) ^ 2
 (theta.mse <- theta.bias2 + vartheta.popest)
+```
 
+```
+##                watts                 fgt0 watts pov. gap ratio 
+##         6.145027e-05         1.015656e-04         9.248844e-04 
+##          theil(poor) 
+##         1.108526e-03
+```
+
+```r
 # squared bias component of the MSE
 (squared_bias_over_mse <- 100 * (theta.bias2 / theta.mse))
+```
 
+```
+##                watts                 fgt0 watts pov. gap ratio 
+##         0.0584715789         0.0389737000         0.0820154610 
+##          theil(poor) 
+##         0.0001195063
+```
+
+```r
 stopifnot(squared_bias_over_mse < 0.1)
-
 ```
 
 However, the CIs based on the normal approximation might not work very well for some components. The code below shows that coverage rate for the Theil index component differs significantly from the 95% nominal coverage rate.
 
-```{r}
+
+```r
 # estimate confidence intervals of the Watts index
 # for each of the samples
 est.coverage <-
@@ -1828,13 +2428,23 @@ est.coverage <-
 
 # evaluate empirical coverage
 (empirical_coverage <- rowMeans(est.coverage))
+```
 
+```
+##                watts                 fgt0 watts pov. gap ratio 
+##               0.9268               0.9494               0.9476 
+##          theil(poor) 
+##               0.8452
+```
+
+```r
 stopifnot(abs(empirical_coverage - 0.95) < 0.15)
 ```
 
 One of the reasons for this is that the sample might not be large enough for the CLT to hold. The distribution of the estimator shows substantial asymmetry, which would be a problem for the normal approximation.
 
-```{r}
+
+```r
 hist(
   sapply(wattsdec.estimate.list , coef)[4, ] ,
   main = "Histogram of Theil component estimator" ,
@@ -1843,6 +2453,8 @@ hist(
   xlab = "Estimate"
 )
 ```
+
+<img src="02-poverty_files/figure-html/unnamed-chunk-52-1.png" width="672"  />
 
 
 For additional usage examples of `svywatts` and `svywattsdec`, type `?convey::svywatts` or `?convey::svywattsdec` in the R console.

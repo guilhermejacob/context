@@ -1,8 +1,6 @@
 # Richness
 
-```{r results='hide', echo=FALSE}
-set.seed(2020)
-```
+
 
 Richness (or Affluence) measures provide another approach for understanding 
 income concentration. Unlike inequality measures, that are sensitive to the 
@@ -36,7 +34,8 @@ The reasoning behind the concave transfer axiom is that such progressive transfe
 
 ## Richness Measures (svyrich)
 
-```{r eval=FALSE}
+
+```r
 ✔️ focuses on the top -- i.e., the "rich"
 ✔️ can have an inequality or polarization interpretation
 ✔️ interesting complementary approach to income inequality or polarization
@@ -91,7 +90,8 @@ parameter!).
 For the sake of similarity, we start by simulating a large finite population ($N = 10^5$) 
 using the same distribution from @brz2014:
 
-```{r results='hide', message=FALSE, warning=FALSE}
+
+```r
 # load libraries
 library(survey)
 library(convey)
@@ -115,7 +115,8 @@ pop.df <-
 
 Then, we compute the finite population parameters using the simulated population:
 
-```{r}
+
+```r
 # richness measures: finite population parameters
 cha.scores <-
   function(y , b , rho)
@@ -133,7 +134,8 @@ rFGTT2.fp <- mean(cha.scores(pop.df$y1  , fgt.alpha , rho.fp))
 For our sampling design, we select $n = 1000$ units using multinomial sampling, 
 with the variable `x.aux` as the size variable for the inclusion probabilities:
 
-```{r}
+
+```r
 # define sample size
 n.sample <- 1000L
 
@@ -144,7 +146,8 @@ pop.df$pi1 <- sampling::inclusionprobabilities( pop.df$x.aux , n.sample )
 
 We run the procedure N and store the estimate objects using the code below:
 
-```{r}
+
+```r
 # define the number of simulation runs
 mc.reps <- 5000L
 
@@ -207,7 +210,8 @@ variance (for the main parameter) and mean squared error. To study the validity
 of the normal approximation, we also estimate the percent coverage rate of the nominal 
 95% confidence interval. This is done using the function below:
 
-```{r}
+
+```r
 sim.compile <- function(ll ,
                         pv ,
                         level = .95 ,
@@ -255,10 +259,20 @@ sim.compile <- function(ll ,
 
 For the Headcount Richness Ratio (computed using the concave FGT measure), we have:
 
-```{r}
+
+```r
 rhc.list <- lapply(rep.list , `[[` , 1)
 sim.compile(rhc.list, rHC.fp)
+```
 
+```
+##   mc.reps   theta  theta.hat  theta.bias2 theta.empvar theta.hat.mse
+## 1    5000 0.05469 0.05452618 2.683797e-08 4.112616e-05    4.1153e-05
+##   theta.varhat    pcr
+## 1 4.336252e-05 0.9524
+```
+
+```r
 stopifnot(round(
   sim.compile(rhc.list, rHC.fp)["theta.bias2"] / sim.compile(rhc.list, rHC.fp)["theta.hat.mse"] ,
   4
@@ -282,10 +296,20 @@ level of 95%, indicating that the confidence intervals are approximately valid.
 
 For the Chakravarty measure, we have:
 
-```{r}
+
+```r
 rcha.list <- lapply(rep.list , `[[` , 2)
 sim.compile(rcha.list, rCha.fp)
+```
 
+```
+##   mc.reps      theta  theta.hat  theta.bias2 theta.empvar theta.hat.mse
+## 1    5000 0.02743915 0.02737177 4.538966e-09 1.428639e-05  1.429093e-05
+##   theta.varhat    pcr
+## 1 1.402416e-05 0.9428
+```
+
+```r
 stopifnot(round(
   sim.compile(rcha.list, rCha.fp)["theta.bias2"] / sim.compile(rcha.list, rCha.fp)["theta.hat.mse"] ,
   4
@@ -309,10 +333,20 @@ confidence intervals are approximately valid.
 
 For the convex FGT measure, we have:
 
-```{r}
+
+```r
 rfgtt2.list <- lapply(rep.list , `[[` , 3)
 sim.compile(rfgtt2.list, rFGTT2.fp)
+```
 
+```
+##   mc.reps      theta theta.hat theta.bias2 theta.empvar theta.hat.mse
+## 1    5000 0.02349189 0.1045973  0.00657808   0.01865219    0.02523027
+##   theta.varhat    pcr
+## 1   0.01857144 0.5212
+```
+
+```r
 stopifnot(round(
   sim.compile(rfgtt2.list, rFGTT2.fp)["theta.bias2"] / sim.compile(rfgtt2.list, rFGTT2.fp)["theta.hat.mse"] ,
   2

@@ -13,7 +13,7 @@
 
 <meta name="author" content="By Guilherme Jacob, Anthony Damico, and Djalma Pessoa. The authors received no external funding for the convey software and this accompanying textbook." />
 
-<meta name="date" content="2023-11-07" />
+<meta name="date" content="2023-11-11" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -263,42 +263,50 @@ div.csl-indent {
 <p>The function <code>bootVar</code> from the <code>laeken</code> library <span class="citation">(<label for="tufte-mn-12" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-12" class="margin-toggle">Alfons and Templ 2013<span class="marginnote">Alfons, Andreas, and Matthias Templ. 2013. <span>“Estimation of Social Exclusion Indicators from Complex Surveys: The <span>R</span> Package <span class="nocase">laeken</span>.”</span> <em>Journal of Statistical Software</em> 54 (15): 1–25. <a href="http://www.jstatsoft.org/v54/i15/">http://www.jstatsoft.org/v54/i15/</a>.</span>)</span>, also uses the bootstrap method to estimate variances.</p>
 <div id="replication-design-example" class="section level3" number="2.2.1">
 <h3><span class="header-section-number">2.2.1</span> Replication Design Example</h3>
-<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="2.2-replication-based-variance-estimation.html#cb56-1" tabindex="-1"></a><span class="co"># load libraries</span></span>
-<span id="cb56-2"><a href="2.2-replication-based-variance-estimation.html#cb56-2" tabindex="-1"></a><span class="fu">library</span>( survey )</span>
-<span id="cb56-3"><a href="2.2-replication-based-variance-estimation.html#cb56-3" tabindex="-1"></a><span class="fu">library</span>( convey )</span>
-<span id="cb56-4"><a href="2.2-replication-based-variance-estimation.html#cb56-4" tabindex="-1"></a><span class="fu">library</span>( laeken ) <span class="co"># for the dataset</span></span>
-<span id="cb56-5"><a href="2.2-replication-based-variance-estimation.html#cb56-5" tabindex="-1"></a></span>
-<span id="cb56-6"><a href="2.2-replication-based-variance-estimation.html#cb56-6" tabindex="-1"></a><span class="co"># get laeken eusilc data</span></span>
-<span id="cb56-7"><a href="2.2-replication-based-variance-estimation.html#cb56-7" tabindex="-1"></a><span class="fu">data</span>( eusilc ) ; <span class="fu">names</span>( eusilc ) <span class="ot">&lt;-</span> <span class="fu">tolower</span>( <span class="fu">names</span>( eusilc ) )</span>
-<span id="cb56-8"><a href="2.2-replication-based-variance-estimation.html#cb56-8" tabindex="-1"></a></span>
-<span id="cb56-9"><a href="2.2-replication-based-variance-estimation.html#cb56-9" tabindex="-1"></a><span class="co"># survey design object for TSL/ifluence function variance estimation</span></span>
-<span id="cb56-10"><a href="2.2-replication-based-variance-estimation.html#cb56-10" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span> <span class="fu">svydesign</span>( <span class="at">ids =</span> <span class="sc">~</span>rb030 , <span class="at">strata =</span> <span class="sc">~</span>db040 ,  <span class="at">weights =</span> <span class="sc">~</span>rb050 , <span class="at">data =</span> eusilc )</span>
-<span id="cb56-11"><a href="2.2-replication-based-variance-estimation.html#cb56-11" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>( des_eusilc )</span>
-<span id="cb56-12"><a href="2.2-replication-based-variance-estimation.html#cb56-12" tabindex="-1"></a></span>
-<span id="cb56-13"><a href="2.2-replication-based-variance-estimation.html#cb56-13" tabindex="-1"></a><span class="co"># influence function SE estimate for the gini index</span></span>
-<span id="cb56-14"><a href="2.2-replication-based-variance-estimation.html#cb56-14" tabindex="-1"></a>convey<span class="sc">:::</span><span class="fu">svygini.survey.design</span>( <span class="sc">~</span>eqincome , <span class="at">design =</span> des_eusilc )</span></code></pre></div>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="2.2-replication-based-variance-estimation.html#cb55-1" tabindex="-1"></a><span class="co"># load libraries</span></span>
+<span id="cb55-2"><a href="2.2-replication-based-variance-estimation.html#cb55-2" tabindex="-1"></a><span class="fu">library</span>( survey )</span></code></pre></div>
+<pre><code>## Carregando pacotes exigidos: grid</code></pre>
+<pre><code>## Carregando pacotes exigidos: Matrix</code></pre>
+<pre><code>## Carregando pacotes exigidos: survival</code></pre>
+<pre><code>## 
+## Attaching package: &#39;survey&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:graphics&#39;:
+## 
+##     dotchart</code></pre>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="2.2-replication-based-variance-estimation.html#cb61-1" tabindex="-1"></a><span class="fu">library</span>( convey )</span>
+<span id="cb61-2"><a href="2.2-replication-based-variance-estimation.html#cb61-2" tabindex="-1"></a><span class="fu">library</span>( laeken ) <span class="co"># for the dataset</span></span>
+<span id="cb61-3"><a href="2.2-replication-based-variance-estimation.html#cb61-3" tabindex="-1"></a></span>
+<span id="cb61-4"><a href="2.2-replication-based-variance-estimation.html#cb61-4" tabindex="-1"></a><span class="co"># get laeken eusilc data</span></span>
+<span id="cb61-5"><a href="2.2-replication-based-variance-estimation.html#cb61-5" tabindex="-1"></a><span class="fu">data</span>( eusilc ) ; <span class="fu">names</span>( eusilc ) <span class="ot">&lt;-</span> <span class="fu">tolower</span>( <span class="fu">names</span>( eusilc ) )</span>
+<span id="cb61-6"><a href="2.2-replication-based-variance-estimation.html#cb61-6" tabindex="-1"></a></span>
+<span id="cb61-7"><a href="2.2-replication-based-variance-estimation.html#cb61-7" tabindex="-1"></a><span class="co"># survey design object for TSL/ifluence function variance estimation</span></span>
+<span id="cb61-8"><a href="2.2-replication-based-variance-estimation.html#cb61-8" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span> <span class="fu">svydesign</span>( <span class="at">ids =</span> <span class="sc">~</span>rb030 , <span class="at">strata =</span> <span class="sc">~</span>db040 ,  <span class="at">weights =</span> <span class="sc">~</span>rb050 , <span class="at">data =</span> eusilc )</span>
+<span id="cb61-9"><a href="2.2-replication-based-variance-estimation.html#cb61-9" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>( des_eusilc )</span>
+<span id="cb61-10"><a href="2.2-replication-based-variance-estimation.html#cb61-10" tabindex="-1"></a></span>
+<span id="cb61-11"><a href="2.2-replication-based-variance-estimation.html#cb61-11" tabindex="-1"></a><span class="co"># influence function SE estimate for the gini index</span></span>
+<span id="cb61-12"><a href="2.2-replication-based-variance-estimation.html#cb61-12" tabindex="-1"></a>convey<span class="sc">:::</span><span class="fu">svygini.survey.design</span>( <span class="sc">~</span>eqincome , <span class="at">design =</span> des_eusilc )</span></code></pre></div>
 <pre><code>##             gini     SE
 ## eqincome 0.26497 0.0019</code></pre>
-<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="2.2-replication-based-variance-estimation.html#cb58-1" tabindex="-1"></a><span class="co"># create survey design object for replicate-based variance estimation</span></span>
-<span id="cb58-2"><a href="2.2-replication-based-variance-estimation.html#cb58-2" tabindex="-1"></a>des_eusilc_rep <span class="ot">&lt;-</span> <span class="fu">as.svrepdesign</span>( des_eusilc , <span class="at">type =</span> <span class="st">&quot;bootstrap&quot;</span> )</span>
-<span id="cb58-3"><a href="2.2-replication-based-variance-estimation.html#cb58-3" tabindex="-1"></a>des_eusilc_rep <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>( des_eusilc_rep )</span>
-<span id="cb58-4"><a href="2.2-replication-based-variance-estimation.html#cb58-4" tabindex="-1"></a></span>
-<span id="cb58-5"><a href="2.2-replication-based-variance-estimation.html#cb58-5" tabindex="-1"></a><span class="co"># replicate-based (bootstrao) SE estimate for the gini index</span></span>
-<span id="cb58-6"><a href="2.2-replication-based-variance-estimation.html#cb58-6" tabindex="-1"></a><span class="co"># with option to keep replicates</span></span>
-<span id="cb58-7"><a href="2.2-replication-based-variance-estimation.html#cb58-7" tabindex="-1"></a>( gini.repstat <span class="ot">&lt;-</span> convey<span class="sc">:::</span><span class="fu">svygini.svyrep.design</span>( <span class="sc">~</span>eqincome , <span class="at">design =</span> des_eusilc_rep , <span class="at">return.replicates =</span> <span class="cn">TRUE</span> ) )</span></code></pre></div>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="2.2-replication-based-variance-estimation.html#cb63-1" tabindex="-1"></a><span class="co"># create survey design object for replicate-based variance estimation</span></span>
+<span id="cb63-2"><a href="2.2-replication-based-variance-estimation.html#cb63-2" tabindex="-1"></a>des_eusilc_rep <span class="ot">&lt;-</span> <span class="fu">as.svrepdesign</span>( des_eusilc , <span class="at">type =</span> <span class="st">&quot;bootstrap&quot;</span> )</span>
+<span id="cb63-3"><a href="2.2-replication-based-variance-estimation.html#cb63-3" tabindex="-1"></a>des_eusilc_rep <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>( des_eusilc_rep )</span>
+<span id="cb63-4"><a href="2.2-replication-based-variance-estimation.html#cb63-4" tabindex="-1"></a></span>
+<span id="cb63-5"><a href="2.2-replication-based-variance-estimation.html#cb63-5" tabindex="-1"></a><span class="co"># replicate-based (bootstrao) SE estimate for the gini index</span></span>
+<span id="cb63-6"><a href="2.2-replication-based-variance-estimation.html#cb63-6" tabindex="-1"></a><span class="co"># with option to keep replicates</span></span>
+<span id="cb63-7"><a href="2.2-replication-based-variance-estimation.html#cb63-7" tabindex="-1"></a>( gini.repstat <span class="ot">&lt;-</span> convey<span class="sc">:::</span><span class="fu">svygini.svyrep.design</span>( <span class="sc">~</span>eqincome , <span class="at">design =</span> des_eusilc_rep , <span class="at">return.replicates =</span> <span class="cn">TRUE</span> ) )</span></code></pre></div>
 <pre><code>##             gini     SE
-## eqincome 0.26497 0.0022</code></pre>
+## eqincome 0.26497 0.0019</code></pre>
 <p>To understand how that variance is estimated, we can look at the replicates:</p>
-<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="2.2-replication-based-variance-estimation.html#cb60-1" tabindex="-1"></a><span class="co"># collect gini bootstrap replicates</span></span>
-<span id="cb60-2"><a href="2.2-replication-based-variance-estimation.html#cb60-2" tabindex="-1"></a>( gini.reps <span class="ot">&lt;-</span> gini.repstat<span class="sc">$</span>replicates )</span></code></pre></div>
-<pre><code>##  [1] 0.2628816 0.2653672 0.2663951 0.2646311 0.2660021 0.2648396 0.2633737
-##  [8] 0.2611656 0.2613233 0.2647174 0.2638256 0.2621616 0.2646830 0.2587950
-## [15] 0.2642947 0.2651559 0.2663231 0.2673018 0.2687169 0.2671058 0.2654078
-## [22] 0.2632859 0.2636763 0.2643964 0.2659183 0.2676759 0.2637824 0.2661465
-## [29] 0.2652060 0.2635074 0.2678686 0.2655230 0.2614917 0.2636580 0.2670249
-## [36] 0.2671674 0.2629817 0.2612323 0.2618645 0.2641601 0.2646633 0.2637810
-## [43] 0.2631755 0.2639137 0.2618225 0.2598284 0.2670922 0.2672737 0.2625786
-## [50] 0.2677954
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="2.2-replication-based-variance-estimation.html#cb65-1" tabindex="-1"></a><span class="co"># collect gini bootstrap replicates</span></span>
+<span id="cb65-2"><a href="2.2-replication-based-variance-estimation.html#cb65-2" tabindex="-1"></a>( gini.reps <span class="ot">&lt;-</span> gini.repstat<span class="sc">$</span>replicates )</span></code></pre></div>
+<pre><code>##  [1] 0.2634964 0.2660525 0.2628159 0.2642214 0.2640101 0.2646866 0.2658197
+##  [8] 0.2647185 0.2631214 0.2659181 0.2662891 0.2659961 0.2660510 0.2652151
+## [15] 0.2644426 0.2668523 0.2631412 0.2647396 0.2645238 0.2621920 0.2664261
+## [22] 0.2657785 0.2690639 0.2669724 0.2644131 0.2645514 0.2649314 0.2652856
+## [29] 0.2629863 0.2645778 0.2632758 0.2656489 0.2636115 0.2621762 0.2642869
+## [36] 0.2678055 0.2674347 0.2679129 0.2673382 0.2667176 0.2629524 0.2610910
+## [43] 0.2653172 0.2649615 0.2611728 0.2690993 0.2631572 0.2648130 0.2625523
+## [50] 0.2659988
 ## attr(,&quot;scale&quot;)
 ## [1] 0.02042526
 ## attr(,&quot;rscales&quot;)
@@ -307,16 +315,16 @@ div.csl-indent {
 ## attr(,&quot;mse&quot;)
 ## [1] FALSE</code></pre>
 <p>These are resampling (bootstrap) replicates. With them, we can look at the variance of these replicates to get an estimate the gini estimator’s variance:</p>
-<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="2.2-replication-based-variance-estimation.html#cb62-1" tabindex="-1"></a><span class="co"># variance estimate</span></span>
-<span id="cb62-2"><a href="2.2-replication-based-variance-estimation.html#cb62-2" tabindex="-1"></a>des.scale <span class="ot">&lt;-</span> des_eusilc_rep<span class="sc">$</span>scale</span>
-<span id="cb62-3"><a href="2.2-replication-based-variance-estimation.html#cb62-3" tabindex="-1"></a>meantheta <span class="ot">&lt;-</span> <span class="fu">mean</span>( gini.reps )[[<span class="dv">1</span>]]</span>
-<span id="cb62-4"><a href="2.2-replication-based-variance-estimation.html#cb62-4" tabindex="-1"></a>v <span class="ot">&lt;-</span> <span class="fu">sum</span>( ( gini.reps <span class="sc">-</span> meantheta )<span class="sc">^</span><span class="dv">2</span> ) <span class="sc">*</span> des.scale</span>
-<span id="cb62-5"><a href="2.2-replication-based-variance-estimation.html#cb62-5" tabindex="-1"></a></span>
-<span id="cb62-6"><a href="2.2-replication-based-variance-estimation.html#cb62-6" tabindex="-1"></a><span class="co"># SE estimate</span></span>
-<span id="cb62-7"><a href="2.2-replication-based-variance-estimation.html#cb62-7" tabindex="-1"></a>( gini.se <span class="ot">&lt;-</span> ( <span class="fu">sqrt</span>( v ) ) )</span></code></pre></div>
-<pre><code>## [1] 0.002226009</code></pre>
-<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="2.2-replication-based-variance-estimation.html#cb64-1" tabindex="-1"></a><span class="co"># compare estimates</span></span>
-<span id="cb64-2"><a href="2.2-replication-based-variance-estimation.html#cb64-2" tabindex="-1"></a><span class="fu">identical</span>( gini.se , <span class="fu">SE</span>( gini.repstat )[[<span class="dv">1</span>]] )</span></code></pre></div>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="2.2-replication-based-variance-estimation.html#cb67-1" tabindex="-1"></a><span class="co"># variance estimate</span></span>
+<span id="cb67-2"><a href="2.2-replication-based-variance-estimation.html#cb67-2" tabindex="-1"></a>des.scale <span class="ot">&lt;-</span> des_eusilc_rep<span class="sc">$</span>scale</span>
+<span id="cb67-3"><a href="2.2-replication-based-variance-estimation.html#cb67-3" tabindex="-1"></a>meantheta <span class="ot">&lt;-</span> <span class="fu">mean</span>( gini.reps )[[<span class="dv">1</span>]]</span>
+<span id="cb67-4"><a href="2.2-replication-based-variance-estimation.html#cb67-4" tabindex="-1"></a>v <span class="ot">&lt;-</span> <span class="fu">sum</span>( ( gini.reps <span class="sc">-</span> meantheta )<span class="sc">^</span><span class="dv">2</span> ) <span class="sc">*</span> des.scale</span>
+<span id="cb67-5"><a href="2.2-replication-based-variance-estimation.html#cb67-5" tabindex="-1"></a></span>
+<span id="cb67-6"><a href="2.2-replication-based-variance-estimation.html#cb67-6" tabindex="-1"></a><span class="co"># SE estimate</span></span>
+<span id="cb67-7"><a href="2.2-replication-based-variance-estimation.html#cb67-7" tabindex="-1"></a>( gini.se <span class="ot">&lt;-</span> ( <span class="fu">sqrt</span>( v ) ) )</span></code></pre></div>
+<pre><code>## [1] 0.001851098</code></pre>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="2.2-replication-based-variance-estimation.html#cb69-1" tabindex="-1"></a><span class="co"># compare estimates</span></span>
+<span id="cb69-2"><a href="2.2-replication-based-variance-estimation.html#cb69-2" tabindex="-1"></a><span class="fu">identical</span>( gini.se , <span class="fu">SE</span>( gini.repstat )[[<span class="dv">1</span>]] )</span></code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
 </div>
 </div>
