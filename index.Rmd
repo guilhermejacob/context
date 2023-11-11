@@ -24,7 +24,6 @@ knitr::opts_chunk$set(
 
 ```{r results='hide', echo=FALSE}
 set.seed(2017)
-
 ```
 
 # Intro
@@ -178,6 +177,10 @@ svygini( ~ py010n , design = des_eusilc_rep , na.rm = TRUE)
 
 ## Current Population Survey (CPS)
 
+```{r, results = 'hide' , include=FALSE , echo=FALSE }
+rm( list = ls() ) ; gc()
+```
+
 Sponsored jointly by the U.S. Census Bureau and the U.S. Bureau of Labor Statistics (BLS), the Current Population Survey is the primary source of labor force statistics for the population of the United States.
 
 This section downloads, imports, and prepares the most current microdata for analysis, then reproduces some statistics and margin of error terms from the U.S. Census Bureau.
@@ -246,6 +249,10 @@ cps_df <- merge(hh_fm_pr_df , repwgts_df)
 stopifnot(nrow(cps_df) == nrow(person_df))
 ```
 
+```{r, results = 'hide' , include=FALSE , echo=FALSE }
+rm( list = setdiff( ls() , "cps_df" ) ) ; gc()
+```
+
 Construct a complex sample survey design:
 
 ```{r, results = 'hide'}
@@ -261,6 +268,10 @@ cps_design <-
     combined.weights = TRUE ,
     mse = TRUE
   )
+```
+
+```{r, results = 'hide' , include=FALSE , echo=FALSE , eval=TRUE }
+rm( list = setdiff( ls() , "cps_design" ) ) ; gc()
 ```
 
 Run the `convey_prep()` function on the full design:
@@ -290,6 +301,10 @@ stopifnot(round(
 ) == 0.0033) 
 ```
 
+```{r, results = 'hide' , include=FALSE , echo=FALSE , eval=TRUE }
+rm( list = setdiff( ls() , "cps_design" ) ) ; gc()
+```
+
 ### Family-level
 
 Limit the CPS person-level design to the family reference person of primary families, then calculate the gini coefficient with total family income:
@@ -305,6 +320,10 @@ cps_family_design <-
 stopifnot(round(coef(cps_family_gini) , 3) == 0.458)
 ```
 
+```{r, results = 'hide' , include=FALSE , echo=FALSE , eval=TRUE }
+rm( list = setdiff( ls() , "cps_design" ) ) ; gc()
+```
+
 ### Worker Earnings
 
 Limit the CPS person-level design to full-time, full year workers, then calculate the gini coefficient with both total personal income and then total earnings:
@@ -317,12 +336,16 @@ svygini( ~ ptotval , cps_ftfy_worker_design)
 svygini( ~ pearnval , cps_ftfy_worker_design)
 ```
 
+```{r, results = 'hide' , include=FALSE , echo=FALSE }
+rm( list = ls() ) ; gc()
+```
+
 
 ## Pesquisa Nacional por Amostra de Domicílios Contínua (PNAD-Continua)
 
 Administered by the Instituto Brasileiro de Geografia e Estatística (IBGE), the Pesquisa Nacional por Amostra de Domicílios Contínua is the primary source of labor force statistics for the population of Brazil.
 
-This section downloads, imports, and prepares the most current microdata for analysis, then reproduces some statistics and margin of error terms from IBGE.
+This section downloads, imports, and prepares the most current microdata for analysis, then reproduces some statistics and margin of error terms from IBGE.^[See [this link](https://agenciadenoticias.ibge.gov.br/agencia-noticias/2012-agencia-de-noticias/noticias/36857-em-2022-mercado-de-trabalho-e-auxilio-brasil-permitem-recuperacao-dos-rendimentos) for IBGE Gini estimates reproduced below.]
 
 
 Download and import the 2022 file:
@@ -406,11 +429,11 @@ pnadc_design <-
   )
 ```
 
-Run the `convey_prep()` function on the full design:
-
-```{r, results = 'hide'}
-pnadc_design <- convey_prep(pnadc_design)
+```{r, results = 'hide' , include=FALSE , echo=FALSE }
+rm( list = setdiff( ls() , "pnadc_design" ) ) ; gc()
 ```
+
+Run the `convey_prep()` function on the full design:
 
 ### Per Capita-level
 
@@ -446,4 +469,8 @@ stopifnot(round(coef(pnadc_earnings_gini) , 3) == 0.486)
 
 # match 2022 earnings gini coefficient of variation
 stopifnot(round(cv(pnadc_earnings_gini), 3) == 0.007) 
+```
+
+```{r, results = 'hide' , include=FALSE , echo=FALSE , eval=TRUE }
+rm( list = ls() ) ; gc()
 ```
