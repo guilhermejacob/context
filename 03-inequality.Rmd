@@ -665,6 +665,59 @@ varpoord_gini_calculation$all_result$se
 SE(svygini( ~ eqincome , des_eusilc_ultimate_cluster)) * 100
 ```
 
+### Analysis Examples
+
+This section presents current Gini index estimates for the United States and Brazil to help users compare their own results to populations (and sub-populations) of two large, diverse countries.  Using the two nationally-representative labor force surveys of the United States (CPS-ASEC) and Brazil (PNAD-Continua) described in the introduction, this section displays straightforward syntax to calculate a Gini index with those survey design objects.
+
+Nationwide Estimates:
+
+```{r}
+# Gini index of the United States calculated with Household Income
+svygini(~ htotval , cps_household_design)
+
+# Gini index of the United States calculated with Family Income
+svygini(~ ftotval , cps_family_design)
+
+# Gini index of Full-Time Full Year Workers in the United States calculated with Personal Income
+svygini(~ ptotval , cps_ftfy_worker_design)
+
+# Gini index of Full-Time Full Year Workers in the United States calculated with Personal Earnings
+svygini(~ pearnval , cps_ftfy_worker_design)
+
+# Gini index of Brazil calculated with Per Capita Income
+svygini(~ deflated_per_capita_income , pnadc_design , na.rm = TRUE)
+
+# Gini index of Brazil calculated with Personal Earnings
+svygini(~ deflated_labor_income , pnadc_design , na.rm = TRUE))
+```
+
+Regional Estimates
+
+```{r}
+# Gini index of California calculated with Household Income
+svygini(~ htotval , subset(cps_household_design , gestfips == 6))
+
+# Gini index of California calculated with Family Income
+svygini(~ ftotval , subset(cps_family_design , gestfips == 6))
+
+# Gini index of Full-Time Full Year Workers in California calculated with Personal Income
+svygini(~ ptotval , subset(cps_ftfy_worker_design , gestfips == 6))
+
+# Gini index of Full-Time Full Year Workers in California calculated with Personal Earnings
+svygini(~ pearnval , subset(cps_ftfy_worker_design , gestfips == 6))
+
+# Gini index of Sao Paulo calculated with Per Capita Income
+svygini(~ deflated_per_capita_income ,
+        subset(pnadc_design , uf == 35) ,
+        na.rm = TRUE)
+
+# Gini index of Sao Paulo calculated with Personal Earnings
+svygini(~ deflated_labor_income , subset(pnadc_design , uf == 35) , na.rm = TRUE)
+```
+
+
+
+
 ## Zenga index (svyzenga)
 
 ```{r eval=FALSE}
