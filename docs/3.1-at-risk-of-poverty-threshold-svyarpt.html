@@ -258,13 +258,13 @@ div.csl-indent {
 <div class="col-sm-12">
 <div id="at-risk-of-poverty-threshold-svyarpt" class="section level2" number="3.1">
 <h2><span class="header-section-number">3.1</span> At Risk of Poverty Threshold (svyarpt)</h2>
-<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb71-1" tabindex="-1"></a>✔️ commonly used by statistical agencies <span class="cf">in</span> the european union working group on statistics on income <span class="sc">&amp;</span> living <span class="fu">conditions</span> (eurostat)</span>
-<span id="cb71-2"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb71-2" tabindex="-1"></a>✔️ not tied to the inflation rate nor to a basket of goods or consumable products</span>
-<span id="cb71-3"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb71-3" tabindex="-1"></a>✔️ generic calculation that can be broadly applied to different nations or regions</span>
-<span id="cb71-4"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb71-4" tabindex="-1"></a>✔️ easy to understand<span class="sc">:</span> defaults to <span class="dv">60</span>% of median income</span>
-<span id="cb71-5"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb71-5" tabindex="-1"></a>❌ the <span class="dv">60</span>% of median income used <span class="cf">in</span> ARPT might appear arbitrary <span class="cf">for</span> non<span class="sc">-</span>EU analyses</span>
-<span id="cb71-6"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb71-6" tabindex="-1"></a>❌ does not account <span class="cf">for</span> the intensity<span class="sc">/</span>severity of poverty</span>
-<span id="cb71-7"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb71-7" tabindex="-1"></a>❌ not really a poverty measure, but an estimated poverty threshold<span class="sc">/</span>poverty line</span></code></pre></div>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb66-1" tabindex="-1"></a>✔️ commonly used by statistical agencies <span class="cf">in</span> the european union working group on statistics on income <span class="sc">&amp;</span> living <span class="fu">conditions</span> (eurostat)</span>
+<span id="cb66-2"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb66-2" tabindex="-1"></a>✔️ not tied to the inflation rate nor to a basket of goods or consumable products</span>
+<span id="cb66-3"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb66-3" tabindex="-1"></a>✔️ generic calculation that can be broadly applied to different nations or regions</span>
+<span id="cb66-4"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb66-4" tabindex="-1"></a>✔️ easy to understand<span class="sc">:</span> defaults to <span class="dv">60</span>% of median income</span>
+<span id="cb66-5"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb66-5" tabindex="-1"></a>❌ the <span class="dv">60</span>% of median income used <span class="cf">in</span> ARPT might appear arbitrary <span class="cf">for</span> non<span class="sc">-</span>EU analyses</span>
+<span id="cb66-6"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb66-6" tabindex="-1"></a>❌ does not account <span class="cf">for</span> the intensity<span class="sc">/</span>severity of poverty</span>
+<span id="cb66-7"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb66-7" tabindex="-1"></a>❌ not really a poverty measure, but an estimated poverty threshold<span class="sc">/</span>poverty line</span></code></pre></div>
 <p>The at-risk-of-poverty threshold (ARPT) is a measure used to define the people whose incomes imply a low standard of living in comparison to the general living standards. Even though some people are not below the effective poverty line, those below the ARPT can be considered “almost deprived”.</p>
 <p>This measure is defined as <span class="math inline">\(0.6\)</span> times the median income for the entire population:</p>
 <p><span class="math display">\[
@@ -276,149 +276,142 @@ where <span class="math inline">\(y\)</span> is the income variable and <code>me
 <h3><span class="header-section-number">3.1.1</span> Replication Example</h3>
 <p>The R <code>vardpoor</code> package <span class="citation">(<label for="tufte-mn-25" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-25" class="margin-toggle">Breidaks, Liberts, and Ivanova 2016<span class="marginnote">Breidaks, Juris, Martins Liberts, and Santa Ivanova. 2016. <span>“Vardpoor: Estimation of Indicators on Social Exclusion and Poverty and Its Linearization, Variance Estimation.”</span> Riga, Latvia: CSB.</span>)</span>, created by researchers at the Central Statistical Bureau of Latvia, includes an ARPT coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.</p>
 <p>Load and prepare the same data set:</p>
-<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb72-1" tabindex="-1"></a><span class="co"># load the convey package</span></span>
-<span id="cb72-2"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb72-2" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
-<span id="cb72-3"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb72-3" tabindex="-1"></a></span>
-<span id="cb72-4"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb72-4" tabindex="-1"></a><span class="co"># load the survey library</span></span>
-<span id="cb72-5"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb72-5" tabindex="-1"></a><span class="fu">library</span>(survey)</span></code></pre></div>
-<pre><code>## Carregando pacotes exigidos: grid</code></pre>
-<pre><code>## Carregando pacotes exigidos: Matrix</code></pre>
-<pre><code>## Carregando pacotes exigidos: survival</code></pre>
-<pre><code>## 
-## Attaching package: &#39;survey&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:graphics&#39;:
-## 
-##     dotchart</code></pre>
-<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-1" tabindex="-1"></a><span class="co"># load the vardpoor library</span></span>
-<span id="cb78-2"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-2" tabindex="-1"></a><span class="fu">library</span>(vardpoor)</span>
-<span id="cb78-3"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-3" tabindex="-1"></a></span>
-<span id="cb78-4"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-4" tabindex="-1"></a><span class="co"># load the laeken library</span></span>
-<span id="cb78-5"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-5" tabindex="-1"></a><span class="fu">library</span>(laeken)</span>
-<span id="cb78-6"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-6" tabindex="-1"></a></span>
-<span id="cb78-7"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-7" tabindex="-1"></a><span class="co"># load the synthetic EU statistics on income &amp; living conditions</span></span>
-<span id="cb78-8"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-8" tabindex="-1"></a><span class="fu">data</span>(eusilc)</span>
-<span id="cb78-9"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-9" tabindex="-1"></a></span>
-<span id="cb78-10"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-10" tabindex="-1"></a><span class="co"># make all column names lowercase</span></span>
-<span id="cb78-11"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-11" tabindex="-1"></a><span class="fu">names</span>(eusilc) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(eusilc))</span>
-<span id="cb78-12"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-12" tabindex="-1"></a></span>
-<span id="cb78-13"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-13" tabindex="-1"></a><span class="co"># add a column with the row number</span></span>
-<span id="cb78-14"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-14" tabindex="-1"></a>dati <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">data.table</span>(<span class="at">IDd =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(eusilc), eusilc)</span>
-<span id="cb78-15"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-15" tabindex="-1"></a></span>
-<span id="cb78-16"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-16" tabindex="-1"></a><span class="co"># calculate the arpt coefficient</span></span>
-<span id="cb78-17"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-17" tabindex="-1"></a><span class="co"># using the R vardpoor library</span></span>
-<span id="cb78-18"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-18" tabindex="-1"></a>varpoord_arpt_calculation <span class="ot">&lt;-</span></span>
-<span id="cb78-19"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-19" tabindex="-1"></a>  <span class="fu">varpoord</span>(</span>
-<span id="cb78-20"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-20" tabindex="-1"></a>    <span class="co"># analysis variable</span></span>
-<span id="cb78-21"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-21" tabindex="-1"></a>    <span class="at">Y =</span> <span class="st">&quot;eqincome&quot;</span>,</span>
-<span id="cb78-22"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-22" tabindex="-1"></a>    </span>
-<span id="cb78-23"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-23" tabindex="-1"></a>    <span class="co"># weights variable</span></span>
-<span id="cb78-24"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-24" tabindex="-1"></a>    <span class="at">w_final =</span> <span class="st">&quot;rb050&quot;</span>,</span>
-<span id="cb78-25"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-25" tabindex="-1"></a>    </span>
-<span id="cb78-26"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-26" tabindex="-1"></a>    <span class="co"># row number variable</span></span>
-<span id="cb78-27"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-27" tabindex="-1"></a>    <span class="at">ID_level1 =</span> <span class="st">&quot;IDd&quot;</span>,</span>
-<span id="cb78-28"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-28" tabindex="-1"></a>    </span>
-<span id="cb78-29"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-29" tabindex="-1"></a>    <span class="co"># row number variable</span></span>
-<span id="cb78-30"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-30" tabindex="-1"></a>    <span class="at">ID_level2 =</span> <span class="st">&quot;IDd&quot;</span>,</span>
-<span id="cb78-31"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-31" tabindex="-1"></a>    </span>
-<span id="cb78-32"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-32" tabindex="-1"></a>    <span class="co"># strata variable</span></span>
-<span id="cb78-33"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-33" tabindex="-1"></a>    <span class="at">H =</span> <span class="st">&quot;db040&quot;</span>,</span>
-<span id="cb78-34"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-34" tabindex="-1"></a>    </span>
-<span id="cb78-35"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-35" tabindex="-1"></a>    <span class="at">N_h =</span> <span class="cn">NULL</span> ,</span>
-<span id="cb78-36"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-36" tabindex="-1"></a>    </span>
-<span id="cb78-37"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-37" tabindex="-1"></a>    <span class="co"># clustering variable</span></span>
-<span id="cb78-38"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-38" tabindex="-1"></a>    <span class="at">PSU =</span> <span class="st">&quot;rb030&quot;</span>,</span>
-<span id="cb78-39"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-39" tabindex="-1"></a>    </span>
-<span id="cb78-40"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-40" tabindex="-1"></a>    <span class="co"># data.table</span></span>
-<span id="cb78-41"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-41" tabindex="-1"></a>    <span class="at">dataset =</span> dati,</span>
-<span id="cb78-42"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-42" tabindex="-1"></a>    </span>
-<span id="cb78-43"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-43" tabindex="-1"></a>    <span class="co"># arpt coefficient function</span></span>
-<span id="cb78-44"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-44" tabindex="-1"></a>    <span class="at">type =</span> <span class="st">&quot;linarpt&quot;</span>,</span>
-<span id="cb78-45"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-45" tabindex="-1"></a>    </span>
-<span id="cb78-46"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-46" tabindex="-1"></a>    <span class="co"># get linearized variable</span></span>
-<span id="cb78-47"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-47" tabindex="-1"></a>    <span class="at">outp_lin =</span> <span class="cn">TRUE</span></span>
-<span id="cb78-48"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-48" tabindex="-1"></a>  )</span>
-<span id="cb78-49"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-49" tabindex="-1"></a></span>
-<span id="cb78-50"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-50" tabindex="-1"></a></span>
-<span id="cb78-51"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-51" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
-<span id="cb78-52"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-52" tabindex="-1"></a><span class="co"># using our recommended setup</span></span>
-<span id="cb78-53"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-53" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span></span>
-<span id="cb78-54"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-54" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
-<span id="cb78-55"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-55" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
-<span id="cb78-56"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-56" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
-<span id="cb78-57"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-57" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
-<span id="cb78-58"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-58" tabindex="-1"></a>    <span class="at">data =</span> eusilc</span>
-<span id="cb78-59"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-59" tabindex="-1"></a>  )</span>
-<span id="cb78-60"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-60" tabindex="-1"></a></span>
-<span id="cb78-61"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-61" tabindex="-1"></a><span class="co"># immediately run the convey_prep function on it</span></span>
-<span id="cb78-62"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-62" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(des_eusilc)</span>
-<span id="cb78-63"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-63" tabindex="-1"></a></span>
-<span id="cb78-64"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-64" tabindex="-1"></a><span class="co"># coefficients do match</span></span>
-<span id="cb78-65"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb78-65" tabindex="-1"></a>varpoord_arpt_calculation<span class="sc">$</span>all_result<span class="sc">$</span>value</span></code></pre></div>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-1" tabindex="-1"></a><span class="co"># load the convey package</span></span>
+<span id="cb67-2"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-2" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
+<span id="cb67-3"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-3" tabindex="-1"></a></span>
+<span id="cb67-4"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-4" tabindex="-1"></a><span class="co"># load the survey library</span></span>
+<span id="cb67-5"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-5" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb67-6"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-6" tabindex="-1"></a></span>
+<span id="cb67-7"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-7" tabindex="-1"></a><span class="co"># load the vardpoor library</span></span>
+<span id="cb67-8"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-8" tabindex="-1"></a><span class="fu">library</span>(vardpoor)</span>
+<span id="cb67-9"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-9" tabindex="-1"></a></span>
+<span id="cb67-10"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-10" tabindex="-1"></a><span class="co"># load the laeken library</span></span>
+<span id="cb67-11"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-11" tabindex="-1"></a><span class="fu">library</span>(laeken)</span>
+<span id="cb67-12"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-12" tabindex="-1"></a></span>
+<span id="cb67-13"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-13" tabindex="-1"></a><span class="co"># load the synthetic EU statistics on income &amp; living conditions</span></span>
+<span id="cb67-14"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-14" tabindex="-1"></a><span class="fu">data</span>(eusilc)</span>
+<span id="cb67-15"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-15" tabindex="-1"></a></span>
+<span id="cb67-16"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-16" tabindex="-1"></a><span class="co"># make all column names lowercase</span></span>
+<span id="cb67-17"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-17" tabindex="-1"></a><span class="fu">names</span>(eusilc) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(eusilc))</span>
+<span id="cb67-18"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-18" tabindex="-1"></a></span>
+<span id="cb67-19"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-19" tabindex="-1"></a><span class="co"># add a column with the row number</span></span>
+<span id="cb67-20"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-20" tabindex="-1"></a>dati <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">data.table</span>(<span class="at">IDd =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(eusilc), eusilc)</span>
+<span id="cb67-21"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-21" tabindex="-1"></a></span>
+<span id="cb67-22"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-22" tabindex="-1"></a><span class="co"># calculate the arpt coefficient</span></span>
+<span id="cb67-23"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-23" tabindex="-1"></a><span class="co"># using the R vardpoor library</span></span>
+<span id="cb67-24"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-24" tabindex="-1"></a>varpoord_arpt_calculation <span class="ot">&lt;-</span></span>
+<span id="cb67-25"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-25" tabindex="-1"></a>  <span class="fu">varpoord</span>(</span>
+<span id="cb67-26"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-26" tabindex="-1"></a>    <span class="co"># analysis variable</span></span>
+<span id="cb67-27"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-27" tabindex="-1"></a>    <span class="at">Y =</span> <span class="st">&quot;eqincome&quot;</span>,</span>
+<span id="cb67-28"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-28" tabindex="-1"></a>    </span>
+<span id="cb67-29"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-29" tabindex="-1"></a>    <span class="co"># weights variable</span></span>
+<span id="cb67-30"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-30" tabindex="-1"></a>    <span class="at">w_final =</span> <span class="st">&quot;rb050&quot;</span>,</span>
+<span id="cb67-31"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-31" tabindex="-1"></a>    </span>
+<span id="cb67-32"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-32" tabindex="-1"></a>    <span class="co"># row number variable</span></span>
+<span id="cb67-33"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-33" tabindex="-1"></a>    <span class="at">ID_level1 =</span> <span class="st">&quot;IDd&quot;</span>,</span>
+<span id="cb67-34"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-34" tabindex="-1"></a>    </span>
+<span id="cb67-35"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-35" tabindex="-1"></a>    <span class="co"># row number variable</span></span>
+<span id="cb67-36"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-36" tabindex="-1"></a>    <span class="at">ID_level2 =</span> <span class="st">&quot;IDd&quot;</span>,</span>
+<span id="cb67-37"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-37" tabindex="-1"></a>    </span>
+<span id="cb67-38"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-38" tabindex="-1"></a>    <span class="co"># strata variable</span></span>
+<span id="cb67-39"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-39" tabindex="-1"></a>    <span class="at">H =</span> <span class="st">&quot;db040&quot;</span>,</span>
+<span id="cb67-40"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-40" tabindex="-1"></a>    </span>
+<span id="cb67-41"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-41" tabindex="-1"></a>    <span class="at">N_h =</span> <span class="cn">NULL</span> ,</span>
+<span id="cb67-42"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-42" tabindex="-1"></a>    </span>
+<span id="cb67-43"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-43" tabindex="-1"></a>    <span class="co"># clustering variable</span></span>
+<span id="cb67-44"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-44" tabindex="-1"></a>    <span class="at">PSU =</span> <span class="st">&quot;rb030&quot;</span>,</span>
+<span id="cb67-45"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-45" tabindex="-1"></a>    </span>
+<span id="cb67-46"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-46" tabindex="-1"></a>    <span class="co"># data.table</span></span>
+<span id="cb67-47"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-47" tabindex="-1"></a>    <span class="at">dataset =</span> dati,</span>
+<span id="cb67-48"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-48" tabindex="-1"></a>    </span>
+<span id="cb67-49"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-49" tabindex="-1"></a>    <span class="co"># arpt coefficient function</span></span>
+<span id="cb67-50"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-50" tabindex="-1"></a>    <span class="at">type =</span> <span class="st">&quot;linarpt&quot;</span>,</span>
+<span id="cb67-51"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-51" tabindex="-1"></a>    </span>
+<span id="cb67-52"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-52" tabindex="-1"></a>    <span class="co"># get linearized variable</span></span>
+<span id="cb67-53"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-53" tabindex="-1"></a>    <span class="at">outp_lin =</span> <span class="cn">TRUE</span></span>
+<span id="cb67-54"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-54" tabindex="-1"></a>  )</span>
+<span id="cb67-55"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-55" tabindex="-1"></a></span>
+<span id="cb67-56"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-56" tabindex="-1"></a></span>
+<span id="cb67-57"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-57" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
+<span id="cb67-58"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-58" tabindex="-1"></a><span class="co"># using our recommended setup</span></span>
+<span id="cb67-59"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-59" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span></span>
+<span id="cb67-60"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-60" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
+<span id="cb67-61"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-61" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
+<span id="cb67-62"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-62" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
+<span id="cb67-63"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-63" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
+<span id="cb67-64"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-64" tabindex="-1"></a>    <span class="at">data =</span> eusilc</span>
+<span id="cb67-65"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-65" tabindex="-1"></a>  )</span>
+<span id="cb67-66"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-66" tabindex="-1"></a></span>
+<span id="cb67-67"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-67" tabindex="-1"></a><span class="co"># immediately run the convey_prep function on it</span></span>
+<span id="cb67-68"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-68" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(des_eusilc)</span>
+<span id="cb67-69"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-69" tabindex="-1"></a></span>
+<span id="cb67-70"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-70" tabindex="-1"></a><span class="co"># coefficients do match</span></span>
+<span id="cb67-71"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb67-71" tabindex="-1"></a>varpoord_arpt_calculation<span class="sc">$</span>all_result<span class="sc">$</span>value</span></code></pre></div>
 <pre><code>## [1] 10859.24</code></pre>
-<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb80-1" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">svyarpt</span>( <span class="sc">~</span> eqincome , des_eusilc))</span></code></pre></div>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb69-1" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">svyarpt</span>( <span class="sc">~</span> eqincome , des_eusilc))</span></code></pre></div>
 <pre><code>## eqincome 
 ## 10859.24</code></pre>
-<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb82-1" tabindex="-1"></a><span class="co"># linearized variables do match</span></span>
-<span id="cb82-2"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb82-2" tabindex="-1"></a><span class="co"># vardpoor</span></span>
-<span id="cb82-3"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb82-3" tabindex="-1"></a>lin_arpt_varpoord <span class="ot">&lt;-</span> varpoord_arpt_calculation<span class="sc">$</span>lin_out<span class="sc">$</span>lin_arpt</span>
-<span id="cb82-4"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb82-4" tabindex="-1"></a><span class="co"># convey</span></span>
-<span id="cb82-5"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb82-5" tabindex="-1"></a>lin_arpt_convey <span class="ot">&lt;-</span> <span class="fu">attr</span>(<span class="fu">svyarpt</span>( <span class="sc">~</span> eqincome , des_eusilc), <span class="st">&quot;lin&quot;</span>)</span>
-<span id="cb82-6"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb82-6" tabindex="-1"></a></span>
-<span id="cb82-7"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb82-7" tabindex="-1"></a><span class="co"># check equality</span></span>
-<span id="cb82-8"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb82-8" tabindex="-1"></a><span class="fu">all.equal</span>(lin_arpt_varpoord, lin_arpt_convey)</span></code></pre></div>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb71-1" tabindex="-1"></a><span class="co"># linearized variables do match</span></span>
+<span id="cb71-2"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb71-2" tabindex="-1"></a><span class="co"># vardpoor</span></span>
+<span id="cb71-3"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb71-3" tabindex="-1"></a>lin_arpt_varpoord <span class="ot">&lt;-</span> varpoord_arpt_calculation<span class="sc">$</span>lin_out<span class="sc">$</span>lin_arpt</span>
+<span id="cb71-4"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb71-4" tabindex="-1"></a><span class="co"># convey</span></span>
+<span id="cb71-5"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb71-5" tabindex="-1"></a>lin_arpt_convey <span class="ot">&lt;-</span> <span class="fu">attr</span>(<span class="fu">svyarpt</span>( <span class="sc">~</span> eqincome , des_eusilc), <span class="st">&quot;lin&quot;</span>)</span>
+<span id="cb71-6"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb71-6" tabindex="-1"></a></span>
+<span id="cb71-7"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb71-7" tabindex="-1"></a><span class="co"># check equality</span></span>
+<span id="cb71-8"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb71-8" tabindex="-1"></a><span class="fu">all.equal</span>(lin_arpt_varpoord, lin_arpt_convey)</span></code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
-<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb84-1" tabindex="-1"></a><span class="co"># variances do not match exactly</span></span>
-<span id="cb84-2"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb84-2" tabindex="-1"></a><span class="fu">attr</span>(<span class="fu">svyarpt</span>( <span class="sc">~</span> eqincome , des_eusilc) , <span class="st">&#39;var&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb73-1" tabindex="-1"></a><span class="co"># variances do not match exactly</span></span>
+<span id="cb73-2"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb73-2" tabindex="-1"></a><span class="fu">attr</span>(<span class="fu">svyarpt</span>( <span class="sc">~</span> eqincome , des_eusilc) , <span class="st">&#39;var&#39;</span>)</span></code></pre></div>
 <pre><code>##          eqincome
 ## eqincome 2564.027</code></pre>
-<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb86-1" tabindex="-1"></a>varpoord_arpt_calculation<span class="sc">$</span>all_result<span class="sc">$</span>var</span></code></pre></div>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb75-1" tabindex="-1"></a>varpoord_arpt_calculation<span class="sc">$</span>all_result<span class="sc">$</span>var</span></code></pre></div>
 <pre><code>## [1] 2559.442</code></pre>
-<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb88-1" tabindex="-1"></a><span class="co"># standard errors do not match exactly</span></span>
-<span id="cb88-2"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb88-2" tabindex="-1"></a>varpoord_arpt_calculation<span class="sc">$</span>all_result<span class="sc">$</span>se</span></code></pre></div>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb77-1" tabindex="-1"></a><span class="co"># standard errors do not match exactly</span></span>
+<span id="cb77-2"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb77-2" tabindex="-1"></a>varpoord_arpt_calculation<span class="sc">$</span>all_result<span class="sc">$</span>se</span></code></pre></div>
 <pre><code>## [1] 50.59093</code></pre>
-<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb90-1" tabindex="-1"></a><span class="fu">SE</span>(<span class="fu">svyarpt</span>( <span class="sc">~</span> eqincome , des_eusilc))</span></code></pre></div>
+<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb79-1" tabindex="-1"></a><span class="fu">SE</span>(<span class="fu">svyarpt</span>( <span class="sc">~</span> eqincome , des_eusilc))</span></code></pre></div>
 <pre><code>##          eqincome
 ## eqincome 50.63622</code></pre>
 <p>The variance estimate is computed by using the approximation defined in <a href="2-var.html#var">2</a>, while the linearized variable <span class="math inline">\(z\)</span> is defined by <a href="2.1-lin.html#lin">2.1</a>. The functions <code>convey::svyarpt</code> and <code>vardpoor::linarpt</code> produce the same linearized variable <span class="math inline">\(z\)</span>.</p>
 <p>However, the measures of uncertainty do not line up, because <code>library(vardpoor)</code> defaults to an ultimate cluster method that can be replicated with an alternative setup of the <code>survey.design</code> object.</p>
-<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb92-1"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-1" tabindex="-1"></a><span class="co"># within each strata, sum up the weights</span></span>
-<span id="cb92-2"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-2" tabindex="-1"></a>cluster_sums <span class="ot">&lt;-</span></span>
-<span id="cb92-3"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-3" tabindex="-1"></a>  <span class="fu">aggregate</span>(eusilc<span class="sc">$</span>rb050 , <span class="fu">list</span>(eusilc<span class="sc">$</span>db040) , sum)</span>
-<span id="cb92-4"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-4" tabindex="-1"></a></span>
-<span id="cb92-5"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-5" tabindex="-1"></a><span class="co"># name the within-strata sums of weights the `cluster_sum`</span></span>
-<span id="cb92-6"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-6" tabindex="-1"></a><span class="fu">names</span>(cluster_sums) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;db040&quot;</span> , <span class="st">&quot;cluster_sum&quot;</span>)</span>
-<span id="cb92-7"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-7" tabindex="-1"></a></span>
-<span id="cb92-8"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-8" tabindex="-1"></a><span class="co"># merge this column back onto the data.frame</span></span>
-<span id="cb92-9"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-9" tabindex="-1"></a>eusilc <span class="ot">&lt;-</span> <span class="fu">merge</span>(eusilc , cluster_sums)</span>
-<span id="cb92-10"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-10" tabindex="-1"></a></span>
-<span id="cb92-11"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-11" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
-<span id="cb92-12"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-12" tabindex="-1"></a><span class="co"># with the fpc using the cluster sum</span></span>
-<span id="cb92-13"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-13" tabindex="-1"></a>des_eusilc_ultimate_cluster <span class="ot">&lt;-</span></span>
-<span id="cb92-14"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-14" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
-<span id="cb92-15"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-15" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
-<span id="cb92-16"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-16" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
-<span id="cb92-17"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-17" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
-<span id="cb92-18"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-18" tabindex="-1"></a>    <span class="at">data =</span> eusilc ,</span>
-<span id="cb92-19"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-19" tabindex="-1"></a>    <span class="at">fpc =</span> <span class="sc">~</span> cluster_sum</span>
-<span id="cb92-20"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-20" tabindex="-1"></a>  )</span>
-<span id="cb92-21"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-21" tabindex="-1"></a></span>
-<span id="cb92-22"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-22" tabindex="-1"></a><span class="co"># again, immediately run the convey_prep function on the `survey.design`</span></span>
-<span id="cb92-23"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-23" tabindex="-1"></a>des_eusilc_ultimate_cluster <span class="ot">&lt;-</span></span>
-<span id="cb92-24"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-24" tabindex="-1"></a>  <span class="fu">convey_prep</span>(des_eusilc_ultimate_cluster)</span>
-<span id="cb92-25"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-25" tabindex="-1"></a></span>
-<span id="cb92-26"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-26" tabindex="-1"></a></span>
-<span id="cb92-27"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-27" tabindex="-1"></a></span>
-<span id="cb92-28"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-28" tabindex="-1"></a><span class="co"># matches</span></span>
-<span id="cb92-29"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-29" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all.equal</span>(</span>
-<span id="cb92-30"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-30" tabindex="-1"></a>  <span class="fu">attr</span>(<span class="fu">svyarpt</span>( <span class="sc">~</span> eqincome , des_eusilc_ultimate_cluster) , <span class="st">&#39;var&#39;</span>)[<span class="dv">1</span>] ,</span>
-<span id="cb92-31"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-31" tabindex="-1"></a>  varpoord_arpt_calculation<span class="sc">$</span>all_result<span class="sc">$</span>var</span>
-<span id="cb92-32"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-32" tabindex="-1"></a>))</span>
-<span id="cb92-33"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-33" tabindex="-1"></a></span>
-<span id="cb92-34"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-34" tabindex="-1"></a><span class="co"># matches</span></span>
-<span id="cb92-35"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-35" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all.equal</span>(varpoord_arpt_calculation<span class="sc">$</span>all_result<span class="sc">$</span>se ,</span>
-<span id="cb92-36"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-36" tabindex="-1"></a>                    <span class="fu">SE</span>(</span>
-<span id="cb92-37"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-37" tabindex="-1"></a>                      <span class="fu">svyarpt</span>( <span class="sc">~</span> eqincome , des_eusilc_ultimate_cluster)</span>
-<span id="cb92-38"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb92-38" tabindex="-1"></a>                    )[<span class="dv">1</span>]))</span></code></pre></div>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-1" tabindex="-1"></a><span class="co"># within each strata, sum up the weights</span></span>
+<span id="cb81-2"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-2" tabindex="-1"></a>cluster_sums <span class="ot">&lt;-</span></span>
+<span id="cb81-3"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-3" tabindex="-1"></a>  <span class="fu">aggregate</span>(eusilc<span class="sc">$</span>rb050 , <span class="fu">list</span>(eusilc<span class="sc">$</span>db040) , sum)</span>
+<span id="cb81-4"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-4" tabindex="-1"></a></span>
+<span id="cb81-5"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-5" tabindex="-1"></a><span class="co"># name the within-strata sums of weights the `cluster_sum`</span></span>
+<span id="cb81-6"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-6" tabindex="-1"></a><span class="fu">names</span>(cluster_sums) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;db040&quot;</span> , <span class="st">&quot;cluster_sum&quot;</span>)</span>
+<span id="cb81-7"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-7" tabindex="-1"></a></span>
+<span id="cb81-8"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-8" tabindex="-1"></a><span class="co"># merge this column back onto the data.frame</span></span>
+<span id="cb81-9"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-9" tabindex="-1"></a>eusilc <span class="ot">&lt;-</span> <span class="fu">merge</span>(eusilc , cluster_sums)</span>
+<span id="cb81-10"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-10" tabindex="-1"></a></span>
+<span id="cb81-11"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-11" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
+<span id="cb81-12"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-12" tabindex="-1"></a><span class="co"># with the fpc using the cluster sum</span></span>
+<span id="cb81-13"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-13" tabindex="-1"></a>des_eusilc_ultimate_cluster <span class="ot">&lt;-</span></span>
+<span id="cb81-14"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-14" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
+<span id="cb81-15"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-15" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
+<span id="cb81-16"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-16" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
+<span id="cb81-17"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-17" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
+<span id="cb81-18"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-18" tabindex="-1"></a>    <span class="at">data =</span> eusilc ,</span>
+<span id="cb81-19"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-19" tabindex="-1"></a>    <span class="at">fpc =</span> <span class="sc">~</span> cluster_sum</span>
+<span id="cb81-20"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-20" tabindex="-1"></a>  )</span>
+<span id="cb81-21"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-21" tabindex="-1"></a></span>
+<span id="cb81-22"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-22" tabindex="-1"></a><span class="co"># again, immediately run the convey_prep function on the `survey.design`</span></span>
+<span id="cb81-23"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-23" tabindex="-1"></a>des_eusilc_ultimate_cluster <span class="ot">&lt;-</span></span>
+<span id="cb81-24"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-24" tabindex="-1"></a>  <span class="fu">convey_prep</span>(des_eusilc_ultimate_cluster)</span>
+<span id="cb81-25"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-25" tabindex="-1"></a></span>
+<span id="cb81-26"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-26" tabindex="-1"></a></span>
+<span id="cb81-27"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-27" tabindex="-1"></a></span>
+<span id="cb81-28"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-28" tabindex="-1"></a><span class="co"># matches</span></span>
+<span id="cb81-29"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-29" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all.equal</span>(</span>
+<span id="cb81-30"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-30" tabindex="-1"></a>  <span class="fu">attr</span>(<span class="fu">svyarpt</span>( <span class="sc">~</span> eqincome , des_eusilc_ultimate_cluster) , <span class="st">&#39;var&#39;</span>)[<span class="dv">1</span>] ,</span>
+<span id="cb81-31"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-31" tabindex="-1"></a>  varpoord_arpt_calculation<span class="sc">$</span>all_result<span class="sc">$</span>var</span>
+<span id="cb81-32"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-32" tabindex="-1"></a>))</span>
+<span id="cb81-33"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-33" tabindex="-1"></a></span>
+<span id="cb81-34"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-34" tabindex="-1"></a><span class="co"># matches</span></span>
+<span id="cb81-35"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-35" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all.equal</span>(varpoord_arpt_calculation<span class="sc">$</span>all_result<span class="sc">$</span>se ,</span>
+<span id="cb81-36"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-36" tabindex="-1"></a>                    <span class="fu">SE</span>(</span>
+<span id="cb81-37"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-37" tabindex="-1"></a>                      <span class="fu">svyarpt</span>( <span class="sc">~</span> eqincome , des_eusilc_ultimate_cluster)</span>
+<span id="cb81-38"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#cb81-38" tabindex="-1"></a>                    )[<span class="dv">1</span>]))</span></code></pre></div>
 <p>For additional usage examples of <code>svyarpt</code>, type <code>?convey::svyarpt</code> in the R console.</p>
 </div>
 </div>
