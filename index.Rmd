@@ -176,7 +176,7 @@ svygini( ~ py010n , design = des_eusilc_rep , na.rm = TRUE)
 
 ## Current Population Survey - Annual Social and Economic Supplement (CPS-ASEC)
 
-Sponsored jointly by the U.S. Census Bureau and the U.S. Bureau of Labor Statistics (BLS), the Current Population Survey is the primary source of labor force statistics for the population of the United States.
+Sponsored jointly by the U.S. Census Bureau and the U.S. Bureau of Labor Statistics (BLS), the CPS-ASEC is the primary source of labor force statistics for the population of the United States.
 
 This section downloads, imports, and prepares the most current microdata for analysis, then reproduces some statistics and margin of error terms from the U.S. Census Bureau.
 
@@ -318,7 +318,7 @@ svygini( ~ pearnval , cps_ftfy_worker_design)
 
 ## Pesquisa Nacional por Amostra de Domicílios Contínua (PNAD-Continua)
 
-Administered by the Instituto Brasileiro de Geografia e Estatística (IBGE), the Pesquisa Nacional por Amostra de Domicílios Contínua is the primary source of labor force statistics for the population of Brazil.
+Administered by the Instituto Brasileiro de Geografia e Estatística (IBGE), the PNAD-Continua is the primary source of labor force statistics for the population of Brazil.
 
 This section downloads, imports, and prepares the most current microdata for analysis, then reproduces some statistics and margin of error terms from IBGE.^[See [this link](https://agenciadenoticias.ibge.gov.br/agencia-noticias/2012-agencia-de-noticias/noticias/36857-em-2022-mercado-de-trabalho-e-auxilio-brasil-permitem-recuperacao-dos-rendimentos) for IBGE Gini estimates reproduced below.]
 
@@ -445,4 +445,419 @@ stopifnot(round(coef(pnadc_earnings_gini) , 3) == 0.486)
 
 # match 2022 earnings gini coefficient of variation
 stopifnot(round(cv(pnadc_earnings_gini), 3) == 0.007) 
+```
+
+
+
+
+## Survey of Consumer Finances (SCF)
+
+
+
+The SCF studies net worth across the United States by asking respondents about both active and passive income, mortgages, pensions, credit card debt, even car leases.  Administered by the [Board of Governors of the Federal Reserve System](https://www.federalreserve.gov/) triennially since 1989, this complex sample survey generalizes to the civilian non-institutional population and comprehensively assesses household wealth.   
+
+This section downloads, imports, and prepares the most current microdata for analysis, then reproduces some statistics and margin of error terms from the Federal Reserve.
+
+This survey uses a multiply-imputed variance estimation technique described in the [2004 Codebook](https://www.federalreserve.gov/econres/files/2004_codebk2004.txt). Most users do not need to study this function carefully. Define a function specific to only this dataset:
+
+```{r, results = 'hide'}
+scf_MIcombine <-
+  function (results,
+            variances,
+            call = sys.call(),
+            df.complete = Inf,
+            ...) {
+    m <- length(results)
+    oldcall <- attr(results, "call")
+    if (missing(variances)) {
+      variances <- suppressWarnings(lapply(results, vcov))
+      results <- lapply(results, coef)
+    }
+    vbar <- variances[[1]]
+    cbar <- results[[1]]
+    for (i in 2:m) {
+      cbar <- cbar + results[[i]]
+      # MODIFICATION:
+      # vbar <- vbar + variances[[i]]
+    }
+    cbar <- cbar / m
+    # MODIFICATION:
+    # vbar <- vbar/m
+    evar <- var(do.call("rbind", results))
+    r <- (1 + 1 / m) * evar / vbar
+    df <- (m - 1) * (1 + 1 / r) ^ 2
+    if (is.matrix(df))
+      df <- diag(df)
+    if (is.finite(df.complete)) {
+      dfobs <- ((df.complete + 1) / (df.complete + 3)) * df.complete *
+        vbar / (vbar + evar)
+      if (is.matrix(dfobs))
+        dfobs <- diag(dfobs)
+      df <- 1 / (1 / dfobs + 1 / df)
+    }
+    if (is.matrix(r))
+      r <- diag(r)
+    rval <- list(
+      coefficients = cbar,
+      variance = vbar + evar *
+        (m + 1) / m,
+      call = c(oldcall, call),
+      nimp = m,
+      df = df,
+      missinfo = (r + 2 / (df + 3)) / (r + 1)
+    )
+    class(rval) <- "MIresult"
+    rval
+  }
+```
+
+
+
+Define a function to download and import each stata file:
+
+```{r, results = 'hide'}
+library(haven)
+
+scf_dta_import <-
+  function(this_url) {
+    this_tf <- tempfile()
+    
+    download.file(this_url , this_tf , mode = 'wb')
+    
+    this_tbl <- read_dta(this_tf)
+    
+    this_df <- data.frame(this_tbl)
+    
+    file.remove(this_tf)
+    
+    names(this_df) <- tolower(names(this_df))
+    
+    this_df
+  }
+```	
+
+Download and import the full, summary extract, and replicate weights tables:
+
+```{r, results = 'hide'}
+scf_df <-
+  scf_dta_import("https://www.federalreserve.gov/econres/files/scf2022s.zip")
+
+ext_df <-
+  scf_dta_import("https://www.federalreserve.gov/econres/files/scfp2022s.zip")
+
+scf_rw_df <-
+  scf_dta_import("https://www.federalreserve.gov/econres/files/scf2022rw1s.zip")
+```
+
+Confirm both the full public data and the summary extract contain five records per family:
+```{r, results = 'hide'}
+stopifnot(nrow(scf_df) == nrow(scf_rw_df) * 5)
+stopifnot(nrow(scf_df) == nrow(ext_df))
+```
+
+Confirm only the primary economic unit and the five implicate identifiers overlap:
+```{r, results = 'hide'}
+stopifnot(all(sort(intersect(
+  names(scf_df) , names(ext_df)
+)) == c('y1' , 'yy1')))
+stopifnot(all(sort(intersect(
+  names(scf_df) , names(scf_rw_df)
+)) == c('y1' , 'yy1')))
+stopifnot(all(sort(intersect(
+  names(ext_df) , names(scf_rw_df)
+)) == c('y1' , 'yy1')))
+```
+
+Remove the implicate identifier from the replicate weights table, add a column of fives for weighting:
+```{r, results = 'hide'}
+scf_rw_df[, 'y1'] <- NULL
+
+scf_df[, 'five'] <- 5
+```
+
+Construct a multiply-imputed, complex sample survey design:
+
+Break the main table into five different implicates based on the final character of the column `y1`:
+```{r, results = 'hide'}
+library(stringr)
+
+s1_df <- scf_df[str_sub(scf_df[, 'y1'] ,-1 ,-1) == 1 ,]
+s2_df <- scf_df[str_sub(scf_df[, 'y1'] ,-1 ,-1) == 2 ,]
+s3_df <- scf_df[str_sub(scf_df[, 'y1'] ,-1 ,-1) == 3 ,]
+s4_df <- scf_df[str_sub(scf_df[, 'y1'] ,-1 ,-1) == 4 ,]
+s5_df <- scf_df[str_sub(scf_df[, 'y1'] ,-1 ,-1) == 5 ,]
+```
+
+Combine these into a single `list`, then merge each implicate with the summary extract:
+```{r, results = 'hide'}
+scf_imp <- list(s1_df , s2_df , s3_df , s4_df , s5_df)
+
+scf_list <- lapply(scf_imp , merge , ext_df)
+
+```
+
+Replace all missing values in the replicate weights table with zeroes, multiply the replicate weights by the multiplication factor, then only keep the unique identifier and the final (combined) replicate weights:
+```{r, results = 'hide'}
+scf_rw_df[is.na(scf_rw_df)] <- 0
+
+scf_rw_df[, paste0('wgt' , 1:999)] <-
+  scf_rw_df[, paste0('wt1b' , 1:999)] * scf_rw_df[, paste0('mm' , 1:999)]
+
+scf_rw_df <- scf_rw_df[, c('yy1' , paste0('wgt' , 1:999))]
+```
+
+Sort both the five implicates and also the replicate weights table by the unique identifier:
+
+```{r, results = 'hide'}
+scf_list <-
+  lapply(scf_list , function(w)
+    w[order(w[, 'yy1']) ,])
+
+scf_rw_df <- scf_rw_df[order(scf_rw_df[, 'yy1']) ,]
+```
+
+Define the design:
+```{r, results = 'hide'}
+library(survey)
+library(mitools)
+
+scf_design <-
+  svrepdesign(
+    weights = ~ wgt ,
+    repweights = scf_rw_df[,-1] ,
+    data = imputationList(scf_list) ,
+    scale = 1 ,
+    rscales = rep(1 / 998 , 999) ,
+    mse = FALSE ,
+    type = "other" ,
+    combined.weights = TRUE
+  )
+
+```
+
+
+
+Run the `convey_prep()` function on the full design:
+
+```{r, results = 'hide'}
+scf_design$designs <- lapply(scf_design$designs , convey_prep)
+```
+
+This example matches the "Table 4" tab's cell Y6 of the [Excel Based on Public Data](https://www.federalreserve.gov/econres/files/scf2022_tables_public_nominal_historical.xlsx):
+
+```{r, results = 'hide'}
+mean_net_worth <-
+  scf_MIcombine(with(scf_design , svymean(~ networth)))
+
+stopifnot(round(coef(mean_net_worth) / 1000 , 1) == 1059.5)
+```
+
+This example comes within $500 of the standard error of mean net worth from Table 2 of the [Federal Reserve Bulletin](https://www.federalreserve.gov/publications/files/scf23.pdf#page=18), displaying the minor differences between the [Internal Data](https://www.federalreserve.gov/econres/files/scf2022_tables_internal_nominal_historical.xlsx) and [Public Data](https://www.federalreserve.gov/econres/files/scf2022_tables_public_nominal_historical.xlsx):
+```{r, results = 'hide'}
+stopifnot(abs(23.2 - round(SE(mean_net_worth) / 1000 , 1)) < 0.5)
+```
+
+This example matches the "Table 4" tab's cells X6 of the [Excel Based on Public Data](https://www.federalreserve.gov/econres/files/scf2022_tables_public_nominal_historical.xlsx):
+
+```{r, results = 'hide'}
+# compute quantile with all five implicates stacked (not the recommended technique)
+fake_design <-
+  svydesign(~ 1 , data = ext_df[c('networth' , 'wgt')] , weights = ~ wgt)
+
+median_net_worth_incorrect_errors <-
+  svyquantile(~ networth , fake_design , 0.5)
+
+stopifnot(round(coef(median_net_worth_incorrect_errors) / 1000 , 2) == 192.7)
+```
+
+
+
+
+
+### Analysis Examples with the `survey` library
+
+Add new columns to the data set:
+```{r, results = 'hide'}
+scf_design <-
+  update(
+    scf_design ,
+    
+    hhsex = factor(
+      hhsex ,
+      levels = 1:2 ,
+      labels = c("male" , "female")
+    ) ,
+    
+    married = as.numeric(married == 1) ,
+    
+    edcl =
+      factor(
+        edcl ,
+        levels = 1:4 ,
+        labels =
+          c(
+            "less than high school" ,
+            "high school or GED" ,
+            "some college" ,
+            "college degree"
+          )
+      )
+    
+  )
+```
+
+Count the unweighted number of records in the survey sample, overall and by groups:
+```{r, results = 'hide'}
+scf_MIcombine(with(scf_design , svyby(~ five , ~ five , unwtd.count)))
+
+scf_MIcombine(with(scf_design , svyby(~ five , ~ hhsex , unwtd.count)))
+```
+
+Count the weighted size of the generalizable population, overall and by groups:
+```{r, results = 'hide'}
+scf_MIcombine(with(scf_design , svytotal(~ five)))
+
+scf_MIcombine(with(scf_design ,
+                   svyby(~ five , ~ hhsex , svytotal)))
+```
+
+Calculate the mean (average) of a linear variable, overall and by groups:
+```{r, results = 'hide'}
+scf_MIcombine(with(scf_design , svymean(~ networth)))
+
+scf_MIcombine(with(scf_design ,
+                   svyby(~ networth , ~ hhsex , svymean)))
+```
+
+Calculate the distribution of a categorical variable, overall and by groups:
+```{r, results = 'hide'}
+scf_MIcombine(with(scf_design , svymean(~ edcl)))
+
+scf_MIcombine(with(scf_design ,
+                   svyby(~ edcl , ~ hhsex , svymean)))
+```
+
+Calculate the sum of a linear variable, overall and by groups:
+```{r, results = 'hide'}
+scf_MIcombine(with(scf_design , svytotal(~ networth)))
+
+scf_MIcombine(with(scf_design ,
+                   svyby(~ networth , ~ hhsex , svytotal)))
+```
+
+Calculate the weighted sum of a categorical variable, overall and by groups:
+```{r, results = 'hide'}
+scf_MIcombine(with(scf_design , svytotal(~ edcl)))
+
+scf_MIcombine(with(scf_design ,
+                   svyby(~ edcl , ~ hhsex , svytotal)))
+```
+
+Calculate the median (50th percentile) of a linear variable, overall and by groups:
+```{r, results = 'hide'}
+scf_MIcombine(with(
+  scf_design ,
+  svyquantile(~ networth ,
+              0.5 , se = TRUE , interval.type = 'quantile')
+))
+
+scf_MIcombine(with(
+  scf_design ,
+  svyby(
+    ~ networth ,
+    ~ hhsex ,
+    svyquantile ,
+    0.5 ,
+    se = TRUE ,
+    interval.type = 'quantile' ,
+    ci = TRUE
+  )
+))
+```
+
+Estimate a ratio:
+```{r, results = 'hide'}
+scf_MIcombine(with(
+  scf_design ,
+  svyratio(numerator = ~ income , denominator = ~ networth)
+))
+```
+
+Restrict the survey design to labor force participants:
+```{r, results = 'hide'}
+sub_scf_design <- subset(scf_design , lf == 1)
+```
+Calculate the mean (average) of this subset:
+```{r, results = 'hide'}
+scf_MIcombine(with(sub_scf_design , svymean(~ networth)))
+```
+
+Extract the coefficient, standard error, confidence interval, and coefficient of variation from any descriptive statistics function result, overall and by groups:
+```{r, results = 'hide'}
+this_result <-
+  scf_MIcombine(with(scf_design ,
+                     svymean(~ networth)))
+
+coef(this_result)
+SE(this_result)
+confint(this_result)
+cv(this_result)
+
+grouped_result <-
+  scf_MIcombine(with(scf_design ,
+                     svyby(~ networth , ~ hhsex , svymean)))
+
+coef(grouped_result)
+SE(grouped_result)
+confint(grouped_result)
+cv(grouped_result)
+```
+
+Calculate the degrees of freedom of any survey design object:
+```{r, results = 'hide'}
+degf(scf_design$designs[[1]])
+```
+
+Calculate the complex sample survey-adjusted variance of any statistic:
+```{r, results = 'hide'}
+scf_MIcombine(with(scf_design , svyvar(~ networth)))
+```
+
+Include the complex sample design effect in the result for a specific statistic:
+```{r, results = 'hide'}
+# SRS without replacement
+scf_MIcombine(with(scf_design ,
+                   svymean(~ networth , deff = TRUE)))
+
+# SRS with replacement
+scf_MIcombine(with(scf_design ,
+                   svymean(~ networth , deff = "replace")))
+```
+
+
+Perform a survey-weighted generalized linear model:
+```{r, results = 'hide'}
+glm_result <-
+  scf_MIcombine(with(scf_design ,
+                     svyglm(networth ~ married + edcl)))
+
+summary(glm_result)
+```
+
+
+
+### Family Net Worth
+
+Calculate the gini coefficient with family net worth:
+
+```{r}
+scf_MIcombine(with(scf_design , svygini(~ networth)))
+```
+
+### Family Income
+
+Calculate the gini coefficient with income:
+
+```{r}
+scf_MIcombine(with(scf_design , svygini(~ income)))
 ```
