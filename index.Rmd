@@ -183,7 +183,7 @@ This section downloads, imports, and prepares the most current microdata for ana
 
 Download and unzip the 2023 file:
 
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 library(httr)
 
 tf <- tempfile()
@@ -198,7 +198,7 @@ unzipped_files <- unzip(tf , exdir = tempdir())
 
 Import all four files:
 
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 library(haven)
 
 four_tbl <- lapply(unzipped_files , read_sas)
@@ -223,7 +223,7 @@ repwgts_df <-
 
 Divide weights:
 
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 household_df[, 'hsup_wgt'] <- household_df[, 'hsup_wgt'] / 100
 family_df[, 'fsup_wgt'] <- family_df[, 'fsup_wgt'] / 100
 for (j in c('marsupwt' , 'a_ernlwt' , 'a_fnlwgt'))
@@ -232,7 +232,7 @@ for (j in c('marsupwt' , 'a_ernlwt' , 'a_fnlwgt'))
 
 Merge these four files:
 
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 names(family_df)[names(family_df) == 'fh_seq'] <- 'h_seq'
 names(person_df)[names(person_df) == 'ph_seq'] <- 'h_seq'
 names(person_df)[names(person_df) == 'phf_seq'] <- 'ffpos'
@@ -246,7 +246,7 @@ stopifnot(nrow(cps_df) == nrow(person_df))
 
 Construct a complex sample survey design:
 
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 library(survey)
 
 cps_design <-
@@ -263,7 +263,7 @@ cps_design <-
 
 Run the `convey_prep()` function on the full design:
 
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 cps_design <- convey_prep(cps_design)
 ```
 
@@ -326,7 +326,7 @@ This section downloads, imports, and prepares the most current microdata for ana
 
 Download and import the 2022 file:
 
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 library(PNADcIBGE)
 
 pnadc_df <-
@@ -339,7 +339,7 @@ names(pnadc_df) <- tolower(names(pnadc_df))
 ```
 
 Recode a number of variables:
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 pnadc_df <-
   transform(
     pnadc_df ,
@@ -392,7 +392,7 @@ pnadc_df <-
 
 Construct a complex sample survey design:
 
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 library(survey)
 
 pnadc_design <-
@@ -407,7 +407,7 @@ pnadc_design <-
 
 Run the `convey_prep()` function on the full design:
 
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 pnadc_design <- convey_prep(pnadc_design)
 ```
 
@@ -460,7 +460,7 @@ This section downloads, imports, and prepares the most current microdata for ana
 
 This survey uses a multiply-imputed variance estimation technique described in the [2004 Codebook](https://www.federalreserve.gov/econres/files/2004_codebk2004.txt). Most users do not need to study this function carefully. Define a function specific to only this dataset:
 
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 scf_MIcombine <-
   function (results,
             variances,
@@ -515,7 +515,7 @@ scf_MIcombine <-
 
 Define a function to download and import each stata file:
 
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 library(haven)
 
 scf_dta_import <-
@@ -538,7 +538,7 @@ scf_dta_import <-
 
 Download and import the full, summary extract, and replicate weights tables:
 
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 scf_df <-
   scf_dta_import("https://www.federalreserve.gov/econres/files/scf2022s.zip")
 
@@ -550,13 +550,13 @@ scf_rw_df <-
 ```
 
 Confirm both the full public data and the summary extract contain five records per family:
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 stopifnot(nrow(scf_df) == nrow(scf_rw_df) * 5)
 stopifnot(nrow(scf_df) == nrow(ext_df))
 ```
 
 Confirm only the primary economic unit and the five implicate identifiers overlap:
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 stopifnot(all(sort(intersect(
   names(scf_df) , names(ext_df)
 )) == c('y1' , 'yy1')))
@@ -569,7 +569,7 @@ stopifnot(all(sort(intersect(
 ```
 
 Remove the implicate identifier from the replicate weights table, add a column of fives for weighting:
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 scf_rw_df[, 'y1'] <- NULL
 
 scf_df[, 'five'] <- 5
@@ -578,7 +578,7 @@ scf_df[, 'five'] <- 5
 Construct a multiply-imputed, complex sample survey design:
 
 Break the main table into five different implicates based on the final character of the column `y1`:
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 library(stringr)
 
 s1_df <- scf_df[str_sub(scf_df[, 'y1'] ,-1 ,-1) == 1 ,]
@@ -589,7 +589,7 @@ s5_df <- scf_df[str_sub(scf_df[, 'y1'] ,-1 ,-1) == 5 ,]
 ```
 
 Combine these into a single `list`, then merge each implicate with the summary extract:
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 scf_imp <- list(s1_df , s2_df , s3_df , s4_df , s5_df)
 
 scf_list <- lapply(scf_imp , merge , ext_df)
@@ -597,7 +597,7 @@ scf_list <- lapply(scf_imp , merge , ext_df)
 ```
 
 Replace all missing values in the replicate weights table with zeroes, multiply the replicate weights by the multiplication factor, then only keep the unique identifier and the final (combined) replicate weights:
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 scf_rw_df[is.na(scf_rw_df)] <- 0
 
 scf_rw_df[, paste0('wgt' , 1:999)] <-
@@ -608,7 +608,7 @@ scf_rw_df <- scf_rw_df[, c('yy1' , paste0('wgt' , 1:999))]
 
 Sort both the five implicates and also the replicate weights table by the unique identifier:
 
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 scf_list <-
   lapply(scf_list , function(w)
     w[order(w[, 'yy1']) ,])
@@ -617,7 +617,7 @@ scf_rw_df <- scf_rw_df[order(scf_rw_df[, 'yy1']) ,]
 ```
 
 Define the design:
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 library(survey)
 library(mitools)
 
@@ -639,13 +639,13 @@ scf_design <-
 
 Run the `convey_prep()` function on the full design:
 
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 scf_design$designs <- lapply(scf_design$designs , convey_prep)
 ```
 
 This example matches the "Table 4" tab's cell Y6 of the [Excel Based on Public Data](https://www.federalreserve.gov/econres/files/scf2022_tables_public_nominal_historical.xlsx):
 
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 mean_net_worth <-
   scf_MIcombine(with(scf_design , svymean(~ networth)))
 
@@ -653,13 +653,13 @@ stopifnot(round(coef(mean_net_worth) / 1000 , 1) == 1059.5)
 ```
 
 This example comes within $500 of the standard error of mean net worth from Table 2 of the [Federal Reserve Bulletin](https://www.federalreserve.gov/publications/files/scf23.pdf#page=18), displaying the minor differences between the [Internal Data](https://www.federalreserve.gov/econres/files/scf2022_tables_internal_nominal_historical.xlsx) and [Public Data](https://www.federalreserve.gov/econres/files/scf2022_tables_public_nominal_historical.xlsx):
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 stopifnot(abs(23.2 - round(SE(mean_net_worth) / 1000 , 1)) < 0.5)
 ```
 
 This example matches the "Table 4" tab's cells X6 of the [Excel Based on Public Data](https://www.federalreserve.gov/econres/files/scf2022_tables_public_nominal_historical.xlsx):
 
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 # compute quantile with all five implicates stacked (not the recommended technique)
 fake_design <-
   svydesign(~ 1 , data = ext_df[c('networth' , 'wgt')] , weights = ~ wgt)
@@ -677,7 +677,7 @@ stopifnot(round(coef(median_net_worth_incorrect_errors) / 1000 , 2) == 192.7)
 ### Analysis Examples with the `survey` library
 
 Add new columns to the data set:
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 scf_design <-
   update(
     scf_design ,
@@ -707,14 +707,14 @@ scf_design <-
 ```
 
 Count the unweighted number of records in the survey sample, overall and by groups:
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 scf_MIcombine(with(scf_design , svyby(~ five , ~ five , unwtd.count)))
 
 scf_MIcombine(with(scf_design , svyby(~ five , ~ hhsex , unwtd.count)))
 ```
 
 Count the weighted size of the generalizable population, overall and by groups:
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 scf_MIcombine(with(scf_design , svytotal(~ five)))
 
 scf_MIcombine(with(scf_design ,
@@ -722,7 +722,7 @@ scf_MIcombine(with(scf_design ,
 ```
 
 Calculate the mean (average) of a linear variable, overall and by groups:
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 scf_MIcombine(with(scf_design , svymean(~ networth)))
 
 scf_MIcombine(with(scf_design ,
@@ -730,7 +730,7 @@ scf_MIcombine(with(scf_design ,
 ```
 
 Calculate the distribution of a categorical variable, overall and by groups:
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 scf_MIcombine(with(scf_design , svymean(~ edcl)))
 
 scf_MIcombine(with(scf_design ,
@@ -738,7 +738,7 @@ scf_MIcombine(with(scf_design ,
 ```
 
 Calculate the sum of a linear variable, overall and by groups:
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 scf_MIcombine(with(scf_design , svytotal(~ networth)))
 
 scf_MIcombine(with(scf_design ,
@@ -746,7 +746,7 @@ scf_MIcombine(with(scf_design ,
 ```
 
 Calculate the weighted sum of a categorical variable, overall and by groups:
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 scf_MIcombine(with(scf_design , svytotal(~ edcl)))
 
 scf_MIcombine(with(scf_design ,
@@ -754,7 +754,7 @@ scf_MIcombine(with(scf_design ,
 ```
 
 Calculate the median (50th percentile) of a linear variable, overall and by groups:
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 scf_MIcombine(with(
   scf_design ,
   svyquantile(~ networth ,
@@ -776,7 +776,7 @@ scf_MIcombine(with(
 ```
 
 Estimate a ratio:
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 scf_MIcombine(with(
   scf_design ,
   svyratio(numerator = ~ income , denominator = ~ networth)
@@ -784,16 +784,16 @@ scf_MIcombine(with(
 ```
 
 Restrict the survey design to labor force participants:
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 sub_scf_design <- subset(scf_design , lf == 1)
 ```
 Calculate the mean (average) of this subset:
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 scf_MIcombine(with(sub_scf_design , svymean(~ networth)))
 ```
 
 Extract the coefficient, standard error, confidence interval, and coefficient of variation from any descriptive statistics function result, overall and by groups:
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 this_result <-
   scf_MIcombine(with(scf_design ,
                      svymean(~ networth)))
@@ -814,17 +814,17 @@ cv(grouped_result)
 ```
 
 Calculate the degrees of freedom of any survey design object:
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 degf(scf_design$designs[[1]])
 ```
 
 Calculate the complex sample survey-adjusted variance of any statistic:
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 scf_MIcombine(with(scf_design , svyvar(~ networth)))
 ```
 
 Include the complex sample design effect in the result for a specific statistic:
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 # SRS without replacement
 scf_MIcombine(with(scf_design ,
                    svymean(~ networth , deff = TRUE)))
@@ -836,7 +836,7 @@ scf_MIcombine(with(scf_design ,
 
 
 Perform a survey-weighted generalized linear model:
-```{r, results = 'hide'}
+```{r results='hide', message=FALSE, warning=FALSE}
 glm_result <-
   scf_MIcombine(with(scf_design ,
                      svyglm(networth ~ married + edcl)))
