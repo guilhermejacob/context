@@ -29,7 +29,7 @@ set.seed(2017)
 
 # Intro
 
-The R `convey` library estimates measures of poverty, inequality, and wellbeing.  There are two other R libraries covering this subject, [vardpoor](https://CRAN.R-project.org/package=vardpoor) [@R-vardpoor] and [laeken](https://CRAN.R-project.org/package=laeken) [@R-laeken], however, only `convey` integrates seamlessly with the [R survey package](https://CRAN.R-project.org/package=survey) [@R-survey-article;@R-survey-book;@R-survey].
+The R `convey` library estimates measures of poverty, inequality and richness/affluence.  There are two other R libraries covering this subject, [vardpoor](https://CRAN.R-project.org/package=vardpoor) [@R-vardpoor] and [laeken](https://CRAN.R-project.org/package=laeken) [@R-laeken], however, only `convey` integrates seamlessly with the [R survey package](https://CRAN.R-project.org/package=survey) [@R-survey-article;@R-survey-book;@R-survey].
 
 `convey` is free and open-source software that runs inside the [R environment for statistical computing](https://www.r-project.org/).  Anyone can review and propose changes to [the source code](https://github.com/ajdamico/convey) for this software.  Readers are welcome to [propose changes to this book](https://github.com/guilhermejacob/context/) as well.
 
@@ -62,14 +62,14 @@ In order to know how to cite this package, run `citation("convey")`.
 
 ## Complex surveys and statistical inference {#survey}
 
-In this book, we demonstrate how to measure poverty and income concentration in a population based on microdata collected from a complex survey sample.  Most surveys administered by government agencies or larger research organizations utilize a sampling design that violates the assumption of simple random sampling (SRS), including:
+In this book, we demonstrate how to estimate poverty and inequality measures in a population using microdata collected from a complex survey sample.  Most surveys administered by government agencies or larger research organizations utilize a sampling design that violates the assumption of simple random sampling (SRS), including:
 
 1. Different units selection probabilities;
 2. Clustering of units;
 3. Stratification of clusters;
 4. Reweighting to compensate for missing values and other adjustments.
 
-Therefore, basic unweighted R commands such as `mean()` or `glm()` will not properly account for the weighting nor the measures of uncertainty (such as the confidence intervals) present in the dataset.  For some examples of publicly-available complex survey data sets, see [http://asdfree.com]().  
+Therefore, basic unweighted R commands such as `mean()` or `glm()` will not properly account for the weighting nor the measures of uncertainty (such as sampling variance estimates and confidence intervals) present in the dataset.  For some examples of publicly-available complex survey data sets, see [http://asdfree.com]().  
 
 Unlike other software, the R `convey` package does not require that the user specify these parameters throughout the analysis.  So long as the [svydesign object](http://r-survey.r-forge.r-project.org/survey/html/svydesign.html) or [svrepdesign object](http://r-survey.r-forge.r-project.org/survey/html/svrepdesign.html) has been constructed properly at the outset of the analysis, the `convey` package will incorporate the survey design automatically and produce statistics and variances that take the complex sample into account.
 
@@ -97,17 +97,20 @@ des_eusilc <-
     data = eusilc
   )
 ```
+
 Right after the creation of the design object `des_eusilc`, we should use the function `convey_prep` that adds an attribute to the survey design which saves information on the design object based upon the whole sample, needed to work with subset designs.
 
 ```{r}
 library(convey)
 des_eusilc <- convey_prep(des_eusilc)
 ```
+
 To estimate the at-risk-of-poverty rate, we use the function `svyarpt`:
 
 ```{r comment=NA}
 svyarpr( ~ eqIncome, design = des_eusilc)
 ```
+
 To estimate the at-risk-of-poverty rate across domains defined by the variable `db040` we use:
 
 ```{r comment=NA}
@@ -159,9 +162,10 @@ svyby(
   deff = FALSE
 )
 ```
-The functions of the convey `library` are called in a similar way  to the functions in `survey` library.
 
-It is also possible to deal with missing values by using the argument `na.rm`.
+The functions of the convey `library` are called in a similar way to the functions in `survey` library.
+
+It is also possible to discard missing values by using the argument `na.rm`:
 
 ```{r comment=NA}
 # survey.design using a variable with missings
@@ -172,7 +176,6 @@ svygini( ~ py010n , design = des_eusilc , na.rm = TRUE)
 svygini( ~ py010n , design = des_eusilc_rep)
 svygini( ~ py010n , design = des_eusilc_rep , na.rm = TRUE)
 ```
-
 
 ## Current Population Survey - Annual Social and Economic Supplement (CPS-ASEC)
 
@@ -269,7 +272,7 @@ cps_design <- convey_prep(cps_design)
 
 ### Household Income
 
-Limit the CPS-ASEC person-level design to the household reference person, then calculate the gini coefficient with total household income:
+Limit the CPS-ASEC person-level design to the household reference person, then calculate the Gini coefficient with total household income:
 
 ```{r}
 cps_household_design <- subset(cps_design , a_exprrp %in% 1:2)
@@ -290,7 +293,7 @@ stopifnot(round(
 
 ### Family Income
 
-Limit the CPS-ASEC person-level design to the family reference person of primary families, then calculate the gini coefficient with total family income:
+Limit the CPS-ASEC person-level design to the family reference person of primary families, then calculate the Gini coefficient with total family income:
 
 ```{r}
 cps_family_design <-
@@ -305,7 +308,7 @@ stopifnot(round(coef(cps_family_gini) , 3) == 0.458)
 
 ### Worker Earnings
 
-Limit the CPS-ASEC person-level design to full-time, full year workers, then calculate the gini coefficient with both total personal income and then total earnings:
+Limit the CPS-ASEC person-level design to full-time, full year workers, then calculate the Gini coefficient with both total personal income and then total earnings:
 
 ```{r}
 cps_ftfy_worker_design <- subset(cps_design , wewkrs %in% 1)
@@ -316,15 +319,15 @@ svygini( ~ pearnval , cps_ftfy_worker_design)
 ```
 
 
-## Pesquisa Nacional por Amostra de Domicílios Contínua (PNAD-Continua)
+## Pesquisa Nacional por Amostra de Domicílios Contínua (PNAD-Contínua)
 
-Administered by the Instituto Brasileiro de Geografia e Estatística (IBGE), the PNAD-Continua is the primary source of labor force statistics for the population of Brazil.
+Administered by the Instituto Brasileiro de Geografia e Estatística (IBGE), the PNAD Contínua is the primary source of labor force statistics for the population of Brazil.
 
-This section downloads, imports, and prepares the most current microdata for analysis, then reproduces some statistics and margin of error terms from IBGE.^[See [this link](https://agenciadenoticias.ibge.gov.br/agencia-noticias/2012-agencia-de-noticias/noticias/36857-em-2022-mercado-de-trabalho-e-auxilio-brasil-permitem-recuperacao-dos-rendimentos) for IBGE Gini estimates reproduced below.]
+This section downloads, imports, and prepares the most current microdata for analysis, then reproduces some statistics and margins of error from IBGE.^[See [this link](https://agenciadenoticias.ibge.gov.br/agencia-noticias/2012-agencia-de-noticias/noticias/36857-em-2022-mercado-de-trabalho-e-auxilio-brasil-permitem-recuperacao-dos-rendimentos) for IBGE Gini coefficient estimates reproduced below.]
 
 
 
-Download and import the 2022 file:
+Download and import the 2022 5th interview file:
 
 ```{r results='hide', message=FALSE, warning=FALSE}
 library(PNADcIBGE)
@@ -413,7 +416,7 @@ pnadc_design <- convey_prep(pnadc_design)
 
 ### Per Capita Income
 
-Calculate the gini coefficient with per capita income:
+Calculate the Gini coefficient with per capita income:
 
 ```{r}
 # https://sidra.ibge.gov.br/tabela/7435#/n1/all/v/all/p/last%201/d/v10681%203,v10682%201/l/v,p,t/resultado
@@ -432,7 +435,7 @@ stopifnot(round(cv(pnadc_per_capita_gini), 3) == 0.006)
 
 ### Worker Earnings
 
-Calculate the gini coefficient with total earnings:
+Estimate the Gini coefficient with total earnings:
 
 ```{r}
 # https://sidra.ibge.gov.br/tabela/7453#/n1/all/v/all/p/last%201/d/v10806%203,v10807%201/l/v,p,t/resultado
@@ -848,7 +851,7 @@ summary(glm_result)
 
 ### Family Net Worth
 
-Calculate the gini coefficient with family net worth:
+Calculate the Gini coefficient with family net worth:
 
 ```{r}
 scf_MIcombine(with(scf_design , svygini(~ networth)))
@@ -856,7 +859,7 @@ scf_MIcombine(with(scf_design , svygini(~ networth)))
 
 ### Family Income
 
-Calculate the gini coefficient with income:
+Calculate the Gini coefficient with income:
 
 ```{r}
 scf_MIcombine(with(scf_design , svygini(~ income)))
