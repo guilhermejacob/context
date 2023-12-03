@@ -180,6 +180,99 @@ stopifnot(all.equal(varpoord_arpt_calculation$all_result$se ,
 
 For additional usage examples of `svyarpt`, type `?convey::svyarpt` in the R console.
 
+
+
+
+
+
+
+
+
+### Real World Examples
+
+#### CPS-ASEC Household Income
+
+```{r}
+(
+  cps_household_arpt <- svyarpt(~ htotval , cps_household_design)
+)
+
+(cps_household_arpt_by_sex <- svyby( ~ htotval , ~ sex , cps_household_design , svyarpt ) )
+```
+
+#### CPS-ASEC Family Income
+
+```{r}
+(
+  cps_family_arpt <- svyarpt(~ ftotval , cps_family_design)
+)
+
+(cps_family_arpt_by_sex <- svyby( ~ ftotval , ~ sex , cps_family_design , svyarpt ) )
+```
+
+#### CPS-ASEC Worker Earnings
+
+```{r}
+svyarpt(~ ptotval , cps_ftfy_worker_design)
+
+svyby(~ ptotval , ~ sex , cps_ftfy_worker_design , svyarpt)
+
+svyarpt(~ pearnval , cps_ftfy_worker_design)
+
+svyby(~ pearnval , ~ sex , cps_ftfy_worker_design , svyarpt)
+```
+
+
+#### PNAD-Contínua Per Capita Income
+
+```{r}
+(
+  pnadc_per_capita_arpt <-
+    svyarpt(~ deflated_per_capita_income , pnadc_design , na.rm = TRUE)
+)
+
+(
+  pnadc_per_capita_arpt_by_sex <-
+    svyby( ~ deflated_per_capita_income , ~ sex , pnadc_design , svyarpt , na.rm = TRUE)
+)
+```
+
+#### PNAD-Contínua Worker Earnings
+
+```{r}
+(
+  pnadc_earnings_arpt <-
+    svyarpt(~ deflated_labor_income , pnadc_design , na.rm = TRUE)
+)
+
+(pnadc_earnings_arpt_by_sex <-
+    svyby( ~ deflated_labor_income , ~ sex , pnadc_design , svyarpt , na.rm = TRUE))
+```
+
+
+
+
+#### SCF Family Net Worth
+
+```{r}
+scf_MIcombine(with(scf_design , svyarpt( ~ networth)))
+
+scf_MIcombine(with(scf_design , svyby( ~ networth, ~ hhsex , svyarpt)))
+```
+
+#### SCF Family Income
+
+```{r}
+scf_MIcombine(with(scf_design , svyarpt( ~ income)))
+
+scf_MIcombine(with(scf_design , svyby( ~ income, ~ hhsex , svyarpt)))
+```
+
+
+
+
+
+
 ## At Risk of Poverty Ratio (svyarpr)
 
 ```{r eval=FALSE}

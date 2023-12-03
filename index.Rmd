@@ -264,6 +264,17 @@ cps_design <-
   )
 ```
 
+Add a sex variable:
+
+```{r results='hide', message=FALSE, warning=FALSE}
+cps_design <-
+  update(cps_design, sex = factor(
+    a_sex ,
+    levels = 1:2 ,
+    labels = c('male' , 'female')
+  ))
+```
+
 Run the `convey_prep()` function on the full design:
 
 ```{r results='hide', message=FALSE, warning=FALSE}
@@ -381,6 +392,7 @@ pnadc_df[is.na(pnadc_df[, 'household_deflated_other_source_income']) , 'househol
   0
 
 
+
 pnadc_df <-
   transform(
     pnadc_df ,
@@ -388,7 +400,13 @@ pnadc_df <-
     deflated_per_capita_income =
       (
         household_deflated_labor_income + household_deflated_other_source_income
-      ) / vd2003
+      ) / vd2003 ,
+    
+    sex = factor(
+      v2007 ,
+      levels = 1:2 ,
+      labels = c('male' , 'female')
+    )
     
   )
 ```

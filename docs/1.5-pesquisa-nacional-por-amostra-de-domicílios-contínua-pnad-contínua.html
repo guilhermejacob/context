@@ -13,7 +13,7 @@
 
 <meta name="author" content="By Guilherme Jacob, Anthony Damico, and Djalma Pessoa. The authors received no external funding for the convey software and this accompanying textbook." />
 
-<meta name="date" content="2023-12-02" />
+<meta name="date" content="2023-12-03" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -175,6 +175,7 @@ div.csl-indent {
 <li class="has-sub"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#at-risk-of-poverty-threshold-svyarpt" id="toc-at-risk-of-poverty-threshold-svyarpt"><span class="toc-section-number">3.1</span> At Risk of Poverty Threshold (svyarpt)</a>
 <ul>
 <li><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#replication-example" id="toc-replication-example"><span class="toc-section-number">3.1.1</span> Replication Example</a></li>
+<li><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#real-world-examples" id="toc-real-world-examples"><span class="toc-section-number">3.1.2</span> Real World Examples</a></li>
 </ul></li>
 <li class="has-sub"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#at-risk-of-poverty-ratio-svyarpr" id="toc-at-risk-of-poverty-ratio-svyarpr"><span class="toc-section-number">3.2</span> At Risk of Poverty Ratio (svyarpr)</a>
 <ul>
@@ -268,108 +269,115 @@ div.csl-indent {
 <p>Administered by the Instituto Brasileiro de Geografia e Estatística (IBGE), the PNAD Contínua is the primary source of labor force statistics for the population of Brazil.</p>
 <p>This section downloads, imports, and prepares the most current microdata for analysis, then reproduces some statistics and margins of error from IBGE.<label for="tufte-sn-1" class="margin-toggle sidenote-number">1</label><input type="checkbox" id="tufte-sn-1" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">1</span> See <a href="https://agenciadenoticias.ibge.gov.br/agencia-noticias/2012-agencia-de-noticias/noticias/36857-em-2022-mercado-de-trabalho-e-auxilio-brasil-permitem-recuperacao-dos-rendimentos">this link</a> for IBGE Gini coefficient estimates reproduced below.</span></p>
 <p>Download and import the 2022 5th interview file:</p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb44-1" tabindex="-1"></a><span class="fu">library</span>(PNADcIBGE)</span>
-<span id="cb44-2"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb44-2" tabindex="-1"></a></span>
-<span id="cb44-3"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb44-3" tabindex="-1"></a>pnadc_df <span class="ot">&lt;-</span></span>
-<span id="cb44-4"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb44-4" tabindex="-1"></a>  <span class="fu">get_pnadc</span>(<span class="dv">2022</span> ,</span>
-<span id="cb44-5"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb44-5" tabindex="-1"></a>            <span class="at">interview =</span> <span class="dv">5</span> ,</span>
-<span id="cb44-6"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb44-6" tabindex="-1"></a>            <span class="at">design =</span> <span class="cn">FALSE</span> ,</span>
-<span id="cb44-7"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb44-7" tabindex="-1"></a>            <span class="at">labels =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb44-8"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb44-8" tabindex="-1"></a></span>
-<span id="cb44-9"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb44-9" tabindex="-1"></a><span class="fu">names</span>(pnadc_df) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(pnadc_df))</span></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-1" tabindex="-1"></a><span class="fu">library</span>(PNADcIBGE)</span>
+<span id="cb45-2"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-2" tabindex="-1"></a></span>
+<span id="cb45-3"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-3" tabindex="-1"></a>pnadc_df <span class="ot">&lt;-</span></span>
+<span id="cb45-4"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-4" tabindex="-1"></a>  <span class="fu">get_pnadc</span>(<span class="dv">2022</span> ,</span>
+<span id="cb45-5"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-5" tabindex="-1"></a>            <span class="at">interview =</span> <span class="dv">5</span> ,</span>
+<span id="cb45-6"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-6" tabindex="-1"></a>            <span class="at">design =</span> <span class="cn">FALSE</span> ,</span>
+<span id="cb45-7"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-7" tabindex="-1"></a>            <span class="at">labels =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb45-8"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-8" tabindex="-1"></a></span>
+<span id="cb45-9"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-9" tabindex="-1"></a><span class="fu">names</span>(pnadc_df) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(pnadc_df))</span></code></pre></div>
 <p>Recode a number of variables:</p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-1" tabindex="-1"></a>pnadc_df <span class="ot">&lt;-</span></span>
-<span id="cb45-2"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-2" tabindex="-1"></a>  <span class="fu">transform</span>(</span>
-<span id="cb45-3"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-3" tabindex="-1"></a>    pnadc_df ,</span>
-<span id="cb45-4"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-4" tabindex="-1"></a>    </span>
-<span id="cb45-5"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-5" tabindex="-1"></a>    <span class="at">household_id =</span> <span class="fu">paste0</span>(upa , v1008 , v1014) ,</span>
-<span id="cb45-6"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-6" tabindex="-1"></a>    </span>
-<span id="cb45-7"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-7" tabindex="-1"></a>    <span class="at">deflated_labor_income =</span> vd4019 <span class="sc">*</span> co2 ,</span>
-<span id="cb45-8"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-8" tabindex="-1"></a>    </span>
-<span id="cb45-9"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-9" tabindex="-1"></a>    <span class="at">deflated_other_source_income =</span> vd4048 <span class="sc">*</span> co2e</span>
-<span id="cb45-10"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-10" tabindex="-1"></a>  )</span>
-<span id="cb45-11"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-11" tabindex="-1"></a></span>
-<span id="cb45-12"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-12" tabindex="-1"></a>labor_income_sum_df <span class="ot">&lt;-</span></span>
-<span id="cb45-13"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-13" tabindex="-1"></a>  <span class="fu">aggregate</span>(</span>
-<span id="cb45-14"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-14" tabindex="-1"></a>    <span class="fu">cbind</span>(<span class="at">household_deflated_labor_income =</span> deflated_labor_income) <span class="sc">~</span> household_id ,</span>
-<span id="cb45-15"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-15" tabindex="-1"></a>    <span class="at">data =</span> pnadc_df[<span class="sc">!</span>(pnadc_df[, <span class="st">&#39;vd2002&#39;</span>] <span class="sc">%in%</span> <span class="dv">17</span><span class="sc">:</span><span class="dv">19</span>) ,] ,</span>
-<span id="cb45-16"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-16" tabindex="-1"></a>    sum ,</span>
-<span id="cb45-17"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-17" tabindex="-1"></a>    <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
-<span id="cb45-18"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-18" tabindex="-1"></a>  )</span>
-<span id="cb45-19"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-19" tabindex="-1"></a></span>
-<span id="cb45-20"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-20" tabindex="-1"></a>other_income_sum_df <span class="ot">&lt;-</span></span>
-<span id="cb45-21"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-21" tabindex="-1"></a>  <span class="fu">aggregate</span>(</span>
-<span id="cb45-22"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-22" tabindex="-1"></a>    <span class="fu">cbind</span>(<span class="at">household_deflated_other_source_income =</span> deflated_other_source_income) <span class="sc">~</span> household_id ,</span>
-<span id="cb45-23"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-23" tabindex="-1"></a>    <span class="at">data =</span> pnadc_df[<span class="sc">!</span>(pnadc_df[, <span class="st">&#39;vd2002&#39;</span>] <span class="sc">%in%</span> <span class="dv">17</span><span class="sc">:</span><span class="dv">19</span>) ,] ,</span>
-<span id="cb45-24"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-24" tabindex="-1"></a>    sum ,</span>
-<span id="cb45-25"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-25" tabindex="-1"></a>    <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
-<span id="cb45-26"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-26" tabindex="-1"></a>  )</span>
-<span id="cb45-27"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-27" tabindex="-1"></a></span>
-<span id="cb45-28"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-28" tabindex="-1"></a>before_nrow <span class="ot">&lt;-</span> <span class="fu">nrow</span>(pnadc_df)</span>
-<span id="cb45-29"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-29" tabindex="-1"></a>pnadc_df <span class="ot">&lt;-</span> <span class="fu">merge</span>(pnadc_df , labor_income_sum_df , <span class="at">all.x =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb45-30"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-30" tabindex="-1"></a>pnadc_df <span class="ot">&lt;-</span> <span class="fu">merge</span>(pnadc_df , other_income_sum_df , <span class="at">all.x =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb45-31"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-31" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">nrow</span>(pnadc_df) <span class="sc">==</span> before_nrow)</span>
-<span id="cb45-32"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-32" tabindex="-1"></a></span>
-<span id="cb45-33"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-33" tabindex="-1"></a>pnadc_df[<span class="fu">is.na</span>(pnadc_df[, <span class="st">&#39;household_deflated_labor_income&#39;</span>]) , <span class="st">&#39;household_deflated_labor_income&#39;</span>] <span class="ot">&lt;-</span></span>
-<span id="cb45-34"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-34" tabindex="-1"></a>  <span class="dv">0</span></span>
-<span id="cb45-35"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-35" tabindex="-1"></a>pnadc_df[<span class="fu">is.na</span>(pnadc_df[, <span class="st">&#39;household_deflated_other_source_income&#39;</span>]) , <span class="st">&#39;household_deflated_other_source_income&#39;</span>] <span class="ot">&lt;-</span></span>
-<span id="cb45-36"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-36" tabindex="-1"></a>  <span class="dv">0</span></span>
-<span id="cb45-37"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-37" tabindex="-1"></a></span>
-<span id="cb45-38"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-38" tabindex="-1"></a></span>
-<span id="cb45-39"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-39" tabindex="-1"></a>pnadc_df <span class="ot">&lt;-</span></span>
-<span id="cb45-40"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-40" tabindex="-1"></a>  <span class="fu">transform</span>(</span>
-<span id="cb45-41"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-41" tabindex="-1"></a>    pnadc_df ,</span>
-<span id="cb45-42"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-42" tabindex="-1"></a>    </span>
-<span id="cb45-43"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-43" tabindex="-1"></a>    <span class="at">deflated_per_capita_income =</span></span>
-<span id="cb45-44"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-44" tabindex="-1"></a>      (</span>
-<span id="cb45-45"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-45" tabindex="-1"></a>        household_deflated_labor_income <span class="sc">+</span> household_deflated_other_source_income</span>
-<span id="cb45-46"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-46" tabindex="-1"></a>      ) <span class="sc">/</span> vd2003</span>
-<span id="cb45-47"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-47" tabindex="-1"></a>    </span>
-<span id="cb45-48"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb45-48" tabindex="-1"></a>  )</span></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-1" tabindex="-1"></a>pnadc_df <span class="ot">&lt;-</span></span>
+<span id="cb46-2"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-2" tabindex="-1"></a>  <span class="fu">transform</span>(</span>
+<span id="cb46-3"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-3" tabindex="-1"></a>    pnadc_df ,</span>
+<span id="cb46-4"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-4" tabindex="-1"></a>    </span>
+<span id="cb46-5"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-5" tabindex="-1"></a>    <span class="at">household_id =</span> <span class="fu">paste0</span>(upa , v1008 , v1014) ,</span>
+<span id="cb46-6"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-6" tabindex="-1"></a>    </span>
+<span id="cb46-7"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-7" tabindex="-1"></a>    <span class="at">deflated_labor_income =</span> vd4019 <span class="sc">*</span> co2 ,</span>
+<span id="cb46-8"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-8" tabindex="-1"></a>    </span>
+<span id="cb46-9"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-9" tabindex="-1"></a>    <span class="at">deflated_other_source_income =</span> vd4048 <span class="sc">*</span> co2e</span>
+<span id="cb46-10"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-10" tabindex="-1"></a>  )</span>
+<span id="cb46-11"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-11" tabindex="-1"></a></span>
+<span id="cb46-12"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-12" tabindex="-1"></a>labor_income_sum_df <span class="ot">&lt;-</span></span>
+<span id="cb46-13"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-13" tabindex="-1"></a>  <span class="fu">aggregate</span>(</span>
+<span id="cb46-14"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-14" tabindex="-1"></a>    <span class="fu">cbind</span>(<span class="at">household_deflated_labor_income =</span> deflated_labor_income) <span class="sc">~</span> household_id ,</span>
+<span id="cb46-15"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-15" tabindex="-1"></a>    <span class="at">data =</span> pnadc_df[<span class="sc">!</span>(pnadc_df[, <span class="st">&#39;vd2002&#39;</span>] <span class="sc">%in%</span> <span class="dv">17</span><span class="sc">:</span><span class="dv">19</span>) ,] ,</span>
+<span id="cb46-16"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-16" tabindex="-1"></a>    sum ,</span>
+<span id="cb46-17"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-17" tabindex="-1"></a>    <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
+<span id="cb46-18"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-18" tabindex="-1"></a>  )</span>
+<span id="cb46-19"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-19" tabindex="-1"></a></span>
+<span id="cb46-20"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-20" tabindex="-1"></a>other_income_sum_df <span class="ot">&lt;-</span></span>
+<span id="cb46-21"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-21" tabindex="-1"></a>  <span class="fu">aggregate</span>(</span>
+<span id="cb46-22"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-22" tabindex="-1"></a>    <span class="fu">cbind</span>(<span class="at">household_deflated_other_source_income =</span> deflated_other_source_income) <span class="sc">~</span> household_id ,</span>
+<span id="cb46-23"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-23" tabindex="-1"></a>    <span class="at">data =</span> pnadc_df[<span class="sc">!</span>(pnadc_df[, <span class="st">&#39;vd2002&#39;</span>] <span class="sc">%in%</span> <span class="dv">17</span><span class="sc">:</span><span class="dv">19</span>) ,] ,</span>
+<span id="cb46-24"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-24" tabindex="-1"></a>    sum ,</span>
+<span id="cb46-25"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-25" tabindex="-1"></a>    <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
+<span id="cb46-26"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-26" tabindex="-1"></a>  )</span>
+<span id="cb46-27"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-27" tabindex="-1"></a></span>
+<span id="cb46-28"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-28" tabindex="-1"></a>before_nrow <span class="ot">&lt;-</span> <span class="fu">nrow</span>(pnadc_df)</span>
+<span id="cb46-29"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-29" tabindex="-1"></a>pnadc_df <span class="ot">&lt;-</span> <span class="fu">merge</span>(pnadc_df , labor_income_sum_df , <span class="at">all.x =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb46-30"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-30" tabindex="-1"></a>pnadc_df <span class="ot">&lt;-</span> <span class="fu">merge</span>(pnadc_df , other_income_sum_df , <span class="at">all.x =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb46-31"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-31" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">nrow</span>(pnadc_df) <span class="sc">==</span> before_nrow)</span>
+<span id="cb46-32"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-32" tabindex="-1"></a></span>
+<span id="cb46-33"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-33" tabindex="-1"></a>pnadc_df[<span class="fu">is.na</span>(pnadc_df[, <span class="st">&#39;household_deflated_labor_income&#39;</span>]) , <span class="st">&#39;household_deflated_labor_income&#39;</span>] <span class="ot">&lt;-</span></span>
+<span id="cb46-34"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-34" tabindex="-1"></a>  <span class="dv">0</span></span>
+<span id="cb46-35"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-35" tabindex="-1"></a>pnadc_df[<span class="fu">is.na</span>(pnadc_df[, <span class="st">&#39;household_deflated_other_source_income&#39;</span>]) , <span class="st">&#39;household_deflated_other_source_income&#39;</span>] <span class="ot">&lt;-</span></span>
+<span id="cb46-36"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-36" tabindex="-1"></a>  <span class="dv">0</span></span>
+<span id="cb46-37"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-37" tabindex="-1"></a></span>
+<span id="cb46-38"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-38" tabindex="-1"></a></span>
+<span id="cb46-39"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-39" tabindex="-1"></a></span>
+<span id="cb46-40"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-40" tabindex="-1"></a>pnadc_df <span class="ot">&lt;-</span></span>
+<span id="cb46-41"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-41" tabindex="-1"></a>  <span class="fu">transform</span>(</span>
+<span id="cb46-42"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-42" tabindex="-1"></a>    pnadc_df ,</span>
+<span id="cb46-43"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-43" tabindex="-1"></a>    </span>
+<span id="cb46-44"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-44" tabindex="-1"></a>    <span class="at">deflated_per_capita_income =</span></span>
+<span id="cb46-45"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-45" tabindex="-1"></a>      (</span>
+<span id="cb46-46"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-46" tabindex="-1"></a>        household_deflated_labor_income <span class="sc">+</span> household_deflated_other_source_income</span>
+<span id="cb46-47"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-47" tabindex="-1"></a>      ) <span class="sc">/</span> vd2003 ,</span>
+<span id="cb46-48"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-48" tabindex="-1"></a>    </span>
+<span id="cb46-49"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-49" tabindex="-1"></a>    <span class="at">sex =</span> <span class="fu">factor</span>(</span>
+<span id="cb46-50"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-50" tabindex="-1"></a>      v2007 ,</span>
+<span id="cb46-51"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-51" tabindex="-1"></a>      <span class="at">levels =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span> ,</span>
+<span id="cb46-52"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-52" tabindex="-1"></a>      <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;male&#39;</span> , <span class="st">&#39;female&#39;</span>)</span>
+<span id="cb46-53"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-53" tabindex="-1"></a>    )</span>
+<span id="cb46-54"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-54" tabindex="-1"></a>    </span>
+<span id="cb46-55"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-55" tabindex="-1"></a>  )</span></code></pre></div>
 <p>Construct a complex sample survey design:</p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-1" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
-<span id="cb46-2"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-2" tabindex="-1"></a></span>
-<span id="cb46-3"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-3" tabindex="-1"></a>pnadc_design <span class="ot">&lt;-</span></span>
-<span id="cb46-4"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-4" tabindex="-1"></a>  <span class="fu">svrepdesign</span>(</span>
-<span id="cb46-5"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-5" tabindex="-1"></a>    <span class="at">data =</span> pnadc_df ,</span>
-<span id="cb46-6"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-6" tabindex="-1"></a>    <span class="at">weight =</span> <span class="sc">~</span> v1032,</span>
-<span id="cb46-7"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-7" tabindex="-1"></a>    <span class="at">type =</span> <span class="st">&quot;bootstrap&quot;</span> ,</span>
-<span id="cb46-8"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-8" tabindex="-1"></a>    <span class="at">repweights =</span> <span class="st">&quot;v1032[0-9]{3}&quot;</span> ,</span>
-<span id="cb46-9"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-9" tabindex="-1"></a>    <span class="at">mse =</span> <span class="cn">TRUE</span></span>
-<span id="cb46-10"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb46-10" tabindex="-1"></a>  )</span></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb47-1" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb47-2"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb47-2" tabindex="-1"></a></span>
+<span id="cb47-3"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb47-3" tabindex="-1"></a>pnadc_design <span class="ot">&lt;-</span></span>
+<span id="cb47-4"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb47-4" tabindex="-1"></a>  <span class="fu">svrepdesign</span>(</span>
+<span id="cb47-5"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb47-5" tabindex="-1"></a>    <span class="at">data =</span> pnadc_df ,</span>
+<span id="cb47-6"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb47-6" tabindex="-1"></a>    <span class="at">weight =</span> <span class="sc">~</span> v1032,</span>
+<span id="cb47-7"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb47-7" tabindex="-1"></a>    <span class="at">type =</span> <span class="st">&quot;bootstrap&quot;</span> ,</span>
+<span id="cb47-8"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb47-8" tabindex="-1"></a>    <span class="at">repweights =</span> <span class="st">&quot;v1032[0-9]{3}&quot;</span> ,</span>
+<span id="cb47-9"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb47-9" tabindex="-1"></a>    <span class="at">mse =</span> <span class="cn">TRUE</span></span>
+<span id="cb47-10"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb47-10" tabindex="-1"></a>  )</span></code></pre></div>
 <p>Run the <code>convey_prep()</code> function on the full design:</p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb47-1" tabindex="-1"></a>pnadc_design <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(pnadc_design)</span></code></pre></div>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb48-1" tabindex="-1"></a>pnadc_design <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(pnadc_design)</span></code></pre></div>
 <div id="per-capita-income" class="section level3" number="1.5.1">
 <h3><span class="header-section-number">1.5.1</span> Per Capita Income</h3>
 <p>Calculate the Gini coefficient with per capita income:</p>
-<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb48-1" tabindex="-1"></a><span class="co"># https://sidra.ibge.gov.br/tabela/7435#/n1/all/v/all/p/last%201/d/v10681%203,v10682%201/l/v,p,t/resultado</span></span>
-<span id="cb48-2"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb48-2" tabindex="-1"></a></span>
-<span id="cb48-3"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb48-3" tabindex="-1"></a>(</span>
-<span id="cb48-4"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb48-4" tabindex="-1"></a>  pnadc_per_capita_gini <span class="ot">&lt;-</span></span>
-<span id="cb48-5"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb48-5" tabindex="-1"></a>    <span class="fu">svygini</span>( <span class="sc">~</span> deflated_per_capita_income , pnadc_design , <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb48-6"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb48-6" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb49-1" tabindex="-1"></a><span class="co"># https://sidra.ibge.gov.br/tabela/7435#/n1/all/v/all/p/last%201/d/v10681%203,v10682%201/l/v,p,t/resultado</span></span>
+<span id="cb49-2"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb49-2" tabindex="-1"></a></span>
+<span id="cb49-3"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb49-3" tabindex="-1"></a>(</span>
+<span id="cb49-4"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb49-4" tabindex="-1"></a>  pnadc_per_capita_gini <span class="ot">&lt;-</span></span>
+<span id="cb49-5"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb49-5" tabindex="-1"></a>    <span class="fu">svygini</span>( <span class="sc">~</span> deflated_per_capita_income , pnadc_design , <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb49-6"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb49-6" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>##                               gini     SE
 ## deflated_per_capita_income 0.51845 0.0032</code></pre>
-<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb50-1" tabindex="-1"></a><span class="co"># match 2022 per_capita gini coefficient</span></span>
-<span id="cb50-2"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb50-2" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">coef</span>(pnadc_per_capita_gini) , <span class="dv">3</span>) <span class="sc">==</span> <span class="fl">0.518</span>)</span>
-<span id="cb50-3"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb50-3" tabindex="-1"></a></span>
-<span id="cb50-4"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb50-4" tabindex="-1"></a><span class="co"># match 2022 per_capita gini coefficient of variation</span></span>
-<span id="cb50-5"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb50-5" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">cv</span>(pnadc_per_capita_gini), <span class="dv">3</span>) <span class="sc">==</span> <span class="fl">0.006</span>) </span></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb51-1" tabindex="-1"></a><span class="co"># match 2022 per_capita gini coefficient</span></span>
+<span id="cb51-2"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb51-2" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">coef</span>(pnadc_per_capita_gini) , <span class="dv">3</span>) <span class="sc">==</span> <span class="fl">0.518</span>)</span>
+<span id="cb51-3"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb51-3" tabindex="-1"></a></span>
+<span id="cb51-4"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb51-4" tabindex="-1"></a><span class="co"># match 2022 per_capita gini coefficient of variation</span></span>
+<span id="cb51-5"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb51-5" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">cv</span>(pnadc_per_capita_gini), <span class="dv">3</span>) <span class="sc">==</span> <span class="fl">0.006</span>) </span></code></pre></div>
 </div>
 <div id="worker-earnings-1" class="section level3" number="1.5.2">
 <h3><span class="header-section-number">1.5.2</span> Worker Earnings</h3>
 <p>Estimate the Gini coefficient with total earnings:</p>
-<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb51-1" tabindex="-1"></a><span class="co"># https://sidra.ibge.gov.br/tabela/7453#/n1/all/v/all/p/last%201/d/v10806%203,v10807%201/l/v,p,t/resultado</span></span>
-<span id="cb51-2"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb51-2" tabindex="-1"></a></span>
-<span id="cb51-3"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb51-3" tabindex="-1"></a>(pnadc_earnings_gini <span class="ot">&lt;-</span></span>
-<span id="cb51-4"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb51-4" tabindex="-1"></a>   <span class="fu">svygini</span>( <span class="sc">~</span> deflated_labor_income , pnadc_design , <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb52-1" tabindex="-1"></a><span class="co"># https://sidra.ibge.gov.br/tabela/7453#/n1/all/v/all/p/last%201/d/v10806%203,v10807%201/l/v,p,t/resultado</span></span>
+<span id="cb52-2"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb52-2" tabindex="-1"></a></span>
+<span id="cb52-3"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb52-3" tabindex="-1"></a>(pnadc_earnings_gini <span class="ot">&lt;-</span></span>
+<span id="cb52-4"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb52-4" tabindex="-1"></a>   <span class="fu">svygini</span>( <span class="sc">~</span> deflated_labor_income , pnadc_design , <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div>
 <pre><code>##                          gini     SE
 ## deflated_labor_income 0.48606 0.0036</code></pre>
-<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb53-1" tabindex="-1"></a><span class="co"># match 2022 earnings gini coefficient</span></span>
-<span id="cb53-2"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb53-2" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">coef</span>(pnadc_earnings_gini) , <span class="dv">3</span>) <span class="sc">==</span> <span class="fl">0.486</span>)</span>
-<span id="cb53-3"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb53-3" tabindex="-1"></a></span>
-<span id="cb53-4"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb53-4" tabindex="-1"></a><span class="co"># match 2022 earnings gini coefficient of variation</span></span>
-<span id="cb53-5"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb53-5" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">cv</span>(pnadc_earnings_gini), <span class="dv">3</span>) <span class="sc">==</span> <span class="fl">0.007</span>) </span></code></pre></div>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb54-1" tabindex="-1"></a><span class="co"># match 2022 earnings gini coefficient</span></span>
+<span id="cb54-2"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb54-2" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">coef</span>(pnadc_earnings_gini) , <span class="dv">3</span>) <span class="sc">==</span> <span class="fl">0.486</span>)</span>
+<span id="cb54-3"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb54-3" tabindex="-1"></a></span>
+<span id="cb54-4"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb54-4" tabindex="-1"></a><span class="co"># match 2022 earnings gini coefficient of variation</span></span>
+<span id="cb54-5"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#cb54-5" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">cv</span>(pnadc_earnings_gini), <span class="dv">3</span>) <span class="sc">==</span> <span class="fl">0.007</span>) </span></code></pre></div>
 </div>
 </div>
 <p style="text-align: center;">

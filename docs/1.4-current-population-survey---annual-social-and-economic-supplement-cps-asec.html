@@ -13,7 +13,7 @@
 
 <meta name="author" content="By Guilherme Jacob, Anthony Damico, and Djalma Pessoa. The authors received no external funding for the convey software and this accompanying textbook." />
 
-<meta name="date" content="2023-12-02" />
+<meta name="date" content="2023-12-03" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -175,6 +175,7 @@ div.csl-indent {
 <li class="has-sub"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#at-risk-of-poverty-threshold-svyarpt" id="toc-at-risk-of-poverty-threshold-svyarpt"><span class="toc-section-number">3.1</span> At Risk of Poverty Threshold (svyarpt)</a>
 <ul>
 <li><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#replication-example" id="toc-replication-example"><span class="toc-section-number">3.1.1</span> Replication Example</a></li>
+<li><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#real-world-examples" id="toc-real-world-examples"><span class="toc-section-number">3.1.2</span> Real World Examples</a></li>
 </ul></li>
 <li class="has-sub"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#at-risk-of-poverty-ratio-svyarpr" id="toc-at-risk-of-poverty-ratio-svyarpr"><span class="toc-section-number">3.2</span> At Risk of Poverty Ratio (svyarpr)</a>
 <ul>
@@ -326,49 +327,56 @@ div.csl-indent {
 <span id="cb32-10"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb32-10" tabindex="-1"></a>    <span class="at">combined.weights =</span> <span class="cn">TRUE</span> ,</span>
 <span id="cb32-11"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb32-11" tabindex="-1"></a>    <span class="at">mse =</span> <span class="cn">TRUE</span></span>
 <span id="cb32-12"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb32-12" tabindex="-1"></a>  )</span></code></pre></div>
+<p>Add a sex variable:</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb33-1" tabindex="-1"></a>cps_design <span class="ot">&lt;-</span></span>
+<span id="cb33-2"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb33-2" tabindex="-1"></a>  <span class="fu">update</span>(cps_design, <span class="at">sex =</span> <span class="fu">factor</span>(</span>
+<span id="cb33-3"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb33-3" tabindex="-1"></a>    a_sex ,</span>
+<span id="cb33-4"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb33-4" tabindex="-1"></a>    <span class="at">levels =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span> ,</span>
+<span id="cb33-5"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb33-5" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;male&#39;</span> , <span class="st">&#39;female&#39;</span>)</span>
+<span id="cb33-6"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb33-6" tabindex="-1"></a>  ))</span></code></pre></div>
 <p>Run the <code>convey_prep()</code> function on the full design:</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb33-1" tabindex="-1"></a>cps_design <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(cps_design)</span></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb34-1" tabindex="-1"></a>cps_design <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(cps_design)</span></code></pre></div>
 <div id="household-income" class="section level3" number="1.4.1">
 <h3><span class="header-section-number">1.4.1</span> Household Income</h3>
 <p>Limit the CPS-ASEC person-level design to the household reference person, then calculate the Gini coefficient with total household income:</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb34-1" tabindex="-1"></a>cps_household_design <span class="ot">&lt;-</span> <span class="fu">subset</span>(cps_design , a_exprrp <span class="sc">%in%</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)</span>
-<span id="cb34-2"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb34-2" tabindex="-1"></a></span>
-<span id="cb34-3"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb34-3" tabindex="-1"></a>(cps_household_gini <span class="ot">&lt;-</span> <span class="fu">svygini</span>( <span class="sc">~</span> htotval , cps_household_design))</span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb35-1" tabindex="-1"></a>cps_household_design <span class="ot">&lt;-</span> <span class="fu">subset</span>(cps_design , a_exprrp <span class="sc">%in%</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)</span>
+<span id="cb35-2"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb35-2" tabindex="-1"></a></span>
+<span id="cb35-3"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb35-3" tabindex="-1"></a>(cps_household_gini <span class="ot">&lt;-</span> <span class="fu">svygini</span>( <span class="sc">~</span> htotval , cps_household_design))</span></code></pre></div>
 <pre><code>##            gini    SE
 ## htotval 0.48846 0.002</code></pre>
-<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb36-1" tabindex="-1"></a><span class="co"># match 2022 household gini coefficient</span></span>
-<span id="cb36-2"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb36-2" tabindex="-1"></a><span class="co"># https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-income-households/h04.xlsx</span></span>
-<span id="cb36-3"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb36-3" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">coef</span>(cps_household_gini) , <span class="dv">3</span>) <span class="sc">==</span> <span class="fl">0.488</span>)</span>
-<span id="cb36-4"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb36-4" tabindex="-1"></a></span>
-<span id="cb36-5"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb36-5" tabindex="-1"></a><span class="co"># match 2022 household gini margin of error</span></span>
-<span id="cb36-6"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb36-6" tabindex="-1"></a><span class="co"># https://www.census.gov/content/dam/Census/newsroom/press-kits/2023/iphi/20230912-iphi-slides-income.pdf#page=13</span></span>
-<span id="cb36-7"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb36-7" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(</span>
-<span id="cb36-8"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb36-8" tabindex="-1"></a>  <span class="fu">coef</span>(cps_household_gini) <span class="sc">-</span> <span class="fu">confint</span>(cps_household_gini , <span class="at">level =</span> <span class="fl">0.9</span>)[<span class="dv">1</span>] ,</span>
-<span id="cb36-9"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb36-9" tabindex="-1"></a>  <span class="dv">4</span></span>
-<span id="cb36-10"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb36-10" tabindex="-1"></a>) <span class="sc">==</span> <span class="fl">0.0033</span>) </span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb37-1" tabindex="-1"></a><span class="co"># match 2022 household gini coefficient</span></span>
+<span id="cb37-2"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb37-2" tabindex="-1"></a><span class="co"># https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-income-households/h04.xlsx</span></span>
+<span id="cb37-3"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb37-3" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">coef</span>(cps_household_gini) , <span class="dv">3</span>) <span class="sc">==</span> <span class="fl">0.488</span>)</span>
+<span id="cb37-4"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb37-4" tabindex="-1"></a></span>
+<span id="cb37-5"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb37-5" tabindex="-1"></a><span class="co"># match 2022 household gini margin of error</span></span>
+<span id="cb37-6"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb37-6" tabindex="-1"></a><span class="co"># https://www.census.gov/content/dam/Census/newsroom/press-kits/2023/iphi/20230912-iphi-slides-income.pdf#page=13</span></span>
+<span id="cb37-7"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb37-7" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(</span>
+<span id="cb37-8"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb37-8" tabindex="-1"></a>  <span class="fu">coef</span>(cps_household_gini) <span class="sc">-</span> <span class="fu">confint</span>(cps_household_gini , <span class="at">level =</span> <span class="fl">0.9</span>)[<span class="dv">1</span>] ,</span>
+<span id="cb37-9"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb37-9" tabindex="-1"></a>  <span class="dv">4</span></span>
+<span id="cb37-10"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb37-10" tabindex="-1"></a>) <span class="sc">==</span> <span class="fl">0.0033</span>) </span></code></pre></div>
 </div>
 <div id="family-income" class="section level3" number="1.4.2">
 <h3><span class="header-section-number">1.4.2</span> Family Income</h3>
 <p>Limit the CPS-ASEC person-level design to the family reference person of primary families, then calculate the Gini coefficient with total family income:</p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb37-1" tabindex="-1"></a>cps_family_design <span class="ot">&lt;-</span></span>
-<span id="cb37-2"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb37-2" tabindex="-1"></a>  <span class="fu">subset</span>(cps_design , a_famrel <span class="sc">%in%</span> <span class="dv">1</span> <span class="sc">&amp;</span> a_famtyp <span class="sc">%in%</span> <span class="dv">1</span>)</span>
-<span id="cb37-3"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb37-3" tabindex="-1"></a></span>
-<span id="cb37-4"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb37-4" tabindex="-1"></a>(cps_family_gini <span class="ot">&lt;-</span> <span class="fu">svygini</span>( <span class="sc">~</span> ftotval , cps_family_design))</span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb38-1" tabindex="-1"></a>cps_family_design <span class="ot">&lt;-</span></span>
+<span id="cb38-2"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb38-2" tabindex="-1"></a>  <span class="fu">subset</span>(cps_design , a_famrel <span class="sc">%in%</span> <span class="dv">1</span> <span class="sc">&amp;</span> a_famtyp <span class="sc">%in%</span> <span class="dv">1</span>)</span>
+<span id="cb38-3"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb38-3" tabindex="-1"></a></span>
+<span id="cb38-4"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb38-4" tabindex="-1"></a>(cps_family_gini <span class="ot">&lt;-</span> <span class="fu">svygini</span>( <span class="sc">~</span> ftotval , cps_family_design))</span></code></pre></div>
 <pre><code>##            gini     SE
 ## ftotval 0.45816 0.0023</code></pre>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb39-1" tabindex="-1"></a><span class="co"># match 2022 family gini coefficient</span></span>
-<span id="cb39-2"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb39-2" tabindex="-1"></a><span class="co"># https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-income-families/f04.xlsx</span></span>
-<span id="cb39-3"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb39-3" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">coef</span>(cps_family_gini) , <span class="dv">3</span>) <span class="sc">==</span> <span class="fl">0.458</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb40-1" tabindex="-1"></a><span class="co"># match 2022 family gini coefficient</span></span>
+<span id="cb40-2"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb40-2" tabindex="-1"></a><span class="co"># https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-income-families/f04.xlsx</span></span>
+<span id="cb40-3"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb40-3" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">coef</span>(cps_family_gini) , <span class="dv">3</span>) <span class="sc">==</span> <span class="fl">0.458</span>)</span></code></pre></div>
 </div>
 <div id="worker-earnings" class="section level3" number="1.4.3">
 <h3><span class="header-section-number">1.4.3</span> Worker Earnings</h3>
 <p>Limit the CPS-ASEC person-level design to full-time, full year workers, then calculate the Gini coefficient with both total personal income and then total earnings:</p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb40-1" tabindex="-1"></a>cps_ftfy_worker_design <span class="ot">&lt;-</span> <span class="fu">subset</span>(cps_design , wewkrs <span class="sc">%in%</span> <span class="dv">1</span>)</span>
-<span id="cb40-2"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb40-2" tabindex="-1"></a></span>
-<span id="cb40-3"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb40-3" tabindex="-1"></a><span class="fu">svygini</span>( <span class="sc">~</span> ptotval , cps_ftfy_worker_design)</span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb41-1" tabindex="-1"></a>cps_ftfy_worker_design <span class="ot">&lt;-</span> <span class="fu">subset</span>(cps_design , wewkrs <span class="sc">%in%</span> <span class="dv">1</span>)</span>
+<span id="cb41-2"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb41-2" tabindex="-1"></a></span>
+<span id="cb41-3"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb41-3" tabindex="-1"></a><span class="fu">svygini</span>( <span class="sc">~</span> ptotval , cps_ftfy_worker_design)</span></code></pre></div>
 <pre><code>##            gini     SE
 ## ptotval 0.41809 0.0025</code></pre>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb42-1" tabindex="-1"></a><span class="fu">svygini</span>( <span class="sc">~</span> pearnval , cps_ftfy_worker_design)</span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#cb43-1" tabindex="-1"></a><span class="fu">svygini</span>( <span class="sc">~</span> pearnval , cps_ftfy_worker_design)</span></code></pre></div>
 <pre><code>##           gini     SE
 ## pearnval 0.412 0.0026</code></pre>
 </div>
