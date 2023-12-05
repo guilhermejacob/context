@@ -281,6 +281,302 @@ Run the `convey_prep()` function on the full design:
 cps_design <- convey_prep(cps_design)
 ```
 
+
+
+
+### Analysis Examples with the `survey` library \ {-}
+
+Add new columns to the data set:
+```{r results='hide', message=FALSE, warning=FALSE}
+cps_design <-
+  update(
+    cps_design ,
+    
+    one = 1 ,
+    
+    a_maritl =
+      factor(
+        a_maritl ,
+        labels =
+          c(
+            "married - civilian spouse present" ,
+            "married - AF spouse present" ,
+            "married - spouse absent" ,
+            "widowed" ,
+            "divorced" ,
+            "separated" ,
+            "never married"
+          )
+      ) ,
+    
+    state_name =
+      factor(
+        gestfips ,
+        levels =
+          c(
+            1L,
+            2L,
+            4L,
+            5L,
+            6L,
+            8L,
+            9L,
+            10L,
+            11L,
+            12L,
+            13L,
+            15L,
+            16L,
+            17L,
+            18L,
+            19L,
+            20L,
+            21L,
+            22L,
+            23L,
+            24L,
+            25L,
+            26L,
+            27L,
+            28L,
+            29L,
+            30L,
+            31L,
+            32L,
+            33L,
+            34L,
+            35L,
+            36L,
+            37L,
+            38L,
+            39L,
+            40L,
+            41L,
+            42L,
+            44L,
+            45L,
+            46L,
+            47L,
+            48L,
+            49L,
+            50L,
+            51L,
+            53L,
+            54L,
+            55L,
+            56L
+          ) ,
+        labels =
+          c(
+            "Alabama",
+            "Alaska",
+            "Arizona",
+            "Arkansas",
+            "California",
+            "Colorado",
+            "Connecticut",
+            "Delaware",
+            "District of Columbia",
+            "Florida",
+            "Georgia",
+            "Hawaii",
+            "Idaho",
+            "Illinois",
+            "Indiana",
+            "Iowa",
+            "Kansas",
+            "Kentucky",
+            "Louisiana",
+            "Maine",
+            "Maryland",
+            "Massachusetts",
+            "Michigan",
+            "Minnesota",
+            "Mississippi",
+            "Missouri",
+            "Montana",
+            "Nebraska",
+            "Nevada",
+            "New Hampshire",
+            "New Jersey",
+            "New Mexico",
+            "New York",
+            "North Carolina",
+            "North Dakota",
+            "Ohio",
+            "Oklahoma",
+            "Oregon",
+            "Pennsylvania",
+            "Rhode Island",
+            "South Carolina",
+            "South Dakota",
+            "Tennessee",
+            "Texas",
+            "Utah",
+            "Vermont",
+            "Virginia",
+            "Washington",
+            "West Virginia",
+            "Wisconsin",
+            "Wyoming"
+          )
+      ) ,
+    
+    male = as.numeric(a_sex == 1)
+  )
+```
+
+Count the unweighted number of records in the survey sample, overall and by groups:
+```{r results='hide', message=FALSE, warning=FALSE}
+sum( weights( cps_design , "sampling" ) != 0 )
+
+svyby( ~ one , ~ state_name , cps_design , unwtd.count )
+```
+
+Count the weighted size of the generalizable population, overall and by groups:
+```{r results='hide', message=FALSE, warning=FALSE}
+svytotal( ~ one , cps_design )
+
+svyby( ~ one , ~ state_name , cps_design , svytotal )
+```
+
+
+Calculate the mean (average) of a linear variable, overall and by groups:
+```{r results='hide', message=FALSE, warning=FALSE}
+svymean( ~ ptotval , cps_design )
+
+svyby( ~ ptotval , ~ state_name , cps_design , svymean )
+```
+
+Calculate the distribution of a categorical variable, overall and by groups:
+```{r results='hide', message=FALSE, warning=FALSE}
+svymean( ~ a_maritl , cps_design )
+
+svyby( ~ a_maritl , ~ state_name , cps_design , svymean )
+```
+
+Calculate the sum of a linear variable, overall and by groups:
+```{r results='hide', message=FALSE, warning=FALSE}
+svytotal( ~ ptotval , cps_design )
+
+svyby( ~ ptotval , ~ state_name , cps_design , svytotal )
+```
+
+Calculate the weighted sum of a categorical variable, overall and by groups:
+```{r results='hide', message=FALSE, warning=FALSE}
+svytotal( ~ a_maritl , cps_design )
+
+svyby( ~ a_maritl , ~ state_name , cps_design , svytotal )
+```
+
+Calculate the median (50th percentile) of a linear variable, overall and by groups:
+```{r results='hide', message=FALSE, warning=FALSE}
+svyquantile( ~ ptotval , cps_design , 0.5 )
+
+svyby( 
+	~ ptotval , 
+	~ state_name , 
+	cps_design , 
+	svyquantile , 
+	0.5 ,
+	ci = TRUE 
+)
+```
+
+Estimate a ratio:
+```{r results='hide', message=FALSE, warning=FALSE}
+svyratio( 
+	numerator = ~ moop , 
+	denominator = ~ ptotval , 
+	cps_design 
+)
+```
+
+
+Restrict the survey design to persons aged 18-64:
+```{r results='hide', message=FALSE, warning=FALSE}
+sub_cps_design <- subset( cps_design , a_age %in% 18:64 )
+```
+Calculate the mean (average) of this subset:
+```{r results='hide', message=FALSE, warning=FALSE}
+svymean( ~ ptotval , sub_cps_design )
+```
+
+
+Extract the coefficient, standard error, confidence interval, and coefficient of variation from any descriptive statistics function result, overall and by groups:
+```{r results='hide', message=FALSE, warning=FALSE}
+this_result <- svymean( ~ ptotval , cps_design )
+
+coef( this_result )
+SE( this_result )
+confint( this_result )
+cv( this_result )
+
+grouped_result <-
+	svyby( 
+		~ ptotval , 
+		~ state_name , 
+		cps_design , 
+		svymean 
+	)
+	
+coef( grouped_result )
+SE( grouped_result )
+confint( grouped_result )
+cv( grouped_result )
+```
+
+Calculate the degrees of freedom of any survey design object:
+```{r results='hide', message=FALSE, warning=FALSE}
+degf( cps_design )
+```
+
+Calculate the complex sample survey-adjusted variance of any statistic:
+```{r results='hide', message=FALSE, warning=FALSE}
+svyvar( ~ ptotval , cps_design )
+```
+
+Include the complex sample design effect in the result for a specific statistic:
+```{r results='hide', message=FALSE, warning=FALSE}
+# SRS without replacement
+svymean( ~ ptotval , cps_design , deff = TRUE )
+
+# SRS with replacement
+svymean( ~ ptotval , cps_design , deff = "replace" )
+```
+
+Compute confidence intervals for proportions using methods that may be more accurate near 0 and 1. See `?svyciprop` for alternatives:
+```{r results='hide', message=FALSE, warning=FALSE}
+svyciprop( ~ male , cps_design ,
+	method = "likelihood" )
+```
+
+Perform a design-based t-test:
+```{r results='hide', message=FALSE, warning=FALSE}
+svyttest( ptotval ~ male , cps_design )
+```
+
+Perform a chi-squared test of association for survey data:
+```{r results='hide', message=FALSE, warning=FALSE}
+svychisq( 
+	~ male + a_maritl , 
+	cps_design 
+)
+```
+
+Perform a survey-weighted generalized linear model:
+```{r results='hide', message=FALSE, warning=FALSE}
+glm_result <- 
+	svyglm( 
+		ptotval ~ male + a_maritl , 
+		cps_design 
+	)
+
+summary( glm_result )
+```
+
+
+
 ### Household Income
 
 Limit the CPS-ASEC person-level design to the household reference person, then calculate the Gini coefficient with total household income:
@@ -430,6 +726,276 @@ Run the `convey_prep()` function on the full design:
 
 ```{r results='hide', message=FALSE, warning=FALSE}
 pnadc_design <- convey_prep(pnadc_design)
+```
+
+### Analysis Examples with the `survey` library \ {-}
+
+Add new columns to the data set:
+```{r results='hide', message=FALSE, warning=FALSE}
+pnadc_design <-
+  update(pnadc_design ,
+         
+         pia = as.numeric(v2009 >= 14))
+
+pnadc_design <-
+  update(
+    pnadc_design ,
+    
+    ocup_c = ifelse(pia == 1 , as.numeric(vd4002 %in% 1) , NA) ,
+    
+    desocup30 = ifelse(pia == 1 , as.numeric(vd4002 %in% 2) , NA)
+  )
+
+pnadc_design <-
+  
+  update(
+    pnadc_design ,
+    
+	one = 1 ,
+	
+    uf_name =
+      
+      factor(
+        as.numeric(uf) ,
+        
+        levels =
+          c(
+            11L,
+            12L,
+            13L,
+            14L,
+            15L,
+            16L,
+            17L,
+            21L,
+            22L,
+            23L,
+            24L,
+            25L,
+            26L,
+            27L,
+            28L,
+            29L,
+            31L,
+            32L,
+            33L,
+            35L,
+            41L,
+            42L,
+            43L,
+            50L,
+            51L,
+            52L,
+            53L
+          ) ,
+        
+        labels =
+          c(
+            "Rondonia",
+            "Acre",
+            "Amazonas",
+            "Roraima",
+            "Para",
+            "Amapa",
+            "Tocantins",
+            "Maranhao",
+            "Piaui",
+            "Ceara",
+            "Rio Grande do Norte",
+            "Paraiba",
+            "Pernambuco",
+            "Alagoas",
+            "Sergipe",
+            "Bahia",
+            "Minas Gerais",
+            "Espirito Santo",
+            "Rio de Janeiro",
+            "Sao Paulo",
+            "Parana",
+            "Santa Catarina",
+            "Rio Grande do Sul",
+            "Mato Grosso do Sul",
+            "Mato Grosso",
+            "Goias",
+            "Distrito Federal"
+          )
+        
+      ) ,
+    
+    age_categories = factor(1 + findInterval(v2009 , seq(5 , 60 , 5))) ,
+    
+    male = as.numeric(v2007 == 1) ,
+    
+    region = substr(uf , 1 , 1) ,
+    
+    # calculate usual income from main job
+    # (rendimento habitual do trabalho principal)
+    vd4016n = ifelse(pia %in% 1 & vd4015 %in% 1 , vd4016 , NA) ,
+    
+    # calculate effective income from main job
+    # (rendimento efetivo do trabalho principal)
+    vd4017n = ifelse(pia %in% 1 & vd4015 %in% 1 , vd4017 , NA) ,
+    
+    # calculate usual income from all jobs
+    # (variavel rendimento habitual de todos os trabalhos)
+    vd4019n = ifelse(pia %in% 1 & vd4015 %in% 1 , vd4019 , NA) ,
+    
+    # calculate effective income from all jobs
+    # (rendimento efetivo do todos os trabalhos)
+    vd4020n = ifelse(pia %in% 1 & vd4015 %in% 1 , vd4020 , NA) ,
+    
+    # determine the potential labor force
+    pea_c = as.numeric(ocup_c == 1 | desocup30 == 1)
+    
+  )
+```
+
+Count the unweighted number of records in the survey sample, overall and by groups:
+```{r results='hide', message=FALSE, warning=FALSE}
+sum( weights( pnadc_design , "sampling" ) != 0 )
+
+svyby( ~ one , ~ uf_name , pnadc_design , unwtd.count )
+```
+
+Count the weighted size of the generalizable population, overall and by groups:
+```{r results='hide', message=FALSE, warning=FALSE}
+svytotal( ~ one , pnadc_design )
+
+svyby( ~ one , ~ uf_name , pnadc_design , svytotal )
+```
+
+Calculate the mean (average) of a linear variable, overall and by groups:
+```{r results='hide', message=FALSE, warning=FALSE}
+svymean( ~ vd4020n , pnadc_design , na.rm = TRUE )
+
+svyby( ~ vd4020n , ~ uf_name , pnadc_design , svymean , na.rm = TRUE )
+```
+
+Calculate the distribution of a categorical variable, overall and by groups:
+```{r results='hide', message=FALSE, warning=FALSE}
+svymean( ~ age_categories , pnadc_design )
+
+svyby( ~ age_categories , ~ uf_name , pnadc_design , svymean )
+```
+
+Calculate the sum of a linear variable, overall and by groups:
+```{r results='hide', message=FALSE, warning=FALSE}
+svytotal( ~ vd4020n , pnadc_design , na.rm = TRUE )
+
+svyby( ~ vd4020n , ~ uf_name , pnadc_design , svytotal , na.rm = TRUE )
+```
+
+Calculate the weighted sum of a categorical variable, overall and by groups:
+```{r results='hide', message=FALSE, warning=FALSE}
+svytotal( ~ age_categories , pnadc_design )
+
+svyby( ~ age_categories , ~ uf_name , pnadc_design , svytotal )
+```
+
+Calculate the median (50th percentile) of a linear variable, overall and by groups:
+```{r results='hide', message=FALSE, warning=FALSE}
+svyquantile( ~ vd4020n , pnadc_design , 0.5 , na.rm = TRUE )
+
+svyby( 
+	~ vd4020n , 
+	~ uf_name , 
+	pnadc_design , 
+	svyquantile , 
+	0.5 ,
+	ci = TRUE , na.rm = TRUE
+)
+```
+
+Estimate a ratio:
+```{r results='hide', message=FALSE, warning=FALSE}
+svyratio( 
+	numerator = ~ ocup_c , 
+	denominator = ~ pea_c , 
+	pnadc_design ,
+	na.rm = TRUE
+)
+```
+
+Restrict the survey design to employed persons:
+```{r results='hide', message=FALSE, warning=FALSE}
+sub_pnadc_design <- subset( pnadc_design , ocup_c == 1 )
+```
+Calculate the mean (average) of this subset:
+```{r results='hide', message=FALSE, warning=FALSE}
+svymean( ~ vd4020n , sub_pnadc_design , na.rm = TRUE )
+```
+
+Extract the coefficient, standard error, confidence interval, and coefficient of variation from any descriptive statistics function result, overall and by groups:
+```{r results='hide', message=FALSE, warning=FALSE}
+this_result <- svymean( ~ vd4020n , pnadc_design , na.rm = TRUE )
+
+coef( this_result )
+SE( this_result )
+confint( this_result )
+cv( this_result )
+
+grouped_result <-
+	svyby( 
+		~ vd4020n , 
+		~ uf_name , 
+		pnadc_design , 
+		svymean ,
+		na.rm = TRUE 
+	)
+	
+coef( grouped_result )
+SE( grouped_result )
+confint( grouped_result )
+cv( grouped_result )
+```
+
+Calculate the degrees of freedom of any survey design object:
+```{r results='hide', message=FALSE, warning=FALSE}
+degf( pnadc_design )
+```
+
+Calculate the complex sample survey-adjusted variance of any statistic:
+```{r results='hide', message=FALSE, warning=FALSE}
+svyvar( ~ vd4020n , pnadc_design , na.rm = TRUE )
+```
+
+Include the complex sample design effect in the result for a specific statistic:
+```{r results='hide', message=FALSE, warning=FALSE}
+# SRS without replacement
+svymean( ~ vd4020n , pnadc_design , na.rm = TRUE , deff = TRUE )
+
+# SRS with replacement
+svymean( ~ vd4020n , pnadc_design , na.rm = TRUE , deff = "replace" )
+```
+
+Compute confidence intervals for proportions using methods that may be more accurate near 0 and 1. See `?svyciprop` for alternatives:
+```{r results='hide', message=FALSE, warning=FALSE}
+svyciprop( ~ male , pnadc_design ,
+	method = "likelihood" )
+```
+
+Perform a design-based t-test:
+```{r results='hide', message=FALSE, warning=FALSE}
+svyttest( vd4020n ~ male , pnadc_design )
+```
+
+Perform a chi-squared test of association for survey data:
+```{r results='hide', message=FALSE, warning=FALSE}
+svychisq( 
+	~ male + age_categories , 
+	pnadc_design 
+)
+```
+
+Perform a survey-weighted generalized linear model:
+```{r results='hide', message=FALSE, warning=FALSE}
+glm_result <- 
+	svyglm( 
+		vd4020n ~ male + age_categories , 
+		pnadc_design 
+	)
+
+summary( glm_result )
 ```
 
 ### Per Capita Income
