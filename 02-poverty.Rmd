@@ -582,6 +582,92 @@ Our coverages are not too far from the nominal coverage level of 95%.
 
 For additional usage examples of `svyarpr`, type `?convey::svyarpr` in the R console.
 
+
+
+
+### Real World Examples
+
+
+This section displays example results using nationally-representative surveys from both the United States and Brazil.  We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the `svyarpr` function.
+
+To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD-Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
+
+#### CPS-ASEC Household Income
+
+```{r}
+svyarpr(~ htotval , cps_household_design)
+
+svyby(~ htotval , ~ sex , cps_household_design , svyarpr)
+```
+
+#### CPS-ASEC Family Income
+
+```{r}
+svyarpr(~ ftotval , cps_family_design)
+
+svyby(~ ftotval , ~ sex , cps_family_design , svyarpr)
+```
+
+#### CPS-ASEC Worker Earnings
+
+```{r}
+svyarpr(~ ptotval , cps_ftfy_worker_design)
+
+svyby(~ ptotval , ~ sex , cps_ftfy_worker_design , svyarpr)
+
+svyarpr(~ pearnval , cps_ftfy_worker_design)
+
+svyby(~ pearnval , ~ sex , cps_ftfy_worker_design , svyarpr)
+```
+
+
+#### PNAD-Contínua Per Capita Income
+
+```{r}
+svyarpr( ~ deflated_per_capita_income , pnadc_design , na.rm = TRUE)
+
+svyby(~ deflated_per_capita_income ,
+      ~ sex ,
+      pnadc_design ,
+      svyarpr ,
+      na.rm = TRUE)
+```
+
+#### PNAD-Contínua Worker Earnings
+
+```{r}
+svyarpr( ~ deflated_labor_income , pnadc_design , na.rm = TRUE)
+
+svyby( ~ deflated_labor_income , ~ sex , pnadc_design , svyarpr , na.rm = TRUE)
+```
+
+
+
+
+#### SCF Family Net Worth
+
+```{r}
+scf_MIcombine(with(scf_design , svyarpr( ~ networth)))
+
+scf_MIcombine(with(scf_design , svyby( ~ networth, ~ hhsex , svyarpr)))
+```
+
+#### SCF Family Income
+
+```{r}
+scf_MIcombine(with(scf_design , svyarpr( ~ income)))
+
+scf_MIcombine(with(scf_design , svyby( ~ income, ~ hhsex , svyarpr)))
+```
+
+
+
+
+
+
+
+
+
 ## Relative Median Income Ratio (svyrmir)
 
 ```{r eval=FALSE}
@@ -758,6 +844,103 @@ stopifnot(all.equal(SE(
 
 For additional usage examples of `svyrmir`, type `?convey::svyrmir` in the R console.
 
+
+
+### Real World Examples
+
+
+This section displays example results using nationally-representative surveys from both the United States and Brazil.  We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the `svyrmir` function.
+
+To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD-Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
+
+#### CPS-ASEC Household Income
+
+```{r}
+svyrmir(~ htotval , cps_household_design , age = ~ a_age)
+
+svyby(~ htotval , ~ sex , cps_household_design , svyrmir , age = ~ a_age)
+```
+
+#### CPS-ASEC Family Income
+
+```{r}
+svyrmir(~ ftotval , cps_family_design , age = ~ a_age)
+
+svyby(~ ftotval , ~ sex , cps_family_design , svyrmir , age = ~ a_age)
+```
+
+#### CPS-ASEC Worker Earnings
+
+```{r}
+svyrmir( ~ ptotval , cps_ftfy_worker_design , age = ~ a_age)
+
+svyby( ~ ptotval , ~ sex , cps_ftfy_worker_design , svyrmir , age = ~ a_age)
+
+svyrmir( ~ pearnval , cps_ftfy_worker_design , age = ~ a_age)
+
+svyby( ~ pearnval , ~ sex , cps_ftfy_worker_design , svyrmir , age = ~ a_age)
+```
+
+
+#### PNAD-Contínua Per Capita Income
+
+```{r}
+svyrmir(~ deflated_per_capita_income ,
+        pnadc_design ,
+        na.rm = TRUE ,
+        age = ~ v2009)
+
+svyby(
+  ~ deflated_per_capita_income ,
+  ~ sex ,
+  pnadc_design ,
+  svyrmir ,
+  na.rm = TRUE ,
+  age = ~ v2009
+)
+```
+
+#### PNAD-Contínua Worker Earnings
+
+```{r}
+svyrmir(~ deflated_labor_income ,
+        pnadc_design ,
+        na.rm = TRUE ,
+        age = ~ v2009)
+
+svyby(
+  ~ deflated_labor_income ,
+  ~ sex ,
+  pnadc_design ,
+  svyrmir ,
+  na.rm = TRUE ,
+  age = ~ v2009
+)
+```
+
+
+
+
+#### SCF Family Net Worth
+
+```{r}
+scf_MIcombine(with(scf_design , svyrmir( ~ networth , age = ~ x8022)))
+
+scf_MIcombine(with(scf_design , svyby( ~ networth, ~ hhsex , svyrmir , age = ~ x8022)))
+```
+
+#### SCF Family Income
+
+```{r}
+scf_MIcombine(with(scf_design , svyrmir( ~ income , age = ~ x8022)))
+
+scf_MIcombine(with(scf_design , svyby( ~ income, ~ hhsex , svyrmir , age = ~ x8022)))
+```
+
+
+
+
+
 ## Relative Median Poverty Gap (svyrmpg)
 
 ```{r eval=FALSE}
@@ -924,6 +1107,88 @@ varpoord_rmpg_calculation$all_result$se))
 ```
 
 For additional usage examples of `svyrmpg`, type `?convey::svyrmpg` in the R console.
+
+
+
+### Real World Examples
+
+
+This section displays example results using nationally-representative surveys from both the United States and Brazil.  We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the `svyrmpg` function.
+
+To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD-Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
+
+#### CPS-ASEC Household Income
+
+```{r}
+svyrmpg( ~ htotval , cps_household_design)
+
+svyby( ~ htotval , ~ sex , cps_household_design , svyrmpg)
+```
+
+#### CPS-ASEC Family Income
+
+```{r}
+svyrmpg( ~ ftotval , cps_family_design)
+
+svyby( ~ ftotval , ~ sex , cps_family_design , svyrmpg)
+```
+
+#### CPS-ASEC Worker Earnings
+
+```{r}
+svyrmpg( ~ ptotval , cps_ftfy_worker_design)
+
+svyby( ~ ptotval , ~ sex , cps_ftfy_worker_design , svyrmpg)
+
+svyrmpg( ~ pearnval , cps_ftfy_worker_design)
+
+svyby( ~ pearnval , ~ sex , cps_ftfy_worker_design , svyrmpg)
+```
+
+
+#### PNAD-Contínua Per Capita Income
+
+```{r}
+svyrmpg( ~ deflated_per_capita_income , pnadc_design , na.rm = TRUE)
+
+svyby( ~ deflated_per_capita_income ,
+       ~ sex ,
+       pnadc_design ,
+       svyrmpg ,
+       na.rm = TRUE)
+```
+
+#### PNAD-Contínua Worker Earnings
+
+```{r}
+svyrmpg( ~ deflated_labor_income , pnadc_design , na.rm = TRUE)
+
+svyby( ~ deflated_labor_income , ~ sex , pnadc_design , svyrmpg , na.rm = TRUE)
+```
+
+
+
+
+#### SCF Family Net Worth
+
+```{r}
+scf_MIcombine(with(scf_design , svyrmpg( ~ networth)))
+
+scf_MIcombine(with(scf_design , svyby( ~ networth, ~ hhsex , svyrmpg)))
+```
+
+#### SCF Family Income
+
+```{r}
+scf_MIcombine(with(scf_design , svyrmpg( ~ income)))
+
+scf_MIcombine(with(scf_design , svyby( ~ income, ~ hhsex , svyrmpg)))
+```
+
+
+
+
+
 
 ## Median Income Below the At Risk of Poverty Threshold  (svypoormed)
 
@@ -1092,6 +1357,85 @@ stopifnot(all.equal(
 ```
 
 For additional usage examples of `svypoormed`, type `?convey::svypoormed` in the R console.
+
+
+### Real World Examples
+
+
+This section displays example results using nationally-representative surveys from both the United States and Brazil.  We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the `svypoormed` function.
+
+To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD-Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
+
+#### CPS-ASEC Household Income
+
+```{r}
+svypoormed( ~ htotval , cps_household_design)
+
+svyby( ~ htotval , ~ sex , cps_household_design , svypoormed)
+```
+
+#### CPS-ASEC Family Income
+
+```{r}
+svypoormed(~ ftotval , cps_family_design)
+
+svyby(~ ftotval , ~ sex , cps_family_design , svypoormed)
+```
+
+#### CPS-ASEC Worker Earnings
+
+```{r}
+svypoormed( ~ ptotval , cps_ftfy_worker_design)
+
+svyby( ~ ptotval , ~ sex , cps_ftfy_worker_design , svypoormed)
+
+svypoormed( ~ pearnval , cps_ftfy_worker_design)
+
+svyby( ~ pearnval , ~ sex , cps_ftfy_worker_design , svypoormed)
+```
+
+
+#### PNAD-Contínua Per Capita Income
+
+```{r}
+svypoormed( ~ deflated_per_capita_income , pnadc_design , na.rm = TRUE)
+
+svyby( ~ deflated_per_capita_income ,
+       ~ sex ,
+       pnadc_design ,
+       svypoormed ,
+       na.rm = TRUE)
+```
+
+#### PNAD-Contínua Worker Earnings
+
+```{r}
+svypoormed( ~ deflated_labor_income , pnadc_design , na.rm = TRUE)
+
+svyby( ~ deflated_labor_income , ~ sex , pnadc_design , svypoormed , na.rm = TRUE)
+```
+
+
+
+
+#### SCF Family Net Worth
+
+```{r}
+scf_MIcombine(with(scf_design , svypoormed( ~ networth)))
+
+scf_MIcombine(with(scf_design , svyby( ~ networth, ~ hhsex , svypoormed)))
+```
+
+#### SCF Family Income
+
+```{r}
+scf_MIcombine(with(scf_design , svypoormed( ~ income)))
+
+scf_MIcombine(with(scf_design , svyby( ~ income, ~ hhsex , svypoormed)))
+```
+
+
+
 
 ## Foster-Greer-Thorbecke class (svyfgt, svyfgtdec)
 
@@ -1564,6 +1908,135 @@ stopifnot( abs( rowMeans(est.coverage) - 0.95 ) < 0.015 )
 
 For additional usage examples of `svyfgt` and `svyfgtdec`, type `?convey::svyfgt` or `?convey::svyfgtdec` in the R console.
 
+
+
+### Real World Examples
+
+
+This section displays example results using nationally-representative surveys from both the United States and Brazil.  We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the `svyfgt` function.
+
+To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD-Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
+
+#### CPS-ASEC Household Income
+
+```{r}
+# poverty gap ratio, with poverty threshold fixed at 0.6 x median
+svyfgt( ~ htotval ,
+        cps_household_design ,
+        g = 1 ,
+        type_thresh = "relq")
+
+svyby( ~ htotval ,
+       ~ sex ,
+       cps_household_design ,
+       svyfgt ,
+       g = 1 ,
+       type_thresh = "relq")
+```
+
+#### CPS-ASEC Family Income
+
+```{r}
+# poverty gap ratio, with poverty threshold fixed at 0.6 x median
+svyfgt( ~ ftotval ,
+        cps_family_design ,
+        g = 1 ,
+        type_thresh = "relq")
+
+svyby( ~ ftotval ,
+       ~ sex ,
+       cps_family_design ,
+       svyfgt ,
+       g = 1 ,
+       type_thresh = "relq")
+```
+
+#### CPS-ASEC Worker Earnings
+
+```{r}
+# poverty gap ratio, with poverty threshold fixed at 0.6 x median
+svyfgt(~ ptotval , cps_ftfy_worker_design , g = 1 , type_thresh = "relq")
+
+svyby(~ ptotval , ~ sex , cps_ftfy_worker_design , svyfgt , g = 1 , type_thresh = "relq")
+
+svyfgt(~ pearnval , cps_ftfy_worker_design , g = 1 , type_thresh = "relq")
+
+svyby(~ pearnval , ~ sex , cps_ftfy_worker_design , svyfgt , g = 1 , type_thresh = "relq")
+```
+
+
+#### PNAD-Contínua Per Capita Income
+
+```{r}
+# poverty gap ratio, with poverty threshold fixed at 0.6 x median
+svyfgt( ~ deflated_per_capita_income , pnadc_design , na.rm = TRUE , g = 1 , type_thresh = "relq")
+
+svyby(~ deflated_per_capita_income ,
+      ~ sex ,
+      pnadc_design ,
+      svyfgt ,
+      na.rm = TRUE , g = 1 , type_thresh = "relq")
+```
+
+#### PNAD-Contínua Worker Earnings
+
+```{r}
+# poverty gap ratio, with poverty threshold fixed at 0.6 x median
+svyfgt(
+  ~ deflated_labor_income ,
+  pnadc_design ,
+  na.rm = TRUE ,
+  g = 1 ,
+  type_thresh = "relq"
+)
+
+svyby(
+  ~ deflated_labor_income ,
+  ~ sex ,
+  pnadc_design ,
+  svyfgt ,
+  na.rm = TRUE ,
+  g = 1 ,
+  type_thresh = "relq"
+)
+```
+
+
+
+
+#### SCF Family Net Worth
+
+```{r}
+# poverty gap ratio, with poverty threshold fixed at 0.6 x median
+scf_MIcombine(with(scf_design , svyfgt(
+  ~ networth , g = 1 , type_thresh = "relq"
+)))
+
+scf_MIcombine(with(
+  scf_design ,
+  svyby(
+    ~ networth,
+    ~ hhsex ,
+    svyfgt ,
+    g = 1 ,
+    type_thresh = "relq"
+  )
+))
+```
+
+#### SCF Family Income
+
+```{r}
+# poverty gap ratio, with poverty threshold fixed at 0.6 x median
+scf_MIcombine(with(scf_design , svyfgt( ~ income , g = 1 , type_thresh = "relq")))
+
+scf_MIcombine(with(scf_design , svyby( ~ income, ~ hhsex , svyfgt , g = 1 , type_thresh = "relq")))
+```
+
+
+
+
+
 ## Watts poverty measure (svywatts, svywattsdec)
 
 ```{r eval=FALSE}
@@ -1930,3 +2403,189 @@ hist(
 
 
 For additional usage examples of `svywatts` and `svywattsdec`, type `?convey::svywatts` or `?convey::svywattsdec` in the R console.
+
+
+### Real World Examples
+
+
+This section displays example results using nationally-representative surveys from both the United States and Brazil.  We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the `svywatts` function.
+
+To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD-Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
+
+#### CPS-ASEC Household Income
+
+```{r}
+# poverty threshold equal to arpt
+svywatts(
+  ~ htotval ,
+  subset(cps_household_design , htotval > 0) ,
+  type_thresh = "relq",
+  thresh = TRUE
+)
+
+svyby(
+  ~ htotval ,
+  ~ sex ,
+  subset(cps_household_design , htotval > 0) ,
+  svywatts ,
+  type_thresh = "relq",
+  thresh = TRUE
+)
+```
+
+#### CPS-ASEC Family Income
+
+```{r}
+# poverty threshold equal to arpt
+svywatts(
+  ~ ftotval ,
+  subset(cps_family_design , ftotval > 0) ,
+  type_thresh = "relq",
+  thresh = TRUE
+)
+
+svyby(
+  ~ ftotval ,
+  ~ sex ,
+  subset(cps_family_design , ftotval > 0) ,
+  svywatts ,
+  type_thresh = "relq",
+  thresh = TRUE
+)
+```
+
+#### CPS-ASEC Worker Earnings
+
+```{r}
+# poverty threshold equal to arpt
+svywatts(
+  ~ ptotval ,
+  subset(cps_ftfy_worker_design , ptotval > 0) ,
+  type_thresh = "relq",
+  thresh = TRUE
+)
+
+svyby(
+  ~ ptotval ,
+  ~ sex ,
+  subset(cps_ftfy_worker_design , ptotval > 0) ,
+  svywatts ,
+  type_thresh = "relq",
+  thresh = TRUE
+)
+
+svywatts(
+  ~ pearnval ,
+  subset(cps_ftfy_worker_design , pearnval > 0) ,
+  type_thresh = "relq",
+  thresh = TRUE
+)
+
+svyby(
+  ~ pearnval ,
+  ~ sex ,
+  subset(cps_ftfy_worker_design , pearnval > 0) ,
+  svywatts ,
+  type_thresh = "relq",
+  thresh = TRUE
+)
+```
+
+
+#### PNAD-Contínua Per Capita Income
+
+```{r}
+# poverty threshold equal to arpt
+svywatts(
+  ~ deflated_per_capita_income ,
+  subset(pnadc_design , deflated_per_capita_income > 0),
+  na.rm = TRUE ,
+  type_thresh = "relq",
+  thresh = TRUE
+)
+
+svyby(
+  ~ deflated_per_capita_income ,
+  ~ sex ,
+  subset(pnadc_design , deflated_per_capita_income > 0),
+  svywatts ,
+  na.rm = TRUE ,
+  type_thresh = "relq",
+  thresh = TRUE
+)
+```
+
+#### PNAD-Contínua Worker Earnings
+
+```{r}
+# poverty threshold equal to arpt
+svywatts(
+  ~ deflated_labor_income ,
+  subset(pnadc_design , deflated_labor_income > 0) ,
+  na.rm = TRUE ,
+  type_thresh = "relq",
+  thresh = TRUE
+)
+
+svyby(
+  ~ deflated_labor_income ,
+  ~ sex ,
+  subset(pnadc_design , deflated_labor_income > 0) ,
+  svywatts ,
+  na.rm = TRUE ,
+  type_thresh = "relq",
+  thresh = TRUE
+)
+```
+
+
+
+
+#### SCF Family Net Worth
+
+```{r}
+# poverty threshold equal to arpt
+scf_MIcombine(with(
+  subset(scf_design , networth > 0),
+  svywatts(~ networth ,
+           type_thresh = "relq",
+           thresh = TRUE)
+))
+
+scf_MIcombine(with(
+  subset(scf_design , networth > 0),
+  svyby(
+    ~ networth,
+    ~ hhsex ,
+    svywatts ,
+    type_thresh = "relq",
+    thresh = TRUE
+  )
+))
+```
+
+#### SCF Family Income
+
+```{r}
+# poverty threshold equal to arpt
+scf_MIcombine(with(
+  subset(scf_design , income > 0),
+  svywatts(~ income,
+           type_thresh = "relq",
+           thresh = TRUE)
+))
+
+scf_MIcombine(with(
+  subset(scf_design , income > 0),
+  svyby(
+    ~ income,
+    ~ hhsex ,
+    svywatts,
+    type_thresh = "relq",
+    thresh = TRUE
+  )
+))
+```
+
+
+

@@ -255,6 +255,9 @@ stopifnot(nrow(cps_df) == nrow(person_df))
 
 ```{r results='hide', echo=FALSE}
 rm( household_df , family_df , person_df , hh_fm_df , hh_fm_pr_df , repwgts_df ) ; gc()
+
+# variables to keep
+cps_df <- cps_df[ c( 'a_age' , 'a_sex' , 'moop' , 'a_maritl' , 'a_famrel' , 'gestfips' , 'ptotval' , 'ftotval' , 'htotval' , 'pearnval' , 'a_exprrp' , 'a_famtyp' , 'wewkrs' , 'marsupwt' , paste0( 'pwwgt' , 1:160 ) ) ] ; gc()
 ```
 
 
@@ -727,6 +730,15 @@ pnadc_df <-
     
   )
 ```
+
+
+```{r results='hide', echo=FALSE}
+# variables to keep
+pnadc_df <- pnadc_df[ c( 'vd4002' , 'uf' , 'v2009' , 'v2007' , 'vd4015' , 'vd4016' , 'vd4017' , 'vd4019' , 'vd4020' , 'deflated_per_capita_income' , 'deflated_labor_income' , 'sex' , 'v1032' , grep( 'v1032[0-9]{3}' , names( pnadc_df ) , value = TRUE ) ) ] ; gc()
+```
+
+
+
 
 Construct a complex sample survey design:
 
@@ -1210,6 +1222,21 @@ scf_list <- lapply(scf_imp , merge , ext_df)
 
 
 
+
+```{r results='hide', echo=FALSE}
+# variables to keep
+scf_list <-
+	lapply(
+		scf_list ,
+		function( w ) w[ c( 'yy1' , 'wgt' , 'networth' , 'hhsex' , 'married' , 'edcl' , 'five' , 'x8022' , 'income' , 'lf' ) ]
+	)
+
+gc()
+```
+
+
+
+
 Replace all missing values in the replicate weights table with zeroes, multiply the replicate weights by the multiplication factor, then only keep the unique identifier and the final (combined) replicate weights:
 ```{r results='hide', message=FALSE, warning=FALSE}
 scf_rw_df[is.na(scf_rw_df)] <- 0
@@ -1291,7 +1318,6 @@ rm( scf_rw_df , ext_df , s1_df , s2_df , s3_df , s4_df , s5_df , scf_imp , scf_l
 ```
 
 
-
 ### Analysis Examples with the `survey` library
 
 Add new columns to the data set:
@@ -1323,6 +1349,7 @@ scf_design <-
     
   )
 ```
+
 
 Count the unweighted number of records in the survey sample, overall and by groups:
 ```{r results='hide', message=FALSE, warning=FALSE}
