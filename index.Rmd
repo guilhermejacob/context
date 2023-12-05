@@ -224,6 +224,11 @@ repwgts_df <-
   four_df[[grep('repwgt' , basename(unzipped_files))]]
 ```
 
+
+```{r results='hide', echo=FALSE}
+rm( four_tbl , four_df ) ; gc()
+```
+
 Divide weights:
 
 ```{r results='hide', message=FALSE, warning=FALSE}
@@ -246,6 +251,12 @@ cps_df <- merge(hh_fm_pr_df , repwgts_df)
 
 stopifnot(nrow(cps_df) == nrow(person_df))
 ```
+
+
+```{r results='hide', echo=FALSE}
+rm( household_df , family_df , person_df , hh_fm_df , hh_fm_pr_df , repwgts_df ) ; gc()
+```
+
 
 Construct a complex sample survey design:
 
@@ -281,6 +292,10 @@ Run the `convey_prep()` function on the full design:
 cps_design <- convey_prep(cps_design)
 ```
 
+
+```{r results='hide', echo=FALSE}
+rm( cps_df ) ; gc()
+```
 
 
 
@@ -624,6 +639,12 @@ svygini( ~ ptotval , cps_ftfy_worker_design)
 
 svygini( ~ pearnval , cps_ftfy_worker_design)
 ```
+
+
+```{r results='hide', echo=FALSE}
+rm( cps_design ) ; gc()
+```
+
 
 
 ## Pesquisa Nacional por Amostra de Domicílios Contínua (PNAD-Contínua)
@@ -1036,6 +1057,10 @@ stopifnot(round(cv(pnadc_earnings_gini), 3) == 0.007)
 
 
 
+```{r results='hide', echo=FALSE}
+rm( pnadc_df ) ; gc()
+```
+
 
 ## Survey of Consumer Finances (SCF)
 
@@ -1183,6 +1208,8 @@ scf_list <- lapply(scf_imp , merge , ext_df)
 
 ```
 
+
+
 Replace all missing values in the replicate weights table with zeroes, multiply the replicate weights by the multiplication factor, then only keep the unique identifier and the final (combined) replicate weights:
 ```{r results='hide', message=FALSE, warning=FALSE}
 scf_rw_df[is.na(scf_rw_df)] <- 0
@@ -1258,6 +1285,10 @@ stopifnot(round(coef(median_net_worth_incorrect_errors) / 1000 , 2) == 192.7)
 ```
 
 
+
+```{r results='hide', echo=FALSE}
+rm( scf_rw_df , ext_df , s1_df , s2_df , s3_df , s4_df , s5_df , scf_imp , scf_list ) ; gc()
+```
 
 
 
