@@ -633,11 +633,25 @@ stopifnot(round(coef(cps_family_gini) , 3) == 0.458)
 
 ### Worker Earnings
 
-Limit the CPS-ASEC person-level design to full-time, full year workers, then calculate the Gini coefficient with both total personal income and then total earnings:
+
+The `convey_prep()` function sets the population of reference for poverty threshold estimation.  For relative poverty measures, it is important to think what should be the reference population for the poverty threshold. For instance, if one is interested is computing poverty rates across regions using a poverty line computed at a nationwide level (represented by a full sample design object), it is important to run `convey_prep()` immediately after creating the full object. However, imagine that one wants to compute the poverty line using the annual earnings among only full-time, full year workers. In this case, subsetting the full object after running `convey_prep()` will compute the poverty line using the entire sample, including the earnings of part-time workers, part year workers, and also zeroes for the non-working population.  So in this (non-standard) case, we suggest subsetting the main object and then running `convey_prep()` again to re-set the reference population:
+
+
+
+Limit the CPS-ASEC person-level design to full-time, full year workers:
 
 ```{r}
 cps_ftfy_worker_design <- subset(cps_design , wewkrs %in% 1)
+```
 
+Re-set the population of reference for poverty threshold estimation:
+
+```{r}
+cps_ftfy_worker_design <- convey_prep(cps_ftfy_worker_design)
+```
+
+Calculate the Gini coefficient with both total personal income and then total earnings:
+```{r}
 svygini( ~ ptotval , cps_ftfy_worker_design)
 
 svygini( ~ pearnval , cps_ftfy_worker_design)
