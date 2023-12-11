@@ -13,7 +13,7 @@
 
 <meta name="author" content="By Guilherme Jacob, Anthony Damico, and Djalma Pessoa. The authors received no external funding for the convey software and this accompanying textbook." />
 
-<meta name="date" content="2023-12-05" />
+<meta name="date" content="2023-12-11" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -275,8 +275,10 @@ div.csl-indent {
 <div id="replication-based-variance-estimation" class="section level2" number="2.2">
 <h2><span class="header-section-number">2.2</span> Replication-Based Variance Estimation</h2>
 <p>All major functions in the <code>convey</code> library have S3 methods for the classes: <code>survey.design</code>, <code>svyrep.design</code> and <code>DBIdesign</code>. When the argument <code>design</code> is a survey design object with replicate weights created by the <code>survey</code> library, <code>convey</code> uses the method <code>svrepdesign</code>.</p>
-<p>Considering the remarks in <span class="citation">(<label for="tufte-mn-11" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-11" class="margin-toggle">Wolter 1985<span class="marginnote">Wolter, K. M. 1985. <em>Introduction to Variance Estimation</em>. New York: Springer-Verlag.</span>)</span>, p. 163, concerning the deficiency of the <code>Jackknife</code> method in estimating the variance of <code>quantiles</code>, we adopted the bootstrap method instead.</p>
-<p>The function <code>bootVar</code> from the <code>laeken</code> library <span class="citation">(<label for="tufte-mn-12" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-12" class="margin-toggle">Alfons and Templ 2013<span class="marginnote">Alfons, Andreas, and Matthias Templ. 2013. <span>“Estimation of Social Exclusion Indicators from Complex Surveys: The <span>R</span> Package <span class="nocase">laeken</span>.”</span> <em>Journal of Statistical Software</em> 54 (15): 1–25. <a href="http://www.jstatsoft.org/v54/i15/">http://www.jstatsoft.org/v54/i15/</a>.</span>)</span>, also uses the bootstrap method to estimate variances.</p>
+<p>Considering the remarks in <span class="citation">Wolter (<label for="tufte-mn-12" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-12" class="margin-toggle">1985, 163<span class="marginnote">Wolter, K. M. 1985. <em>Introduction to Variance Estimation</em>. New York: Springer-Verlag.</span>)</span>, concerning the deficiency of the <code>Jackknife</code> method in estimating the variance of <code>quantiles</code>, we suggest using bootstrap methods. This is specified in the <code>survey::svrepdesign</code> or <code>survey::as.svrepdesign</code> functions, as we show in the next example. For comparison, the function <code>bootVar</code> from the <code>laeken</code> library <span class="citation">(<label for="tufte-mn-13" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-13" class="margin-toggle">Alfons and Templ 2013<span class="marginnote">Alfons, Andreas, and Matthias Templ. 2013. <span>“Estimation of Social Exclusion Indicators from Complex Surveys: The <span>R</span> Package <span class="nocase">laeken</span>.”</span> <em>Journal of Statistical Software</em> 54 (15): 1–25. <a href="http://www.jstatsoft.org/v54/i15/">http://www.jstatsoft.org/v54/i15/</a>.</span>)</span>, also uses the bootstrap method to estimate variances.</p>
+<p>It is worth pointing out tha bootstrap methods rely on randomly resampling the dataset.
+Therefore, users are likely to have slightly different variance estimates by chance.
+For reproducibility, the user can set a random seed using <code>set.seed()</code> before running <code>survey::as.svrepdesign</code>.</p>
 <div id="replication-design-example" class="section level3" number="2.2.1">
 <h3><span class="header-section-number">2.2.1</span> Replication Design Example</h3>
 <div class="sourceCode" id="cb128"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb128-1"><a href="2.2-replication-based-variance-estimation.html#cb128-1" tabindex="-1"></a><span class="co"># load libraries</span></span>
@@ -322,7 +324,7 @@ div.csl-indent {
 ## [39] 1 1 1 1 1 1 1 1 1 1 1 1
 ## attr(,&quot;mse&quot;)
 ## [1] FALSE</code></pre>
-<p>These are resampling (bootstrap) replicates. With them, we can look at the variance of these replicates to get an estimate the gini estimator’s variance:</p>
+<p>These are resampling (bootstrap) replicates. With them, we can look at the variance of these replicates to get an estimate the Gini estimator’s variance:</p>
 <div class="sourceCode" id="cb134"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb134-1"><a href="2.2-replication-based-variance-estimation.html#cb134-1" tabindex="-1"></a><span class="co"># variance estimate</span></span>
 <span id="cb134-2"><a href="2.2-replication-based-variance-estimation.html#cb134-2" tabindex="-1"></a>des.scale <span class="ot">&lt;-</span> des_eusilc_rep<span class="sc">$</span>scale</span>
 <span id="cb134-3"><a href="2.2-replication-based-variance-estimation.html#cb134-3" tabindex="-1"></a>meantheta <span class="ot">&lt;-</span> <span class="fu">mean</span>( gini.reps )[[<span class="dv">1</span>]]</span>
