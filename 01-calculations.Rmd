@@ -17,11 +17,11 @@ This section explains the calculations used for survey designs created with the 
 
 In what follows, we often use the linearization method as a tool to produce an approximation for the variance of an estimator. From the linearized variable $z$ of an estimator $T$, we get from the expression \@ref(var) an estimate of the variance of $T$.
 
-If $T$ can be expressed as a function of the population totals $T = g(Y_1, Y_2, \ldots, Y_n)$, and if $g$ is linear,  the estimation of the variance of $T = g(Y_1, Y_2, \ldots, Y_n)$ is straightforward. If $g$ is not linear but is a 'smooth' function, then it is possible to approximate the variance of $g(Y_1, Y_2, \ldots, Y_n)$ by the variance of its first order Taylor expansion. For example, we can use Taylor expansion to linearize the ratio of two totals. However, there are situations where Taylor linearization cannot be immediately computed, either because $T$ cannot be expressed as functions of the population totals, or because $g$ is not  a `smooth` function.  A common example is the case where $T$ is a quantile.
+If $T$ can be expressed as a function of the population totals $T = g(Y_1, Y_2, \ldots, Y_n)$, and if $g$ is linear,  the estimation of the variance of $T = g(Y_1, Y_2, \ldots, Y_n)$ is straightforward. If $g$ is not linear but is a 'smooth' function, then it is possible to approximate the variance of $g(Y_1, Y_2, \ldots, Y_n)$ by the variance of its first order Taylor expansion. For example, we can use Taylor expansion to linearize the ratio of two totals. However, there are situations where Taylor linearization cannot be immediately computed, either because $T$ cannot be expressed as functions of the population totals, or because $g$ is not  a 'smooth' function.  A common example is the case where $T$ is a quantile.
 
 In these cases, an alternative form of linearization of $T$ might suffice: the `Influence Function`, as defined in \@ref(lin), proposed in @deville1999.  Separately, replication methods such as `bootstrap` and `jackknife` also work.
 
-In the `convey` library, there are some basic functions that produce the linearized variables needed to measure income concentration and poverty.  For example, looking at the income variable in some complex survey dataset, the `quantile` of that income variable can be linearized by the function `convey::svyiqalpha` and the sum total below any quantile of the variable is linearized by the function `convey::svyisq`.
+In the `convey` library, there are some basic functions that produce the linearized variables needed to measure income concentration and poverty.  For example, looking at the income variable in some complex survey dataset, the `quantile` of that income variable is linearized inside the function `convey::svyiqalpha` and the sum total below any quantile of the variable is linearized inside the function `convey::svyisq`.
 
 From the linearized variables of these basic estimates, it is possible by using rules of composition, valid for influence functions, to derive the influence function of more complex estimates. By definition, the influence function is a Gateaux derivative and the rules of composition valid for Gateaux derivatives also hold for Influence Functions.
 
@@ -85,8 +85,7 @@ $qsr=\frac{\sum_U 1(y_i>q_{.80})}{\sum_U 1(y_i\leq q_{.20})}$
 $1+G=\frac{2\sum_U (r_i-1)y_i}{N\sum_Uy_i}$
 where $r_i$ is the rank of $y_i$.
 
-Note that it is not possible to use TSL for these measures because they rely on quantiles or, in the case of the Gini coefficient, a function of ranks.  Therefore, we instead follow the approach proposed by Deville (1999) based upon influence functions.
-
+Note that it is not possible to use TSL for these measures because they rely on quantiles or, in the case of the Gini coefficient, a function of ranks.  Therefore, we instead follow the approach proposed by @deville1999 based upon influence functions.
 
 Let $U$ be a population of size $N$ and $M$ be a measure that allocates mass one to the set composed by one unit, that is $M(i)=M_i= 1$ if $i\in U$ and $M(i)=0$ if $i\notin U$.
 
@@ -184,10 +183,11 @@ $f$ - income density function;
 
 All major functions in the `convey` library have S3 methods  for the classes: `survey.design`, `svyrep.design` and `DBIdesign`. When the argument `design` is  a survey design object with replicate weights created by the `survey` library, `convey` uses the method `svrepdesign`. 
 
-Considering the remarks in [@W85],  p. 163, concerning the deficiency of the `Jackknife` method in estimating the variance of `quantiles`, we adopted the bootstrap method instead. 
+Considering the remarks in @W85 [p. 163], concerning the deficiency of the `Jackknife` method in estimating the variance of `quantiles`, we suggest using bootstrap methods. This is specified in the `survey::svrepdesign` or `survey::as.svrepdesign` functions, as we show in the next example. For comparison, the function `bootVar` from the `laeken` library [@R-laeken], also uses the bootstrap method to estimate variances. 
 
-The function `bootVar` from the `laeken` library [@R-laeken], also uses the bootstrap method to estimate variances. 
-
+It is worth pointing out tha bootstrap methods rely on randomly resampling the dataset.
+Therefore, users are likely to have slightly different variance estimates by chance.
+For reproducibility, the user can set a random seed using `set.seed()` before running `survey::as.svrepdesign`.
 
 ### Replication Design Example
 
@@ -223,7 +223,7 @@ To understand how that variance is estimated, we can look at the replicates:
 ( gini.reps <- gini.repstat$replicates )
 ```
 
-These are resampling (bootstrap) replicates. With them, we can look at the variance of these replicates to get an estimate the gini estimator's variance:
+These are resampling (bootstrap) replicates. With them, we can look at the variance of these replicates to get an estimate the Gini estimator's variance:
 
 ```{r}
 # variance estimate
@@ -242,9 +242,9 @@ identical( gini.se , SE( gini.repstat )[[1]] )
 
 Some inequality and multidimensional poverty measures can be decomposed. The decomposition methods in the `convey` library are limited to group decomposition for inequality measures and sub-indices decomposition for poverty measures.
 
-For instance, the generalized entropy index is an inequality measure that can be decomposed into between and within group components. This sheds light on a very simple question: _of the overall inequality, how much can be explained by inequalities between groups and within groups?_ Since this measure is additively decomposable, one can get estimates of the coefficients, SEs and covariance between components. For a more practical approach, see @lima2013.
+For instance, the generalized entropy index is an inequality measure that can be decomposed into between and within group components. This sheds light on a very simple question: _of the overall inequality, how much can be explained by inequalities between groups and within groups?_ Since this measure is additively decomposable, we can obtain estimates of the "within-inequality" and "between-inequality" that adds up to the "overall inequality" across groups.^[For a more practical approach, see @lima2013.] Since those are estimates, it is useful to obtain estimates of their SEs and, more generally, of their variance-covariance matrix.
 For poverty measures, a sub-indices decomposition example is the decomposition of the FGT [@foster1984] measure 
-into extension, intensity and inequality components. This allows researchers to explain how each components accounts 
+into extension, intensity and inequality components. This allows researchers to explain how each components accounts
 for the difference between this measure over time and across domains.
 
 The Alkire-Foster class of multidimensional poverty indices (not implemented in the `convey` library) can be decomposed by both dimensions and by groups, showing how much each group and each dimension contributes to poverty overall.  Multidimensional poverty techniques can sometimes help economic and policy analysts understand more precisely who is more affected by inequality and poverty, and how those disparities manifest.
@@ -255,6 +255,6 @@ the variance estimation should also account for the covariances across component
 This is handled directly through each decomposition function, like `svygeidec` and `svyfgtdec`.
 These functions produce estimates of the variance-covariance matrices using either 
 influence functions or replication-based methods. 
-For examples of the decompositions functions, we direct the reader to the section
+For examples of the decomposition estimation functions, we direct the reader to the section
 about the specific decomposition function.
 
