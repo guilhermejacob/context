@@ -5,7 +5,7 @@
 <meta charset="utf-8" />
 <meta name="generator" content="pandoc" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="Chapter 2 Variance Estimation | Poverty and Inequality with Complex Survey Data" />
+<meta property="og:title" content="2.1 Linearization-Based Variance Estimation | Poverty and Inequality with Complex Survey Data" />
 <meta property="og:type" content="book" />
 
 <meta property="og:description" content="A book about the R convey package" />
@@ -24,7 +24,7 @@ MathJax.Hub.Config({
 
 <meta name="description" content="A book about the R convey package">
 
-<title>Chapter 2 Variance Estimation | Poverty and Inequality with Complex Survey Data</title>
+<title>2.1 Linearization-Based Variance Estimation | Poverty and Inequality with Complex Survey Data</title>
 
 <link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte-background.css" rel="stylesheet" />
@@ -160,11 +160,11 @@ div.csl-indent {
 <li><a href="1.6-survey-of-consumer-finances-scf.html#family-income-1" id="toc-family-income-1"><span class="toc-section-number">1.6.3</span> Family Income</a></li>
 </ul></li>
 </ul></li>
-<li class="has-sub"><a href="2-var.html#var" id="toc-var"><span class="toc-section-number">2</span> Variance Estimation</a>
+<li class="has-sub"><a href="2-variance-estimation.html#variance-estimation" id="toc-variance-estimation"><span class="toc-section-number">2</span> Variance Estimation</a>
 <ul>
-<li class="has-sub"><a href="2.1-lin.html#lin" id="toc-lin"><span class="toc-section-number">2.1</span> Linearization-Based Variance Estimation</a>
+<li class="has-sub"><a href="2.1-linearization-based-variance-estimation.html#linearization-based-variance-estimation" id="toc-linearization-based-variance-estimation"><span class="toc-section-number">2.1</span> Linearization-Based Variance Estimation</a>
 <ul>
-<li><a href="2.1-lin.html#influence-functions" id="toc-influence-functions"><span class="toc-section-number">2.1.1</span> Influence Functions</a></li>
+<li><a href="2.1-linearization-based-variance-estimation.html#influence-functions" id="toc-influence-functions"><span class="toc-section-number">2.1.1</span> Influence Functions</a></li>
 </ul></li>
 <li class="has-sub"><a href="2.2-replication-based-variance-estimation.html#replication-based-variance-estimation" id="toc-replication-based-variance-estimation"><span class="toc-section-number">2.2</span> Replication-Based Variance Estimation</a>
 <ul>
@@ -280,14 +280,129 @@ div.csl-indent {
 </div>
 <div class="row">
 <div class="col-sm-12">
-<div id="var" class="section level1" number="2">
-<h1><span class="header-section-number">Chapter 2</span> Variance Estimation</h1>
-<p>This section explains the details of the variance estimation methodologies
-for the measures implemented in the <code>convey</code> package.</p>
+<div id="linearization-based-variance-estimation" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Linearization-Based Variance Estimation</h2>
+<p>This section explains the calculations used for survey designs created with the <code>svydesign()</code> function within the <code>survey</code> package.</p>
+<p>In what follows, we often use the linearization method as a tool to produce an approximation for the variance of an estimator. From the linearized variable <span class="math inline">\(z\)</span> of an estimator <span class="math inline">\(T\)</span>, we get from the expression below an estimate of the variance of <span class="math inline">\(T\)</span>.</p>
+<p>If <span class="math inline">\(T\)</span> can be expressed as a function of the population totals <span class="math inline">\(T = g(Y_1, Y_2, \ldots, Y_n)\)</span>, and if <span class="math inline">\(g\)</span> is linear, the estimation of the variance of <span class="math inline">\(T = g(Y_1, Y_2, \ldots, Y_n)\)</span> is straightforward. If <span class="math inline">\(g\)</span> is not linear but is a ‘smooth’ function, then it is possible to approximate the variance of <span class="math inline">\(g(Y_1, Y_2, \ldots, Y_n)\)</span> by the variance of its first order Taylor expansion. For example, we can use Taylor expansion to linearize the ratio of two totals. However, there are situations where Taylor linearization cannot be immediately computed, either because <span class="math inline">\(T\)</span> cannot be expressed as functions of the population totals, or because <span class="math inline">\(g\)</span> is not a ‘smooth’ function. A common example is the case where <span class="math inline">\(T\)</span> is a quantile.</p>
+<p>In these cases, an alternative form of linearization of <span class="math inline">\(T\)</span> might suffice: the <code>Influence Function</code>, proposed in <span class="citation">Deville (<label for="tufte-mn-7" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-7" class="margin-toggle">1999<span class="marginnote">Deville, Jean-Claude. 1999. <span>“Variance Estimation for Complex Statistics and Estimators: Linearization and Residual Techniques.”</span> <em>Survey Methodology</em> 25 (2): 193–203. <a href="http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf">http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf</a>.</span>)</span>. Separately, replication methods such as <code>bootstrap</code> and <code>jackknife</code> also work.</p>
+<p>In the <code>convey</code> library, there are some basic functions that produce the linearized variables needed to measure income concentration and poverty. For example, looking at the income variable in some complex survey dataset, the <code>quantile</code> of that income variable is linearized inside the function <code>convey::svyiqalpha</code> and the sum total below any quantile of the variable is linearized inside the function <code>convey::svyisq</code>.</p>
+<p>From the linearized variables of these basic estimates, it is possible by using rules of composition, valid for influence functions, to derive the influence function of more complex estimates. By definition, the influence function is a Gateaux derivative and the rules of composition valid for Gateaux derivatives also hold for Influence Functions.</p>
+<p>The following property of Gateaux derivatives is commonly used in the <code>convey</code> library: Let <span class="math inline">\(g\)</span> be a differentiable function of <span class="math inline">\(m\)</span> variables. Suppose we want to compute the influence function of the estimator <span class="math inline">\(g(T_1, T_2,\ldots, T_m)\)</span>, knowing the influence function of the estimators <span class="math inline">\(T_i, i=1,\ldots, m\)</span>. Then the following holds:</p>
+<p><span class="math display">\[
+I(g(T_1, T_2,\ldots, T_m)) = \sum_{i=1}^m \frac{\partial g}{\partial T_i}I(T_i)
+\]</span></p>
+<p>In the <code>convey</code> library, this rule is implemented by the function <code>contrastinf</code>, which uses the base R function <code>deriv</code> to compute the formal partial derivatives <span class="math inline">\(\frac{\partial g}{\partial T_i}\)</span>.</p>
+<p>For example, suppose we want to linearize the relative median poverty gap (RMPG), defined as the difference between the at-risk-of-poverty threshold (ARPT) and the median of incomes less than the ARPT, relative to the ARPT itself. Let’s say that this median income below the at-risk-of-poverty-threshold (POORMED) is the median of incomes less than ARPT:</p>
+<p><span class="math display">\[
+rmpg= \frac{(arpt-poormed)} {arpt}
+\]</span></p>
+<p>If we know how to linearize ARPT and POORMED, then by applying the function <code>contrastinf</code> with
+<span class="math display">\[
+g(T_1,T_2)= \frac{(T_1 - T_2)}{T_1}
+\]</span>
+we are also able to linearize the RMPG.</p>
+<p>Using the notation in <span class="citation">Osier (<label for="tufte-mn-8" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-8" class="margin-toggle">2009<span class="marginnote">Osier, Guillaume. 2009. <span>“Variance Estimation for Complex Indicators of Poverty and Inequality.”</span> <em>Journal of the European Survey Research Association</em> 3 (3): 167–95. <a href="http://ojs.ub.uni-konstanz.de/srm/article/view/369">http://ojs.ub.uni-konstanz.de/srm/article/view/369</a>.</span>)</span>, the variance of the estimator <span class="math inline">\(T(\hat{M})\)</span> can approximated by:</p>
+<p><span class="math display">\[\begin{equation}
+Var\left[T(\hat{M})\right]\cong var\left[\sum_s w_i z_i\right]
+\end{equation}\]</span></p>
+<p>The <code>linearized</code> variable <span class="math inline">\(z\)</span> is given by the derivative of the functional:</p>
+<p><span class="math display">\[\begin{equation}
+z_k=lim_{t\rightarrow0}\frac{T(M+t\delta_k)-T(M)}{t}=IT_k(M)
+\end{equation}\]</span></p>
+<p>where, <span class="math inline">\(\delta_k\)</span> is the Dirac measure in <span class="math inline">\(k\)</span>: <span class="math inline">\(\delta_k(i)=1\)</span> if and only if <span class="math inline">\(i=k\)</span>.</p>
+<p>This <strong>derivative</strong> is called the <strong>Influence Function</strong> and was introduced in the area of <strong>Robust Statistics</strong>.</p>
+<div id="influence-functions" class="section level3" number="2.1.1">
+<h3><span class="header-section-number">2.1.1</span> Influence Functions</h3>
+<p>Some measures of poverty and income concentration are defined by non-differentiable functions, so that it is not always possible to use Taylor Series Linearization (TSL) to estimate variances. An alternative is to use <strong>influence functions</strong> as described in <span class="citation">Deville (<label for="tufte-mn-9" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-9" class="margin-toggle">1999<span class="marginnote">Deville, Jean-Claude. 1999. <span>“Variance Estimation for Complex Statistics and Estimators: Linearization and Residual Techniques.”</span> <em>Survey Methodology</em> 25 (2): 193–203. <a href="http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf">http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf</a>.</span>)</span> and <span class="citation">Osier (<label for="tufte-mn-10" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-10" class="margin-toggle">2009<span class="marginnote">Osier, Guillaume. 2009. <span>“Variance Estimation for Complex Indicators of Poverty and Inequality.”</span> <em>Journal of the European Survey Research Association</em> 3 (3): 167–95. <a href="http://ojs.ub.uni-konstanz.de/srm/article/view/369">http://ojs.ub.uni-konstanz.de/srm/article/view/369</a>.</span>)</span>. The <code>convey</code> library implements this methodology to work with <code>survey.design</code> objects.<label for="tufte-sn-2" class="margin-toggle sidenote-number">2</label><input type="checkbox" id="tufte-sn-2" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">2</span> Influence functions can also be estimated with <code>svyrep.design</code> objects, but they are not used for variance estimation in these cases.</span></p>
+<p>Some examples of these measures are:</p>
+<ul>
+<li><p>At-risk-of-poverty threshold:
+<span class="math inline">\(arpt=.60q_{.50}\)</span> where <span class="math inline">\(q_{.50}\)</span> is the median income;</p></li>
+<li><p>At-risk-of-poverty rate:
+<span class="math inline">\(arpr=\frac{\sum_U 1(y_i \leq arpt)}{N}.100\)</span></p></li>
+<li><p>Quintile share ratio:
+<span class="math inline">\(qsr=\frac{\sum_U 1(y_i&gt;q_{.80})}{\sum_U 1(y_i\leq q_{.20})}\)</span></p></li>
+<li><p>Gini coefficient
+<span class="math inline">\(1+G=\frac{2\sum_U (r_i-1)y_i}{N\sum_Uy_i}\)</span>
+where <span class="math inline">\(r_i\)</span> is the rank of <span class="math inline">\(y_i\)</span>.</p></li>
+</ul>
+<p>Note that it is not possible to use TSL for these measures because they rely on quantiles or, in the case of the Gini coefficient, a function of ranks. Therefore, we instead follow the approach proposed by <span class="citation">Deville (<label for="tufte-mn-11" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-11" class="margin-toggle">1999<span class="marginnote">Deville, Jean-Claude. 1999. <span>“Variance Estimation for Complex Statistics and Estimators: Linearization and Residual Techniques.”</span> <em>Survey Methodology</em> 25 (2): 193–203. <a href="http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf">http://www.statcan.gc.ca/pub/12-001-x/1999002/article/4882-eng.pdf</a>.</span>)</span> based upon influence functions.</p>
+<p>Let <span class="math inline">\(U\)</span> be a population of size <span class="math inline">\(N\)</span> and <span class="math inline">\(M\)</span> be a measure that allocates mass one to the set composed by one unit, that is <span class="math inline">\(M(i)=M_i= 1\)</span> if <span class="math inline">\(i\in U\)</span> and <span class="math inline">\(M(i)=0\)</span> if <span class="math inline">\(i\notin U\)</span>.</p>
+<p>Now, a population parameter <span class="math inline">\(\theta\)</span> can be expressed as a functional of <span class="math inline">\(M\)</span>
+<span class="math inline">\(\theta=T(M)\)</span>.</p>
+<p>Examples of such parameters are:</p>
+<ul>
+<li><p>Total:
+<span class="math inline">\(Y=\sum_Uy_i=\sum_U y_iM_i=\int ydM=T(M)\)</span></p></li>
+<li><p>Ratio of two totals:
+<span class="math inline">\(R=\frac{Y}{X}=\frac{\int y dM}{\int x dM}=T(M)\)</span></p></li>
+<li><p>Cumulative distribution function:
+<span class="math inline">\(F(x)=\frac{\sum_U 1(y_i\leq x)}{N}=\frac{\int 1(y\leq x)dM}{\int{dM}}=T(M)\)</span></p></li>
+</ul>
+<p>To estimate these parameters from the sample, we replace the measure <span class="math inline">\(M\)</span> by the estimated measure <span class="math inline">\(\hat{M}\)</span> defined by: <span class="math inline">\(\hat{M}(i)=\hat{M}_i= w_i\)</span> if <span class="math inline">\(i\in s\)</span> and <span class="math inline">\(\hat{M}(i)=0\)</span> if <span class="math inline">\(i\notin s\)</span>.</p>
+<p>The estimators of the population parameters can then be expressed as functional of the measure <span class="math inline">\(\hat{M}\)</span>.</p>
+<ul>
+<li><p>Total:
+<span class="math inline">\(\hat{Y}=T(\hat{M})=\int yd\hat{M}=\sum_s w_iy_i\)</span></p></li>
+<li><p>Ratio of totals:
+<span class="math inline">\(\hat{R}=T(\hat{M})=\frac{\int y d\hat{M}}{\int x d\hat{M}}=\frac{\sum_s w_iy_i}{\sum_s w_ix_i}\)</span></p></li>
+<li><p>Cumulative distribution function:
+<span class="math inline">\(\hat{F}(x)=T(\hat{M})=\frac{\int 1(y\leq x)d\hat{M}}{\int{d\hat{M}}}=\frac{\sum_s w_i 1(y_i\leq x)}{\sum_s w_i}\)</span></p></li>
+</ul>
+<div id="examples-of-influence-functions-of-differentiable-measures" class="section level4" number="2.1.1.1">
+<h4><span class="header-section-number">2.1.1.1</span> Examples of Influence Functions of Differentiable Measures</h4>
+<ul>
+<li><p>Total:
+<span class="math display">\[
+\begin{aligned}
+IT_k(M)&amp;=lim_{t\rightarrow 0}\frac{T(M+t\delta_k)-T(M)}{t}\\
+&amp;=lim_{t\rightarrow 0}\frac{\int y.d(M+t\delta_k)-\int y.dM}{t}\\
+&amp;=lim_{t\rightarrow 0}\frac{\int yd(t\delta_k)}{t}=y_k  
+\end{aligned}
+\]</span></p></li>
+<li><p>Ratio of two totals:
+<span class="math display">\[
+\begin{aligned}
+IR_k(M)&amp;=I\left(\frac{U}{V}\right)_k(M)=\frac{V(M)\times IU_k(M)-U(M)\times IV_k(M)}{V(M)^2}\\
+&amp;=\frac{X y_k-Y x_k}{X^2}=\frac{1}{X}(y_k-Rx_k)
+\end{aligned}
+\]</span></p></li>
+</ul>
+</div>
+<div id="examples-of-influence-functions-for-non-differentiable-measures" class="section level4" number="2.1.1.2">
+<h4><span class="header-section-number">2.1.1.2</span> Examples of Influence Functions for Non-Differentiable Measures</h4>
+<ul>
+<li>At-risk-of-poverty threshold:
+<span class="math display">\[
+arpt = 0.6\times m
+\]</span>
+where <span class="math inline">\(m\)</span> is the median income.</li>
+</ul>
+<p><span class="math display">\[
+z_k= -\frac{0.6}{f(m)}\times\frac{1}{N}\times\left[I(y_k\leq m-0.5) \right]
+\]</span></p>
+<ul>
+<li>At-risk-of-poverty rate:</li>
+</ul>
+<p><span class="math display">\[
+arpr=\frac{\sum_U I(y_i \leq t)}{\sum_U w_i}.100
+\]</span>
+<span class="math display">\[
+z_k=\frac{1}{N}\left[I(y_k\leq t)-t\right]-\frac{0.6}{N}\times\frac{f(t)}{f(m)}\left[I(y_k\leq m)-0.5\right]
+\]</span></p>
+<p>where:</p>
+<p><span class="math inline">\(N\)</span> - population size;</p>
+<p><span class="math inline">\(t\)</span> - at-risk-of-poverty threshold;</p>
+<p><span class="math inline">\(y_k\)</span> - income of person <span class="math inline">\(k\)</span>;</p>
+<p><span class="math inline">\(m\)</span> - median income;</p>
+<p><span class="math inline">\(f\)</span> - income density function;</p>
+</div>
+</div>
 </div>
 <p style="text-align: center;">
-<a href="1.6-survey-of-consumer-finances-scf.html"><button class="btn btn-default">Previous</button></a>
-<a href="2.1-lin.html"><button class="btn btn-default">Next</button></a>
+<a href="2-variance-estimation.html"><button class="btn btn-default">Previous</button></a>
+<a href="2.2-replication-based-variance-estimation.html"><button class="btn btn-default">Next</button></a>
 </p>
 </div>
 </div>

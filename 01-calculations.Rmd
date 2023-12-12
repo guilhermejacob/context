@@ -6,20 +6,20 @@ output:
 
 
 
-# Variance Estimation {#var}
+# Variance Estimation
 
 This section explains the details of the variance estimation methodologies
 for the measures implemented in the `convey` package.
 
-## Linearization-Based Variance Estimation {#lin}
+## Linearization-Based Variance Estimation
 
 This section explains the calculations used for survey designs created with the `svydesign()` function within the `survey` package.
 
-In what follows, we often use the linearization method as a tool to produce an approximation for the variance of an estimator. From the linearized variable $z$ of an estimator $T$, we get from the expression \@ref(var) an estimate of the variance of $T$.
+In what follows, we often use the linearization method as a tool to produce an approximation for the variance of an estimator. From the linearized variable $z$ of an estimator $T$, we get from the expression below an estimate of the variance of $T$.
 
 If $T$ can be expressed as a function of the population totals $T = g(Y_1, Y_2, \ldots, Y_n)$, and if $g$ is linear,  the estimation of the variance of $T = g(Y_1, Y_2, \ldots, Y_n)$ is straightforward. If $g$ is not linear but is a 'smooth' function, then it is possible to approximate the variance of $g(Y_1, Y_2, \ldots, Y_n)$ by the variance of its first order Taylor expansion. For example, we can use Taylor expansion to linearize the ratio of two totals. However, there are situations where Taylor linearization cannot be immediately computed, either because $T$ cannot be expressed as functions of the population totals, or because $g$ is not  a 'smooth' function.  A common example is the case where $T$ is a quantile.
 
-In these cases, an alternative form of linearization of $T$ might suffice: the `Influence Function`, as defined in \@ref(lin), proposed in @deville1999.  Separately, replication methods such as `bootstrap` and `jackknife` also work.
+In these cases, an alternative form of linearization of $T$ might suffice: the `Influence Function`, proposed in @deville1999.  Separately, replication methods such as `bootstrap` and `jackknife` also work.
 
 In the `convey` library, there are some basic functions that produce the linearized variables needed to measure income concentration and poverty.  For example, looking at the income variable in some complex survey dataset, the `quantile` of that income variable is linearized inside the function `convey::svyiqalpha` and the sum total below any quantile of the variable is linearized inside the function `convey::svyisq`.
 
@@ -52,14 +52,12 @@ Using the notation in @osier2009, the variance of the estimator $T(\hat{M})$ can
 
 \begin{equation}
 Var\left[T(\hat{M})\right]\cong var\left[\sum_s w_i z_i\right]
-(\#var)
 \end{equation}
 
 The  `linearized` variable $z$  is given by the derivative of the functional:
 
 \begin{equation}
 z_k=lim_{t\rightarrow0}\frac{T(M+t\delta_k)-T(M)}{t}=IT_k(M)
-(\#lin)
 \end{equation}
 
 where, $\delta_k$ is the Dirac measure in $k$: $\delta_k(i)=1$ if and only if $i=k$.
