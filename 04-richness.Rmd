@@ -330,3 +330,214 @@ not of the MSE!). Finally, the estimated percent coverage rate of 52.12% is far
 from the nominal level of 95%, indicating that the confidence intervals are invalid. 
 This comes from the fact that the estimator is very sensitive to the extreme values 
 and is the reason why @brz2014 does not recommend using convex richness measures.
+
+
+For additional usage examples of `svyrich`, type `?convey::svyrich` in the R console.
+
+
+
+
+
+### Real World Examples
+
+
+This section displays example results using nationally-representative surveys from both the United States and Brazil.  We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the `svyrich` function.
+
+To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD-Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
+
+#### CPS-ASEC Household Income
+
+```{r}
+# richness gap index, richness threshold equal to the median
+svyrich(
+  ~ htotval ,
+  cps_household_design ,
+  type_measure = "Cha" ,
+  g = 1 ,
+  type_thresh = "relq"
+)
+
+svyby(
+  ~ htotval ,
+  ~ sex ,
+  cps_household_design ,
+  svyrich ,
+  type_measure = "Cha" ,
+  g = 1 ,
+  type_thresh = "relq"
+)
+```
+
+#### CPS-ASEC Family Income
+
+```{r}
+# richness gap index, richness threshold equal to the median
+svyrich(
+  ~ ftotval ,
+  cps_family_design ,
+  type_measure = "Cha" ,
+  g = 1 ,
+  type_thresh = "relq"
+)
+
+svyby(
+  ~ ftotval ,
+  ~ sex ,
+  cps_family_design ,
+  svyrich ,
+  type_measure = "Cha" ,
+  g = 1 ,
+  type_thresh = "relq"
+)
+```
+
+#### CPS-ASEC Worker Earnings
+
+```{r}
+# richness gap index, richness threshold equal to the median
+svyrich(
+  ~ ptotval ,
+  cps_ftfy_worker_design ,
+  type_measure = "Cha" ,
+  g = 1 ,
+  type_thresh = "relq"
+)
+
+svyby(
+  ~ ptotval ,
+  ~ sex ,
+  cps_ftfy_worker_design ,
+  svyrich ,
+  type_measure = "Cha" ,
+  g = 1 ,
+  type_thresh = "relq"
+)
+
+svyrich(
+  ~ pearnval ,
+  cps_ftfy_worker_design ,
+  type_measure = "Cha" ,
+  g = 1 ,
+  type_thresh = "relq"
+)
+
+svyby(
+  ~ pearnval ,
+  ~ sex ,
+  cps_ftfy_worker_design ,
+  svyrich ,
+  type_measure = "Cha" ,
+  g = 1 ,
+  type_thresh = "relq"
+)
+```
+
+
+#### PNAD-Contínua Per Capita Income
+
+```{r}
+# richness gap index, richness threshold equal to the median
+svyrich(
+  ~ deflated_per_capita_income ,
+  pnadc_design ,
+  na.rm = TRUE ,
+  type_measure = "Cha" ,
+  g = 1 ,
+  type_thresh = "relq"
+)
+
+svyby(
+  ~ deflated_per_capita_income ,
+  ~ sex ,
+  pnadc_design ,
+  svyrich ,
+  na.rm = TRUE ,
+  type_measure = "Cha" ,
+  g = 1 ,
+  type_thresh = "relq"
+)
+```
+
+#### PNAD-Contínua Worker Earnings
+
+```{r}
+# richness gap index, richness threshold equal to the median
+svyrich(
+  ~ deflated_labor_income ,
+  pnadc_design ,
+  na.rm = TRUE ,
+  type_measure = "Cha" ,
+  g = 1 ,
+  type_thresh = "relq"
+)
+
+svyby(
+  ~ deflated_labor_income ,
+  ~ sex ,
+  pnadc_design ,
+  svyrich ,
+  na.rm = TRUE ,
+  type_measure = "Cha" ,
+  g = 1 ,
+  type_thresh = "relq"
+)
+```
+
+
+
+
+#### SCF Family Net Worth
+
+```{r}
+# richness gap index, richness threshold equal to the median
+scf_MIcombine(with(
+  scf_design ,
+  svyrich(
+    ~ networth ,
+    type_measure = "Cha" ,
+    g = 1 ,
+    type_thresh = "relq"
+  )
+))
+
+scf_MIcombine(with(
+  scf_design ,
+  svyby(
+    ~ networth,
+    ~ hhsex ,
+    svyrich ,
+    type_measure = "Cha" ,
+    g = 1 ,
+    type_thresh = "relq"
+  )
+))
+```
+
+#### SCF Family Income
+
+```{r}
+# richness gap index, richness threshold equal to the median
+scf_MIcombine(with(
+  scf_design ,
+  svyrich(
+    ~ income ,
+    type_measure = "Cha" ,
+    g = 1 ,
+    type_thresh = "relq"
+  )
+))
+
+scf_MIcombine(with(
+  scf_design ,
+  svyby(
+    ~ income,
+    ~ hhsex ,
+    svyrich ,
+    type_measure = "Cha" ,
+    g = 1 ,
+    type_thresh = "relq"
+  )
+))
+```
+
+

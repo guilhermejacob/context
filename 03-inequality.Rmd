@@ -200,6 +200,102 @@ SE(svygpg( ~ eqincome , des_eusilc_ultimate_cluster , sex = ~ rb090)) * 100
 
 For additional usage examples of `svygpg`, type `?convey::svygpg` in the R console.
 
+
+
+### Real World Examples
+
+
+This section displays example results using nationally-representative surveys from both the United States and Brazil.  We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the `svygpg` function.
+
+To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD-Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
+
+#### CPS-ASEC Household Income
+
+```{r}
+svygpg(~ htotval , cps_household_design , sex = ~ sex)
+
+svyby(~ htotval , ~ a_maritl , cps_household_design , svygpg , sex = ~ sex)
+```
+
+#### CPS-ASEC Family Income
+
+```{r}
+svygpg(~ ftotval , cps_family_design , sex = ~ sex)
+
+svyby(~ ftotval , ~ a_maritl , cps_family_design , svygpg , sex = ~ sex)
+```
+
+#### CPS-ASEC Worker Earnings
+
+```{r}
+svygpg( ~ ptotval , cps_ftfy_worker_design , sex = ~ sex)
+
+svyby( ~ ptotval , ~ a_maritl , cps_ftfy_worker_design , svygpg , sex = ~ sex)
+
+svygpg( ~ pearnval , cps_ftfy_worker_design , sex = ~ sex)
+
+svyby( ~ pearnval , ~ a_maritl , cps_ftfy_worker_design , svygpg , sex = ~ sex)
+```
+
+
+#### PNAD-Contínua Per Capita Income
+
+```{r}
+svygpg(~ deflated_per_capita_income ,
+        pnadc_design ,
+        na.rm = TRUE ,
+        sex = ~ sex)
+
+svyby(
+  ~ deflated_per_capita_income ,
+  ~ age_categories ,
+  pnadc_design ,
+  svygpg ,
+  na.rm = TRUE ,
+  sex = ~ sex
+)
+```
+
+#### PNAD-Contínua Worker Earnings
+
+```{r}
+svygpg(~ deflated_labor_income ,
+        pnadc_design ,
+        na.rm = TRUE ,
+        sex = ~ sex)
+
+svyby(
+  ~ deflated_labor_income ,
+  ~ age_categories ,
+  pnadc_design ,
+  svygpg ,
+  na.rm = TRUE ,
+  sex = ~ sex
+)
+```
+
+
+
+
+#### SCF Family Net Worth
+
+```{r}
+scf_MIcombine(with(scf_design , svygpg( ~ networth , sex = ~ hhsex)))
+
+scf_MIcombine(with(scf_design , svyby( ~ networth, ~ edcl , svygpg , sex = ~ hhsex)))
+```
+
+#### SCF Family Income
+
+```{r}
+scf_MIcombine(with(scf_design , svygpg( ~ income , sex = ~ hhsex)))
+
+scf_MIcombine(with(scf_design , svyby( ~ income, ~ edcl , svygpg , sex = ~ hhsex)))
+```
+
+
+
+
 ## Quintile Share Ratio (svyqsr)
 
 ```{r eval=FALSE}
@@ -369,6 +465,90 @@ SE(svyqsr( ~ eqincome , des_eusilc_ultimate_cluster))
 
 For additional usage examples of `svyqsr`, type `?convey::svyqsr` in the R console.
 
+
+
+
+
+### Real World Examples
+
+
+This section displays example results using nationally-representative surveys from both the United States and Brazil.  We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the `svyqsr` function.
+
+To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD-Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
+
+#### CPS-ASEC Household Income
+
+```{r}
+svyqsr(~ htotval , cps_household_design)
+
+svyby(~ htotval , ~ sex , cps_household_design , svyqsr)
+```
+
+#### CPS-ASEC Family Income
+
+```{r}
+svyqsr(~ ftotval , cps_family_design)
+
+svyby(~ ftotval , ~ sex , cps_family_design , svyqsr)
+```
+
+#### CPS-ASEC Worker Earnings
+
+```{r}
+svyqsr(~ ptotval , cps_ftfy_worker_design)
+
+svyby(~ ptotval , ~ sex , cps_ftfy_worker_design , svyqsr)
+
+svyqsr(~ pearnval , cps_ftfy_worker_design)
+
+svyby(~ pearnval , ~ sex , cps_ftfy_worker_design , svyqsr)
+```
+
+
+#### PNAD-Contínua Per Capita Income
+
+```{r}
+svyqsr( ~ deflated_per_capita_income , pnadc_design , na.rm = TRUE)
+
+svyby(~ deflated_per_capita_income ,
+      ~ sex ,
+      pnadc_design ,
+      svyqsr ,
+      na.rm = TRUE)
+```
+
+#### PNAD-Contínua Worker Earnings
+
+```{r}
+svyqsr( ~ deflated_labor_income , pnadc_design , na.rm = TRUE)
+
+svyby( ~ deflated_labor_income , ~ sex , pnadc_design , svyqsr , na.rm = TRUE)
+```
+
+
+
+
+#### SCF Family Net Worth
+
+```{r}
+scf_MIcombine(with(scf_design , svyqsr( ~ networth)))
+
+scf_MIcombine(with(scf_design , svyby( ~ networth, ~ hhsex , svyqsr)))
+```
+
+#### SCF Family Income
+
+```{r}
+scf_MIcombine(with(scf_design , svyqsr( ~ income)))
+
+scf_MIcombine(with(scf_design , svyby( ~ income, ~ hhsex , svyqsr)))
+```
+
+
+
+
+
+
 ## Lorenz Curve-based Measures
 
 In the following, we discuss the Lorenz curve, a graphical tool for describing inequality
@@ -490,6 +670,96 @@ knitr::kable(section_four_one ,
 
 
 For additional usage examples of `svylorenz`, type `?convey::svylorenz` in the R console.
+
+
+
+
+
+### Real World Examples
+
+
+This section displays example results using nationally-representative surveys from both the United States and Brazil.  We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the `svylorenz` function.
+
+To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD-Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
+
+#### CPS-ASEC Household Income
+
+```{r}
+svylorenz(~ htotval , cps_household_design)
+
+svyby(~ htotval , ~ sex , cps_household_design , svylorenz, plot = FALSE)
+```
+
+#### CPS-ASEC Family Income
+
+```{r}
+svylorenz(~ ftotval , cps_family_design)
+
+svyby(~ ftotval , ~ sex , cps_family_design , svylorenz, plot = FALSE)
+```
+
+#### CPS-ASEC Worker Earnings
+
+```{r}
+svylorenz(~ ptotval , cps_ftfy_worker_design)
+
+svyby(~ ptotval , ~ sex , cps_ftfy_worker_design , svylorenz, plot = FALSE)
+
+svylorenz(~ pearnval , cps_ftfy_worker_design)
+
+svyby(~ pearnval , ~ sex , cps_ftfy_worker_design , svylorenz, plot = FALSE)
+```
+
+
+#### PNAD-Contínua Per Capita Income
+
+```{r}
+svylorenz( ~ deflated_per_capita_income , pnadc_design , na.rm = TRUE)
+
+
+svyby(
+  ~ deflated_per_capita_income ,
+  ~ sex ,
+  pnadc_design ,
+  svylorenz ,
+  na.rm = TRUE,
+  plot = FALSE
+)
+```
+
+#### PNAD-Contínua Worker Earnings
+
+```{r}
+svylorenz(~ deflated_labor_income , pnadc_design , na.rm = TRUE)
+
+svyby(
+  ~ deflated_labor_income ,
+  ~ sex ,
+  pnadc_design ,
+  svylorenz ,
+  na.rm = TRUE,
+  plot = FALSE
+)
+```
+
+
+
+
+#### SCF Family Net Worth
+
+```{r}
+scf_MIcombine(with(scf_design , svylorenz(~ networth, plot = FALSE)))
+
+scf_MIcombine(with(scf_design , svyby(~ networth, ~ hhsex , svylorenz, plot = FALSE)))
+```
+
+#### SCF Family Income
+
+```{r}
+scf_MIcombine(with(scf_design , svylorenz(~ income, plot = FALSE)))
+
+scf_MIcombine(with(scf_design , svyby(~ income, ~ hhsex , svylorenz, plot = FALSE)))
+```
 
 
 ## Gini index (svygini)
@@ -665,55 +935,91 @@ varpoord_gini_calculation$all_result$se
 SE(svygini( ~ eqincome , des_eusilc_ultimate_cluster)) * 100
 ```
 
-### Analysis Examples
+For additional usage examples of `svygini`, type `?convey::svygini` in the R console.
 
-This section presents current Gini index estimates for the United States and Brazil to help users compare their own results to populations (and sub-populations) of two large, diverse countries.  Using the two nationally-representative labor force surveys of the United States (CPS-ASEC) and Brazil (PNAD-Continua) described in the introduction, this section displays straightforward syntax to calculate a Gini index with those survey design objects.
 
-Nationwide Estimates:
+
+
+
+
+
+
+### Real World Examples
+
+
+This section displays example results using nationally-representative surveys from both the United States and Brazil.  We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the `svygini` function.
+
+To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD-Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
+
+#### CPS-ASEC Household Income
 
 ```{r}
-# Gini index of the United States calculated with Household Income
 svygini(~ htotval , cps_household_design)
 
-# Gini index of the United States calculated with Family Income
-svygini(~ ftotval , cps_family_design)
-
-# Gini index of Full-Time Full Year Workers in the United States calculated with Personal Income
-svygini(~ ptotval , cps_ftfy_worker_design)
-
-# Gini index of Full-Time Full Year Workers in the United States calculated with Personal Earnings
-svygini(~ pearnval , cps_ftfy_worker_design)
-
-# Gini index of Brazil calculated with Per Capita Income
-svygini(~ deflated_per_capita_income , pnadc_design , na.rm = TRUE)
-
-# Gini index of Brazil calculated with Personal Earnings
-svygini(~ deflated_labor_income , pnadc_design , na.rm = TRUE)
+svyby(~ htotval , ~ sex , cps_household_design , svygini)
 ```
 
-Regional Estimates
+#### CPS-ASEC Family Income
 
 ```{r}
-# Gini index of California calculated with Household Income
-svygini(~ htotval , subset(cps_household_design , gestfips == 6))
+svygini(~ ftotval , cps_family_design)
 
-# Gini index of California calculated with Family Income
-svygini(~ ftotval , subset(cps_family_design , gestfips == 6))
-
-# Gini index of Full-Time Full Year Workers in California calculated with Personal Income
-svygini(~ ptotval , subset(cps_ftfy_worker_design , gestfips == 6))
-
-# Gini index of Full-Time Full Year Workers in California calculated with Personal Earnings
-svygini(~ pearnval , subset(cps_ftfy_worker_design , gestfips == 6))
-
-# Gini index of Sao Paulo calculated with Per Capita Income
-svygini(~ deflated_per_capita_income ,
-        subset(pnadc_design , uf == 35) ,
-        na.rm = TRUE)
-
-# Gini index of Sao Paulo calculated with Personal Earnings
-svygini(~ deflated_labor_income , subset(pnadc_design , uf == 35) , na.rm = TRUE)
+svyby(~ ftotval , ~ sex , cps_family_design , svygini)
 ```
+
+#### CPS-ASEC Worker Earnings
+
+```{r}
+svygini(~ ptotval , cps_ftfy_worker_design)
+
+svyby(~ ptotval , ~ sex , cps_ftfy_worker_design , svygini)
+
+svygini(~ pearnval , cps_ftfy_worker_design)
+
+svyby(~ pearnval , ~ sex , cps_ftfy_worker_design , svygini)
+```
+
+
+#### PNAD-Contínua Per Capita Income
+
+```{r}
+svygini( ~ deflated_per_capita_income , pnadc_design , na.rm = TRUE)
+
+svyby(~ deflated_per_capita_income ,
+      ~ sex ,
+      pnadc_design ,
+      svygini ,
+      na.rm = TRUE)
+```
+
+#### PNAD-Contínua Worker Earnings
+
+```{r}
+svygini( ~ deflated_labor_income , pnadc_design , na.rm = TRUE)
+
+svyby( ~ deflated_labor_income , ~ sex , pnadc_design , svygini , na.rm = TRUE)
+```
+
+
+
+
+#### SCF Family Net Worth
+
+```{r}
+scf_MIcombine(with(scf_design , svygini( ~ networth)))
+
+scf_MIcombine(with(scf_design , svyby( ~ networth, ~ hhsex , svygini)))
+```
+
+#### SCF Family Income
+
+```{r}
+scf_MIcombine(with(scf_design , svygini( ~ income)))
+
+scf_MIcombine(with(scf_design , svyby( ~ income, ~ hhsex , svygini)))
+```
+
+
 
 
 
@@ -934,6 +1240,126 @@ prop.table(table((theta.pop > est.cis[, 1]) &
 ```
 
 Our estimated 95% CIs cover the parameter 94.52% of the time, which is very close to the nominal rate and also similar to the `94.5` PCR shown in Table 2.
+
+For additional usage examples of `svyzenga`, type `?convey::svyzenga` in the R console.
+
+
+
+
+
+
+
+
+### Real World Examples
+
+
+This section displays example results using nationally-representative surveys from both the United States and Brazil.  We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the `svyzenga` function.
+
+To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD-Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
+
+#### CPS-ASEC Household Income
+
+```{r}
+svyzenga( ~ htotval , subset(cps_household_design, htotval >= 0))
+
+svyby( ~ htotval ,
+       ~ sex ,
+       subset(cps_household_design , htotval >= 0) ,
+       svyzenga)
+```
+
+#### CPS-ASEC Family Income
+
+```{r}
+svyzenga( ~ ftotval , subset(cps_family_design, ftotval >= 0))
+
+svyby( ~ ftotval ,
+       ~ sex ,
+       subset(cps_family_design , ftotval >= 0) ,
+       svyzenga)
+```
+
+#### CPS-ASEC Worker Earnings
+
+```{r}
+svyzenga( ~ ptotval , subset(cps_ftfy_worker_design , ptotval >= 0))
+
+svyby( ~ ptotval ,
+       ~ sex ,
+       subset(cps_ftfy_worker_design , ptotval >= 0),
+       svyzenga)
+
+svyzenga( ~ pearnval , subset(cps_ftfy_worker_design, pearnval >= 0))
+
+svyby( ~ pearnval ,
+       ~ sex ,
+       subset(cps_ftfy_worker_design , pearnval >= 0),
+       svyzenga)
+```
+
+
+#### PNAD-Contínua Per Capita Income
+
+```{r}
+svyzenga(
+  ~ deflated_per_capita_income ,
+  subset(pnadc_design , deflated_per_capita_income >= 0) ,
+  na.rm = TRUE
+)
+
+svyby(
+  ~ deflated_per_capita_income ,
+  ~ sex ,
+  subset(pnadc_design , deflated_per_capita_income >= 0) ,
+  svyzenga ,
+  na.rm = TRUE
+)
+```
+
+#### PNAD-Contínua Worker Earnings
+
+```{r}
+svyzenga(~ deflated_labor_income ,
+         subset(pnadc_design , deflated_labor_income >= 0) ,
+         na.rm = TRUE)
+
+svyby(
+  ~ deflated_labor_income ,
+  ~ sex ,
+  subset(pnadc_design , deflated_labor_income >= 0) ,
+  svyzenga ,
+  na.rm = TRUE
+)
+```
+
+
+
+
+#### SCF Family Net Worth
+
+```{r}
+scf_MIcombine(with(subset(scf_design , networth >= 0) , svyzenga(~ networth)))
+
+scf_MIcombine(with(
+  subset(scf_design , networth >= 0) ,
+  svyby(~ networth, ~ hhsex , svyzenga)
+))
+```
+
+#### SCF Family Income
+
+```{r}
+scf_MIcombine(with(subset(scf_design , income >= 0) , svyzenga(~ income)))
+
+scf_MIcombine(with(
+  subset(scf_design , income >= 0) ,
+  svyby(~ income, ~ hhsex , svyzenga)
+))
+```
+
+
+
+
 
 
 ## Social Welfare Function-based Measures
@@ -1165,6 +1591,112 @@ svyatk( ~ eybhc0 , z81_two , epsilon = 2.5)
 ```
 
 For additional usage examples of `svyatk`, type `?convey::svyatk` in the R console.
+
+
+
+### Real World Examples
+
+
+This section displays example results using nationally-representative surveys from both the United States and Brazil.  We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the `svyatk` function.
+
+To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD-Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
+
+#### CPS-ASEC Household Income
+
+```{r}
+svyatk(
+  ~ htotval ,
+  subset(cps_household_design , htotval > 0)
+)
+
+svyby(
+  ~ htotval ,
+  ~ sex ,
+  subset(cps_household_design , htotval > 0) ,
+  svyatk
+)
+```
+
+#### CPS-ASEC Family Income
+
+```{r}
+svyatk(
+  ~ ftotval ,
+  subset(cps_family_design , ftotval > 0)
+)
+
+svyby(
+  ~ ftotval ,
+  ~ sex ,
+  subset(cps_family_design , ftotval > 0) ,
+  svyatk
+)
+```
+
+#### CPS-ASEC Worker Earnings
+
+```{r}
+svyatk(
+  ~ ptotval ,
+  subset(cps_ftfy_worker_design , ptotval > 0)
+)
+
+svyby(
+  ~ ptotval ,
+  ~ sex ,
+  subset(cps_ftfy_worker_design , ptotval > 0) ,
+  svyatk
+)
+
+svyatk(
+  ~ pearnval ,
+  subset(cps_ftfy_worker_design , pearnval > 0)
+)
+
+svyby(
+  ~ pearnval ,
+  ~ sex ,
+  subset(cps_ftfy_worker_design , pearnval > 0) ,
+  svyatk
+)
+```
+
+
+#### PNAD-Contínua Per Capita Income
+
+```{r}
+svyatk(
+  ~ deflated_per_capita_income ,
+  subset(pnadc_design , deflated_per_capita_income > 0),
+  na.rm = TRUE
+)
+
+svyby(
+  ~ deflated_per_capita_income ,
+  ~ sex ,
+  subset(pnadc_design , deflated_per_capita_income > 0),
+  svyatk ,
+  na.rm = TRUE
+)
+```
+
+#### PNAD-Contínua Worker Earnings
+
+```{r}
+svyatk(
+  ~ deflated_labor_income ,
+  subset(pnadc_design , deflated_labor_income > 0) ,
+  na.rm = TRUE
+)
+
+svyby(
+  ~ deflated_labor_income ,
+  ~ sex ,
+  subset(pnadc_design , deflated_labor_income > 0) ,
+  svyatk ,
+  na.rm = TRUE
+)
+```
 
 
 
@@ -1428,6 +1960,118 @@ svygeidec( ~ eybhc0, ~ wkstatus, z91, epsilon = 2)
 
 For additional usage examples of `svygei` or `svygeidec`, type `?convey::svygei` or `?convey::svygeidec` in the R console.
 
+
+
+### Real World Examples
+
+
+This section displays example results using nationally-representative surveys from both the United States and Brazil.  We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the `svygei` function.
+
+To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD-Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
+
+#### CPS-ASEC Household Income
+
+```{r}
+svygei(
+  ~ htotval ,
+  subset(cps_household_design , htotval > 0)
+)
+
+svyby(
+  ~ htotval ,
+  ~ sex ,
+  subset(cps_household_design , htotval > 0) ,
+  svygei
+)
+```
+
+#### CPS-ASEC Family Income
+
+```{r}
+svygei(
+  ~ ftotval ,
+  subset(cps_family_design , ftotval > 0)
+)
+
+svyby(
+  ~ ftotval ,
+  ~ sex ,
+  subset(cps_family_design , ftotval > 0) ,
+  svygei
+)
+```
+
+#### CPS-ASEC Worker Earnings
+
+```{r}
+svygei(
+  ~ ptotval ,
+  subset(cps_ftfy_worker_design , ptotval > 0)
+)
+
+svyby(
+  ~ ptotval ,
+  ~ sex ,
+  subset(cps_ftfy_worker_design , ptotval > 0) ,
+  svygei
+)
+
+svygei(
+  ~ pearnval ,
+  subset(cps_ftfy_worker_design , pearnval > 0)
+)
+
+svyby(
+  ~ pearnval ,
+  ~ sex ,
+  subset(cps_ftfy_worker_design , pearnval > 0) ,
+  svygei
+)
+```
+
+
+#### PNAD-Contínua Per Capita Income
+
+```{r}
+svygei(
+  ~ deflated_per_capita_income ,
+  subset(pnadc_design , deflated_per_capita_income > 0),
+  na.rm = TRUE
+)
+
+svyby(
+  ~ deflated_per_capita_income ,
+  ~ sex ,
+  subset(pnadc_design , deflated_per_capita_income > 0),
+  svygei ,
+  na.rm = TRUE
+)
+```
+
+#### PNAD-Contínua Worker Earnings
+
+```{r}
+svygei(
+  ~ deflated_labor_income ,
+  subset(pnadc_design , deflated_labor_income > 0) ,
+  na.rm = TRUE
+)
+
+svyby(
+  ~ deflated_labor_income ,
+  ~ sex ,
+  subset(pnadc_design , deflated_labor_income > 0) ,
+  svygei ,
+  na.rm = TRUE
+)
+```
+
+
+
+
+
+
+
 ## J-Divergence and Decomposition (svyjdiv, svyjdivdec)
 
 ```{r eval=FALSE}
@@ -1607,4 +2251,112 @@ colMeans(est.coverage)
 Our coverages are not too far from the nominal coverage level of 95%, however the bias of the between component estimator can affect its coverage rate.
 
 For additional usage examples of `svyjdiv` or `svyjdivdec`, type `?convey::svyjdiv` or `?convey::svyjdivdec` in the R console.
+
+
+### Real World Examples
+
+
+This section displays example results using nationally-representative surveys from both the United States and Brazil.  We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the `svyjdiv` function.
+
+To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD-Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
+
+#### CPS-ASEC Household Income
+
+```{r}
+svyjdiv(
+  ~ htotval ,
+  subset(cps_household_design , htotval > 0)
+)
+
+svyby(
+  ~ htotval ,
+  ~ sex ,
+  subset(cps_household_design , htotval > 0) ,
+  svyjdiv
+)
+```
+
+#### CPS-ASEC Family Income
+
+```{r}
+svyjdiv(
+  ~ ftotval ,
+  subset(cps_family_design , ftotval > 0)
+)
+
+svyby(
+  ~ ftotval ,
+  ~ sex ,
+  subset(cps_family_design , ftotval > 0) ,
+  svyjdiv
+)
+```
+
+#### CPS-ASEC Worker Earnings
+
+```{r}
+svyjdiv(
+  ~ ptotval ,
+  subset(cps_ftfy_worker_design , ptotval > 0)
+)
+
+svyby(
+  ~ ptotval ,
+  ~ sex ,
+  subset(cps_ftfy_worker_design , ptotval > 0) ,
+  svyjdiv
+)
+
+svyjdiv(
+  ~ pearnval ,
+  subset(cps_ftfy_worker_design , pearnval > 0)
+)
+
+svyby(
+  ~ pearnval ,
+  ~ sex ,
+  subset(cps_ftfy_worker_design , pearnval > 0) ,
+  svyjdiv
+)
+```
+
+
+#### PNAD-Contínua Per Capita Income
+
+```{r}
+svyjdiv(
+  ~ deflated_per_capita_income ,
+  subset(pnadc_design , deflated_per_capita_income > 0),
+  na.rm = TRUE
+)
+
+svyby(
+  ~ deflated_per_capita_income ,
+  ~ sex ,
+  subset(pnadc_design , deflated_per_capita_income > 0),
+  svyjdiv ,
+  na.rm = TRUE
+)
+```
+
+#### PNAD-Contínua Worker Earnings
+
+```{r}
+svyjdiv(
+  ~ deflated_labor_income ,
+  subset(pnadc_design , deflated_labor_income > 0) ,
+  na.rm = TRUE
+)
+
+svyby(
+  ~ deflated_labor_income ,
+  ~ sex ,
+  subset(pnadc_design , deflated_labor_income > 0) ,
+  svyjdiv ,
+  na.rm = TRUE
+)
+```
+
+
+
 
