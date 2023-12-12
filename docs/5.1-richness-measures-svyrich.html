@@ -13,7 +13,7 @@
 
 <meta name="author" content="By Guilherme Jacob, Anthony Damico, and Djalma Pessoa. The authors received no external funding for the convey software and this accompanying textbook." />
 
-<meta name="date" content="2023-12-11" />
+<meta name="date" content="2023-12-12" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -282,13 +282,13 @@ div.csl-indent {
 <div class="col-sm-12">
 <div id="richness-measures-svyrich" class="section level2" number="5.1">
 <h2><span class="header-section-number">5.1</span> Richness Measures (svyrich)</h2>
-<div class="sourceCode" id="cb995"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb995-1"><a href="5.1-richness-measures-svyrich.html#cb995-1" tabindex="-1"></a>✔️ focuses on the top <span class="sc">--</span> i.e., the <span class="st">&quot;rich&quot;</span></span>
-<span id="cb995-2"><a href="5.1-richness-measures-svyrich.html#cb995-2" tabindex="-1"></a>✔️ can have an inequality or polarization interpretation</span>
-<span id="cb995-3"><a href="5.1-richness-measures-svyrich.html#cb995-3" tabindex="-1"></a>✔️ interesting complementary approach to income inequality or polarization</span>
-<span id="cb995-4"><a href="5.1-richness-measures-svyrich.html#cb995-4" tabindex="-1"></a>❌ hard to interpret as parameters change</span>
-<span id="cb995-5"><a href="5.1-richness-measures-svyrich.html#cb995-5" tabindex="-1"></a>❌ convex richness measures are severely affected by outliers, unreliable <span class="cf">for</span> inference</span>
-<span id="cb995-6"><a href="5.1-richness-measures-svyrich.html#cb995-6" tabindex="-1"></a>❌ requires a richness line defition</span>
-<span id="cb995-7"><a href="5.1-richness-measures-svyrich.html#cb995-7" tabindex="-1"></a>❌ hardly ever used</span></code></pre></div>
+<div class="sourceCode" id="cb1031"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1031-1"><a href="5.1-richness-measures-svyrich.html#cb1031-1" tabindex="-1"></a>✔️ focuses on the top <span class="sc">--</span> i.e., the <span class="st">&quot;rich&quot;</span></span>
+<span id="cb1031-2"><a href="5.1-richness-measures-svyrich.html#cb1031-2" tabindex="-1"></a>✔️ can have an inequality or polarization interpretation</span>
+<span id="cb1031-3"><a href="5.1-richness-measures-svyrich.html#cb1031-3" tabindex="-1"></a>✔️ interesting complementary approach to income inequality or polarization</span>
+<span id="cb1031-4"><a href="5.1-richness-measures-svyrich.html#cb1031-4" tabindex="-1"></a>❌ hard to interpret as parameters change</span>
+<span id="cb1031-5"><a href="5.1-richness-measures-svyrich.html#cb1031-5" tabindex="-1"></a>❌ convex richness measures are severely affected by outliers, unreliable <span class="cf">for</span> inference</span>
+<span id="cb1031-6"><a href="5.1-richness-measures-svyrich.html#cb1031-6" tabindex="-1"></a>❌ requires a richness line defition</span>
+<span id="cb1031-7"><a href="5.1-richness-measures-svyrich.html#cb1031-7" tabindex="-1"></a>❌ hardly ever used</span></code></pre></div>
 <p><span class="citation">Peichl, Schaefer, and Scheicher (<label for="tufte-mn-102" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-102" class="margin-toggle">2010<span class="marginnote">Peichl, Andreas, Thilo Schaefer, and Christoph Scheicher. 2010. <span>“<span class="nocase">Measuring Richness and Poverty: A micro data application to Europe and Germany</span>.”</span> <em>Review of Income and Wealth</em> 56 (3): 597–619. https://doi.org/<a href="https://doi.org/10.1111/j.1475-4991.2010.00404.x">https://doi.org/10.1111/j.1475-4991.2010.00404.x</a>.</span>)</span> also presented a general class of richness measures, proposing three
 particular sub-classes: the (concave) Chakravarty class, the concave-FGT class and the convex-FGT class, defined at the population level as:</p>
 <p><span class="math display">\[
@@ -325,167 +325,167 @@ on each and compare them to the finite population parameter (not the model-based
 parameter!).</p>
 <p>For the sake of similarity, we start by simulating a large finite population (<span class="math inline">\(N = 10^5\)</span>)
 using the same distribution from <span class="citation">Brzezinski (<label for="tufte-mn-108" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-108" class="margin-toggle">2014<span class="marginnote">Brzezinski, Michal. 2014. <span>“Statistical Inference for Richness Measures.”</span> <em>Applied Economics</em> 46 (14): 1599–1608. <a href="https://doi.org/10.1080/00036846.2014.880106">https://doi.org/10.1080/00036846.2014.880106</a>.</span>)</span>:</p>
-<div class="sourceCode" id="cb996"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb996-1"><a href="5.1-richness-measures-svyrich.html#cb996-1" tabindex="-1"></a><span class="co"># load libraries</span></span>
-<span id="cb996-2"><a href="5.1-richness-measures-svyrich.html#cb996-2" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
-<span id="cb996-3"><a href="5.1-richness-measures-svyrich.html#cb996-3" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
-<span id="cb996-4"><a href="5.1-richness-measures-svyrich.html#cb996-4" tabindex="-1"></a><span class="fu">library</span>(sampling)</span>
-<span id="cb996-5"><a href="5.1-richness-measures-svyrich.html#cb996-5" tabindex="-1"></a><span class="fu">library</span>(VGAM)</span>
-<span id="cb996-6"><a href="5.1-richness-measures-svyrich.html#cb996-6" tabindex="-1"></a></span>
-<span id="cb996-7"><a href="5.1-richness-measures-svyrich.html#cb996-7" tabindex="-1"></a><span class="co"># set random seed</span></span>
-<span id="cb996-8"><a href="5.1-richness-measures-svyrich.html#cb996-8" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2023</span>)</span>
-<span id="cb996-9"><a href="5.1-richness-measures-svyrich.html#cb996-9" tabindex="-1"></a></span>
-<span id="cb996-10"><a href="5.1-richness-measures-svyrich.html#cb996-10" tabindex="-1"></a><span class="co"># superpopulation parameters</span></span>
-<span id="cb996-11"><a href="5.1-richness-measures-svyrich.html#cb996-11" tabindex="-1"></a>scale.x0 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb996-12"><a href="5.1-richness-measures-svyrich.html#cb996-12" tabindex="-1"></a>shape.theta <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb996-13"><a href="5.1-richness-measures-svyrich.html#cb996-13" tabindex="-1"></a>cha.beta <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb996-14"><a href="5.1-richness-measures-svyrich.html#cb996-14" tabindex="-1"></a>fgt.alpha <span class="ot">&lt;-</span> <span class="fl">1.5</span></span>
-<span id="cb996-15"><a href="5.1-richness-measures-svyrich.html#cb996-15" tabindex="-1"></a>n.pop <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(<span class="dv">10</span> <span class="sc">^</span> <span class="dv">5</span>)</span>
-<span id="cb996-16"><a href="5.1-richness-measures-svyrich.html#cb996-16" tabindex="-1"></a></span>
-<span id="cb996-17"><a href="5.1-richness-measures-svyrich.html#cb996-17" tabindex="-1"></a><span class="co"># generate finite population</span></span>
-<span id="cb996-18"><a href="5.1-richness-measures-svyrich.html#cb996-18" tabindex="-1"></a>pop.df <span class="ot">&lt;-</span></span>
-<span id="cb996-19"><a href="5.1-richness-measures-svyrich.html#cb996-19" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">y1 =</span> <span class="fu">rparetoI</span>(n.pop  ,  scale.x0 , shape.theta))</span></code></pre></div>
+<div class="sourceCode" id="cb1032"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1032-1"><a href="5.1-richness-measures-svyrich.html#cb1032-1" tabindex="-1"></a><span class="co"># load libraries</span></span>
+<span id="cb1032-2"><a href="5.1-richness-measures-svyrich.html#cb1032-2" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb1032-3"><a href="5.1-richness-measures-svyrich.html#cb1032-3" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
+<span id="cb1032-4"><a href="5.1-richness-measures-svyrich.html#cb1032-4" tabindex="-1"></a><span class="fu">library</span>(sampling)</span>
+<span id="cb1032-5"><a href="5.1-richness-measures-svyrich.html#cb1032-5" tabindex="-1"></a><span class="fu">library</span>(VGAM)</span>
+<span id="cb1032-6"><a href="5.1-richness-measures-svyrich.html#cb1032-6" tabindex="-1"></a></span>
+<span id="cb1032-7"><a href="5.1-richness-measures-svyrich.html#cb1032-7" tabindex="-1"></a><span class="co"># set random seed</span></span>
+<span id="cb1032-8"><a href="5.1-richness-measures-svyrich.html#cb1032-8" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2023</span>)</span>
+<span id="cb1032-9"><a href="5.1-richness-measures-svyrich.html#cb1032-9" tabindex="-1"></a></span>
+<span id="cb1032-10"><a href="5.1-richness-measures-svyrich.html#cb1032-10" tabindex="-1"></a><span class="co"># superpopulation parameters</span></span>
+<span id="cb1032-11"><a href="5.1-richness-measures-svyrich.html#cb1032-11" tabindex="-1"></a>scale.x0 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb1032-12"><a href="5.1-richness-measures-svyrich.html#cb1032-12" tabindex="-1"></a>shape.theta <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb1032-13"><a href="5.1-richness-measures-svyrich.html#cb1032-13" tabindex="-1"></a>cha.beta <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb1032-14"><a href="5.1-richness-measures-svyrich.html#cb1032-14" tabindex="-1"></a>fgt.alpha <span class="ot">&lt;-</span> <span class="fl">1.5</span></span>
+<span id="cb1032-15"><a href="5.1-richness-measures-svyrich.html#cb1032-15" tabindex="-1"></a>n.pop <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(<span class="dv">10</span> <span class="sc">^</span> <span class="dv">5</span>)</span>
+<span id="cb1032-16"><a href="5.1-richness-measures-svyrich.html#cb1032-16" tabindex="-1"></a></span>
+<span id="cb1032-17"><a href="5.1-richness-measures-svyrich.html#cb1032-17" tabindex="-1"></a><span class="co"># generate finite population</span></span>
+<span id="cb1032-18"><a href="5.1-richness-measures-svyrich.html#cb1032-18" tabindex="-1"></a>pop.df <span class="ot">&lt;-</span></span>
+<span id="cb1032-19"><a href="5.1-richness-measures-svyrich.html#cb1032-19" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">y1 =</span> <span class="fu">rparetoI</span>(n.pop  ,  scale.x0 , shape.theta))</span></code></pre></div>
 <p>Then, we compute the finite population parameters using the simulated population:</p>
-<div class="sourceCode" id="cb997"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb997-1"><a href="5.1-richness-measures-svyrich.html#cb997-1" tabindex="-1"></a><span class="co"># richness measures: finite population parameters</span></span>
-<span id="cb997-2"><a href="5.1-richness-measures-svyrich.html#cb997-2" tabindex="-1"></a>cha.scores <span class="ot">&lt;-</span></span>
-<span id="cb997-3"><a href="5.1-richness-measures-svyrich.html#cb997-3" tabindex="-1"></a>  <span class="cf">function</span>(y , b , rho)</span>
-<span id="cb997-4"><a href="5.1-richness-measures-svyrich.html#cb997-4" tabindex="-1"></a>    <span class="fu">ifelse</span>(y <span class="sc">&gt;</span> rho , (<span class="dv">1</span> <span class="sc">-</span> (rho <span class="sc">/</span> y) <span class="sc">^</span> b) , <span class="dv">0</span>)</span>
-<span id="cb997-5"><a href="5.1-richness-measures-svyrich.html#cb997-5" tabindex="-1"></a>fgtt2.scores <span class="ot">&lt;-</span></span>
-<span id="cb997-6"><a href="5.1-richness-measures-svyrich.html#cb997-6" tabindex="-1"></a>  <span class="cf">function</span>(y , g , rho)</span>
-<span id="cb997-7"><a href="5.1-richness-measures-svyrich.html#cb997-7" tabindex="-1"></a>    <span class="fu">ifelse</span>(y <span class="sc">&gt;</span> rho , (y <span class="sc">/</span> rho <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">^</span> a , <span class="dv">0</span>)</span>
-<span id="cb997-8"><a href="5.1-richness-measures-svyrich.html#cb997-8" tabindex="-1"></a>median.fp <span class="ot">&lt;-</span> <span class="fu">quantile</span>(pop.df<span class="sc">$</span>y1 , .<span class="dv">50</span>)</span>
-<span id="cb997-9"><a href="5.1-richness-measures-svyrich.html#cb997-9" tabindex="-1"></a>rho.fp <span class="ot">&lt;-</span> <span class="dv">3</span> <span class="sc">*</span> median.fp</span>
-<span id="cb997-10"><a href="5.1-richness-measures-svyrich.html#cb997-10" tabindex="-1"></a>rHC.fp <span class="ot">&lt;-</span> <span class="fu">mean</span>(pop.df<span class="sc">$</span>y1 <span class="sc">&gt;</span> rho.fp)</span>
-<span id="cb997-11"><a href="5.1-richness-measures-svyrich.html#cb997-11" tabindex="-1"></a>rCha.fp <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">cha.scores</span>(pop.df<span class="sc">$</span>y1  , cha.beta , rho.fp))</span>
-<span id="cb997-12"><a href="5.1-richness-measures-svyrich.html#cb997-12" tabindex="-1"></a>rFGTT2.fp <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">cha.scores</span>(pop.df<span class="sc">$</span>y1  , fgt.alpha , rho.fp))</span></code></pre></div>
+<div class="sourceCode" id="cb1033"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1033-1"><a href="5.1-richness-measures-svyrich.html#cb1033-1" tabindex="-1"></a><span class="co"># richness measures: finite population parameters</span></span>
+<span id="cb1033-2"><a href="5.1-richness-measures-svyrich.html#cb1033-2" tabindex="-1"></a>cha.scores <span class="ot">&lt;-</span></span>
+<span id="cb1033-3"><a href="5.1-richness-measures-svyrich.html#cb1033-3" tabindex="-1"></a>  <span class="cf">function</span>(y , b , rho)</span>
+<span id="cb1033-4"><a href="5.1-richness-measures-svyrich.html#cb1033-4" tabindex="-1"></a>    <span class="fu">ifelse</span>(y <span class="sc">&gt;</span> rho , (<span class="dv">1</span> <span class="sc">-</span> (rho <span class="sc">/</span> y) <span class="sc">^</span> b) , <span class="dv">0</span>)</span>
+<span id="cb1033-5"><a href="5.1-richness-measures-svyrich.html#cb1033-5" tabindex="-1"></a>fgtt2.scores <span class="ot">&lt;-</span></span>
+<span id="cb1033-6"><a href="5.1-richness-measures-svyrich.html#cb1033-6" tabindex="-1"></a>  <span class="cf">function</span>(y , g , rho)</span>
+<span id="cb1033-7"><a href="5.1-richness-measures-svyrich.html#cb1033-7" tabindex="-1"></a>    <span class="fu">ifelse</span>(y <span class="sc">&gt;</span> rho , (y <span class="sc">/</span> rho <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">^</span> a , <span class="dv">0</span>)</span>
+<span id="cb1033-8"><a href="5.1-richness-measures-svyrich.html#cb1033-8" tabindex="-1"></a>median.fp <span class="ot">&lt;-</span> <span class="fu">quantile</span>(pop.df<span class="sc">$</span>y1 , .<span class="dv">50</span>)</span>
+<span id="cb1033-9"><a href="5.1-richness-measures-svyrich.html#cb1033-9" tabindex="-1"></a>rho.fp <span class="ot">&lt;-</span> <span class="dv">3</span> <span class="sc">*</span> median.fp</span>
+<span id="cb1033-10"><a href="5.1-richness-measures-svyrich.html#cb1033-10" tabindex="-1"></a>rHC.fp <span class="ot">&lt;-</span> <span class="fu">mean</span>(pop.df<span class="sc">$</span>y1 <span class="sc">&gt;</span> rho.fp)</span>
+<span id="cb1033-11"><a href="5.1-richness-measures-svyrich.html#cb1033-11" tabindex="-1"></a>rCha.fp <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">cha.scores</span>(pop.df<span class="sc">$</span>y1  , cha.beta , rho.fp))</span>
+<span id="cb1033-12"><a href="5.1-richness-measures-svyrich.html#cb1033-12" tabindex="-1"></a>rFGTT2.fp <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">cha.scores</span>(pop.df<span class="sc">$</span>y1  , fgt.alpha , rho.fp))</span></code></pre></div>
 <p>For our sampling design, we select <span class="math inline">\(n = 1000\)</span> units using multinomial sampling,
 with the variable <code>x.aux</code> as the size variable for the inclusion probabilities:</p>
-<div class="sourceCode" id="cb998"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb998-1"><a href="5.1-richness-measures-svyrich.html#cb998-1" tabindex="-1"></a><span class="co"># define sample size</span></span>
-<span id="cb998-2"><a href="5.1-richness-measures-svyrich.html#cb998-2" tabindex="-1"></a>n.sample <span class="ot">&lt;-</span> 1000L</span>
-<span id="cb998-3"><a href="5.1-richness-measures-svyrich.html#cb998-3" tabindex="-1"></a></span>
-<span id="cb998-4"><a href="5.1-richness-measures-svyrich.html#cb998-4" tabindex="-1"></a><span class="co"># inclusion probability</span></span>
-<span id="cb998-5"><a href="5.1-richness-measures-svyrich.html#cb998-5" tabindex="-1"></a>pop.df<span class="sc">$</span>x.aux <span class="ot">&lt;-</span> <span class="fu">plogis</span>( pop.df<span class="sc">$</span>y1 ) <span class="sc">/</span> <span class="fl">1.1</span></span>
-<span id="cb998-6"><a href="5.1-richness-measures-svyrich.html#cb998-6" tabindex="-1"></a>pop.df<span class="sc">$</span>pi1 <span class="ot">&lt;-</span> sampling<span class="sc">::</span><span class="fu">inclusionprobabilities</span>( pop.df<span class="sc">$</span>x.aux , n.sample )</span></code></pre></div>
+<div class="sourceCode" id="cb1034"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1034-1"><a href="5.1-richness-measures-svyrich.html#cb1034-1" tabindex="-1"></a><span class="co"># define sample size</span></span>
+<span id="cb1034-2"><a href="5.1-richness-measures-svyrich.html#cb1034-2" tabindex="-1"></a>n.sample <span class="ot">&lt;-</span> 1000L</span>
+<span id="cb1034-3"><a href="5.1-richness-measures-svyrich.html#cb1034-3" tabindex="-1"></a></span>
+<span id="cb1034-4"><a href="5.1-richness-measures-svyrich.html#cb1034-4" tabindex="-1"></a><span class="co"># inclusion probability</span></span>
+<span id="cb1034-5"><a href="5.1-richness-measures-svyrich.html#cb1034-5" tabindex="-1"></a>pop.df<span class="sc">$</span>x.aux <span class="ot">&lt;-</span> <span class="fu">plogis</span>( pop.df<span class="sc">$</span>y1 ) <span class="sc">/</span> <span class="fl">1.1</span></span>
+<span id="cb1034-6"><a href="5.1-richness-measures-svyrich.html#cb1034-6" tabindex="-1"></a>pop.df<span class="sc">$</span>pi1 <span class="ot">&lt;-</span> sampling<span class="sc">::</span><span class="fu">inclusionprobabilities</span>( pop.df<span class="sc">$</span>x.aux , n.sample )</span></code></pre></div>
 <p>We run the procedure N and store the estimate objects using the code below:</p>
-<div class="sourceCode" id="cb999"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb999-1"><a href="5.1-richness-measures-svyrich.html#cb999-1" tabindex="-1"></a><span class="co"># define the number of simulation runs</span></span>
-<span id="cb999-2"><a href="5.1-richness-measures-svyrich.html#cb999-2" tabindex="-1"></a>mc.reps <span class="ot">&lt;-</span> 5000L</span>
-<span id="cb999-3"><a href="5.1-richness-measures-svyrich.html#cb999-3" tabindex="-1"></a></span>
-<span id="cb999-4"><a href="5.1-richness-measures-svyrich.html#cb999-4" tabindex="-1"></a><span class="co"># simulation runs</span></span>
-<span id="cb999-5"><a href="5.1-richness-measures-svyrich.html#cb999-5" tabindex="-1"></a>rep.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="fu">seq_len</span>(mc.reps) , <span class="cf">function</span>(this.iter) {</span>
-<span id="cb999-6"><a href="5.1-richness-measures-svyrich.html#cb999-6" tabindex="-1"></a>  <span class="co"># multinomial sampling</span></span>
-<span id="cb999-7"><a href="5.1-richness-measures-svyrich.html#cb999-7" tabindex="-1"></a>  this.sample <span class="ot">&lt;-</span> sampling<span class="sc">::</span><span class="fu">UPmultinomial</span>(pop.df<span class="sc">$</span>pi1)</span>
-<span id="cb999-8"><a href="5.1-richness-measures-svyrich.html#cb999-8" tabindex="-1"></a>  this.sample <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>n.pop , this.sample)</span>
-<span id="cb999-9"><a href="5.1-richness-measures-svyrich.html#cb999-9" tabindex="-1"></a>  sample.df <span class="ot">&lt;-</span> pop.df[this.sample ,]</span>
-<span id="cb999-10"><a href="5.1-richness-measures-svyrich.html#cb999-10" tabindex="-1"></a>  sample.df<span class="sc">$</span>weights <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> sample.df<span class="sc">$</span>pi1</span>
-<span id="cb999-11"><a href="5.1-richness-measures-svyrich.html#cb999-11" tabindex="-1"></a>  des.obj <span class="ot">&lt;-</span></span>
-<span id="cb999-12"><a href="5.1-richness-measures-svyrich.html#cb999-12" tabindex="-1"></a>    <span class="fu">svydesign</span>(</span>
-<span id="cb999-13"><a href="5.1-richness-measures-svyrich.html#cb999-13" tabindex="-1"></a>      <span class="at">ids =</span> <span class="sc">~</span> <span class="dv">1</span> ,</span>
-<span id="cb999-14"><a href="5.1-richness-measures-svyrich.html#cb999-14" tabindex="-1"></a>      <span class="at">weights =</span> <span class="sc">~</span> weights ,</span>
-<span id="cb999-15"><a href="5.1-richness-measures-svyrich.html#cb999-15" tabindex="-1"></a>      <span class="at">data =</span> sample.df ,</span>
-<span id="cb999-16"><a href="5.1-richness-measures-svyrich.html#cb999-16" tabindex="-1"></a>      <span class="at">nest =</span> <span class="cn">FALSE</span></span>
-<span id="cb999-17"><a href="5.1-richness-measures-svyrich.html#cb999-17" tabindex="-1"></a>    )</span>
-<span id="cb999-18"><a href="5.1-richness-measures-svyrich.html#cb999-18" tabindex="-1"></a>  </span>
-<span id="cb999-19"><a href="5.1-richness-measures-svyrich.html#cb999-19" tabindex="-1"></a>  <span class="co"># run estimation</span></span>
-<span id="cb999-20"><a href="5.1-richness-measures-svyrich.html#cb999-20" tabindex="-1"></a>  des.obj <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(des.obj)</span>
-<span id="cb999-21"><a href="5.1-richness-measures-svyrich.html#cb999-21" tabindex="-1"></a>  rCha.hat <span class="ot">&lt;-</span></span>
-<span id="cb999-22"><a href="5.1-richness-measures-svyrich.html#cb999-22" tabindex="-1"></a>    <span class="fu">svyrich</span>(</span>
-<span id="cb999-23"><a href="5.1-richness-measures-svyrich.html#cb999-23" tabindex="-1"></a>      <span class="sc">~</span> y1 ,</span>
-<span id="cb999-24"><a href="5.1-richness-measures-svyrich.html#cb999-24" tabindex="-1"></a>      des.obj ,</span>
-<span id="cb999-25"><a href="5.1-richness-measures-svyrich.html#cb999-25" tabindex="-1"></a>      <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
-<span id="cb999-26"><a href="5.1-richness-measures-svyrich.html#cb999-26" tabindex="-1"></a>      <span class="at">g =</span> cha.beta ,</span>
-<span id="cb999-27"><a href="5.1-richness-measures-svyrich.html#cb999-27" tabindex="-1"></a>      <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span> ,</span>
-<span id="cb999-28"><a href="5.1-richness-measures-svyrich.html#cb999-28" tabindex="-1"></a>      <span class="at">percent =</span> <span class="dv">3</span></span>
-<span id="cb999-29"><a href="5.1-richness-measures-svyrich.html#cb999-29" tabindex="-1"></a>    )</span>
-<span id="cb999-30"><a href="5.1-richness-measures-svyrich.html#cb999-30" tabindex="-1"></a>  <span class="fu">suppressWarnings</span>(</span>
-<span id="cb999-31"><a href="5.1-richness-measures-svyrich.html#cb999-31" tabindex="-1"></a>    rHC.hat <span class="ot">&lt;-</span></span>
-<span id="cb999-32"><a href="5.1-richness-measures-svyrich.html#cb999-32" tabindex="-1"></a>      <span class="fu">svyrich</span>(</span>
-<span id="cb999-33"><a href="5.1-richness-measures-svyrich.html#cb999-33" tabindex="-1"></a>        <span class="sc">~</span> y1 ,</span>
-<span id="cb999-34"><a href="5.1-richness-measures-svyrich.html#cb999-34" tabindex="-1"></a>        des.obj ,</span>
-<span id="cb999-35"><a href="5.1-richness-measures-svyrich.html#cb999-35" tabindex="-1"></a>        <span class="at">type_measure =</span> <span class="st">&quot;FGTT1&quot;</span> ,</span>
-<span id="cb999-36"><a href="5.1-richness-measures-svyrich.html#cb999-36" tabindex="-1"></a>        <span class="at">g =</span> <span class="dv">0</span> ,</span>
-<span id="cb999-37"><a href="5.1-richness-measures-svyrich.html#cb999-37" tabindex="-1"></a>        <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span>  ,</span>
-<span id="cb999-38"><a href="5.1-richness-measures-svyrich.html#cb999-38" tabindex="-1"></a>        <span class="at">percent =</span> <span class="dv">3</span></span>
-<span id="cb999-39"><a href="5.1-richness-measures-svyrich.html#cb999-39" tabindex="-1"></a>      )</span>
-<span id="cb999-40"><a href="5.1-richness-measures-svyrich.html#cb999-40" tabindex="-1"></a>  )</span>
-<span id="cb999-41"><a href="5.1-richness-measures-svyrich.html#cb999-41" tabindex="-1"></a>  <span class="fu">suppressWarnings</span>(</span>
-<span id="cb999-42"><a href="5.1-richness-measures-svyrich.html#cb999-42" tabindex="-1"></a>    rFGTT2.hat <span class="ot">&lt;-</span></span>
-<span id="cb999-43"><a href="5.1-richness-measures-svyrich.html#cb999-43" tabindex="-1"></a>      <span class="fu">svyrich</span>(</span>
-<span id="cb999-44"><a href="5.1-richness-measures-svyrich.html#cb999-44" tabindex="-1"></a>        <span class="sc">~</span> y1 ,</span>
-<span id="cb999-45"><a href="5.1-richness-measures-svyrich.html#cb999-45" tabindex="-1"></a>        des.obj ,</span>
-<span id="cb999-46"><a href="5.1-richness-measures-svyrich.html#cb999-46" tabindex="-1"></a>        <span class="at">type_measure =</span> <span class="st">&quot;FGTT2&quot;</span> ,</span>
-<span id="cb999-47"><a href="5.1-richness-measures-svyrich.html#cb999-47" tabindex="-1"></a>        <span class="at">g =</span> fgt.alpha ,</span>
-<span id="cb999-48"><a href="5.1-richness-measures-svyrich.html#cb999-48" tabindex="-1"></a>        <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span>  ,</span>
-<span id="cb999-49"><a href="5.1-richness-measures-svyrich.html#cb999-49" tabindex="-1"></a>        <span class="at">percent =</span> <span class="dv">3</span></span>
-<span id="cb999-50"><a href="5.1-richness-measures-svyrich.html#cb999-50" tabindex="-1"></a>      )</span>
-<span id="cb999-51"><a href="5.1-richness-measures-svyrich.html#cb999-51" tabindex="-1"></a>  )</span>
-<span id="cb999-52"><a href="5.1-richness-measures-svyrich.html#cb999-52" tabindex="-1"></a>  est.list <span class="ot">&lt;-</span> <span class="fu">list</span>(rHC.hat , rCha.hat , rFGTT2.hat)</span>
-<span id="cb999-53"><a href="5.1-richness-measures-svyrich.html#cb999-53" tabindex="-1"></a>  est.list</span>
-<span id="cb999-54"><a href="5.1-richness-measures-svyrich.html#cb999-54" tabindex="-1"></a>  </span>
-<span id="cb999-55"><a href="5.1-richness-measures-svyrich.html#cb999-55" tabindex="-1"></a>})</span></code></pre></div>
+<div class="sourceCode" id="cb1035"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1035-1"><a href="5.1-richness-measures-svyrich.html#cb1035-1" tabindex="-1"></a><span class="co"># define the number of simulation runs</span></span>
+<span id="cb1035-2"><a href="5.1-richness-measures-svyrich.html#cb1035-2" tabindex="-1"></a>mc.reps <span class="ot">&lt;-</span> 5000L</span>
+<span id="cb1035-3"><a href="5.1-richness-measures-svyrich.html#cb1035-3" tabindex="-1"></a></span>
+<span id="cb1035-4"><a href="5.1-richness-measures-svyrich.html#cb1035-4" tabindex="-1"></a><span class="co"># simulation runs</span></span>
+<span id="cb1035-5"><a href="5.1-richness-measures-svyrich.html#cb1035-5" tabindex="-1"></a>rep.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="fu">seq_len</span>(mc.reps) , <span class="cf">function</span>(this.iter) {</span>
+<span id="cb1035-6"><a href="5.1-richness-measures-svyrich.html#cb1035-6" tabindex="-1"></a>  <span class="co"># multinomial sampling</span></span>
+<span id="cb1035-7"><a href="5.1-richness-measures-svyrich.html#cb1035-7" tabindex="-1"></a>  this.sample <span class="ot">&lt;-</span> sampling<span class="sc">::</span><span class="fu">UPmultinomial</span>(pop.df<span class="sc">$</span>pi1)</span>
+<span id="cb1035-8"><a href="5.1-richness-measures-svyrich.html#cb1035-8" tabindex="-1"></a>  this.sample <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>n.pop , this.sample)</span>
+<span id="cb1035-9"><a href="5.1-richness-measures-svyrich.html#cb1035-9" tabindex="-1"></a>  sample.df <span class="ot">&lt;-</span> pop.df[this.sample ,]</span>
+<span id="cb1035-10"><a href="5.1-richness-measures-svyrich.html#cb1035-10" tabindex="-1"></a>  sample.df<span class="sc">$</span>weights <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> sample.df<span class="sc">$</span>pi1</span>
+<span id="cb1035-11"><a href="5.1-richness-measures-svyrich.html#cb1035-11" tabindex="-1"></a>  des.obj <span class="ot">&lt;-</span></span>
+<span id="cb1035-12"><a href="5.1-richness-measures-svyrich.html#cb1035-12" tabindex="-1"></a>    <span class="fu">svydesign</span>(</span>
+<span id="cb1035-13"><a href="5.1-richness-measures-svyrich.html#cb1035-13" tabindex="-1"></a>      <span class="at">ids =</span> <span class="sc">~</span> <span class="dv">1</span> ,</span>
+<span id="cb1035-14"><a href="5.1-richness-measures-svyrich.html#cb1035-14" tabindex="-1"></a>      <span class="at">weights =</span> <span class="sc">~</span> weights ,</span>
+<span id="cb1035-15"><a href="5.1-richness-measures-svyrich.html#cb1035-15" tabindex="-1"></a>      <span class="at">data =</span> sample.df ,</span>
+<span id="cb1035-16"><a href="5.1-richness-measures-svyrich.html#cb1035-16" tabindex="-1"></a>      <span class="at">nest =</span> <span class="cn">FALSE</span></span>
+<span id="cb1035-17"><a href="5.1-richness-measures-svyrich.html#cb1035-17" tabindex="-1"></a>    )</span>
+<span id="cb1035-18"><a href="5.1-richness-measures-svyrich.html#cb1035-18" tabindex="-1"></a>  </span>
+<span id="cb1035-19"><a href="5.1-richness-measures-svyrich.html#cb1035-19" tabindex="-1"></a>  <span class="co"># run estimation</span></span>
+<span id="cb1035-20"><a href="5.1-richness-measures-svyrich.html#cb1035-20" tabindex="-1"></a>  des.obj <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(des.obj)</span>
+<span id="cb1035-21"><a href="5.1-richness-measures-svyrich.html#cb1035-21" tabindex="-1"></a>  rCha.hat <span class="ot">&lt;-</span></span>
+<span id="cb1035-22"><a href="5.1-richness-measures-svyrich.html#cb1035-22" tabindex="-1"></a>    <span class="fu">svyrich</span>(</span>
+<span id="cb1035-23"><a href="5.1-richness-measures-svyrich.html#cb1035-23" tabindex="-1"></a>      <span class="sc">~</span> y1 ,</span>
+<span id="cb1035-24"><a href="5.1-richness-measures-svyrich.html#cb1035-24" tabindex="-1"></a>      des.obj ,</span>
+<span id="cb1035-25"><a href="5.1-richness-measures-svyrich.html#cb1035-25" tabindex="-1"></a>      <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
+<span id="cb1035-26"><a href="5.1-richness-measures-svyrich.html#cb1035-26" tabindex="-1"></a>      <span class="at">g =</span> cha.beta ,</span>
+<span id="cb1035-27"><a href="5.1-richness-measures-svyrich.html#cb1035-27" tabindex="-1"></a>      <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span> ,</span>
+<span id="cb1035-28"><a href="5.1-richness-measures-svyrich.html#cb1035-28" tabindex="-1"></a>      <span class="at">percent =</span> <span class="dv">3</span></span>
+<span id="cb1035-29"><a href="5.1-richness-measures-svyrich.html#cb1035-29" tabindex="-1"></a>    )</span>
+<span id="cb1035-30"><a href="5.1-richness-measures-svyrich.html#cb1035-30" tabindex="-1"></a>  <span class="fu">suppressWarnings</span>(</span>
+<span id="cb1035-31"><a href="5.1-richness-measures-svyrich.html#cb1035-31" tabindex="-1"></a>    rHC.hat <span class="ot">&lt;-</span></span>
+<span id="cb1035-32"><a href="5.1-richness-measures-svyrich.html#cb1035-32" tabindex="-1"></a>      <span class="fu">svyrich</span>(</span>
+<span id="cb1035-33"><a href="5.1-richness-measures-svyrich.html#cb1035-33" tabindex="-1"></a>        <span class="sc">~</span> y1 ,</span>
+<span id="cb1035-34"><a href="5.1-richness-measures-svyrich.html#cb1035-34" tabindex="-1"></a>        des.obj ,</span>
+<span id="cb1035-35"><a href="5.1-richness-measures-svyrich.html#cb1035-35" tabindex="-1"></a>        <span class="at">type_measure =</span> <span class="st">&quot;FGTT1&quot;</span> ,</span>
+<span id="cb1035-36"><a href="5.1-richness-measures-svyrich.html#cb1035-36" tabindex="-1"></a>        <span class="at">g =</span> <span class="dv">0</span> ,</span>
+<span id="cb1035-37"><a href="5.1-richness-measures-svyrich.html#cb1035-37" tabindex="-1"></a>        <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span>  ,</span>
+<span id="cb1035-38"><a href="5.1-richness-measures-svyrich.html#cb1035-38" tabindex="-1"></a>        <span class="at">percent =</span> <span class="dv">3</span></span>
+<span id="cb1035-39"><a href="5.1-richness-measures-svyrich.html#cb1035-39" tabindex="-1"></a>      )</span>
+<span id="cb1035-40"><a href="5.1-richness-measures-svyrich.html#cb1035-40" tabindex="-1"></a>  )</span>
+<span id="cb1035-41"><a href="5.1-richness-measures-svyrich.html#cb1035-41" tabindex="-1"></a>  <span class="fu">suppressWarnings</span>(</span>
+<span id="cb1035-42"><a href="5.1-richness-measures-svyrich.html#cb1035-42" tabindex="-1"></a>    rFGTT2.hat <span class="ot">&lt;-</span></span>
+<span id="cb1035-43"><a href="5.1-richness-measures-svyrich.html#cb1035-43" tabindex="-1"></a>      <span class="fu">svyrich</span>(</span>
+<span id="cb1035-44"><a href="5.1-richness-measures-svyrich.html#cb1035-44" tabindex="-1"></a>        <span class="sc">~</span> y1 ,</span>
+<span id="cb1035-45"><a href="5.1-richness-measures-svyrich.html#cb1035-45" tabindex="-1"></a>        des.obj ,</span>
+<span id="cb1035-46"><a href="5.1-richness-measures-svyrich.html#cb1035-46" tabindex="-1"></a>        <span class="at">type_measure =</span> <span class="st">&quot;FGTT2&quot;</span> ,</span>
+<span id="cb1035-47"><a href="5.1-richness-measures-svyrich.html#cb1035-47" tabindex="-1"></a>        <span class="at">g =</span> fgt.alpha ,</span>
+<span id="cb1035-48"><a href="5.1-richness-measures-svyrich.html#cb1035-48" tabindex="-1"></a>        <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span>  ,</span>
+<span id="cb1035-49"><a href="5.1-richness-measures-svyrich.html#cb1035-49" tabindex="-1"></a>        <span class="at">percent =</span> <span class="dv">3</span></span>
+<span id="cb1035-50"><a href="5.1-richness-measures-svyrich.html#cb1035-50" tabindex="-1"></a>      )</span>
+<span id="cb1035-51"><a href="5.1-richness-measures-svyrich.html#cb1035-51" tabindex="-1"></a>  )</span>
+<span id="cb1035-52"><a href="5.1-richness-measures-svyrich.html#cb1035-52" tabindex="-1"></a>  est.list <span class="ot">&lt;-</span> <span class="fu">list</span>(rHC.hat , rCha.hat , rFGTT2.hat)</span>
+<span id="cb1035-53"><a href="5.1-richness-measures-svyrich.html#cb1035-53" tabindex="-1"></a>  est.list</span>
+<span id="cb1035-54"><a href="5.1-richness-measures-svyrich.html#cb1035-54" tabindex="-1"></a>  </span>
+<span id="cb1035-55"><a href="5.1-richness-measures-svyrich.html#cb1035-55" tabindex="-1"></a>})</span></code></pre></div>
 <p>To study the behavior of the estimators, we estimate their expected values, empirical
 variance (for the main parameter) and mean squared error. To study the validity
 of the normal approximation, we also estimate the percent coverage rate of the nominal
 95% confidence interval. This is done using the function below:</p>
-<div class="sourceCode" id="cb1000"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1000-1"><a href="5.1-richness-measures-svyrich.html#cb1000-1" tabindex="-1"></a>sim.compile <span class="ot">&lt;-</span> <span class="cf">function</span>(ll ,</span>
-<span id="cb1000-2"><a href="5.1-richness-measures-svyrich.html#cb1000-2" tabindex="-1"></a>                        pv ,</span>
-<span id="cb1000-3"><a href="5.1-richness-measures-svyrich.html#cb1000-3" tabindex="-1"></a>                        <span class="at">level =</span> .<span class="dv">95</span> ,</span>
-<span id="cb1000-4"><a href="5.1-richness-measures-svyrich.html#cb1000-4" tabindex="-1"></a>                        <span class="at">na.rm =</span> <span class="cn">FALSE</span>) {</span>
-<span id="cb1000-5"><a href="5.1-richness-measures-svyrich.html#cb1000-5" tabindex="-1"></a>  <span class="co"># collect estimates</span></span>
-<span id="cb1000-6"><a href="5.1-richness-measures-svyrich.html#cb1000-6" tabindex="-1"></a>  mhat.vec <span class="ot">&lt;-</span> <span class="fu">sapply</span>(ll , coef)</span>
-<span id="cb1000-7"><a href="5.1-richness-measures-svyrich.html#cb1000-7" tabindex="-1"></a>  vhat.vec <span class="ot">&lt;-</span> <span class="fu">sapply</span>(ll , vcov)</span>
-<span id="cb1000-8"><a href="5.1-richness-measures-svyrich.html#cb1000-8" tabindex="-1"></a>  </span>
-<span id="cb1000-9"><a href="5.1-richness-measures-svyrich.html#cb1000-9" tabindex="-1"></a>  <span class="co"># estimate expected value</span></span>
-<span id="cb1000-10"><a href="5.1-richness-measures-svyrich.html#cb1000-10" tabindex="-1"></a>  mhat.exp <span class="ot">&lt;-</span> <span class="fu">mean</span>(mhat.vec , <span class="at">na.rm =</span> na.rm)</span>
-<span id="cb1000-11"><a href="5.1-richness-measures-svyrich.html#cb1000-11" tabindex="-1"></a>  vhat.exp <span class="ot">&lt;-</span> <span class="fu">mean</span>(vhat.vec , <span class="at">na.rm =</span> na.rm)</span>
-<span id="cb1000-12"><a href="5.1-richness-measures-svyrich.html#cb1000-12" tabindex="-1"></a>  </span>
-<span id="cb1000-13"><a href="5.1-richness-measures-svyrich.html#cb1000-13" tabindex="-1"></a>  <span class="co"># calculate empirical variance</span></span>
-<span id="cb1000-14"><a href="5.1-richness-measures-svyrich.html#cb1000-14" tabindex="-1"></a>  mhat.empvar <span class="ot">&lt;-</span> <span class="fu">var</span>(mhat.vec , <span class="at">na.rm =</span> na.rm)</span>
-<span id="cb1000-15"><a href="5.1-richness-measures-svyrich.html#cb1000-15" tabindex="-1"></a>  </span>
-<span id="cb1000-16"><a href="5.1-richness-measures-svyrich.html#cb1000-16" tabindex="-1"></a>  <span class="co"># estimate squared bias</span></span>
-<span id="cb1000-17"><a href="5.1-richness-measures-svyrich.html#cb1000-17" tabindex="-1"></a>  mhat.bias2 <span class="ot">&lt;-</span> (mhat.exp <span class="sc">-</span> pv) <span class="sc">^</span> <span class="dv">2</span></span>
-<span id="cb1000-18"><a href="5.1-richness-measures-svyrich.html#cb1000-18" tabindex="-1"></a>  vhat.bias2 <span class="ot">&lt;-</span> (vhat.exp <span class="sc">-</span> mhat.empvar) <span class="sc">^</span> <span class="dv">2</span></span>
-<span id="cb1000-19"><a href="5.1-richness-measures-svyrich.html#cb1000-19" tabindex="-1"></a>  </span>
-<span id="cb1000-20"><a href="5.1-richness-measures-svyrich.html#cb1000-20" tabindex="-1"></a>  <span class="co"># estimate mse</span></span>
-<span id="cb1000-21"><a href="5.1-richness-measures-svyrich.html#cb1000-21" tabindex="-1"></a>  mhat.mse <span class="ot">&lt;-</span> mhat.bias2 <span class="sc">+</span> mhat.empvar</span>
-<span id="cb1000-22"><a href="5.1-richness-measures-svyrich.html#cb1000-22" tabindex="-1"></a>  </span>
-<span id="cb1000-23"><a href="5.1-richness-measures-svyrich.html#cb1000-23" tabindex="-1"></a>  <span class="co"># estimate coverage rate</span></span>
-<span id="cb1000-24"><a href="5.1-richness-measures-svyrich.html#cb1000-24" tabindex="-1"></a>  ci.hats <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">sapply</span>(ll , confint))</span>
-<span id="cb1000-25"><a href="5.1-richness-measures-svyrich.html#cb1000-25" tabindex="-1"></a>  ci.check <span class="ot">&lt;-</span></span>
-<span id="cb1000-26"><a href="5.1-richness-measures-svyrich.html#cb1000-26" tabindex="-1"></a>    <span class="fu">matrix</span>(<span class="fu">as.logical</span>(<span class="cn">NA</span>) , <span class="at">nrow =</span> <span class="fu">nrow</span>(ci.hats) , <span class="at">ncol =</span> <span class="dv">3</span>)</span>
-<span id="cb1000-27"><a href="5.1-richness-measures-svyrich.html#cb1000-27" tabindex="-1"></a>  ci.check[, <span class="dv">1</span>] <span class="ot">&lt;-</span> ci.hats[, <span class="dv">1</span>] <span class="sc">&lt;=</span> pv</span>
-<span id="cb1000-28"><a href="5.1-richness-measures-svyrich.html#cb1000-28" tabindex="-1"></a>  ci.check[, <span class="dv">2</span>] <span class="ot">&lt;-</span> ci.hats[, <span class="dv">2</span>] <span class="sc">&gt;=</span> pv</span>
-<span id="cb1000-29"><a href="5.1-richness-measures-svyrich.html#cb1000-29" tabindex="-1"></a>  ci.check[, <span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="fu">apply</span>(ci.check[, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>] , <span class="dv">1</span> , all)</span>
-<span id="cb1000-30"><a href="5.1-richness-measures-svyrich.html#cb1000-30" tabindex="-1"></a>  pcr.emp <span class="ot">&lt;-</span> <span class="fu">mean</span>(ci.check[, <span class="dv">3</span>] , <span class="at">na.rm =</span> na.rm)</span>
-<span id="cb1000-31"><a href="5.1-richness-measures-svyrich.html#cb1000-31" tabindex="-1"></a>  </span>
-<span id="cb1000-32"><a href="5.1-richness-measures-svyrich.html#cb1000-32" tabindex="-1"></a>  <span class="co"># setup final table</span></span>
-<span id="cb1000-33"><a href="5.1-richness-measures-svyrich.html#cb1000-33" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
-<span id="cb1000-34"><a href="5.1-richness-measures-svyrich.html#cb1000-34" tabindex="-1"></a>    <span class="st">&quot;mc.reps&quot;</span> <span class="ot">=</span> <span class="fu">length</span>(ll) ,</span>
-<span id="cb1000-35"><a href="5.1-richness-measures-svyrich.html#cb1000-35" tabindex="-1"></a>    <span class="st">&quot;theta&quot;</span> <span class="ot">=</span> pv ,</span>
-<span id="cb1000-36"><a href="5.1-richness-measures-svyrich.html#cb1000-36" tabindex="-1"></a>    <span class="st">&quot;theta.hat&quot;</span> <span class="ot">=</span> mhat.exp ,</span>
-<span id="cb1000-37"><a href="5.1-richness-measures-svyrich.html#cb1000-37" tabindex="-1"></a>    <span class="st">&quot;theta.bias2&quot;</span> <span class="ot">=</span> mhat.bias2 ,</span>
-<span id="cb1000-38"><a href="5.1-richness-measures-svyrich.html#cb1000-38" tabindex="-1"></a>    <span class="st">&quot;theta.empvar&quot;</span> <span class="ot">=</span> mhat.empvar ,</span>
-<span id="cb1000-39"><a href="5.1-richness-measures-svyrich.html#cb1000-39" tabindex="-1"></a>    <span class="st">&quot;theta.hat.mse&quot;</span> <span class="ot">=</span> mhat.mse ,</span>
-<span id="cb1000-40"><a href="5.1-richness-measures-svyrich.html#cb1000-40" tabindex="-1"></a>    <span class="st">&quot;theta.varhat&quot;</span> <span class="ot">=</span> vhat.exp ,</span>
-<span id="cb1000-41"><a href="5.1-richness-measures-svyrich.html#cb1000-41" tabindex="-1"></a>    <span class="st">&quot;pcr&quot;</span> <span class="ot">=</span> pcr.emp</span>
-<span id="cb1000-42"><a href="5.1-richness-measures-svyrich.html#cb1000-42" tabindex="-1"></a>  )</span>
-<span id="cb1000-43"><a href="5.1-richness-measures-svyrich.html#cb1000-43" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb1036"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1036-1"><a href="5.1-richness-measures-svyrich.html#cb1036-1" tabindex="-1"></a>sim.compile <span class="ot">&lt;-</span> <span class="cf">function</span>(ll ,</span>
+<span id="cb1036-2"><a href="5.1-richness-measures-svyrich.html#cb1036-2" tabindex="-1"></a>                        pv ,</span>
+<span id="cb1036-3"><a href="5.1-richness-measures-svyrich.html#cb1036-3" tabindex="-1"></a>                        <span class="at">level =</span> .<span class="dv">95</span> ,</span>
+<span id="cb1036-4"><a href="5.1-richness-measures-svyrich.html#cb1036-4" tabindex="-1"></a>                        <span class="at">na.rm =</span> <span class="cn">FALSE</span>) {</span>
+<span id="cb1036-5"><a href="5.1-richness-measures-svyrich.html#cb1036-5" tabindex="-1"></a>  <span class="co"># collect estimates</span></span>
+<span id="cb1036-6"><a href="5.1-richness-measures-svyrich.html#cb1036-6" tabindex="-1"></a>  mhat.vec <span class="ot">&lt;-</span> <span class="fu">sapply</span>(ll , coef)</span>
+<span id="cb1036-7"><a href="5.1-richness-measures-svyrich.html#cb1036-7" tabindex="-1"></a>  vhat.vec <span class="ot">&lt;-</span> <span class="fu">sapply</span>(ll , vcov)</span>
+<span id="cb1036-8"><a href="5.1-richness-measures-svyrich.html#cb1036-8" tabindex="-1"></a>  </span>
+<span id="cb1036-9"><a href="5.1-richness-measures-svyrich.html#cb1036-9" tabindex="-1"></a>  <span class="co"># estimate expected value</span></span>
+<span id="cb1036-10"><a href="5.1-richness-measures-svyrich.html#cb1036-10" tabindex="-1"></a>  mhat.exp <span class="ot">&lt;-</span> <span class="fu">mean</span>(mhat.vec , <span class="at">na.rm =</span> na.rm)</span>
+<span id="cb1036-11"><a href="5.1-richness-measures-svyrich.html#cb1036-11" tabindex="-1"></a>  vhat.exp <span class="ot">&lt;-</span> <span class="fu">mean</span>(vhat.vec , <span class="at">na.rm =</span> na.rm)</span>
+<span id="cb1036-12"><a href="5.1-richness-measures-svyrich.html#cb1036-12" tabindex="-1"></a>  </span>
+<span id="cb1036-13"><a href="5.1-richness-measures-svyrich.html#cb1036-13" tabindex="-1"></a>  <span class="co"># calculate empirical variance</span></span>
+<span id="cb1036-14"><a href="5.1-richness-measures-svyrich.html#cb1036-14" tabindex="-1"></a>  mhat.empvar <span class="ot">&lt;-</span> <span class="fu">var</span>(mhat.vec , <span class="at">na.rm =</span> na.rm)</span>
+<span id="cb1036-15"><a href="5.1-richness-measures-svyrich.html#cb1036-15" tabindex="-1"></a>  </span>
+<span id="cb1036-16"><a href="5.1-richness-measures-svyrich.html#cb1036-16" tabindex="-1"></a>  <span class="co"># estimate squared bias</span></span>
+<span id="cb1036-17"><a href="5.1-richness-measures-svyrich.html#cb1036-17" tabindex="-1"></a>  mhat.bias2 <span class="ot">&lt;-</span> (mhat.exp <span class="sc">-</span> pv) <span class="sc">^</span> <span class="dv">2</span></span>
+<span id="cb1036-18"><a href="5.1-richness-measures-svyrich.html#cb1036-18" tabindex="-1"></a>  vhat.bias2 <span class="ot">&lt;-</span> (vhat.exp <span class="sc">-</span> mhat.empvar) <span class="sc">^</span> <span class="dv">2</span></span>
+<span id="cb1036-19"><a href="5.1-richness-measures-svyrich.html#cb1036-19" tabindex="-1"></a>  </span>
+<span id="cb1036-20"><a href="5.1-richness-measures-svyrich.html#cb1036-20" tabindex="-1"></a>  <span class="co"># estimate mse</span></span>
+<span id="cb1036-21"><a href="5.1-richness-measures-svyrich.html#cb1036-21" tabindex="-1"></a>  mhat.mse <span class="ot">&lt;-</span> mhat.bias2 <span class="sc">+</span> mhat.empvar</span>
+<span id="cb1036-22"><a href="5.1-richness-measures-svyrich.html#cb1036-22" tabindex="-1"></a>  </span>
+<span id="cb1036-23"><a href="5.1-richness-measures-svyrich.html#cb1036-23" tabindex="-1"></a>  <span class="co"># estimate coverage rate</span></span>
+<span id="cb1036-24"><a href="5.1-richness-measures-svyrich.html#cb1036-24" tabindex="-1"></a>  ci.hats <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">sapply</span>(ll , confint))</span>
+<span id="cb1036-25"><a href="5.1-richness-measures-svyrich.html#cb1036-25" tabindex="-1"></a>  ci.check <span class="ot">&lt;-</span></span>
+<span id="cb1036-26"><a href="5.1-richness-measures-svyrich.html#cb1036-26" tabindex="-1"></a>    <span class="fu">matrix</span>(<span class="fu">as.logical</span>(<span class="cn">NA</span>) , <span class="at">nrow =</span> <span class="fu">nrow</span>(ci.hats) , <span class="at">ncol =</span> <span class="dv">3</span>)</span>
+<span id="cb1036-27"><a href="5.1-richness-measures-svyrich.html#cb1036-27" tabindex="-1"></a>  ci.check[, <span class="dv">1</span>] <span class="ot">&lt;-</span> ci.hats[, <span class="dv">1</span>] <span class="sc">&lt;=</span> pv</span>
+<span id="cb1036-28"><a href="5.1-richness-measures-svyrich.html#cb1036-28" tabindex="-1"></a>  ci.check[, <span class="dv">2</span>] <span class="ot">&lt;-</span> ci.hats[, <span class="dv">2</span>] <span class="sc">&gt;=</span> pv</span>
+<span id="cb1036-29"><a href="5.1-richness-measures-svyrich.html#cb1036-29" tabindex="-1"></a>  ci.check[, <span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="fu">apply</span>(ci.check[, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>] , <span class="dv">1</span> , all)</span>
+<span id="cb1036-30"><a href="5.1-richness-measures-svyrich.html#cb1036-30" tabindex="-1"></a>  pcr.emp <span class="ot">&lt;-</span> <span class="fu">mean</span>(ci.check[, <span class="dv">3</span>] , <span class="at">na.rm =</span> na.rm)</span>
+<span id="cb1036-31"><a href="5.1-richness-measures-svyrich.html#cb1036-31" tabindex="-1"></a>  </span>
+<span id="cb1036-32"><a href="5.1-richness-measures-svyrich.html#cb1036-32" tabindex="-1"></a>  <span class="co"># setup final table</span></span>
+<span id="cb1036-33"><a href="5.1-richness-measures-svyrich.html#cb1036-33" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb1036-34"><a href="5.1-richness-measures-svyrich.html#cb1036-34" tabindex="-1"></a>    <span class="st">&quot;mc.reps&quot;</span> <span class="ot">=</span> <span class="fu">length</span>(ll) ,</span>
+<span id="cb1036-35"><a href="5.1-richness-measures-svyrich.html#cb1036-35" tabindex="-1"></a>    <span class="st">&quot;theta&quot;</span> <span class="ot">=</span> pv ,</span>
+<span id="cb1036-36"><a href="5.1-richness-measures-svyrich.html#cb1036-36" tabindex="-1"></a>    <span class="st">&quot;theta.hat&quot;</span> <span class="ot">=</span> mhat.exp ,</span>
+<span id="cb1036-37"><a href="5.1-richness-measures-svyrich.html#cb1036-37" tabindex="-1"></a>    <span class="st">&quot;theta.bias2&quot;</span> <span class="ot">=</span> mhat.bias2 ,</span>
+<span id="cb1036-38"><a href="5.1-richness-measures-svyrich.html#cb1036-38" tabindex="-1"></a>    <span class="st">&quot;theta.empvar&quot;</span> <span class="ot">=</span> mhat.empvar ,</span>
+<span id="cb1036-39"><a href="5.1-richness-measures-svyrich.html#cb1036-39" tabindex="-1"></a>    <span class="st">&quot;theta.hat.mse&quot;</span> <span class="ot">=</span> mhat.mse ,</span>
+<span id="cb1036-40"><a href="5.1-richness-measures-svyrich.html#cb1036-40" tabindex="-1"></a>    <span class="st">&quot;theta.varhat&quot;</span> <span class="ot">=</span> vhat.exp ,</span>
+<span id="cb1036-41"><a href="5.1-richness-measures-svyrich.html#cb1036-41" tabindex="-1"></a>    <span class="st">&quot;pcr&quot;</span> <span class="ot">=</span> pcr.emp</span>
+<span id="cb1036-42"><a href="5.1-richness-measures-svyrich.html#cb1036-42" tabindex="-1"></a>  )</span>
+<span id="cb1036-43"><a href="5.1-richness-measures-svyrich.html#cb1036-43" tabindex="-1"></a>}</span></code></pre></div>
 <p>For the Headcount Richness Ratio (computed using the concave FGT measure), we have:</p>
-<div class="sourceCode" id="cb1001"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1001-1"><a href="5.1-richness-measures-svyrich.html#cb1001-1" tabindex="-1"></a>rhc.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(rep.list , <span class="st">`</span><span class="at">[[</span><span class="st">`</span> , <span class="dv">1</span>)</span>
-<span id="cb1001-2"><a href="5.1-richness-measures-svyrich.html#cb1001-2" tabindex="-1"></a><span class="fu">sim.compile</span>(rhc.list, rHC.fp)</span></code></pre></div>
+<div class="sourceCode" id="cb1037"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1037-1"><a href="5.1-richness-measures-svyrich.html#cb1037-1" tabindex="-1"></a>rhc.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(rep.list , <span class="st">`</span><span class="at">[[</span><span class="st">`</span> , <span class="dv">1</span>)</span>
+<span id="cb1037-2"><a href="5.1-richness-measures-svyrich.html#cb1037-2" tabindex="-1"></a><span class="fu">sim.compile</span>(rhc.list, rHC.fp)</span></code></pre></div>
 <pre><code>##   mc.reps   theta  theta.hat  theta.bias2 theta.empvar theta.hat.mse
 ## 1    5000 0.05469 0.05452618 2.683797e-08 4.112616e-05    4.1153e-05
 ##   theta.varhat    pcr
 ## 1 4.336252e-05 0.9524</code></pre>
-<div class="sourceCode" id="cb1003"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1003-1"><a href="5.1-richness-measures-svyrich.html#cb1003-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(</span>
-<span id="cb1003-2"><a href="5.1-richness-measures-svyrich.html#cb1003-2" tabindex="-1"></a>  <span class="fu">sim.compile</span>(rhc.list, rHC.fp)[<span class="st">&quot;theta.bias2&quot;</span>] <span class="sc">/</span> <span class="fu">sim.compile</span>(rhc.list, rHC.fp)[<span class="st">&quot;theta.hat.mse&quot;</span>] ,</span>
-<span id="cb1003-3"><a href="5.1-richness-measures-svyrich.html#cb1003-3" tabindex="-1"></a>  <span class="dv">4</span></span>
-<span id="cb1003-4"><a href="5.1-richness-measures-svyrich.html#cb1003-4" tabindex="-1"></a>) <span class="sc">==</span> <span class="fl">0.0007</span>)</span>
-<span id="cb1003-5"><a href="5.1-richness-measures-svyrich.html#cb1003-5" tabindex="-1"></a></span>
-<span id="cb1003-6"><a href="5.1-richness-measures-svyrich.html#cb1003-6" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(</span>
-<span id="cb1003-7"><a href="5.1-richness-measures-svyrich.html#cb1003-7" tabindex="-1"></a>  <span class="fu">sim.compile</span>(rhc.list, rHC.fp)[<span class="st">&quot;theta.varhat&quot;</span>] <span class="sc">/</span> <span class="fu">sim.compile</span>(rhc.list, rHC.fp)[<span class="st">&quot;theta.empvar&quot;</span>] ,</span>
-<span id="cb1003-8"><a href="5.1-richness-measures-svyrich.html#cb1003-8" tabindex="-1"></a>  <span class="dv">2</span></span>
-<span id="cb1003-9"><a href="5.1-richness-measures-svyrich.html#cb1003-9" tabindex="-1"></a>) <span class="sc">==</span> <span class="fl">1.05</span>)</span>
-<span id="cb1003-10"><a href="5.1-richness-measures-svyrich.html#cb1003-10" tabindex="-1"></a></span>
-<span id="cb1003-11"><a href="5.1-richness-measures-svyrich.html#cb1003-11" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">sim.compile</span>(rhc.list, rHC.fp)[<span class="st">&quot;pcr&quot;</span>] , <span class="dv">4</span>) <span class="sc">==</span> <span class="fl">0.9524</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb1039"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1039-1"><a href="5.1-richness-measures-svyrich.html#cb1039-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(</span>
+<span id="cb1039-2"><a href="5.1-richness-measures-svyrich.html#cb1039-2" tabindex="-1"></a>  <span class="fu">sim.compile</span>(rhc.list, rHC.fp)[<span class="st">&quot;theta.bias2&quot;</span>] <span class="sc">/</span> <span class="fu">sim.compile</span>(rhc.list, rHC.fp)[<span class="st">&quot;theta.hat.mse&quot;</span>] ,</span>
+<span id="cb1039-3"><a href="5.1-richness-measures-svyrich.html#cb1039-3" tabindex="-1"></a>  <span class="dv">4</span></span>
+<span id="cb1039-4"><a href="5.1-richness-measures-svyrich.html#cb1039-4" tabindex="-1"></a>) <span class="sc">==</span> <span class="fl">0.0007</span>)</span>
+<span id="cb1039-5"><a href="5.1-richness-measures-svyrich.html#cb1039-5" tabindex="-1"></a></span>
+<span id="cb1039-6"><a href="5.1-richness-measures-svyrich.html#cb1039-6" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(</span>
+<span id="cb1039-7"><a href="5.1-richness-measures-svyrich.html#cb1039-7" tabindex="-1"></a>  <span class="fu">sim.compile</span>(rhc.list, rHC.fp)[<span class="st">&quot;theta.varhat&quot;</span>] <span class="sc">/</span> <span class="fu">sim.compile</span>(rhc.list, rHC.fp)[<span class="st">&quot;theta.empvar&quot;</span>] ,</span>
+<span id="cb1039-8"><a href="5.1-richness-measures-svyrich.html#cb1039-8" tabindex="-1"></a>  <span class="dv">2</span></span>
+<span id="cb1039-9"><a href="5.1-richness-measures-svyrich.html#cb1039-9" tabindex="-1"></a>) <span class="sc">==</span> <span class="fl">1.05</span>)</span>
+<span id="cb1039-10"><a href="5.1-richness-measures-svyrich.html#cb1039-10" tabindex="-1"></a></span>
+<span id="cb1039-11"><a href="5.1-richness-measures-svyrich.html#cb1039-11" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">sim.compile</span>(rhc.list, rHC.fp)[<span class="st">&quot;pcr&quot;</span>] , <span class="dv">4</span>) <span class="sc">==</span> <span class="fl">0.9524</span>)</span></code></pre></div>
 <p>Under this approach, the squared bias accounts for approx. 0.07% of the MSE, indicating
 that the MSE of the estimator is reasonably approximated by its variance. Additionally,
 the ratio between the expected value of the variance estimator and the empirical
@@ -494,23 +494,23 @@ be a (slighlty conservative, but) good approximation of the empirical variance.
 Finally, the estimated percent coverage rate of 95.24% is close to the nominal
 level of 95%, indicating that the confidence intervals are approximately valid.</p>
 <p>For the Chakravarty measure, we have:</p>
-<div class="sourceCode" id="cb1004"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1004-1"><a href="5.1-richness-measures-svyrich.html#cb1004-1" tabindex="-1"></a>rcha.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(rep.list , <span class="st">`</span><span class="at">[[</span><span class="st">`</span> , <span class="dv">2</span>)</span>
-<span id="cb1004-2"><a href="5.1-richness-measures-svyrich.html#cb1004-2" tabindex="-1"></a><span class="fu">sim.compile</span>(rcha.list, rCha.fp)</span></code></pre></div>
+<div class="sourceCode" id="cb1040"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1040-1"><a href="5.1-richness-measures-svyrich.html#cb1040-1" tabindex="-1"></a>rcha.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(rep.list , <span class="st">`</span><span class="at">[[</span><span class="st">`</span> , <span class="dv">2</span>)</span>
+<span id="cb1040-2"><a href="5.1-richness-measures-svyrich.html#cb1040-2" tabindex="-1"></a><span class="fu">sim.compile</span>(rcha.list, rCha.fp)</span></code></pre></div>
 <pre><code>##   mc.reps      theta  theta.hat  theta.bias2 theta.empvar theta.hat.mse
 ## 1    5000 0.02743915 0.02737177 4.538966e-09 1.428639e-05  1.429093e-05
 ##   theta.varhat    pcr
 ## 1 1.402416e-05 0.9428</code></pre>
-<div class="sourceCode" id="cb1006"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1006-1"><a href="5.1-richness-measures-svyrich.html#cb1006-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(</span>
-<span id="cb1006-2"><a href="5.1-richness-measures-svyrich.html#cb1006-2" tabindex="-1"></a>  <span class="fu">sim.compile</span>(rcha.list, rCha.fp)[<span class="st">&quot;theta.bias2&quot;</span>] <span class="sc">/</span> <span class="fu">sim.compile</span>(rcha.list, rCha.fp)[<span class="st">&quot;theta.hat.mse&quot;</span>] ,</span>
-<span id="cb1006-3"><a href="5.1-richness-measures-svyrich.html#cb1006-3" tabindex="-1"></a>  <span class="dv">4</span></span>
-<span id="cb1006-4"><a href="5.1-richness-measures-svyrich.html#cb1006-4" tabindex="-1"></a>) <span class="sc">==</span> <span class="fl">0.0003</span>)</span>
-<span id="cb1006-5"><a href="5.1-richness-measures-svyrich.html#cb1006-5" tabindex="-1"></a></span>
-<span id="cb1006-6"><a href="5.1-richness-measures-svyrich.html#cb1006-6" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(</span>
-<span id="cb1006-7"><a href="5.1-richness-measures-svyrich.html#cb1006-7" tabindex="-1"></a>  <span class="fu">sim.compile</span>(rcha.list, rCha.fp)[<span class="st">&quot;theta.varhat&quot;</span>] <span class="sc">/</span> <span class="fu">sim.compile</span>(rcha.list, rCha.fp)[<span class="st">&quot;theta.empvar&quot;</span>] ,</span>
-<span id="cb1006-8"><a href="5.1-richness-measures-svyrich.html#cb1006-8" tabindex="-1"></a>  <span class="dv">2</span></span>
-<span id="cb1006-9"><a href="5.1-richness-measures-svyrich.html#cb1006-9" tabindex="-1"></a>) <span class="sc">==</span> <span class="fl">0.98</span>)</span>
-<span id="cb1006-10"><a href="5.1-richness-measures-svyrich.html#cb1006-10" tabindex="-1"></a></span>
-<span id="cb1006-11"><a href="5.1-richness-measures-svyrich.html#cb1006-11" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">sim.compile</span>(rcha.list, rCha.fp)[<span class="st">&quot;pcr&quot;</span>] , <span class="dv">4</span>) <span class="sc">==</span> <span class="fl">0.9428</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb1042"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1042-1"><a href="5.1-richness-measures-svyrich.html#cb1042-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(</span>
+<span id="cb1042-2"><a href="5.1-richness-measures-svyrich.html#cb1042-2" tabindex="-1"></a>  <span class="fu">sim.compile</span>(rcha.list, rCha.fp)[<span class="st">&quot;theta.bias2&quot;</span>] <span class="sc">/</span> <span class="fu">sim.compile</span>(rcha.list, rCha.fp)[<span class="st">&quot;theta.hat.mse&quot;</span>] ,</span>
+<span id="cb1042-3"><a href="5.1-richness-measures-svyrich.html#cb1042-3" tabindex="-1"></a>  <span class="dv">4</span></span>
+<span id="cb1042-4"><a href="5.1-richness-measures-svyrich.html#cb1042-4" tabindex="-1"></a>) <span class="sc">==</span> <span class="fl">0.0003</span>)</span>
+<span id="cb1042-5"><a href="5.1-richness-measures-svyrich.html#cb1042-5" tabindex="-1"></a></span>
+<span id="cb1042-6"><a href="5.1-richness-measures-svyrich.html#cb1042-6" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(</span>
+<span id="cb1042-7"><a href="5.1-richness-measures-svyrich.html#cb1042-7" tabindex="-1"></a>  <span class="fu">sim.compile</span>(rcha.list, rCha.fp)[<span class="st">&quot;theta.varhat&quot;</span>] <span class="sc">/</span> <span class="fu">sim.compile</span>(rcha.list, rCha.fp)[<span class="st">&quot;theta.empvar&quot;</span>] ,</span>
+<span id="cb1042-8"><a href="5.1-richness-measures-svyrich.html#cb1042-8" tabindex="-1"></a>  <span class="dv">2</span></span>
+<span id="cb1042-9"><a href="5.1-richness-measures-svyrich.html#cb1042-9" tabindex="-1"></a>) <span class="sc">==</span> <span class="fl">0.98</span>)</span>
+<span id="cb1042-10"><a href="5.1-richness-measures-svyrich.html#cb1042-10" tabindex="-1"></a></span>
+<span id="cb1042-11"><a href="5.1-richness-measures-svyrich.html#cb1042-11" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">sim.compile</span>(rcha.list, rCha.fp)[<span class="st">&quot;pcr&quot;</span>] , <span class="dv">4</span>) <span class="sc">==</span> <span class="fl">0.9428</span>)</span></code></pre></div>
 <p>Under this approach, the squared bias is approx 0.03% of the MSE, indicating that
 the MSE of the estimator is reasonably approximated by its variance. Additionally,
 the ratio between the expected value of the variance estimator and the empirical
@@ -519,23 +519,23 @@ be a good approximation of the empirical variance. Finally, the estimated percen
 coverage rate of 94.28% is close to the nominal level of 95%, indicating that the
 confidence intervals are approximately valid.</p>
 <p>For the convex FGT measure, we have:</p>
-<div class="sourceCode" id="cb1007"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1007-1"><a href="5.1-richness-measures-svyrich.html#cb1007-1" tabindex="-1"></a>rfgtt2.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(rep.list , <span class="st">`</span><span class="at">[[</span><span class="st">`</span> , <span class="dv">3</span>)</span>
-<span id="cb1007-2"><a href="5.1-richness-measures-svyrich.html#cb1007-2" tabindex="-1"></a><span class="fu">sim.compile</span>(rfgtt2.list, rFGTT2.fp)</span></code></pre></div>
+<div class="sourceCode" id="cb1043"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1043-1"><a href="5.1-richness-measures-svyrich.html#cb1043-1" tabindex="-1"></a>rfgtt2.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(rep.list , <span class="st">`</span><span class="at">[[</span><span class="st">`</span> , <span class="dv">3</span>)</span>
+<span id="cb1043-2"><a href="5.1-richness-measures-svyrich.html#cb1043-2" tabindex="-1"></a><span class="fu">sim.compile</span>(rfgtt2.list, rFGTT2.fp)</span></code></pre></div>
 <pre><code>##   mc.reps      theta theta.hat theta.bias2 theta.empvar theta.hat.mse
 ## 1    5000 0.02349189 0.1045973  0.00657808   0.01865219    0.02523027
 ##   theta.varhat    pcr
 ## 1   0.01857144 0.5212</code></pre>
-<div class="sourceCode" id="cb1009"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1009-1"><a href="5.1-richness-measures-svyrich.html#cb1009-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(</span>
-<span id="cb1009-2"><a href="5.1-richness-measures-svyrich.html#cb1009-2" tabindex="-1"></a>  <span class="fu">sim.compile</span>(rfgtt2.list, rFGTT2.fp)[<span class="st">&quot;theta.bias2&quot;</span>] <span class="sc">/</span> <span class="fu">sim.compile</span>(rfgtt2.list, rFGTT2.fp)[<span class="st">&quot;theta.hat.mse&quot;</span>] ,</span>
-<span id="cb1009-3"><a href="5.1-richness-measures-svyrich.html#cb1009-3" tabindex="-1"></a>  <span class="dv">2</span></span>
-<span id="cb1009-4"><a href="5.1-richness-measures-svyrich.html#cb1009-4" tabindex="-1"></a>) <span class="sc">==</span> <span class="fl">0.26</span>)</span>
-<span id="cb1009-5"><a href="5.1-richness-measures-svyrich.html#cb1009-5" tabindex="-1"></a></span>
-<span id="cb1009-6"><a href="5.1-richness-measures-svyrich.html#cb1009-6" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(</span>
-<span id="cb1009-7"><a href="5.1-richness-measures-svyrich.html#cb1009-7" tabindex="-1"></a>  <span class="fu">sim.compile</span>(rfgtt2.list, rFGTT2.fp)[<span class="st">&quot;theta.varhat&quot;</span>] <span class="sc">/</span> <span class="fu">sim.compile</span>(rfgtt2.list, rFGTT2.fp)[<span class="st">&quot;theta.empvar&quot;</span>] ,</span>
-<span id="cb1009-8"><a href="5.1-richness-measures-svyrich.html#cb1009-8" tabindex="-1"></a>  <span class="dv">2</span></span>
-<span id="cb1009-9"><a href="5.1-richness-measures-svyrich.html#cb1009-9" tabindex="-1"></a>) <span class="sc">==</span> <span class="dv">1</span>)</span>
-<span id="cb1009-10"><a href="5.1-richness-measures-svyrich.html#cb1009-10" tabindex="-1"></a></span>
-<span id="cb1009-11"><a href="5.1-richness-measures-svyrich.html#cb1009-11" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">sim.compile</span>(rfgtt2.list, rFGTT2.fp)[<span class="st">&quot;pcr&quot;</span>] , <span class="dv">4</span>) <span class="sc">==</span> <span class="fl">0.5212</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb1045"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1045-1"><a href="5.1-richness-measures-svyrich.html#cb1045-1" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(</span>
+<span id="cb1045-2"><a href="5.1-richness-measures-svyrich.html#cb1045-2" tabindex="-1"></a>  <span class="fu">sim.compile</span>(rfgtt2.list, rFGTT2.fp)[<span class="st">&quot;theta.bias2&quot;</span>] <span class="sc">/</span> <span class="fu">sim.compile</span>(rfgtt2.list, rFGTT2.fp)[<span class="st">&quot;theta.hat.mse&quot;</span>] ,</span>
+<span id="cb1045-3"><a href="5.1-richness-measures-svyrich.html#cb1045-3" tabindex="-1"></a>  <span class="dv">2</span></span>
+<span id="cb1045-4"><a href="5.1-richness-measures-svyrich.html#cb1045-4" tabindex="-1"></a>) <span class="sc">==</span> <span class="fl">0.26</span>)</span>
+<span id="cb1045-5"><a href="5.1-richness-measures-svyrich.html#cb1045-5" tabindex="-1"></a></span>
+<span id="cb1045-6"><a href="5.1-richness-measures-svyrich.html#cb1045-6" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(</span>
+<span id="cb1045-7"><a href="5.1-richness-measures-svyrich.html#cb1045-7" tabindex="-1"></a>  <span class="fu">sim.compile</span>(rfgtt2.list, rFGTT2.fp)[<span class="st">&quot;theta.varhat&quot;</span>] <span class="sc">/</span> <span class="fu">sim.compile</span>(rfgtt2.list, rFGTT2.fp)[<span class="st">&quot;theta.empvar&quot;</span>] ,</span>
+<span id="cb1045-8"><a href="5.1-richness-measures-svyrich.html#cb1045-8" tabindex="-1"></a>  <span class="dv">2</span></span>
+<span id="cb1045-9"><a href="5.1-richness-measures-svyrich.html#cb1045-9" tabindex="-1"></a>) <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb1045-10"><a href="5.1-richness-measures-svyrich.html#cb1045-10" tabindex="-1"></a></span>
+<span id="cb1045-11"><a href="5.1-richness-measures-svyrich.html#cb1045-11" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">round</span>(<span class="fu">sim.compile</span>(rfgtt2.list, rFGTT2.fp)[<span class="st">&quot;pcr&quot;</span>] , <span class="dv">4</span>) <span class="sc">==</span> <span class="fl">0.5212</span>)</span></code></pre></div>
 <p>Under this approach, the squared bias is approx 26% of the MSE, indicating that
 the <em>bias is substantial</em>. The ratio between the expected value of the variance
 estimator and the empirical variance is approx. 1.00, indicating that the variance
@@ -552,183 +552,183 @@ and is the reason why <span class="citation">Brzezinski (<label for="tufte-mn-10
 <p>To understand the construction of each survey design object and respective variables of interest, please refer to <a href="https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html">section 1.4</a> for CPS-ASEC, <a href="https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html">section 1.5</a> for PNAD-Contínua, and <a href="https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html">section 1.6</a> for SCF.</p>
 <div id="cps-asec-household-income-15" class="section level4" number="5.1.2.1">
 <h4><span class="header-section-number">5.1.2.1</span> CPS-ASEC Household Income</h4>
-<div class="sourceCode" id="cb1010"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1010-1"><a href="5.1-richness-measures-svyrich.html#cb1010-1" tabindex="-1"></a><span class="co"># richness gap index, richness threshold equal to the median</span></span>
-<span id="cb1010-2"><a href="5.1-richness-measures-svyrich.html#cb1010-2" tabindex="-1"></a><span class="fu">svyrich</span>(</span>
-<span id="cb1010-3"><a href="5.1-richness-measures-svyrich.html#cb1010-3" tabindex="-1"></a>  <span class="sc">~</span> htotval ,</span>
-<span id="cb1010-4"><a href="5.1-richness-measures-svyrich.html#cb1010-4" tabindex="-1"></a>  cps_household_design ,</span>
-<span id="cb1010-5"><a href="5.1-richness-measures-svyrich.html#cb1010-5" tabindex="-1"></a>  <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
-<span id="cb1010-6"><a href="5.1-richness-measures-svyrich.html#cb1010-6" tabindex="-1"></a>  <span class="at">g =</span> <span class="dv">1</span> ,</span>
-<span id="cb1010-7"><a href="5.1-richness-measures-svyrich.html#cb1010-7" tabindex="-1"></a>  <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
-<span id="cb1010-8"><a href="5.1-richness-measures-svyrich.html#cb1010-8" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb1046"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1046-1"><a href="5.1-richness-measures-svyrich.html#cb1046-1" tabindex="-1"></a><span class="co"># richness gap index, richness threshold equal to the median</span></span>
+<span id="cb1046-2"><a href="5.1-richness-measures-svyrich.html#cb1046-2" tabindex="-1"></a><span class="fu">svyrich</span>(</span>
+<span id="cb1046-3"><a href="5.1-richness-measures-svyrich.html#cb1046-3" tabindex="-1"></a>  <span class="sc">~</span> htotval ,</span>
+<span id="cb1046-4"><a href="5.1-richness-measures-svyrich.html#cb1046-4" tabindex="-1"></a>  cps_household_design ,</span>
+<span id="cb1046-5"><a href="5.1-richness-measures-svyrich.html#cb1046-5" tabindex="-1"></a>  <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
+<span id="cb1046-6"><a href="5.1-richness-measures-svyrich.html#cb1046-6" tabindex="-1"></a>  <span class="at">g =</span> <span class="dv">1</span> ,</span>
+<span id="cb1046-7"><a href="5.1-richness-measures-svyrich.html#cb1046-7" tabindex="-1"></a>  <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
+<span id="cb1046-8"><a href="5.1-richness-measures-svyrich.html#cb1046-8" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>##         Cha-1-richness measure    SE
 ## htotval               0.082968 0.001</code></pre>
-<div class="sourceCode" id="cb1012"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1012-1"><a href="5.1-richness-measures-svyrich.html#cb1012-1" tabindex="-1"></a><span class="fu">svyby</span>(</span>
-<span id="cb1012-2"><a href="5.1-richness-measures-svyrich.html#cb1012-2" tabindex="-1"></a>  <span class="sc">~</span> htotval ,</span>
-<span id="cb1012-3"><a href="5.1-richness-measures-svyrich.html#cb1012-3" tabindex="-1"></a>  <span class="sc">~</span> sex ,</span>
-<span id="cb1012-4"><a href="5.1-richness-measures-svyrich.html#cb1012-4" tabindex="-1"></a>  cps_household_design ,</span>
-<span id="cb1012-5"><a href="5.1-richness-measures-svyrich.html#cb1012-5" tabindex="-1"></a>  svyrich ,</span>
-<span id="cb1012-6"><a href="5.1-richness-measures-svyrich.html#cb1012-6" tabindex="-1"></a>  <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
-<span id="cb1012-7"><a href="5.1-richness-measures-svyrich.html#cb1012-7" tabindex="-1"></a>  <span class="at">g =</span> <span class="dv">1</span> ,</span>
-<span id="cb1012-8"><a href="5.1-richness-measures-svyrich.html#cb1012-8" tabindex="-1"></a>  <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
-<span id="cb1012-9"><a href="5.1-richness-measures-svyrich.html#cb1012-9" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb1048"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1048-1"><a href="5.1-richness-measures-svyrich.html#cb1048-1" tabindex="-1"></a><span class="fu">svyby</span>(</span>
+<span id="cb1048-2"><a href="5.1-richness-measures-svyrich.html#cb1048-2" tabindex="-1"></a>  <span class="sc">~</span> htotval ,</span>
+<span id="cb1048-3"><a href="5.1-richness-measures-svyrich.html#cb1048-3" tabindex="-1"></a>  <span class="sc">~</span> sex ,</span>
+<span id="cb1048-4"><a href="5.1-richness-measures-svyrich.html#cb1048-4" tabindex="-1"></a>  cps_household_design ,</span>
+<span id="cb1048-5"><a href="5.1-richness-measures-svyrich.html#cb1048-5" tabindex="-1"></a>  svyrich ,</span>
+<span id="cb1048-6"><a href="5.1-richness-measures-svyrich.html#cb1048-6" tabindex="-1"></a>  <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
+<span id="cb1048-7"><a href="5.1-richness-measures-svyrich.html#cb1048-7" tabindex="-1"></a>  <span class="at">g =</span> <span class="dv">1</span> ,</span>
+<span id="cb1048-8"><a href="5.1-richness-measures-svyrich.html#cb1048-8" tabindex="-1"></a>  <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
+<span id="cb1048-9"><a href="5.1-richness-measures-svyrich.html#cb1048-9" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>##           sex    htotval          se
 ## male     male 0.09684879 0.001449770
 ## female female 0.06893815 0.001101318</code></pre>
 </div>
 <div id="cps-asec-family-income-15" class="section level4" number="5.1.2.2">
 <h4><span class="header-section-number">5.1.2.2</span> CPS-ASEC Family Income</h4>
-<div class="sourceCode" id="cb1014"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1014-1"><a href="5.1-richness-measures-svyrich.html#cb1014-1" tabindex="-1"></a><span class="co"># richness gap index, richness threshold equal to the median</span></span>
-<span id="cb1014-2"><a href="5.1-richness-measures-svyrich.html#cb1014-2" tabindex="-1"></a><span class="fu">svyrich</span>(</span>
-<span id="cb1014-3"><a href="5.1-richness-measures-svyrich.html#cb1014-3" tabindex="-1"></a>  <span class="sc">~</span> ftotval ,</span>
-<span id="cb1014-4"><a href="5.1-richness-measures-svyrich.html#cb1014-4" tabindex="-1"></a>  cps_family_design ,</span>
-<span id="cb1014-5"><a href="5.1-richness-measures-svyrich.html#cb1014-5" tabindex="-1"></a>  <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
-<span id="cb1014-6"><a href="5.1-richness-measures-svyrich.html#cb1014-6" tabindex="-1"></a>  <span class="at">g =</span> <span class="dv">1</span> ,</span>
-<span id="cb1014-7"><a href="5.1-richness-measures-svyrich.html#cb1014-7" tabindex="-1"></a>  <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
-<span id="cb1014-8"><a href="5.1-richness-measures-svyrich.html#cb1014-8" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb1050"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1050-1"><a href="5.1-richness-measures-svyrich.html#cb1050-1" tabindex="-1"></a><span class="co"># richness gap index, richness threshold equal to the median</span></span>
+<span id="cb1050-2"><a href="5.1-richness-measures-svyrich.html#cb1050-2" tabindex="-1"></a><span class="fu">svyrich</span>(</span>
+<span id="cb1050-3"><a href="5.1-richness-measures-svyrich.html#cb1050-3" tabindex="-1"></a>  <span class="sc">~</span> ftotval ,</span>
+<span id="cb1050-4"><a href="5.1-richness-measures-svyrich.html#cb1050-4" tabindex="-1"></a>  cps_family_design ,</span>
+<span id="cb1050-5"><a href="5.1-richness-measures-svyrich.html#cb1050-5" tabindex="-1"></a>  <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
+<span id="cb1050-6"><a href="5.1-richness-measures-svyrich.html#cb1050-6" tabindex="-1"></a>  <span class="at">g =</span> <span class="dv">1</span> ,</span>
+<span id="cb1050-7"><a href="5.1-richness-measures-svyrich.html#cb1050-7" tabindex="-1"></a>  <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
+<span id="cb1050-8"><a href="5.1-richness-measures-svyrich.html#cb1050-8" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>##         Cha-1-richness measure     SE
 ## ftotval                0.13662 0.0014</code></pre>
-<div class="sourceCode" id="cb1016"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1016-1"><a href="5.1-richness-measures-svyrich.html#cb1016-1" tabindex="-1"></a><span class="fu">svyby</span>(</span>
-<span id="cb1016-2"><a href="5.1-richness-measures-svyrich.html#cb1016-2" tabindex="-1"></a>  <span class="sc">~</span> ftotval ,</span>
-<span id="cb1016-3"><a href="5.1-richness-measures-svyrich.html#cb1016-3" tabindex="-1"></a>  <span class="sc">~</span> sex ,</span>
-<span id="cb1016-4"><a href="5.1-richness-measures-svyrich.html#cb1016-4" tabindex="-1"></a>  cps_family_design ,</span>
-<span id="cb1016-5"><a href="5.1-richness-measures-svyrich.html#cb1016-5" tabindex="-1"></a>  svyrich ,</span>
-<span id="cb1016-6"><a href="5.1-richness-measures-svyrich.html#cb1016-6" tabindex="-1"></a>  <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
-<span id="cb1016-7"><a href="5.1-richness-measures-svyrich.html#cb1016-7" tabindex="-1"></a>  <span class="at">g =</span> <span class="dv">1</span> ,</span>
-<span id="cb1016-8"><a href="5.1-richness-measures-svyrich.html#cb1016-8" tabindex="-1"></a>  <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
-<span id="cb1016-9"><a href="5.1-richness-measures-svyrich.html#cb1016-9" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb1052"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1052-1"><a href="5.1-richness-measures-svyrich.html#cb1052-1" tabindex="-1"></a><span class="fu">svyby</span>(</span>
+<span id="cb1052-2"><a href="5.1-richness-measures-svyrich.html#cb1052-2" tabindex="-1"></a>  <span class="sc">~</span> ftotval ,</span>
+<span id="cb1052-3"><a href="5.1-richness-measures-svyrich.html#cb1052-3" tabindex="-1"></a>  <span class="sc">~</span> sex ,</span>
+<span id="cb1052-4"><a href="5.1-richness-measures-svyrich.html#cb1052-4" tabindex="-1"></a>  cps_family_design ,</span>
+<span id="cb1052-5"><a href="5.1-richness-measures-svyrich.html#cb1052-5" tabindex="-1"></a>  svyrich ,</span>
+<span id="cb1052-6"><a href="5.1-richness-measures-svyrich.html#cb1052-6" tabindex="-1"></a>  <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
+<span id="cb1052-7"><a href="5.1-richness-measures-svyrich.html#cb1052-7" tabindex="-1"></a>  <span class="at">g =</span> <span class="dv">1</span> ,</span>
+<span id="cb1052-8"><a href="5.1-richness-measures-svyrich.html#cb1052-8" tabindex="-1"></a>  <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
+<span id="cb1052-9"><a href="5.1-richness-measures-svyrich.html#cb1052-9" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>##           sex   ftotval          se
 ## male     male 0.1550754 0.002071117
 ## female female 0.1170849 0.001642368</code></pre>
 </div>
 <div id="cps-asec-worker-earnings-15" class="section level4" number="5.1.2.3">
 <h4><span class="header-section-number">5.1.2.3</span> CPS-ASEC Worker Earnings</h4>
-<div class="sourceCode" id="cb1018"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1018-1"><a href="5.1-richness-measures-svyrich.html#cb1018-1" tabindex="-1"></a><span class="co"># richness gap index, richness threshold equal to the median</span></span>
-<span id="cb1018-2"><a href="5.1-richness-measures-svyrich.html#cb1018-2" tabindex="-1"></a><span class="fu">svyrich</span>(</span>
-<span id="cb1018-3"><a href="5.1-richness-measures-svyrich.html#cb1018-3" tabindex="-1"></a>  <span class="sc">~</span> ptotval ,</span>
-<span id="cb1018-4"><a href="5.1-richness-measures-svyrich.html#cb1018-4" tabindex="-1"></a>  cps_ftfy_worker_design ,</span>
-<span id="cb1018-5"><a href="5.1-richness-measures-svyrich.html#cb1018-5" tabindex="-1"></a>  <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
-<span id="cb1018-6"><a href="5.1-richness-measures-svyrich.html#cb1018-6" tabindex="-1"></a>  <span class="at">g =</span> <span class="dv">1</span> ,</span>
-<span id="cb1018-7"><a href="5.1-richness-measures-svyrich.html#cb1018-7" tabindex="-1"></a>  <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
-<span id="cb1018-8"><a href="5.1-richness-measures-svyrich.html#cb1018-8" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb1054"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1054-1"><a href="5.1-richness-measures-svyrich.html#cb1054-1" tabindex="-1"></a><span class="co"># richness gap index, richness threshold equal to the median</span></span>
+<span id="cb1054-2"><a href="5.1-richness-measures-svyrich.html#cb1054-2" tabindex="-1"></a><span class="fu">svyrich</span>(</span>
+<span id="cb1054-3"><a href="5.1-richness-measures-svyrich.html#cb1054-3" tabindex="-1"></a>  <span class="sc">~</span> ptotval ,</span>
+<span id="cb1054-4"><a href="5.1-richness-measures-svyrich.html#cb1054-4" tabindex="-1"></a>  cps_ftfy_worker_design ,</span>
+<span id="cb1054-5"><a href="5.1-richness-measures-svyrich.html#cb1054-5" tabindex="-1"></a>  <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
+<span id="cb1054-6"><a href="5.1-richness-measures-svyrich.html#cb1054-6" tabindex="-1"></a>  <span class="at">g =</span> <span class="dv">1</span> ,</span>
+<span id="cb1054-7"><a href="5.1-richness-measures-svyrich.html#cb1054-7" tabindex="-1"></a>  <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
+<span id="cb1054-8"><a href="5.1-richness-measures-svyrich.html#cb1054-8" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>##         Cha-1-richness measure     SE
 ## ptotval               0.096751 0.0011</code></pre>
-<div class="sourceCode" id="cb1020"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1020-1"><a href="5.1-richness-measures-svyrich.html#cb1020-1" tabindex="-1"></a><span class="fu">svyby</span>(</span>
-<span id="cb1020-2"><a href="5.1-richness-measures-svyrich.html#cb1020-2" tabindex="-1"></a>  <span class="sc">~</span> ptotval ,</span>
-<span id="cb1020-3"><a href="5.1-richness-measures-svyrich.html#cb1020-3" tabindex="-1"></a>  <span class="sc">~</span> sex ,</span>
-<span id="cb1020-4"><a href="5.1-richness-measures-svyrich.html#cb1020-4" tabindex="-1"></a>  cps_ftfy_worker_design ,</span>
-<span id="cb1020-5"><a href="5.1-richness-measures-svyrich.html#cb1020-5" tabindex="-1"></a>  svyrich ,</span>
-<span id="cb1020-6"><a href="5.1-richness-measures-svyrich.html#cb1020-6" tabindex="-1"></a>  <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
-<span id="cb1020-7"><a href="5.1-richness-measures-svyrich.html#cb1020-7" tabindex="-1"></a>  <span class="at">g =</span> <span class="dv">1</span> ,</span>
-<span id="cb1020-8"><a href="5.1-richness-measures-svyrich.html#cb1020-8" tabindex="-1"></a>  <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
-<span id="cb1020-9"><a href="5.1-richness-measures-svyrich.html#cb1020-9" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb1056"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1056-1"><a href="5.1-richness-measures-svyrich.html#cb1056-1" tabindex="-1"></a><span class="fu">svyby</span>(</span>
+<span id="cb1056-2"><a href="5.1-richness-measures-svyrich.html#cb1056-2" tabindex="-1"></a>  <span class="sc">~</span> ptotval ,</span>
+<span id="cb1056-3"><a href="5.1-richness-measures-svyrich.html#cb1056-3" tabindex="-1"></a>  <span class="sc">~</span> sex ,</span>
+<span id="cb1056-4"><a href="5.1-richness-measures-svyrich.html#cb1056-4" tabindex="-1"></a>  cps_ftfy_worker_design ,</span>
+<span id="cb1056-5"><a href="5.1-richness-measures-svyrich.html#cb1056-5" tabindex="-1"></a>  svyrich ,</span>
+<span id="cb1056-6"><a href="5.1-richness-measures-svyrich.html#cb1056-6" tabindex="-1"></a>  <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
+<span id="cb1056-7"><a href="5.1-richness-measures-svyrich.html#cb1056-7" tabindex="-1"></a>  <span class="at">g =</span> <span class="dv">1</span> ,</span>
+<span id="cb1056-8"><a href="5.1-richness-measures-svyrich.html#cb1056-8" tabindex="-1"></a>  <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
+<span id="cb1056-9"><a href="5.1-richness-measures-svyrich.html#cb1056-9" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>##           sex    ptotval          se
 ## male     male 0.11774473 0.001523045
 ## female female 0.06948231 0.001255195</code></pre>
-<div class="sourceCode" id="cb1022"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1022-1"><a href="5.1-richness-measures-svyrich.html#cb1022-1" tabindex="-1"></a><span class="fu">svyrich</span>(</span>
-<span id="cb1022-2"><a href="5.1-richness-measures-svyrich.html#cb1022-2" tabindex="-1"></a>  <span class="sc">~</span> pearnval ,</span>
-<span id="cb1022-3"><a href="5.1-richness-measures-svyrich.html#cb1022-3" tabindex="-1"></a>  cps_ftfy_worker_design ,</span>
-<span id="cb1022-4"><a href="5.1-richness-measures-svyrich.html#cb1022-4" tabindex="-1"></a>  <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
-<span id="cb1022-5"><a href="5.1-richness-measures-svyrich.html#cb1022-5" tabindex="-1"></a>  <span class="at">g =</span> <span class="dv">1</span> ,</span>
-<span id="cb1022-6"><a href="5.1-richness-measures-svyrich.html#cb1022-6" tabindex="-1"></a>  <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
-<span id="cb1022-7"><a href="5.1-richness-measures-svyrich.html#cb1022-7" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb1058"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1058-1"><a href="5.1-richness-measures-svyrich.html#cb1058-1" tabindex="-1"></a><span class="fu">svyrich</span>(</span>
+<span id="cb1058-2"><a href="5.1-richness-measures-svyrich.html#cb1058-2" tabindex="-1"></a>  <span class="sc">~</span> pearnval ,</span>
+<span id="cb1058-3"><a href="5.1-richness-measures-svyrich.html#cb1058-3" tabindex="-1"></a>  cps_ftfy_worker_design ,</span>
+<span id="cb1058-4"><a href="5.1-richness-measures-svyrich.html#cb1058-4" tabindex="-1"></a>  <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
+<span id="cb1058-5"><a href="5.1-richness-measures-svyrich.html#cb1058-5" tabindex="-1"></a>  <span class="at">g =</span> <span class="dv">1</span> ,</span>
+<span id="cb1058-6"><a href="5.1-richness-measures-svyrich.html#cb1058-6" tabindex="-1"></a>  <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
+<span id="cb1058-7"><a href="5.1-richness-measures-svyrich.html#cb1058-7" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>##          Cha-1-richness measure     SE
 ## pearnval               0.085477 0.0017</code></pre>
-<div class="sourceCode" id="cb1024"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1024-1"><a href="5.1-richness-measures-svyrich.html#cb1024-1" tabindex="-1"></a><span class="fu">svyby</span>(</span>
-<span id="cb1024-2"><a href="5.1-richness-measures-svyrich.html#cb1024-2" tabindex="-1"></a>  <span class="sc">~</span> pearnval ,</span>
-<span id="cb1024-3"><a href="5.1-richness-measures-svyrich.html#cb1024-3" tabindex="-1"></a>  <span class="sc">~</span> sex ,</span>
-<span id="cb1024-4"><a href="5.1-richness-measures-svyrich.html#cb1024-4" tabindex="-1"></a>  cps_ftfy_worker_design ,</span>
-<span id="cb1024-5"><a href="5.1-richness-measures-svyrich.html#cb1024-5" tabindex="-1"></a>  svyrich ,</span>
-<span id="cb1024-6"><a href="5.1-richness-measures-svyrich.html#cb1024-6" tabindex="-1"></a>  <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
-<span id="cb1024-7"><a href="5.1-richness-measures-svyrich.html#cb1024-7" tabindex="-1"></a>  <span class="at">g =</span> <span class="dv">1</span> ,</span>
-<span id="cb1024-8"><a href="5.1-richness-measures-svyrich.html#cb1024-8" tabindex="-1"></a>  <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
-<span id="cb1024-9"><a href="5.1-richness-measures-svyrich.html#cb1024-9" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb1060"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1060-1"><a href="5.1-richness-measures-svyrich.html#cb1060-1" tabindex="-1"></a><span class="fu">svyby</span>(</span>
+<span id="cb1060-2"><a href="5.1-richness-measures-svyrich.html#cb1060-2" tabindex="-1"></a>  <span class="sc">~</span> pearnval ,</span>
+<span id="cb1060-3"><a href="5.1-richness-measures-svyrich.html#cb1060-3" tabindex="-1"></a>  <span class="sc">~</span> sex ,</span>
+<span id="cb1060-4"><a href="5.1-richness-measures-svyrich.html#cb1060-4" tabindex="-1"></a>  cps_ftfy_worker_design ,</span>
+<span id="cb1060-5"><a href="5.1-richness-measures-svyrich.html#cb1060-5" tabindex="-1"></a>  svyrich ,</span>
+<span id="cb1060-6"><a href="5.1-richness-measures-svyrich.html#cb1060-6" tabindex="-1"></a>  <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
+<span id="cb1060-7"><a href="5.1-richness-measures-svyrich.html#cb1060-7" tabindex="-1"></a>  <span class="at">g =</span> <span class="dv">1</span> ,</span>
+<span id="cb1060-8"><a href="5.1-richness-measures-svyrich.html#cb1060-8" tabindex="-1"></a>  <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
+<span id="cb1060-9"><a href="5.1-richness-measures-svyrich.html#cb1060-9" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>##           sex   pearnval          se
 ## male     male 0.10498563 0.002103013
 ## female female 0.06013727 0.001630926</code></pre>
 </div>
 <div id="pnad-contínua-per-capita-income-15" class="section level4" number="5.1.2.4">
 <h4><span class="header-section-number">5.1.2.4</span> PNAD-Contínua Per Capita Income</h4>
-<div class="sourceCode" id="cb1026"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1026-1"><a href="5.1-richness-measures-svyrich.html#cb1026-1" tabindex="-1"></a><span class="co"># richness gap index, richness threshold equal to the median</span></span>
-<span id="cb1026-2"><a href="5.1-richness-measures-svyrich.html#cb1026-2" tabindex="-1"></a><span class="fu">svyrich</span>(</span>
-<span id="cb1026-3"><a href="5.1-richness-measures-svyrich.html#cb1026-3" tabindex="-1"></a>  <span class="sc">~</span> deflated_per_capita_income ,</span>
-<span id="cb1026-4"><a href="5.1-richness-measures-svyrich.html#cb1026-4" tabindex="-1"></a>  pnadc_design ,</span>
-<span id="cb1026-5"><a href="5.1-richness-measures-svyrich.html#cb1026-5" tabindex="-1"></a>  <span class="at">na.rm =</span> <span class="cn">TRUE</span> ,</span>
-<span id="cb1026-6"><a href="5.1-richness-measures-svyrich.html#cb1026-6" tabindex="-1"></a>  <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
-<span id="cb1026-7"><a href="5.1-richness-measures-svyrich.html#cb1026-7" tabindex="-1"></a>  <span class="at">g =</span> <span class="dv">1</span> ,</span>
-<span id="cb1026-8"><a href="5.1-richness-measures-svyrich.html#cb1026-8" tabindex="-1"></a>  <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
-<span id="cb1026-9"><a href="5.1-richness-measures-svyrich.html#cb1026-9" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb1062"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1062-1"><a href="5.1-richness-measures-svyrich.html#cb1062-1" tabindex="-1"></a><span class="co"># richness gap index, richness threshold equal to the median</span></span>
+<span id="cb1062-2"><a href="5.1-richness-measures-svyrich.html#cb1062-2" tabindex="-1"></a><span class="fu">svyrich</span>(</span>
+<span id="cb1062-3"><a href="5.1-richness-measures-svyrich.html#cb1062-3" tabindex="-1"></a>  <span class="sc">~</span> deflated_per_capita_income ,</span>
+<span id="cb1062-4"><a href="5.1-richness-measures-svyrich.html#cb1062-4" tabindex="-1"></a>  pnadc_design ,</span>
+<span id="cb1062-5"><a href="5.1-richness-measures-svyrich.html#cb1062-5" tabindex="-1"></a>  <span class="at">na.rm =</span> <span class="cn">TRUE</span> ,</span>
+<span id="cb1062-6"><a href="5.1-richness-measures-svyrich.html#cb1062-6" tabindex="-1"></a>  <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
+<span id="cb1062-7"><a href="5.1-richness-measures-svyrich.html#cb1062-7" tabindex="-1"></a>  <span class="at">g =</span> <span class="dv">1</span> ,</span>
+<span id="cb1062-8"><a href="5.1-richness-measures-svyrich.html#cb1062-8" tabindex="-1"></a>  <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
+<span id="cb1062-9"><a href="5.1-richness-measures-svyrich.html#cb1062-9" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>##                            Cha-1-richness measure     SE
 ## deflated_per_capita_income                0.12399 0.0013</code></pre>
-<div class="sourceCode" id="cb1028"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1028-1"><a href="5.1-richness-measures-svyrich.html#cb1028-1" tabindex="-1"></a><span class="fu">svyby</span>(</span>
-<span id="cb1028-2"><a href="5.1-richness-measures-svyrich.html#cb1028-2" tabindex="-1"></a>  <span class="sc">~</span> deflated_per_capita_income ,</span>
-<span id="cb1028-3"><a href="5.1-richness-measures-svyrich.html#cb1028-3" tabindex="-1"></a>  <span class="sc">~</span> sex ,</span>
-<span id="cb1028-4"><a href="5.1-richness-measures-svyrich.html#cb1028-4" tabindex="-1"></a>  pnadc_design ,</span>
-<span id="cb1028-5"><a href="5.1-richness-measures-svyrich.html#cb1028-5" tabindex="-1"></a>  svyrich ,</span>
-<span id="cb1028-6"><a href="5.1-richness-measures-svyrich.html#cb1028-6" tabindex="-1"></a>  <span class="at">na.rm =</span> <span class="cn">TRUE</span> ,</span>
-<span id="cb1028-7"><a href="5.1-richness-measures-svyrich.html#cb1028-7" tabindex="-1"></a>  <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
-<span id="cb1028-8"><a href="5.1-richness-measures-svyrich.html#cb1028-8" tabindex="-1"></a>  <span class="at">g =</span> <span class="dv">1</span> ,</span>
-<span id="cb1028-9"><a href="5.1-richness-measures-svyrich.html#cb1028-9" tabindex="-1"></a>  <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
-<span id="cb1028-10"><a href="5.1-richness-measures-svyrich.html#cb1028-10" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb1064"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1064-1"><a href="5.1-richness-measures-svyrich.html#cb1064-1" tabindex="-1"></a><span class="fu">svyby</span>(</span>
+<span id="cb1064-2"><a href="5.1-richness-measures-svyrich.html#cb1064-2" tabindex="-1"></a>  <span class="sc">~</span> deflated_per_capita_income ,</span>
+<span id="cb1064-3"><a href="5.1-richness-measures-svyrich.html#cb1064-3" tabindex="-1"></a>  <span class="sc">~</span> sex ,</span>
+<span id="cb1064-4"><a href="5.1-richness-measures-svyrich.html#cb1064-4" tabindex="-1"></a>  pnadc_design ,</span>
+<span id="cb1064-5"><a href="5.1-richness-measures-svyrich.html#cb1064-5" tabindex="-1"></a>  svyrich ,</span>
+<span id="cb1064-6"><a href="5.1-richness-measures-svyrich.html#cb1064-6" tabindex="-1"></a>  <span class="at">na.rm =</span> <span class="cn">TRUE</span> ,</span>
+<span id="cb1064-7"><a href="5.1-richness-measures-svyrich.html#cb1064-7" tabindex="-1"></a>  <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
+<span id="cb1064-8"><a href="5.1-richness-measures-svyrich.html#cb1064-8" tabindex="-1"></a>  <span class="at">g =</span> <span class="dv">1</span> ,</span>
+<span id="cb1064-9"><a href="5.1-richness-measures-svyrich.html#cb1064-9" tabindex="-1"></a>  <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
+<span id="cb1064-10"><a href="5.1-richness-measures-svyrich.html#cb1064-10" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>##           sex deflated_per_capita_income          se
 ## male     male                  0.1271896 0.001330992
 ## female female                  0.1209397 0.001431801</code></pre>
 </div>
 <div id="pnad-contínua-worker-earnings-15" class="section level4" number="5.1.2.5">
 <h4><span class="header-section-number">5.1.2.5</span> PNAD-Contínua Worker Earnings</h4>
-<div class="sourceCode" id="cb1030"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1030-1"><a href="5.1-richness-measures-svyrich.html#cb1030-1" tabindex="-1"></a><span class="co"># richness gap index, richness threshold equal to the median</span></span>
-<span id="cb1030-2"><a href="5.1-richness-measures-svyrich.html#cb1030-2" tabindex="-1"></a><span class="fu">svyrich</span>(</span>
-<span id="cb1030-3"><a href="5.1-richness-measures-svyrich.html#cb1030-3" tabindex="-1"></a>  <span class="sc">~</span> deflated_labor_income ,</span>
-<span id="cb1030-4"><a href="5.1-richness-measures-svyrich.html#cb1030-4" tabindex="-1"></a>  pnadc_design ,</span>
-<span id="cb1030-5"><a href="5.1-richness-measures-svyrich.html#cb1030-5" tabindex="-1"></a>  <span class="at">na.rm =</span> <span class="cn">TRUE</span> ,</span>
-<span id="cb1030-6"><a href="5.1-richness-measures-svyrich.html#cb1030-6" tabindex="-1"></a>  <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
-<span id="cb1030-7"><a href="5.1-richness-measures-svyrich.html#cb1030-7" tabindex="-1"></a>  <span class="at">g =</span> <span class="dv">1</span> ,</span>
-<span id="cb1030-8"><a href="5.1-richness-measures-svyrich.html#cb1030-8" tabindex="-1"></a>  <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
-<span id="cb1030-9"><a href="5.1-richness-measures-svyrich.html#cb1030-9" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb1066"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1066-1"><a href="5.1-richness-measures-svyrich.html#cb1066-1" tabindex="-1"></a><span class="co"># richness gap index, richness threshold equal to the median</span></span>
+<span id="cb1066-2"><a href="5.1-richness-measures-svyrich.html#cb1066-2" tabindex="-1"></a><span class="fu">svyrich</span>(</span>
+<span id="cb1066-3"><a href="5.1-richness-measures-svyrich.html#cb1066-3" tabindex="-1"></a>  <span class="sc">~</span> deflated_labor_income ,</span>
+<span id="cb1066-4"><a href="5.1-richness-measures-svyrich.html#cb1066-4" tabindex="-1"></a>  pnadc_design ,</span>
+<span id="cb1066-5"><a href="5.1-richness-measures-svyrich.html#cb1066-5" tabindex="-1"></a>  <span class="at">na.rm =</span> <span class="cn">TRUE</span> ,</span>
+<span id="cb1066-6"><a href="5.1-richness-measures-svyrich.html#cb1066-6" tabindex="-1"></a>  <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
+<span id="cb1066-7"><a href="5.1-richness-measures-svyrich.html#cb1066-7" tabindex="-1"></a>  <span class="at">g =</span> <span class="dv">1</span> ,</span>
+<span id="cb1066-8"><a href="5.1-richness-measures-svyrich.html#cb1066-8" tabindex="-1"></a>  <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
+<span id="cb1066-9"><a href="5.1-richness-measures-svyrich.html#cb1066-9" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>##                       Cha-1-richness measure     SE
 ## deflated_labor_income                 0.1247 0.0015</code></pre>
-<div class="sourceCode" id="cb1032"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1032-1"><a href="5.1-richness-measures-svyrich.html#cb1032-1" tabindex="-1"></a><span class="fu">svyby</span>(</span>
-<span id="cb1032-2"><a href="5.1-richness-measures-svyrich.html#cb1032-2" tabindex="-1"></a>  <span class="sc">~</span> deflated_labor_income ,</span>
-<span id="cb1032-3"><a href="5.1-richness-measures-svyrich.html#cb1032-3" tabindex="-1"></a>  <span class="sc">~</span> sex ,</span>
-<span id="cb1032-4"><a href="5.1-richness-measures-svyrich.html#cb1032-4" tabindex="-1"></a>  pnadc_design ,</span>
-<span id="cb1032-5"><a href="5.1-richness-measures-svyrich.html#cb1032-5" tabindex="-1"></a>  svyrich ,</span>
-<span id="cb1032-6"><a href="5.1-richness-measures-svyrich.html#cb1032-6" tabindex="-1"></a>  <span class="at">na.rm =</span> <span class="cn">TRUE</span> ,</span>
-<span id="cb1032-7"><a href="5.1-richness-measures-svyrich.html#cb1032-7" tabindex="-1"></a>  <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
-<span id="cb1032-8"><a href="5.1-richness-measures-svyrich.html#cb1032-8" tabindex="-1"></a>  <span class="at">g =</span> <span class="dv">1</span> ,</span>
-<span id="cb1032-9"><a href="5.1-richness-measures-svyrich.html#cb1032-9" tabindex="-1"></a>  <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
-<span id="cb1032-10"><a href="5.1-richness-measures-svyrich.html#cb1032-10" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb1068"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1068-1"><a href="5.1-richness-measures-svyrich.html#cb1068-1" tabindex="-1"></a><span class="fu">svyby</span>(</span>
+<span id="cb1068-2"><a href="5.1-richness-measures-svyrich.html#cb1068-2" tabindex="-1"></a>  <span class="sc">~</span> deflated_labor_income ,</span>
+<span id="cb1068-3"><a href="5.1-richness-measures-svyrich.html#cb1068-3" tabindex="-1"></a>  <span class="sc">~</span> sex ,</span>
+<span id="cb1068-4"><a href="5.1-richness-measures-svyrich.html#cb1068-4" tabindex="-1"></a>  pnadc_design ,</span>
+<span id="cb1068-5"><a href="5.1-richness-measures-svyrich.html#cb1068-5" tabindex="-1"></a>  svyrich ,</span>
+<span id="cb1068-6"><a href="5.1-richness-measures-svyrich.html#cb1068-6" tabindex="-1"></a>  <span class="at">na.rm =</span> <span class="cn">TRUE</span> ,</span>
+<span id="cb1068-7"><a href="5.1-richness-measures-svyrich.html#cb1068-7" tabindex="-1"></a>  <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
+<span id="cb1068-8"><a href="5.1-richness-measures-svyrich.html#cb1068-8" tabindex="-1"></a>  <span class="at">g =</span> <span class="dv">1</span> ,</span>
+<span id="cb1068-9"><a href="5.1-richness-measures-svyrich.html#cb1068-9" tabindex="-1"></a>  <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
+<span id="cb1068-10"><a href="5.1-richness-measures-svyrich.html#cb1068-10" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>##           sex deflated_labor_income          se
 ## male     male             0.1405740 0.001669085
 ## female female             0.1031143 0.001636094</code></pre>
 </div>
-<div id="scf-family-net-worth-12" class="section level4" number="5.1.2.6">
+<div id="scf-family-net-worth-15" class="section level4" number="5.1.2.6">
 <h4><span class="header-section-number">5.1.2.6</span> SCF Family Net Worth</h4>
-<div class="sourceCode" id="cb1034"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1034-1"><a href="5.1-richness-measures-svyrich.html#cb1034-1" tabindex="-1"></a><span class="co"># richness gap index, richness threshold equal to the median</span></span>
-<span id="cb1034-2"><a href="5.1-richness-measures-svyrich.html#cb1034-2" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(</span>
-<span id="cb1034-3"><a href="5.1-richness-measures-svyrich.html#cb1034-3" tabindex="-1"></a>  scf_design ,</span>
-<span id="cb1034-4"><a href="5.1-richness-measures-svyrich.html#cb1034-4" tabindex="-1"></a>  <span class="fu">svyrich</span>(</span>
-<span id="cb1034-5"><a href="5.1-richness-measures-svyrich.html#cb1034-5" tabindex="-1"></a>    <span class="sc">~</span> networth ,</span>
-<span id="cb1034-6"><a href="5.1-richness-measures-svyrich.html#cb1034-6" tabindex="-1"></a>    <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
-<span id="cb1034-7"><a href="5.1-richness-measures-svyrich.html#cb1034-7" tabindex="-1"></a>    <span class="at">g =</span> <span class="dv">1</span> ,</span>
-<span id="cb1034-8"><a href="5.1-richness-measures-svyrich.html#cb1034-8" tabindex="-1"></a>    <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
-<span id="cb1034-9"><a href="5.1-richness-measures-svyrich.html#cb1034-9" tabindex="-1"></a>  )</span>
-<span id="cb1034-10"><a href="5.1-richness-measures-svyrich.html#cb1034-10" tabindex="-1"></a>))</span></code></pre></div>
+<div class="sourceCode" id="cb1070"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1070-1"><a href="5.1-richness-measures-svyrich.html#cb1070-1" tabindex="-1"></a><span class="co"># richness gap index, richness threshold equal to the median</span></span>
+<span id="cb1070-2"><a href="5.1-richness-measures-svyrich.html#cb1070-2" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(</span>
+<span id="cb1070-3"><a href="5.1-richness-measures-svyrich.html#cb1070-3" tabindex="-1"></a>  scf_design ,</span>
+<span id="cb1070-4"><a href="5.1-richness-measures-svyrich.html#cb1070-4" tabindex="-1"></a>  <span class="fu">svyrich</span>(</span>
+<span id="cb1070-5"><a href="5.1-richness-measures-svyrich.html#cb1070-5" tabindex="-1"></a>    <span class="sc">~</span> networth ,</span>
+<span id="cb1070-6"><a href="5.1-richness-measures-svyrich.html#cb1070-6" tabindex="-1"></a>    <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
+<span id="cb1070-7"><a href="5.1-richness-measures-svyrich.html#cb1070-7" tabindex="-1"></a>    <span class="at">g =</span> <span class="dv">1</span> ,</span>
+<span id="cb1070-8"><a href="5.1-richness-measures-svyrich.html#cb1070-8" tabindex="-1"></a>    <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
+<span id="cb1070-9"><a href="5.1-richness-measures-svyrich.html#cb1070-9" tabindex="-1"></a>  )</span>
+<span id="cb1070-10"><a href="5.1-richness-measures-svyrich.html#cb1070-10" tabindex="-1"></a>))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
 ##       m &lt;- length(results)
 ##       scf_MIcombine(with(scf_design, svyrich(~networth, type_measure = &quot;Cha&quot;, 
 ##     g = 1, type_thresh = &quot;relq&quot;)))
 ##            results          se
 ## networth 0.2516482 0.005687558</code></pre>
-<div class="sourceCode" id="cb1036"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1036-1"><a href="5.1-richness-measures-svyrich.html#cb1036-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(</span>
-<span id="cb1036-2"><a href="5.1-richness-measures-svyrich.html#cb1036-2" tabindex="-1"></a>  scf_design ,</span>
-<span id="cb1036-3"><a href="5.1-richness-measures-svyrich.html#cb1036-3" tabindex="-1"></a>  <span class="fu">svyby</span>(</span>
-<span id="cb1036-4"><a href="5.1-richness-measures-svyrich.html#cb1036-4" tabindex="-1"></a>    <span class="sc">~</span> networth,</span>
-<span id="cb1036-5"><a href="5.1-richness-measures-svyrich.html#cb1036-5" tabindex="-1"></a>    <span class="sc">~</span> hhsex ,</span>
-<span id="cb1036-6"><a href="5.1-richness-measures-svyrich.html#cb1036-6" tabindex="-1"></a>    svyrich ,</span>
-<span id="cb1036-7"><a href="5.1-richness-measures-svyrich.html#cb1036-7" tabindex="-1"></a>    <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
-<span id="cb1036-8"><a href="5.1-richness-measures-svyrich.html#cb1036-8" tabindex="-1"></a>    <span class="at">g =</span> <span class="dv">1</span> ,</span>
-<span id="cb1036-9"><a href="5.1-richness-measures-svyrich.html#cb1036-9" tabindex="-1"></a>    <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
-<span id="cb1036-10"><a href="5.1-richness-measures-svyrich.html#cb1036-10" tabindex="-1"></a>  )</span>
-<span id="cb1036-11"><a href="5.1-richness-measures-svyrich.html#cb1036-11" tabindex="-1"></a>))</span></code></pre></div>
+<div class="sourceCode" id="cb1072"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1072-1"><a href="5.1-richness-measures-svyrich.html#cb1072-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(</span>
+<span id="cb1072-2"><a href="5.1-richness-measures-svyrich.html#cb1072-2" tabindex="-1"></a>  scf_design ,</span>
+<span id="cb1072-3"><a href="5.1-richness-measures-svyrich.html#cb1072-3" tabindex="-1"></a>  <span class="fu">svyby</span>(</span>
+<span id="cb1072-4"><a href="5.1-richness-measures-svyrich.html#cb1072-4" tabindex="-1"></a>    <span class="sc">~</span> networth,</span>
+<span id="cb1072-5"><a href="5.1-richness-measures-svyrich.html#cb1072-5" tabindex="-1"></a>    <span class="sc">~</span> hhsex ,</span>
+<span id="cb1072-6"><a href="5.1-richness-measures-svyrich.html#cb1072-6" tabindex="-1"></a>    svyrich ,</span>
+<span id="cb1072-7"><a href="5.1-richness-measures-svyrich.html#cb1072-7" tabindex="-1"></a>    <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
+<span id="cb1072-8"><a href="5.1-richness-measures-svyrich.html#cb1072-8" tabindex="-1"></a>    <span class="at">g =</span> <span class="dv">1</span> ,</span>
+<span id="cb1072-9"><a href="5.1-richness-measures-svyrich.html#cb1072-9" tabindex="-1"></a>    <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
+<span id="cb1072-10"><a href="5.1-richness-measures-svyrich.html#cb1072-10" tabindex="-1"></a>  )</span>
+<span id="cb1072-11"><a href="5.1-richness-measures-svyrich.html#cb1072-11" tabindex="-1"></a>))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
 ##       m &lt;- length(results)
 ##       scf_MIcombine(with(scf_design, svyby(~networth, ~hhsex, svyrich, 
@@ -737,35 +737,35 @@ and is the reason why <span class="citation">Brzezinski (<label for="tufte-mn-10
 ## male   0.2979316 0.007576291
 ## female 0.1318583 0.007329980</code></pre>
 </div>
-<div id="scf-family-income-12" class="section level4" number="5.1.2.7">
+<div id="scf-family-income-15" class="section level4" number="5.1.2.7">
 <h4><span class="header-section-number">5.1.2.7</span> SCF Family Income</h4>
-<div class="sourceCode" id="cb1038"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1038-1"><a href="5.1-richness-measures-svyrich.html#cb1038-1" tabindex="-1"></a><span class="co"># richness gap index, richness threshold equal to the median</span></span>
-<span id="cb1038-2"><a href="5.1-richness-measures-svyrich.html#cb1038-2" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(</span>
-<span id="cb1038-3"><a href="5.1-richness-measures-svyrich.html#cb1038-3" tabindex="-1"></a>  scf_design ,</span>
-<span id="cb1038-4"><a href="5.1-richness-measures-svyrich.html#cb1038-4" tabindex="-1"></a>  <span class="fu">svyrich</span>(</span>
-<span id="cb1038-5"><a href="5.1-richness-measures-svyrich.html#cb1038-5" tabindex="-1"></a>    <span class="sc">~</span> income ,</span>
-<span id="cb1038-6"><a href="5.1-richness-measures-svyrich.html#cb1038-6" tabindex="-1"></a>    <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
-<span id="cb1038-7"><a href="5.1-richness-measures-svyrich.html#cb1038-7" tabindex="-1"></a>    <span class="at">g =</span> <span class="dv">1</span> ,</span>
-<span id="cb1038-8"><a href="5.1-richness-measures-svyrich.html#cb1038-8" tabindex="-1"></a>    <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
-<span id="cb1038-9"><a href="5.1-richness-measures-svyrich.html#cb1038-9" tabindex="-1"></a>  )</span>
-<span id="cb1038-10"><a href="5.1-richness-measures-svyrich.html#cb1038-10" tabindex="-1"></a>))</span></code></pre></div>
+<div class="sourceCode" id="cb1074"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1074-1"><a href="5.1-richness-measures-svyrich.html#cb1074-1" tabindex="-1"></a><span class="co"># richness gap index, richness threshold equal to the median</span></span>
+<span id="cb1074-2"><a href="5.1-richness-measures-svyrich.html#cb1074-2" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(</span>
+<span id="cb1074-3"><a href="5.1-richness-measures-svyrich.html#cb1074-3" tabindex="-1"></a>  scf_design ,</span>
+<span id="cb1074-4"><a href="5.1-richness-measures-svyrich.html#cb1074-4" tabindex="-1"></a>  <span class="fu">svyrich</span>(</span>
+<span id="cb1074-5"><a href="5.1-richness-measures-svyrich.html#cb1074-5" tabindex="-1"></a>    <span class="sc">~</span> income ,</span>
+<span id="cb1074-6"><a href="5.1-richness-measures-svyrich.html#cb1074-6" tabindex="-1"></a>    <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
+<span id="cb1074-7"><a href="5.1-richness-measures-svyrich.html#cb1074-7" tabindex="-1"></a>    <span class="at">g =</span> <span class="dv">1</span> ,</span>
+<span id="cb1074-8"><a href="5.1-richness-measures-svyrich.html#cb1074-8" tabindex="-1"></a>    <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
+<span id="cb1074-9"><a href="5.1-richness-measures-svyrich.html#cb1074-9" tabindex="-1"></a>  )</span>
+<span id="cb1074-10"><a href="5.1-richness-measures-svyrich.html#cb1074-10" tabindex="-1"></a>))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
 ##       m &lt;- length(results)
 ##       scf_MIcombine(with(scf_design, svyrich(~income, type_measure = &quot;Cha&quot;, 
 ##     g = 1, type_thresh = &quot;relq&quot;)))
 ##         results          se
 ## income 0.139043 0.003921955</code></pre>
-<div class="sourceCode" id="cb1040"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1040-1"><a href="5.1-richness-measures-svyrich.html#cb1040-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(</span>
-<span id="cb1040-2"><a href="5.1-richness-measures-svyrich.html#cb1040-2" tabindex="-1"></a>  scf_design ,</span>
-<span id="cb1040-3"><a href="5.1-richness-measures-svyrich.html#cb1040-3" tabindex="-1"></a>  <span class="fu">svyby</span>(</span>
-<span id="cb1040-4"><a href="5.1-richness-measures-svyrich.html#cb1040-4" tabindex="-1"></a>    <span class="sc">~</span> income,</span>
-<span id="cb1040-5"><a href="5.1-richness-measures-svyrich.html#cb1040-5" tabindex="-1"></a>    <span class="sc">~</span> hhsex ,</span>
-<span id="cb1040-6"><a href="5.1-richness-measures-svyrich.html#cb1040-6" tabindex="-1"></a>    svyrich ,</span>
-<span id="cb1040-7"><a href="5.1-richness-measures-svyrich.html#cb1040-7" tabindex="-1"></a>    <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
-<span id="cb1040-8"><a href="5.1-richness-measures-svyrich.html#cb1040-8" tabindex="-1"></a>    <span class="at">g =</span> <span class="dv">1</span> ,</span>
-<span id="cb1040-9"><a href="5.1-richness-measures-svyrich.html#cb1040-9" tabindex="-1"></a>    <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
-<span id="cb1040-10"><a href="5.1-richness-measures-svyrich.html#cb1040-10" tabindex="-1"></a>  )</span>
-<span id="cb1040-11"><a href="5.1-richness-measures-svyrich.html#cb1040-11" tabindex="-1"></a>))</span></code></pre></div>
+<div class="sourceCode" id="cb1076"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1076-1"><a href="5.1-richness-measures-svyrich.html#cb1076-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(</span>
+<span id="cb1076-2"><a href="5.1-richness-measures-svyrich.html#cb1076-2" tabindex="-1"></a>  scf_design ,</span>
+<span id="cb1076-3"><a href="5.1-richness-measures-svyrich.html#cb1076-3" tabindex="-1"></a>  <span class="fu">svyby</span>(</span>
+<span id="cb1076-4"><a href="5.1-richness-measures-svyrich.html#cb1076-4" tabindex="-1"></a>    <span class="sc">~</span> income,</span>
+<span id="cb1076-5"><a href="5.1-richness-measures-svyrich.html#cb1076-5" tabindex="-1"></a>    <span class="sc">~</span> hhsex ,</span>
+<span id="cb1076-6"><a href="5.1-richness-measures-svyrich.html#cb1076-6" tabindex="-1"></a>    svyrich ,</span>
+<span id="cb1076-7"><a href="5.1-richness-measures-svyrich.html#cb1076-7" tabindex="-1"></a>    <span class="at">type_measure =</span> <span class="st">&quot;Cha&quot;</span> ,</span>
+<span id="cb1076-8"><a href="5.1-richness-measures-svyrich.html#cb1076-8" tabindex="-1"></a>    <span class="at">g =</span> <span class="dv">1</span> ,</span>
+<span id="cb1076-9"><a href="5.1-richness-measures-svyrich.html#cb1076-9" tabindex="-1"></a>    <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
+<span id="cb1076-10"><a href="5.1-richness-measures-svyrich.html#cb1076-10" tabindex="-1"></a>  )</span>
+<span id="cb1076-11"><a href="5.1-richness-measures-svyrich.html#cb1076-11" tabindex="-1"></a>))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
 ##       m &lt;- length(results)
 ##       scf_MIcombine(with(scf_design, svyby(~income, ~hhsex, svyrich, 
