@@ -4,7 +4,7 @@ Another problem faced by societies is inequality. Economic inequality can have s
 
 Most inequality data comes from censuses and household surveys. Therefore, in order to produce reliable estimates from survey data, procedures that account for complex sampling designs are necessary.
 
-This chapter presents the inequality measures available in the `convey` library with replication examples where possible.  It starts with an attempt to measure inequality between two groups of a population, then summarizes the general idea of inequality indices by discussing techniques like the quintile share ratio, the Lorenz curve, and the commonly-used Gini coefficient.   Next, this chapter discusses the concept of entropy and presents inequality measures (and their decompositions) based on that method. This chapter concludes with a discussion regarding the tradeoffs of selecting among the various inequality measures.
+This chapter presents the inequality measures available in the `convey` library with replication examples where possible.  It starts with an attempt to measure inequality between two groups of a population, then summarizes the general idea of inequality indices by discussing techniques like the quintile share ratio, the Lorenz curve, and the commonly-used Gini coefficient.   Next, this chapter discusses the concept of entropy and presents inequality measures (and their decompositions) based on that concept. This chapter concludes with a discussion regarding the trade-offs of selecting among the various inequality measures.
 
 
 
@@ -12,20 +12,19 @@ This chapter presents the inequality measures available in the `convey` library 
 
 The variety of inequality measures begs a question: which inequality measure should be used? In fact, this is a very important question. However, the nature of it is not statistical or mathematical, but ethical. This section aims to clarify and, while not proposing a "perfect measure", to provide the reader with some initial guidance about which measure to use.
 
-The most general way to analyze if one distribution is more equally distributed than another is by the Lorenz curve. When $L_A(p) \geqslant L_B(p), \forall p \in [0,1]$, it is said that $A$ is more equally distributed than $B$. Technically, we say that $A$ *(Lorenz) dominates* $B$. (@kramer1998 and @mosler1994 provide helpful insights to how majorization, Lorenz dominance, and inequality measurement are connected. On the topic of majorization, @hardy1934 is still the main reference, while @olkin2011 provide a more modern approach.) In this case, all inequality measures that satisfy basic properties^[Namely, Schur-convexity, population invariance, and scale invariance.] will agree that $A$ is more equally distributed than $B$.
+The most general way to analyze if one distribution is more equally distributed than another is by the Lorenz curve. When $L_A(p) \geqslant L_B(p), \forall p \in [0,1]$, it is said that $A$ is more equally distributed than $B$. Technically, we say that $A$ *(Lorenz) dominates* $B$.^[@kramer1998 and @mosler1994 provide helpful insights to how majorization, Lorenz dominance, and inequality measurement are connected. On the topic of majorization, @hardy1934 is still the main reference, while @olkin2011 provide a more modern approach.] In this case, all inequality measures that satisfy basic properties^[Namely, Schur-convexity, population invariance, and scale invariance.] will agree that $A$ is more equally distributed than $B$.
 
 When this dominance fails, i.e., when Lorenz curves do cross, Lorenz ordering is impossible. Then, under such circumstances, the choice of which inequality measure to use becomes relevant.
 
-Each inequality measure is a result of a subjective understanding of what is a fair distribution. As @dalton1920 [p.348] puts it, "the economist is primarily interested, not in the distribution of income as such, but in the effects of the distribution of income upon the distribution and total amount of economic welfare, which may be derived from income." The importance of how economic welfare is defined is once again expressed by @atkinson1970, where an inequality measure is direclty derived from a class of welfare functions. Even when a welfare function is not explicit, such as in the Gini index, we must agree that an implicit, subjective judgement of the impact of inequality on social welfare is assumed.
+Each inequality measure is a result of a subjective understanding of how to rank the fariness of a distribution. As @dalton1920 [p.348] puts it, "the economist is primarily interested, not in the distribution of income as such, but in the effects of the distribution of income upon the distribution and total amount of economic welfare, which may be derived from income." The importance of how economic welfare is defined is once again expressed by @atkinson1970, where an inequality measure is direclty derived from a class of welfare functions. Even when a welfare function is not explicit, such as in the Gini index, there is an implicit, subjective judgement of the impact of inequality on social welfare.
 
 The idea of what is a fair distribution is a matter of Ethics, a discipline within the realm of Philosophy. Yet, as @fleur1996 [Ch.1] proposes, the analyst should match socially supported moral values and theories of justice to the set of technical tools for policy evaluation. 
 
-Although this can be a useful principle, a more objective answer is needed. By knowing the nature and properties of inequality measures, the analyst can further reduce the set of applicable inequality measures. For instance, choosing from the properties listed in @cowell2011 [p.74], if we require group-decomposability, scale invariance, population invariance, and that the estimate falls within $[0,1]$, we must resort to the Atkinson index.
+Although this can be a useful principle, a more objective answer is needed. By knowing the nature and properties of inequality measures, the analyst can further reduce the set of applicable inequality measures. For instance, choosing from the properties listed in @cowell2011 [p. 74], if we require group-decomposability, scale invariance, population invariance, and that the estimate falls within $[0,1]$, we might resort to the Atkinson index.
 
-Even though the discussion can go deep in technical and philosophical aspects, this choice also depends on the public. For example, it would not be surprising if a public official has not encountered the Atkinson index; however, they might be familiar with the Gini coefficient.  The same goes for publications: journalists have been introduced to the Gini index and can find it easier to compare and, therefore, write about.  Also, we must admit that the Gini index is much more straightforward than any other measure. 
+Even though the discussion can go deep in technical and philosophical aspects, this choice also depends on the public. For example, it would not be surprising if a public official has not encountered the Atkinson index; however, they might be familiar with the Gini index.  The same goes for publications: journalists have been introduced to the Gini index and can find it easier to compare and, therefore, write about. Also, we also admit that that index is relatively straightforward, if compared to many other measures. 
 
-In the end, the choice is mostly subjective and there is no consensus of which method offers the ideal inequality measure. We must remember that this choice is only problematic if Lorenz curves cross and, in that case, it is often straightforward to choose among the inequality measures available.
-
+In the end, the choice is mostly subjective and there is no consensus of which method offers the "ideal" inequality measure.^[In fact, there is much discussion about the properties of an ideal inequality measure.] We must remember that this choice is only problematic for relative inequality measures if Lorenz curves cross and, in that case, the choice among inequality measures is a less substantial issue.
 
 ## The Gender Pay Gap (svygpg)
 
@@ -44,7 +43,7 @@ In mathematical terms, this index can be described as,
 
 \[ GPG = \frac{ \bar{y}_{male} - \bar{y}_{female} }{ \bar{y}_{male} } \]
 
-As we can see from the formula, if there is no difference among classes, $GPG = 0$. Else, if $GPG > 0$, it means that the average hourly income received by women are $GPG$ percent smaller than men's. For negative $GPG$, it means that women's hourly earnings are $GPG$ percent larger than men's. In other words, the larger the $GPG$, larger is the shortfall of women's hourly earnings. 
+As we can see from the formula, if there is no difference between the groups, $GPG = 0$. Else, if $GPG > 0$, it means that the average hourly income received by women are $GPG$ percent smaller than men's. For negative $GPG$, it means that women's hourly earnings are $GPG$ percent larger than men's. In other words, the larger the $GPG$, larger is the shortfall of women's hourly earnings. 
 
 We can also develop a more straightforward idea: for every \$1 raise in men's hourly earnings, women's hourly earnings are expected to increase \$$(1-GPG)$. For instance, assuming $GPG = 0.8$, for every \$1.00 increase in men's average hourly earnings, women's hourly earnings would increase only \$0.20.
 
@@ -205,7 +204,7 @@ For additional usage examples of `svygpg`, type `?convey::svygpg` in the R conso
 ### Real World Examples
 
 
-This section displays example results using nationally-representative surveys from both the United States and Brazil.  We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the `svygpg` function.
+This section displays example results using nationally-representative surveys from both the United States and Brazil. We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the `svygpg` function.
 
 To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD-Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
 
@@ -307,11 +306,9 @@ scf_MIcombine(with(scf_design , svyby( ~ income, ~ edcl , svygpg , sex = ~ hhsex
 ```
 
 
-Unlike the previous measure, the Quintile Share Ratio (QSR) is an inequality measure in itself, depending only on the income distribution to evaluate the degree of inequality. By definition, it can be described as the ratio between the income share held by the richest 20% and the poorest 20% of the population. 
+Unlike the previous measure, the Quintile Share Ratio (QSR) is an inequality measure in itself, depending only on the income distribution to evaluate the degree of inequality. By definition, it can be described as the ratio between the income share held by the richest 20% and the poorest 20% of the population. In plain terms, it expresses how many times the wealthier part of the population are richer than the poorest part. For instance, a $QSR = 4$ implies that the upper class takes home 4 times as much of the total income as the poor.
 
-In plain terms, it expresses how many times the wealthier part of the population are richer than the poorest part. For instance, a $QSR = 4$ implies that the upper class takes home 4 times as much of the total income as the poor.
-
-The QSR can be modified to a more general function of percentile share ratios. For instance, @cobham2015 argues for using the Palma index, defined as the ratio between the share of the 10% richest over the share held by the poorest 40%.  There are actually two ways to compute the Palma ratio with the `convey` package. One is using `convey::svyqsr` and the other is using `convey::svylorenz` - they won't match exactly because of different estimators, but are asymptotically equal. Since the Palma ratio is the top 10% divided by the bottom 40%, in `convey::svyqsr` this could be achieved using `alpha1 = .40` and `alpha2 = .90`.  Note that the `vardpoor::linqsr` function only accepts a single `alpha` parameter (defaulting to `0.2` and `1 - 0.2`), meaning the Palma index cannot presently be computed using that function.
+The QSR can be modified to a more general function of percentile share ratios. For instance, @cobham2015 argues for using the Palma index, defined as the ratio between the share of the 10% richest over the share held by the poorest 40%.  There are actually two ways to compute the Palma ratio with the `convey` package. One is using `convey::svyqsr` and the other is using `convey::svylorenz` - not matching exactly, since they are based on different estimators. Since the Palma ratio is the top 10% divided by the bottom 40%, in `convey::svyqsr` this could be achieved using `alpha1 = .40` and `alpha2 = .90`.  Note that the `vardpoor::linqsr` function only accepts a single `alpha` parameter (defaulting to `0.2` and `1 - 0.2`), meaning the Palma index cannot presently be computed using that function.
 
 The details of the linearization of the QSR are discussed by @deville1999 and @osier2009.
 
@@ -607,7 +604,7 @@ Yet, this formula is used to calculate specific points of the curve and their re
 
 ### Replication Example
 
-In October 2016, [@jann2016] released a pre-publication working paper to estimate Lorenz and concentration curves using stata.  The example below reproduces the statistics presented in his section 4.1.
+In October 2016, [@jann2016] released a pre-publication working paper to estimate Lorenz and concentration curves using Stata.  The example below reproduces the statistics presented in his Section 4.1.
 
 ```{r}
 # load the convey package
@@ -774,7 +771,7 @@ scf_MIcombine(with(scf_design , svyby(~ income, ~ hhsex , svylorenz, plot = FALS
 ❌ https://pubmed.ncbi.nlm.nih.gov/26292521/ and https://www.jstor.org/stable/2142862
 ```
 
-The Gini index (or Gini coefficient) is an attempt to express the inequality presented in the Lorenz curve as a single number. In essence, it is twice the area between the equality curve and the real Lorenz curve. Put simply:
+The Gini index (or Gini coefficient) is an attempt to express the inequality presented by the Lorenz curve as a single number. In essence, it is twice the area between the equality curve and the real Lorenz curve --- that is:
 
 \[
 \begin{aligned}
@@ -1044,9 +1041,9 @@ Z = 1 - \int_{0}^{1} \frac{L(p)}{p} \cdot \frac{ 1 - p }{ 1 - L(p) } dp
 
 \noindent where $L(p)$ is the Lorenz curve ordinate at population share $p$.
 
-The intuition behind the Zenga index is based on argument similar to the Quintile Share Ratio or the Palma index.  While the QSR and Palma indices are based on ratios of lower and upper shares, the Zenga scores (but not the measure itself!) is the ratio of lower and upper means. The Zenga index is the average of those scores.
+The intuition behind the Zenga index is based on argument similar to the Quintile Share Ratio or the Palma index. While the QSR and Palma indices are based on ratios of lower and upper shares, the Zenga scores (but not the measure itself!) are the ratios of lower and upper means. The Zenga index is the average of those scores.
 
-For a given p, when the mean income of the poorest is not much smaller than the mean income of the richest, the ratio is close to one, resulting in $Z(p)$ close to zero. However, when the lower mean is much smaller than the upper mean, the ratio goes to 0, resulting in a $Z(p)$ close to one.
+For a given percentile $p$, when the mean income of the poorest is not much smaller than the mean income of the richest, the ratio is close to one, resulting in $Z(p)$ close to zero. However, when the lower mean is much smaller than the upper mean, the ratio goes to 0, resulting in a $Z(p)$ close to one.
 
 Take the mean income of the poorest 20% of a population: this is the lower mean. The "complement" is the mean income of the richest 80%: this is the upper mean. If the lower mean is \$100 and the upper mean is \$1,000, then the respective point on the Zenga curve would associate the fraction $20$% to $1 - ( \$100 / \$1,000 ) = 0.9$.  In other words, $Z(20\%) = 90\%$.
 
@@ -1398,7 +1395,7 @@ The utility function "weights" the individual income $y$ on the (overall) social
 Saying that "$U ( y )$ is increasing in $y$" means that more income means more individual utility, 
 while "$U ( y )$ is concave" means that (individual) welfare grows less for every income increase.
 
-@atkinson1970 [p. 250] that we should measure inequality by using the Equally Distriuted Equivalent level of income
+@atkinson1970 [p. 250] that we should measure inequality by using the Equally Distributed Equivalent level of income
 $y_{EDE}$. The $y_{EDE}$ is the level of income that would lead to the observed level welfare if income was equally distributed.
 In mathematical terms, the $y_{EDE}$ is defined as:
 
@@ -1438,8 +1435,8 @@ $$
 \noindent where $\epsilon$ is an inequality-aversion (scalar) parameter: as it 
 approaches infinity, more weight is given to lower incomes.
 
-Combining this with his proposed approach, @atkinson1970 derives what came to be known as
-the Atkinson index:
+Combining this with his proposed approach, @atkinson1970 derives what came to be 
+known as the Atkinson index:
 
 $$
 I_\epsilon = 
@@ -1757,7 +1754,7 @@ Using ideas presented in @cowell2009, substituting the density function by the i
 s(q) = {F}^{-1}(q) / \int_{0}^{1} F^{-1}(t)dt = y/\mu
 \]
 
-the entropy function becomes the Theil (or Theil-T) inequality index:
+the entropy function becomes the Theil-T inequality index:
 
 \[
 I_{Theil} = \int_{0}^{\infty} \frac{y}{\mu} \log \bigg( \frac{y}{\mu} \bigg) dF(y) = -H(s)
@@ -1794,7 +1791,7 @@ This relates to a class of inequality measures, the Generalized entropy indices,
 GE^{(\alpha)} = \frac{1}{\alpha^2 - \alpha} \int_{0}^\infty \bigg[ \bigg( \frac{y}{\mu} \bigg)^\alpha - 1 \bigg]dF(x) = - \frac{-H_\alpha(s) }{ \alpha } \text{.}
 \]
 
-The parameter $\alpha$ also has an economic interpretation: as $\alpha$ increases, the influence of high incomes upon the index increases. In some cases, this measure takes special forms, such as the mean log deviation and the aforementioned Theil index.
+The parameter $\alpha$ also has an economic interpretation: as $\alpha$ increases, the influence of high incomes upon the index increases. In some cases, this measure takes special forms, such as the mean log deviation and the aforementioned Theil-T index.
 
 @biewen2003 use the following finite-population as the basis for a plugin estimator:
 
