@@ -3,7 +3,7 @@
 Richness (or Affluence) measures provide another approach for understanding 
 income concentration. Unlike inequality measures, that are sensitive to the 
 changes over the entire income distribution, richness measures are restricted 
-to the top. 
+to the top incomes. 
 
 In that sense, they work like "inverted" poverty measures: while the poverty 
 focus axiom states that poverty measures should be insensitive to changes 
@@ -27,8 +27,17 @@ On the other hand, a *convex* measure follows the convex transfer axiom (T2):
 the measure should *decrease* when a progressive transfer occurs among two rich 
 individuals.
 
-The reasoning behind the concave transfer axiom is that such progressive transfer would make the income distribution among the rich more internally homogeneous. By clustering the incomes and assets of the rich away from the rest of society, the distribution of income becomes more polarized. On the other hand, the convex transfer axiom means that a progressive transfer among rich individuals reduces inequality among them, so the convex inequality measure should register a reduction. In a sense, concave measures are related to the income polarization approach, meaning that increases in income polarization should increase the value of the richness measure, while convex measures are related to the income inequality approach, meaning that a reduction in inequality among the rich should also result in a reduction of a convex richness measure.
-
+The reasoning behind the concave transfer axiom is that such progressive transfer 
+would make the income distribution among the rich more internally homogeneous. 
+By clustering the incomes and assets of the rich away from the rest of society, 
+the distribution of income becomes more polarized. On the other hand, the convex
+transfer axiom means that a progressive transfer among rich individuals reduces 
+inequality among them, so the convex inequality measure should register a reduction. 
+In a sense, concave measures are related to the income polarization approach, meaning 
+that increases in income polarization among the rich should increase the value of 
+the richness measure, while convex measures are related to the income inequality 
+approach, meaning that a reduction in inequality among the rich should also result 
+in a reduction of a convex richness measure.
 
 ## Richness Measures (svyrich)
 
@@ -43,7 +52,8 @@ The reasoning behind the concave transfer axiom is that such progressive transfe
 ```
 
 @peichl2010 also presented a general class of richness measures, proposing three
-particular sub-classes: the (concave) Chakravarty class, the concave-FGT class and the convex-FGT class, defined at the population level as:
+particular sub-classes: the (concave) Chakravarty class, the concave-FGT class (T1) and 
+the convex-FGT class (T2), defined at the population level as:
 
 $$
 \begin{aligned}
@@ -69,20 +79,23 @@ In order to estimate the variance of these estimators, @brz2014 derived influenc
 
 @brz2014 also studied the reliability of the inference based on these estimators 
 using a model-based Monte Carlo simulation, which are also valid for (design-based) 
-simple random sampling with replacement. His results showed that inference for convex 
-measures are unreliable for convex measures, the estimator generally produces bad results.  It is highly sensitive to outliers, and confidence intervals are invalid (actual coverage is much smaller than 95%).  The vignette below shows for a design-based approach with the same results.
+simple random sampling with replacement. His results showed that inferences for convex 
+richness measures are unreliable. The (convex) FGT-T2 estimator is highly sensitive 
+to outliers, and confidence intervals are invalid (actual coverage is much smaller than the nominal level). 
+The vignette below shows a design-based simulation reproducing the same conclusions.
 
 ---
 
 ### Monte Carlo Simulation
 
 @brz2014 presented results using a model-based Monte Carlo --- i.e., he simulated 
-several samples from the model and compared the behavior of the estimators with 
-the model-based parameters. 
+several samples from the model and compared the behaviour of the estimators with 
+the superpopulation model parameters. 
+
 In the simulation below, we take a design-based approach: we take several samples 
 from a fixed finite population using a particular sampling design, compute the estimator 
-on each and compare them to the finite population parameter (not the model-based 
-parameter!).
+for each sample and compare them to the finite population parameter (not the superpopulation 
+model parameter!).
 
 For the sake of similarity, we start by simulating a large finite population ($N = 10^5$) 
 using the same distribution from @brz2014:
@@ -127,18 +140,18 @@ rFGTT2.fp <- mean(cha.scores(pop.df$y1  , fgt.alpha , rho.fp))
 ```
 
 For our sampling design, we select $n = 1000$ units using multinomial sampling, 
-with the variable `x.aux` as the size variable for the inclusion probabilities:
+with the variable `x.aux` as the size variable for the selection probabilities:
 
 ```{r}
 # define sample size
 n.sample <- 1000L
 
-# inclusion probability
+# selection probability
 pop.df$x.aux <- plogis( pop.df$y1 ) / 1.1
 pop.df$pi1 <- sampling::inclusionprobabilities( pop.df$x.aux , n.sample )
 ```
 
-We run the procedure N and store the estimate objects using the code below:
+We run the procedure 5000 times and store the estimate objects using the code below:
 
 ```{r}
 # define the number of simulation runs
@@ -198,7 +211,7 @@ rep.list <- lapply(seq_len(mc.reps) , function(this.iter) {
 })
 ```
 
-To study the behavior of the estimators, we estimate their expected values, empirical 
+To study the behaviour of the estimators, we estimate their expected values, empirical 
 variance (for the main parameter) and mean squared error. To study the validity 
 of the normal approximation, we also estimate the percent coverage rate of the nominal 
 95% confidence interval. This is done using the function below:
@@ -272,7 +285,7 @@ Under this approach, the squared bias accounts for approx. 0.07% of the MSE, ind
 that the MSE of the estimator is reasonably approximated by its variance. Additionally, 
 the ratio between the expected value of the variance estimator and the empirical 
 variance is approx. 1.05, indicating that the variance estimates are expected to 
-be a (slighlty conservative, but) good approximation of the empirical variance. 
+be a (slightly conservative, but) good approximation of the empirical variance. 
 Finally, the estimated percent coverage rate of 95.24% is close to the nominal 
 level of 95%, indicating that the confidence intervals are approximately valid.
 
