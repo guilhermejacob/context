@@ -13,7 +13,7 @@
 
 <meta name="author" content="By Guilherme Jacob, Anthony Damico, and Djalma Pessoa. The authors received no external funding for the convey software and this accompanying textbook." />
 
-<meta name="date" content="2023-12-15" />
+<meta name="date" content="2023-12-19" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -268,7 +268,9 @@ div.csl-indent {
 </ul></li>
 <li class="has-sub"><a href="6-multidimensional-poverty.html#multidimensional-poverty" id="toc-multidimensional-poverty"><span class="toc-section-number">6</span> Multidimensional Poverty</a>
 <ul>
-<li><a href="6.1-example-calculation.html#example-calculation" id="toc-example-calculation"><span class="toc-section-number">6.1</span> Example Calculation</a></li>
+<li><a href="6.1-experimental-alkire-foster-class.html#experimental-alkire-foster-class" id="toc-experimental-alkire-foster-class"><span class="toc-section-number">6.1</span> Experimental Alkire-Foster Class</a></li>
+<li><a href="6.2-experimental-alkire-foster-class-decomposition.html#experimental-alkire-foster-class-decomposition" id="toc-experimental-alkire-foster-class-decomposition"><span class="toc-section-number">6.2</span> Experimental Alkire-Foster Class Decomposition</a></li>
+<li><a href="6.3-example-calculation.html#example-calculation" id="toc-example-calculation"><span class="toc-section-number">6.3</span> Example Calculation</a></li>
 </ul></li>
 <li class="has-sub"><a href="7-covariance-matrix.html#covariance-matrix" id="toc-covariance-matrix"><span class="toc-section-number">7</span> Covariance Matrix</a>
 <ul>
@@ -298,36 +300,36 @@ tends to be positive, which results in a conservative variance estimator for the
 <p>Then, how can we estimate the covariance? The <code>survey</code> package already provides an
 approach for that using the <code>svyby</code> function. Based on the <code>?survey::svyby</code> examples,
 we have:</p>
-<div class="sourceCode" id="cb1078"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1078-1"><a href="7-covariance-matrix.html#cb1078-1" tabindex="-1"></a><span class="co"># load the survey library</span></span>
-<span id="cb1078-2"><a href="7-covariance-matrix.html#cb1078-2" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
-<span id="cb1078-3"><a href="7-covariance-matrix.html#cb1078-3" tabindex="-1"></a></span>
-<span id="cb1078-4"><a href="7-covariance-matrix.html#cb1078-4" tabindex="-1"></a><span class="co">#  load data set</span></span>
-<span id="cb1078-5"><a href="7-covariance-matrix.html#cb1078-5" tabindex="-1"></a><span class="fu">data</span>( api )</span>
-<span id="cb1078-6"><a href="7-covariance-matrix.html#cb1078-6" tabindex="-1"></a></span>
-<span id="cb1078-7"><a href="7-covariance-matrix.html#cb1078-7" tabindex="-1"></a><span class="co"># declare sampling design</span></span>
-<span id="cb1078-8"><a href="7-covariance-matrix.html#cb1078-8" tabindex="-1"></a>dclus1 <span class="ot">&lt;-</span> <span class="fu">svydesign</span>( <span class="at">id=</span><span class="sc">~</span>dnum, <span class="at">weights=</span><span class="sc">~</span>pw, <span class="at">data=</span>apiclus1, <span class="at">fpc=</span><span class="sc">~</span>fpc )</span>
-<span id="cb1078-9"><a href="7-covariance-matrix.html#cb1078-9" tabindex="-1"></a></span>
-<span id="cb1078-10"><a href="7-covariance-matrix.html#cb1078-10" tabindex="-1"></a><span class="co"># estimate means</span></span>
-<span id="cb1078-11"><a href="7-covariance-matrix.html#cb1078-11" tabindex="-1"></a>mns <span class="ot">&lt;-</span><span class="fu">svyby</span>(<span class="sc">~</span>api99, <span class="sc">~</span>stype, dclus1, svymean,<span class="at">covmat=</span><span class="cn">TRUE</span>)</span>
-<span id="cb1078-12"><a href="7-covariance-matrix.html#cb1078-12" tabindex="-1"></a></span>
-<span id="cb1078-13"><a href="7-covariance-matrix.html#cb1078-13" tabindex="-1"></a><span class="co"># collect variacnce-covariance matrix of estimates</span></span>
-<span id="cb1078-14"><a href="7-covariance-matrix.html#cb1078-14" tabindex="-1"></a>( m <span class="ot">&lt;-</span> <span class="fu">vcov</span>( mns ) )</span></code></pre></div>
+<div class="sourceCode" id="cb1083"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1083-1"><a href="7-covariance-matrix.html#cb1083-1" tabindex="-1"></a><span class="co"># load the survey library</span></span>
+<span id="cb1083-2"><a href="7-covariance-matrix.html#cb1083-2" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb1083-3"><a href="7-covariance-matrix.html#cb1083-3" tabindex="-1"></a></span>
+<span id="cb1083-4"><a href="7-covariance-matrix.html#cb1083-4" tabindex="-1"></a><span class="co">#  load data set</span></span>
+<span id="cb1083-5"><a href="7-covariance-matrix.html#cb1083-5" tabindex="-1"></a><span class="fu">data</span>( api )</span>
+<span id="cb1083-6"><a href="7-covariance-matrix.html#cb1083-6" tabindex="-1"></a></span>
+<span id="cb1083-7"><a href="7-covariance-matrix.html#cb1083-7" tabindex="-1"></a><span class="co"># declare sampling design</span></span>
+<span id="cb1083-8"><a href="7-covariance-matrix.html#cb1083-8" tabindex="-1"></a>dclus1 <span class="ot">&lt;-</span> <span class="fu">svydesign</span>( <span class="at">id=</span><span class="sc">~</span>dnum, <span class="at">weights=</span><span class="sc">~</span>pw, <span class="at">data=</span>apiclus1, <span class="at">fpc=</span><span class="sc">~</span>fpc )</span>
+<span id="cb1083-9"><a href="7-covariance-matrix.html#cb1083-9" tabindex="-1"></a></span>
+<span id="cb1083-10"><a href="7-covariance-matrix.html#cb1083-10" tabindex="-1"></a><span class="co"># estimate means</span></span>
+<span id="cb1083-11"><a href="7-covariance-matrix.html#cb1083-11" tabindex="-1"></a>mns <span class="ot">&lt;-</span><span class="fu">svyby</span>(<span class="sc">~</span>api99, <span class="sc">~</span>stype, dclus1, svymean,<span class="at">covmat=</span><span class="cn">TRUE</span>)</span>
+<span id="cb1083-12"><a href="7-covariance-matrix.html#cb1083-12" tabindex="-1"></a></span>
+<span id="cb1083-13"><a href="7-covariance-matrix.html#cb1083-13" tabindex="-1"></a><span class="co"># collect variacnce-covariance matrix of estimates</span></span>
+<span id="cb1083-14"><a href="7-covariance-matrix.html#cb1083-14" tabindex="-1"></a>( m <span class="ot">&lt;-</span> <span class="fu">vcov</span>( mns ) )</span></code></pre></div>
 <pre><code>##          E         H         M
 ## E 520.5973  573.0404  684.6562
 ## H 573.0404 1744.2317  747.1989
 ## M 684.6562  747.1989 1060.1954</code></pre>
-<div class="sourceCode" id="cb1080"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1080-1"><a href="7-covariance-matrix.html#cb1080-1" tabindex="-1"></a><span class="co"># compute variance terms</span></span>
-<span id="cb1080-2"><a href="7-covariance-matrix.html#cb1080-2" tabindex="-1"></a>var.naive <span class="ot">&lt;-</span> <span class="fu">sum</span>( <span class="fu">diag</span>( m[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>),<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>)] ) )</span>
-<span id="cb1080-3"><a href="7-covariance-matrix.html#cb1080-3" tabindex="-1"></a>cov.term <span class="ot">&lt;-</span> <span class="fu">sum</span>( <span class="fu">diag</span>( m[ <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>),<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">1</span>)] ) )</span>
-<span id="cb1080-4"><a href="7-covariance-matrix.html#cb1080-4" tabindex="-1"></a></span>
-<span id="cb1080-5"><a href="7-covariance-matrix.html#cb1080-5" tabindex="-1"></a><span class="co"># &quot;naive&quot; SE of the difference</span></span>
-<span id="cb1080-6"><a href="7-covariance-matrix.html#cb1080-6" tabindex="-1"></a><span class="fu">sqrt</span>( var.naive )</span></code></pre></div>
+<div class="sourceCode" id="cb1085"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1085-1"><a href="7-covariance-matrix.html#cb1085-1" tabindex="-1"></a><span class="co"># compute variance terms</span></span>
+<span id="cb1085-2"><a href="7-covariance-matrix.html#cb1085-2" tabindex="-1"></a>var.naive <span class="ot">&lt;-</span> <span class="fu">sum</span>( <span class="fu">diag</span>( m[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>),<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>)] ) )</span>
+<span id="cb1085-3"><a href="7-covariance-matrix.html#cb1085-3" tabindex="-1"></a>cov.term <span class="ot">&lt;-</span> <span class="fu">sum</span>( <span class="fu">diag</span>( m[ <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>),<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">1</span>)] ) )</span>
+<span id="cb1085-4"><a href="7-covariance-matrix.html#cb1085-4" tabindex="-1"></a></span>
+<span id="cb1085-5"><a href="7-covariance-matrix.html#cb1085-5" tabindex="-1"></a><span class="co"># &quot;naive&quot; SE of the difference</span></span>
+<span id="cb1085-6"><a href="7-covariance-matrix.html#cb1085-6" tabindex="-1"></a><span class="fu">sqrt</span>( var.naive )</span></code></pre></div>
 <pre><code>## [1] 39.75918</code></pre>
-<div class="sourceCode" id="cb1082"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1082-1"><a href="7-covariance-matrix.html#cb1082-1" tabindex="-1"></a><span class="co"># SE of the difference</span></span>
-<span id="cb1082-2"><a href="7-covariance-matrix.html#cb1082-2" tabindex="-1"></a><span class="fu">sqrt</span>( var.naive <span class="sc">-</span> cov.term )</span></code></pre></div>
+<div class="sourceCode" id="cb1087"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1087-1"><a href="7-covariance-matrix.html#cb1087-1" tabindex="-1"></a><span class="co"># SE of the difference</span></span>
+<span id="cb1087-2"><a href="7-covariance-matrix.html#cb1087-2" tabindex="-1"></a><span class="fu">sqrt</span>( var.naive <span class="sc">-</span> cov.term )</span></code></pre></div>
 <pre><code>## [1] 14.54236</code></pre>
-<div class="sourceCode" id="cb1084"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1084-1"><a href="7-covariance-matrix.html#cb1084-1" tabindex="-1"></a><span class="co">#... or using svycontrast</span></span>
-<span id="cb1084-2"><a href="7-covariance-matrix.html#cb1084-2" tabindex="-1"></a><span class="fu">svycontrast</span>( mns , <span class="fu">c</span>(<span class="at">E =</span> <span class="dv">1</span>, <span class="at">M =</span> <span class="sc">-</span><span class="dv">1</span>) )</span></code></pre></div>
+<div class="sourceCode" id="cb1089"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1089-1"><a href="7-covariance-matrix.html#cb1089-1" tabindex="-1"></a><span class="co">#... or using svycontrast</span></span>
+<span id="cb1089-2"><a href="7-covariance-matrix.html#cb1089-2" tabindex="-1"></a><span class="fu">svycontrast</span>( mns , <span class="fu">c</span>(<span class="at">E =</span> <span class="dv">1</span>, <span class="at">M =</span> <span class="sc">-</span><span class="dv">1</span>) )</span></code></pre></div>
 <pre><code>##          contrast     SE
 ## contrast -0.80833 14.542</code></pre>
 <p>Notice that, because the covariance terms are positive, the (actual) variance of
@@ -337,7 +339,7 @@ However, this has not yet been implemented for linearization/influence function 
 In the next section, we show an example with the Gini index.</p>
 </div>
 <p style="text-align: center;">
-<a href="6.1-example-calculation.html"><button class="btn btn-default">Previous</button></a>
+<a href="6.3-example-calculation.html"><button class="btn btn-default">Previous</button></a>
 <a href="7.1-example-calculation-1.html"><button class="btn btn-default">Next</button></a>
 </p>
 </div>
