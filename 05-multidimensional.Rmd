@@ -8,4 +8,781 @@ output:
 
 # Multidimensional Poverty
 
-## Example Calculation
+The current convey software does not include a measure of multidimensional poverty.  The United Nations Development Program (UNDP) and @alkire2011 at Oxford University’s Poverty and Human Development Initiative (OPHI) have published [reports](https://hdr.undp.org/content/2023-global-multidimensional-poverty-index-mpi#/indicies/MPI) and [both Stata and R code](https://hdr.undp.org/mpi-statistical-programmes) based on the concepts proposed by Nobel laureaute Amartya Sen.  Although we have not incorporated this work into our current R package, the example below defines a function and its related decomposition based on the Stata module by @pacifico2016 and then replicates [a presentation by OPHI Research Officer Christop Jindra](https://www.ophi.org.uk/wp-content/uploads/Jindra_151109_OPHISeminar.pdf).
+
+
+## Alkire-Foster Class Function Definition
+
+```{r results='hide', message=FALSE, warning=FALSE}
+svyafc <-
+  function(formula,
+           design,
+           k ,
+           g ,
+           cutoffs ,
+           dimw = NULL,
+           na.rm = FALSE,
+           ...) {
+    if (k <= 0 |
+        k > 1)
+      stop("This functions is only defined for k in (0,1].")
+    if (g < 0)
+      stop("This function is undefined for g < 0.")
+    if (!is.list(cutoffs))
+      stop("The parameter 'cutoffs' has to be a list.")
+    
+    ach.matrix <-
+      model.frame(formula, design$variables, na.action = na.pass)[, ]
+    
+    if (!is.null(dimw)) {
+      if (any(is.na(dimw))) {
+        stop("Invalid value in dimension weights vector.")
+      }
+      if (sum(dimw) > 1) {
+        stop("The sum of dimension weigths have to be equal to one.")
+      }
+      if (any(dimw > 1 |
+              dimw < 0)) {
+        stop("Dim. weights have to be within interval [0,1].")
+      }
+      if (length(dimw) != ncol(ach.matrix)) {
+        stop("Dimension weights' length differs from number of dimensions in formula")
+      }
+    }
+    
+    var.class <- lapply(ach.matrix, function(x)
+      class(x)[1])
+    var.class <- matrix(
+      var.class,
+      nrow = 1,
+      ncol = ncol(ach.matrix),
+      dimnames = list(c("var.class"), colnames(ach.matrix))
+    )
+    
+    if (any(!(var.class %in% c("numeric", "integer", "ordered")))) {
+      stop(
+        "This function is only applicable to variables of types 'numeric' or 'ordered factor'."
+      )
+    }
+    if (any((var.class == "integer"))) {
+      stop(
+        "At least one of the variables is an integer.\nCoerce your column to numeric with as.numeric if you are sure it's what you want."
+      )
+    }
+    
+    w <- 1 / design$prob
+    
+    if (any(ach.matrix[w != 0, var.class == "numeric"] < 0, na.rm = TRUE))
+      stop(
+        "The Alkire-Foster multidimensional poverty class is defined for non-negative numeric variables only."
+      )
+    
+    if (na.rm) {
+      nas <- apply(ach.matrix, 1, function(x)
+        any(is.na(x)))
+      design <- design[nas == 0,]
+      w <- 1 / design$prob
+    }
+    
+    ach.matrix <-
+      model.frame(formula, design$variables, na.action = na.pass)[, ]
+    ach.matrix <- ach.matrix [w > 0,]
+    w <- w [w > 0]
+    
+    if (any(is.na(ach.matrix))) {
+      if (is.null(dimw)) {
+        dimw = rep(1 / ncol(var.class), length(var.class))
+      }
+      
+      rval <- as.numeric(NA)
+      variance <- as.numeric(NA)
+      class(rval) <- c("cvystat" , "svystat")
+      attr(rval, "var") <- variance
+      names(rval)[1] <- attr(rval, "statistic") <- "alkire-foster"
+      dimtable <-
+        as.data.frame(matrix(
+          c(strsplit(as.character(formula)[[2]] , ' \\+ ')[[1]], dimw),
+          nrow = ncol(var.class),
+          ncol = 2,
+          dimnames = list(paste("dimension", 1:ncol(var.class)), c("variables", "weight"))
+        ),
+        stringsAsFactors = FALSE)
+      dimtable[, 2] <- as.numeric(dimtable[, 2])
+      attr(rval, "dimensions") <- dimtable
+      attr(rval, "parameters") <-
+        matrix(
+          c(g, k),
+          nrow = 1,
+          ncol = 2,
+          dimnames = list("parameters", c("g=", "k="))
+        )
+      
+      return(rval)
+      
+    }
+    
+    # Deprivation Matrix
+    dep.matrix <-
+      sapply(
+        seq_along(var.class),
+        FUN = function(i) {
+          1 * (cutoffs[[i]] > ach.matrix[, i])
+        }
+      )
+    colnames(dep.matrix) <- colnames(var.class)
+    
+    # Unweighted count of deprivations:
+    # depr.count <- rowSums( dep.matrix )
+    
+    # deprivation k cut
+    if (is.null(dimw)) {
+      dimw = rep(1 / ncol(dep.matrix), ncol(dep.matrix))
+    }
+    
+    # Weighted sum of deprivations:
+    depr.sums <- rowSums(sweep(dep.matrix, MARGIN = 2 , dimw, `*`))
+    
+    # k multidimensional cutoff:
+    multi.cut <- depr.sums * (depr.sums >= k)
+    rm(dep.matrix)
+    
+    # Censored Deprivation Matrix
+    cen.dep.matrix <-
+      sapply(
+        seq_along(cutoffs) ,
+        FUN = function(x) {
+          if (var.class[x] == "numeric") {
+            1 * (cutoffs[[x]] > ach.matrix[, x]) * ((cutoffs[[x]] - ach.matrix[, x]) / cutoffs[[x]]) ^
+              g
+          } else {
+            1 * (cutoffs[[x]] > ach.matrix[, x])
+          }
+        }
+      )
+    colnames(cen.dep.matrix) <- colnames(var.class)
+    cen.dep.matrix[multi.cut == 0,] <- 0
+    
+    # Sum of censored deprivations:
+    cen.depr.sums <-
+      rowSums(sweep(cen.dep.matrix, MARGIN = 2 , dimw, `*`))
+    rm(cen.dep.matrix, ach.matrix)
+    
+    
+    w <- 1 / design$prob
+    w[w > 0] <- cen.depr.sums
+    cen.depr.sums <- w
+    rm(w)
+    
+    if (g == 0) {
+      w <- 1 / design$prob
+      w[w > 0] <- (depr.sums >= k)
+      h_i <- w
+      rm(w)
+      
+      h_est <- survey::svymean(h_i, design)
+      
+      w <- 1 / design$prob
+      w[w > 0] <- multi.cut
+      multi.cut <- w
+      rm(w)
+      
+      a_est <- survey::svyratio(multi.cut, h_i, design)
+      
+      
+    }
+    
+    rval <- survey::svymean(cen.depr.sums , design)
+    names(rval)[1] <- attr(rval, "statistic") <- "alkire-foster"
+    dimtable <-
+      as.data.frame(matrix(
+        c(strsplit(as.character(formula)[[2]] , ' \\+ ')[[1]], dimw),
+        nrow = ncol(var.class),
+        ncol = 2,
+        dimnames = list(paste("dimension", 1:ncol(var.class)), c("variables", "weight"))
+      ),
+      stringsAsFactors = FALSE)
+    dimtable[, 2] <- as.numeric(dimtable[, 2])
+    attr(rval, "dimensions") <- dimtable
+    attr(rval, "parameters") <-
+      matrix(
+        c(g, k),
+        nrow = 1,
+        ncol = 2,
+        dimnames = list("parameters", c("g=", "k="))
+      )
+    if (g == 0) {
+      attr(rval, "extra") <-
+        matrix(
+          c(h_est[1], a_est[[1]], attr(h_est, "var")[1] ^ .5, a_est[[2]] ^ .5),
+          nrow = 2,
+          ncol = 2,
+          dimnames = list(c("H", "A"), c("coef", "SE"))
+        )
+    }
+    class(rval) <- c("cvystat" , "svystat")
+    
+    return(rval)
+    
+  }
+```
+
+## Alkire-Foster Class Decomposition Function Definition
+
+
+```{r results='hide', message=FALSE, warning=FALSE}
+svyafcdec <-
+  function(formula,
+           subgroup = ~ 1 ,
+           design,
+           g ,
+           cutoffs ,
+           k ,
+           dimw = NULL,
+           na.rm = FALSE,
+           ...) {
+    if (k <= 0 |
+        k > 1)
+      stop("This functions is only defined for k in (0,1].")
+    if (g < 0)
+      stop("This function is undefined for g < 0.")
+    if (!is.list(cutoffs))
+      stop("The parameter 'cutoffs' has to be a list.")
+    if (length(cutoffs) != length(all.vars(formula)))
+      stop("number of variables in formula must exactly match cutoffs")
+    if (!is.null(dimw)) {
+      if (any(is.na(dimw))) {
+        stop("Invalid value in dimension weights vector.")
+      }
+      if (sum(dimw) > 1) {
+        stop("The sum of dimension weigths have to be equal to one.")
+      }
+      if (any(dimw > 1 |
+              dimw < 0)) {
+        stop("Dim. weights have to be within interval [0,1].")
+      }
+    }
+    
+    ach.matrix <-
+      model.frame(formula, design$variables, na.action = na.pass)[, ]
+    
+    if (!is.null(dimw)) {
+      if (any(is.na(dimw))) {
+        stop("Invalid value in dimension weights vector.")
+      }
+      if (sum(dimw) > 1) {
+        stop("The sum of dimension weigths have to be equal to one.")
+      }
+      if (any(dimw > 1 |
+              dimw < 0)) {
+        stop("Dim. weights have to be within interval [0,1].")
+      }
+      if (length(dimw) != ncol(ach.matrix)) {
+        stop("Dimension weights' length differs from number of dimensions in formula")
+      }
+    }
+    
+    grpvar <-
+      model.frame(subgroup, design$variables, na.action = na.pass)[, ]
+    
+    var.class <- lapply(ach.matrix, function(x)
+      class(x)[1])
+    var.class <-
+      matrix(
+        var.class,
+        nrow = 1,
+        ncol = ncol(ach.matrix),
+        dimnames = list(c("var.class"), colnames(ach.matrix))
+      )
+    
+    if (any(!(var.class %in% c("numeric", "ordered")))) {
+      stop(
+        "This function is only applicable to variables of types 'numeric' or 'ordered factor'."
+      )
+    }
+    
+    w <- 1 / design$prob
+    
+    if (any(ach.matrix[w != 0, var.class == "numeric"] < 0, na.rm = TRUE))
+      stop(
+        "The Alkire-Foster multidimensional poverty decompostition is defined for non-negative numeric variables only."
+      )
+    
+    ach.matrix <-
+      model.frame(formula, design$variables, na.action = na.pass)[, ]
+    grpvar <-
+      model.frame(subgroup, design$variables, na.action = na.pass)[, ]
+    
+    if (class(grpvar) == "labelled") {
+      stop("This function does not support 'labelled' variables. Try factor().")
+    }
+    
+    if (na.rm) {
+      nas <-
+        apply(cbind(ach.matrix, grpvar), 1, function(x)
+          any(is.na(x)))
+      design <- design[nas == 0,]
+    }
+    
+    w <- 1 / design$prob
+    ach.matrix <-
+      model.frame(formula, design$variables, na.action = na.pass)[, ]
+    grpvar <-
+      model.frame(subgroup, design$variables, na.action = na.pass)[, ]
+    
+    # Deprivation Matrix
+    dep.matrix <-
+      sapply(
+        seq_along(var.class),
+        FUN = function(i) {
+          1 * (cutoffs[[i]] > ach.matrix[, i])
+        }
+      )
+    colnames(dep.matrix) <- colnames(var.class)
+    
+    # Unweighted count of deprivations:
+    # depr.count <- rowSums( dep.matrix )
+    
+    # deprivation k cut
+    if (is.null(dimw)) {
+      dimw = rep(1 / ncol(dep.matrix), ncol(dep.matrix))
+    }
+    
+    # Weighted sum of deprivations:
+    depr.sums <- rowSums(sweep(dep.matrix, MARGIN = 2 , dimw, `*`))
+    
+    # k multidimensional cutoff:
+    multi.cut <- depr.sums * (depr.sums >= k)
+    #rm(dep.matrix)
+    
+    # Censored Deprivation Matrix
+    cen.dep.matrix <-
+      sapply(
+        seq_along(cutoffs) ,
+        FUN = function(x) {
+          if (var.class[x] == "numeric") {
+            1 * (cutoffs[[x]] > ach.matrix[, x]) * ((cutoffs[[x]] - ach.matrix[, x]) / cutoffs[[x]]) ^
+              g
+          } else {
+            1 * (cutoffs[[x]] > ach.matrix[, x])
+          }
+        }
+      )
+    colnames(cen.dep.matrix) <- colnames(var.class)
+    
+    cen.dep.matrix[multi.cut == 0 & !is.na(multi.cut),] <- 0
+    
+    # Sum of censored deprivations:
+    cen.depr.sums <-
+      rowSums(sweep(cen.dep.matrix, MARGIN = 2 , dimw, `*`))
+    
+    if (any(is.na(cen.depr.sums)[w > 0])) {
+      # overall result:
+      overall.result <-
+        matrix(
+          c(NA, NA),
+          nrow = 1,
+          ncol = 2,
+          dimnames = list("overall", c("alkire-foster", "SE"))
+        )
+      
+      # group breakdown:
+      if (!is.null(levels(grpvar))) {
+        grp.estim <-
+          matrix(
+            rep(NA, 2 * length(levels(grpvar))),
+            nrow = length(levels(grpvar)),
+            ncol = 2,
+            dimnames = list(levels(grpvar), c("alkire-foster", "SE"))
+          )
+        grp.contr <-
+          matrix(
+            rep(NA, 2 * length(levels(grpvar))),
+            nrow = length(levels(grpvar)),
+            ncol = 2,
+            dimnames = list(levels(grpvar), c("contribution", "SE"))
+          )
+        
+      }
+      
+      # dimensional breakdown:
+      dim.raw.hc <-
+        matrix(
+          rep(NA, 2 * ncol(cen.dep.matrix)),
+          nrow = ncol(cen.dep.matrix),
+          ncol = 2,
+          dimnames = list(colnames(cen.dep.matrix), c("raw headcount", "SE"))
+        )
+      dim.cen.hc <-
+        matrix(
+          rep(NA, 2 * ncol(cen.dep.matrix)),
+          nrow = ncol(cen.dep.matrix),
+          ncol = 2,
+          dimnames = list(colnames(cen.dep.matrix), c("cens. headcount", "SE"))
+        )
+      dim.contri <-
+        matrix(
+          rep(NA, 2 * ncol(cen.dep.matrix)),
+          nrow = ncol(cen.dep.matrix),
+          ncol = 2,
+          dimnames = list(colnames(cen.dep.matrix), c("contribution", "SE"))
+        )
+      
+      # set up result object:
+      if (is.null(levels(grpvar))) {
+        rval <- list(overall.result, dim.raw.hc, dim.cen.hc, dim.contri)
+      } else {
+        rval <-
+          list(overall.result,
+               dim.raw.hc,
+               dim.cen.hc,
+               dim.contri,
+               grp.estim,
+               grp.contr)
+      }
+      
+      return(rval)
+      
+    }
+    
+    raw.hc.ratio <-
+      survey::svymean(dep.matrix[, ] , design, na.rm = TRUE)
+    attr(raw.hc.ratio, "statistic") <- "raw headcount"
+    cen.hc.ratio <-
+      survey::svymean(cen.dep.matrix[, ] , design, na.rm = TRUE)
+    attr(cen.hc.ratio, "statistic") <- "cens. headcount"
+    
+    U_0 <-
+      list(value = sum(w[w > 0]), lin = rep(1, length(w)))
+    U_1 <-
+      list(value = sum(w[w > 0] * cen.depr.sums[w > 0]), lin = cen.depr.sums)
+    
+    # overall alkire-foster index:
+    overall <- survey::svymean(cen.depr.sums, design, na.rm = TRUE)
+    names(overall)[1] <-
+      attr(overall, "statistic") <- "alkire-foster"
+    
+    # group decomposition
+    if (!is.null(levels(grpvar))) {
+      grp.pctg.estm <- NULL
+      grp.pctg.estm_var <- NULL
+      grp.pctg.cont <- NULL
+      grp.pctg.cont_lin <-
+        matrix(data = rep(w, length(levels(grpvar))), nrow = length(w))
+      for (i in seq_along(levels(grpvar))) {
+        w_i <- w * (grpvar == levels(grpvar)[i])
+        U_1_i <-
+          list(value = sum(cen.depr.sums[w_i > 0] * w_i[w_i > 0]),
+               lin = cen.depr.sums * (grpvar == levels(grpvar)[i]))
+        U_0_i <-
+          list(value = sum(w_i[w_i > 0]),
+               lin = 1 * (grpvar == levels(grpvar)[i]))
+        
+        list_all <-
+          list(
+            U_0 = U_0,
+            U_1 = U_1,
+            U_0_i = U_0_i,
+            U_1_i = U_1_i
+          )
+        
+        estimate <-
+          contrastinf(quote((U_1_i / U_0_i)), list_all)
+        grp.pctg.estm[i] <- estimate$value
+        estimate$lin[is.na(estimate$lin)] <- 0
+        grp.pctg.estm_var[i] <-
+          survey::svyrecvar(
+            estimate$lin * w_i,
+            design$cluster,
+            design$strata,
+            design$fpc,
+            postStrata = design$postStrata
+          )
+        
+        estimate <-
+          contrastinf(quote((U_0_i / U_0) * (U_1_i / U_0_i) / (U_1 / U_0)), list_all)
+        grp.pctg.cont[i] <- estimate$value
+        estimate$lin[is.na(estimate$lin)] <- 0
+        grp.pctg.cont_lin[, i] <- estimate$lin
+        
+      }
+      
+      grp.pctg.cont_var <-
+        survey::svyrecvar(
+          grp.pctg.cont_lin * w,
+          design$cluster,
+          design$strata,
+          design$fpc,
+          postStrata = design$postStrata
+        )
+      
+      grp.contr.estimate <-
+        matrix(grp.pctg.estm,
+               ncol = 1,
+               dimnames = list(levels(grpvar), "alkire-foster"))
+      attr(grp.contr.estimate, "names") <- levels(grpvar)
+      attr(grp.contr.estimate, "var") <- grp.pctg.estm_var
+      attr(grp.contr.estimate, "statistic") <- "alkire-foster"
+      class(grp.contr.estimate) <- c("svystat")
+      
+      grp.contr.pct <-
+        matrix(
+          grp.pctg.cont,
+          ncol = 1,
+          dimnames = list(levels(grpvar), "grp. % contribution")
+        )
+      attr(grp.contr.pct, "names") <- levels(grpvar)
+      attr(grp.contr.pct, "var") <- grp.pctg.cont_var
+      attr(grp.contr.pct, "statistic") <- "grp. % contribution"
+      class(grp.contr.pct) <- c("svystat")
+      
+      rm(
+        grp.pctg.estm,
+        grp.pctg.estm_var,
+        grp.pctg.cont,
+        grp.pctg.cont_lin,
+        grp.pctg.cont_var
+      )
+      
+    }
+    
+    # dimensional decomposition:
+    dim.contr <- NULL
+    dim.contr_lin <-
+      matrix(data = rep(w, ncol(cen.dep.matrix)), nrow = length(w))
+    for (i in 1:ncol(cen.dep.matrix)) {
+      wj <-
+        list(value = dimw[i], lin = rep(0, length(cen.depr.sums)))
+      
+      H_0 <-
+        list(value = sum(cen.dep.matrix[w > 0 , i] * w[w > 0]),
+             lin = cen.dep.matrix[, i] * (w > 0))
+      list_all <- list(
+        U_0 = U_0,
+        U_1 = U_1,
+        H_0 = H_0,
+        wj = wj
+      )
+      estimate <-
+        contrastinf(quote(wj * (H_0 / U_0) / (U_1 / U_0)), list_all)
+      
+      dim.contr[i] <- estimate$value
+      estimate$lin[is.na(estimate$lin)] <- 0
+      dim.contr_lin[, i] <- estimate$lin
+      
+    }
+    
+    dim.contr_var <-
+      survey::svyrecvar(
+        dim.contr_lin * w,
+        design$cluster,
+        design$strata,
+        design$fpc,
+        postStrata = design$postStrata
+      )
+    
+    dim.result <- dim.contr
+    attr(dim.result, "names") <- colnames(ach.matrix)
+    attr(dim.result, "var") <- dim.contr_var
+    attr(dim.result, "statistic") <- "dim. % contribution"
+    class(dim.result) <- c("svystat")
+    
+    rm(dim.contr, dim.contr_lin, dim.contr_var)
+    
+    # set up result object:
+    if (is.null(levels(grpvar))) {
+      rval <- list(overall, raw.hc.ratio, cen.hc.ratio, dim.result)
+      names(rval) <-
+        list(
+          "overall",
+          "raw headcount ratio",
+          "censored headcount ratio",
+          "percentual contribution per dimension"
+        )
+      
+    } else {
+      rval <-
+        list(
+          overall,
+          raw.hc.ratio,
+          cen.hc.ratio,
+          dim.result,
+          grp.contr.estimate,
+          grp.contr.pct
+        )
+      names(rval) <-
+        list(
+          "overall",
+          "raw headcount ratio",
+          "censored headcount ratio",
+          "percentual contribution per dimension",
+          "subgroup alkire-foster estimates",
+          "percentual contribution per subgroup"
+        )
+      
+    }
+    
+    return(rval)
+    
+  }
+```
+
+## Replication Example
+
+The R code below replicates multiple statistics and standard errors from [the presentation by OPHI Research Officer Christop Jindra](https://www.ophi.org.uk/wp-content/uploads/Jindra_151109_OPHISeminar.pdf):
+
+
+```{r}
+library(survey)
+library(convey)
+library(webuse)
+
+
+# load the same microdata set used by Jindra in his presentation
+webuse("nlsw88")
+
+# coerce that `tbl_df` to a standard R `data.frame`
+nlsw88 <- data.frame(nlsw88)
+
+# create a `collgrad` column
+nlsw88$collgrad <-
+  factor(
+    as.numeric(nlsw88$collgrad) ,
+    label = c('not college grad' , 'college grad') ,
+    ordered = TRUE
+  )
+
+# initiate a linearized survey design object
+des_nlsw88 <- svydesign(ids = ~ 1 , data = nlsw88)
+
+# immediately run the `convey_prep` function on the survey design
+des_nlsw88 <- convey_prep(des_nlsw88)
+
+# PDF page 9
+result <-
+  svyafc(
+    ~ wage + collgrad + hours,
+    design = des_nlsw88,
+    cutoffs = list(4, 'college grad' , 26),
+    k = 1 / 3,
+    g = 0,
+    na.rm = T
+  )
+
+result
+
+attr(result, 'extra')
+
+
+# PDF page 10
+for (ks in seq(0.1, 1, .1)) {
+  result <-
+    svyafc(
+      ~ wage + collgrad + hours,
+      design = des_nlsw88,
+      cutoffs = list(4, 'college grad' , 26),
+      k = ks ,
+      g = 0,
+      na.rm = T
+    )
+  
+  print(result)
+  
+  print(attr(result , 'extra'))
+  
+}
+
+# PDF page 13
+for (ks in c(0.5 , 0.75 , 1)) {
+  result <-
+    svyafc(
+      ~ wage + collgrad + hours ,
+      design = des_nlsw88 ,
+      cutoffs = list(4, 'college grad' , 26) ,
+      k = ks ,
+      g = 0 ,
+      dimw = c(0.5 , 0.25 , 0.25) ,
+      na.rm = TRUE
+    )
+  
+  print(result)
+  
+  print(attr(result, 'extra'))
+  
+}
+
+# PDF page 17
+result <-
+  svyafc(
+    ~ wage + collgrad + hours,
+    design = des_nlsw88,
+    cutoffs = list(4, 'college grad' , 26),
+    k = 1 / 3,
+    g = 0,
+    na.rm = T
+  )
+
+result
+
+attr(result, "extra")
+
+svyafcdec(
+  ~ wage + collgrad + hours,
+  by = ~ 1,
+  design = des_nlsw88,
+  cutoffs = list(4, 'college grad' , 26),
+  k = 1 / 3,
+  g = 0,
+  na.rm = T
+)[2]
+
+# PDF page 19
+
+# Censored headcount ratios
+for (ks in seq(1 / 3, 1, 1 / 3)) {
+  print (
+    svyafcdec(
+      ~ wage + collgrad + hours,
+      by = ~ 1,
+      design = des_nlsw88,
+      cutoffs = list(4, 'college grad' , 26),
+      k = ks,
+      g = 0,
+      na.rm = T
+    )[3]
+  )
+  
+}
+# Percentage contribution by dimensions
+for (ks in seq(1 / 3, 1, 1 / 3)) {
+  print (
+    svyafcdec(
+      ~ wage + collgrad + hours,
+      by = ~ 1,
+      design = des_nlsw88,
+      cutoffs = list(4, 'college grad' , 26),
+      k = ks,
+      g = 0,
+      na.rm = T
+    )[4]
+  )
+  
+}
+
+# PDF page 22
+for (ks in seq(1 / 3, 1, 1 / 3)) {
+  print(
+    svyafcdec(
+      ~ wage + collgrad + hours,
+      subgroup = ~ factor(married),
+      design = des_nlsw88,
+      cutoffs = list(4, 'college grad' , 26),
+      k = ks ,
+      g = 0,
+      dimw = NULL,
+      na.rm = T
+    )[6]
+  )
+  
+}
+```
+
