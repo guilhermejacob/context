@@ -13,7 +13,7 @@
 
 <meta name="author" content="By Guilherme Jacob, Anthony Damico, and Djalma Pessoa. The authors received no external funding for the convey software and this accompanying textbook." />
 
-<meta name="date" content="2023-12-19" />
+<meta name="date" content="2023-12-20" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -330,33 +330,43 @@ div.csl-indent {
 <span id="cb1116-2"><a href="7.1-example-calculation.html#cb1116-2" tabindex="-1"></a><span class="fu">svycontrast</span>( ginis.rep , <span class="fu">quote</span>( <span class="st">`</span><span class="at">male</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">female</span><span class="st">`</span> ) )</span></code></pre></div>
 <pre><code>##             nlcon     SE
 ## contrast -0.15006 0.0068</code></pre>
+<p>Notice that the warning <code>Only diagonal elements of vcov() available</code> means that
+the covariance terms are null for the <code>vcov( ginis.rep.nocov )</code> result.</p>
 <p>While not implemented yet, a linearization-based approach can be applied using:</p>
 <div class="sourceCode" id="cb1118"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1118-1"><a href="7.1-example-calculation.html#cb1118-1" tabindex="-1"></a><span class="co"># estimate gini by gender, with and without covariance matrices</span></span>
 <span id="cb1118-2"><a href="7.1-example-calculation.html#cb1118-2" tabindex="-1"></a>ginis.lin.nocov <span class="ot">&lt;-</span> <span class="fu">svyby</span>( <span class="sc">~</span> py010n , <span class="sc">~</span>rb090 , des_eusilc , svygini , <span class="at">na.rm =</span> <span class="cn">TRUE</span> , <span class="at">covmat =</span> <span class="cn">FALSE</span> )</span>
 <span id="cb1118-3"><a href="7.1-example-calculation.html#cb1118-3" tabindex="-1"></a>gini.female <span class="ot">&lt;-</span> <span class="fu">svygini</span>( <span class="sc">~</span> py010n , <span class="fu">subset</span>( des_eusilc , rb090 <span class="sc">==</span> <span class="st">&quot;female&quot;</span> ), <span class="at">na.rm =</span> <span class="cn">TRUE</span> , <span class="at">influence =</span> <span class="cn">TRUE</span> )</span>
 <span id="cb1118-4"><a href="7.1-example-calculation.html#cb1118-4" tabindex="-1"></a>gini.male   <span class="ot">&lt;-</span> <span class="fu">svygini</span>( <span class="sc">~</span> py010n , <span class="fu">subset</span>( des_eusilc , rb090 <span class="sc">==</span> <span class="st">&quot;male&quot;</span> ), <span class="at">na.rm =</span> <span class="cn">TRUE</span> , <span class="at">influence =</span> <span class="cn">TRUE</span> )</span>
 <span id="cb1118-5"><a href="7.1-example-calculation.html#cb1118-5" tabindex="-1"></a></span>
-<span id="cb1118-6"><a href="7.1-example-calculation.html#cb1118-6" tabindex="-1"></a><span class="co"># variance of the gini difference: naive</span></span>
+<span id="cb1118-6"><a href="7.1-example-calculation.html#cb1118-6" tabindex="-1"></a><span class="co"># estimate full variance-covariance matrix</span></span>
 <span id="cb1118-7"><a href="7.1-example-calculation.html#cb1118-7" tabindex="-1"></a>linmat <span class="ot">&lt;-</span> <span class="fu">rep</span>( <span class="dv">0</span> , <span class="fu">nrow</span>( des_eusilc<span class="sc">$</span>variables ) )</span>
 <span id="cb1118-8"><a href="7.1-example-calculation.html#cb1118-8" tabindex="-1"></a>linmat[ <span class="fu">attr</span>( gini.female , <span class="st">&quot;index&quot;</span> ) ] <span class="ot">&lt;-</span> <span class="fu">attr</span>( gini.female , <span class="st">&quot;influence&quot;</span> )</span>
 <span id="cb1118-9"><a href="7.1-example-calculation.html#cb1118-9" tabindex="-1"></a>linmat[ <span class="fu">attr</span>( gini.male , <span class="st">&quot;index&quot;</span> ) ] <span class="ot">&lt;-</span> <span class="fu">attr</span>( gini.male , <span class="st">&quot;influence&quot;</span> )</span>
 <span id="cb1118-10"><a href="7.1-example-calculation.html#cb1118-10" tabindex="-1"></a>linmat <span class="ot">&lt;-</span> linmat <span class="sc">*</span> des_eusilc<span class="sc">$</span>prob</span>
 <span id="cb1118-11"><a href="7.1-example-calculation.html#cb1118-11" tabindex="-1"></a>lintot <span class="ot">&lt;-</span> <span class="fu">svyby</span>( linmat , <span class="sc">~</span>rb090 , des_eusilc , svytotal , <span class="at">covmat =</span> <span class="cn">TRUE</span> )</span>
 <span id="cb1118-12"><a href="7.1-example-calculation.html#cb1118-12" tabindex="-1"></a></span>
-<span id="cb1118-13"><a href="7.1-example-calculation.html#cb1118-13" tabindex="-1"></a><span class="co"># collect covariance matrix</span></span>
-<span id="cb1118-14"><a href="7.1-example-calculation.html#cb1118-14" tabindex="-1"></a>( m <span class="ot">&lt;-</span> <span class="fu">vcov</span>( lintot ) )</span></code></pre></div>
+<span id="cb1118-13"><a href="7.1-example-calculation.html#cb1118-13" tabindex="-1"></a><span class="co"># compare the variance-covariance matrices</span></span>
+<span id="cb1118-14"><a href="7.1-example-calculation.html#cb1118-14" tabindex="-1"></a><span class="fu">vcov</span>( ginis.lin.nocov ) <span class="co"># naive, with null covariance terms</span></span></code></pre></div>
+<pre><code>## Warning in vcov.svyby(ginis.lin.nocov): Only diagonal elements of vcov()
+## available</code></pre>
+<pre><code>##                male       female
+## male   2.954413e-05 0.000000e+00
+## female 0.000000e+00 2.292063e-05</code></pre>
+<div class="sourceCode" id="cb1121"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1121-1"><a href="7.1-example-calculation.html#cb1121-1" tabindex="-1"></a><span class="fu">vcov</span>( lintot ) <span class="co"># full, with non-null covariance terms</span></span></code></pre></div>
 <pre><code>##                male       female
 ## male   2.954413e-05 2.764584e-10
 ## female 2.764584e-10 2.292063e-05</code></pre>
-<div class="sourceCode" id="cb1120"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1120-1"><a href="7.1-example-calculation.html#cb1120-1" tabindex="-1"></a><span class="co"># SE of the gini difference: naive</span></span>
-<span id="cb1120-2"><a href="7.1-example-calculation.html#cb1120-2" tabindex="-1"></a><span class="fu">SE</span>( <span class="fu">svycontrast</span>( ginis.lin.nocov , <span class="fu">quote</span>( <span class="st">`</span><span class="at">male</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">female</span><span class="st">`</span> ) ) )</span></code></pre></div>
+<div class="sourceCode" id="cb1123"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1123-1"><a href="7.1-example-calculation.html#cb1123-1" tabindex="-1"></a><span class="co"># SE of the gini difference: naive</span></span>
+<span id="cb1123-2"><a href="7.1-example-calculation.html#cb1123-2" tabindex="-1"></a><span class="fu">SE</span>( <span class="fu">svycontrast</span>( ginis.lin.nocov , <span class="fu">quote</span>( <span class="st">`</span><span class="at">male</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">female</span><span class="st">`</span> ) ) )</span></code></pre></div>
 <pre><code>## Warning in vcov.svyby(stat): Only diagonal elements of vcov() available</code></pre>
 <pre><code>##    contrast 
 ## 0.007243256</code></pre>
-<div class="sourceCode" id="cb1123"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1123-1"><a href="7.1-example-calculation.html#cb1123-1" tabindex="-1"></a><span class="co"># SE of the gini difference: accounting for covariance</span></span>
-<span id="cb1123-2"><a href="7.1-example-calculation.html#cb1123-2" tabindex="-1"></a><span class="fu">SE</span>( <span class="fu">svycontrast</span>( lintot , <span class="fu">quote</span>( <span class="st">`</span><span class="at">male</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">female</span><span class="st">`</span> ) ) )</span></code></pre></div>
+<div class="sourceCode" id="cb1126"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1126-1"><a href="7.1-example-calculation.html#cb1126-1" tabindex="-1"></a><span class="co"># SE of the gini difference: accounting for covariance</span></span>
+<span id="cb1126-2"><a href="7.1-example-calculation.html#cb1126-2" tabindex="-1"></a><span class="fu">SE</span>( <span class="fu">svycontrast</span>( lintot , <span class="fu">quote</span>( <span class="st">`</span><span class="at">male</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">female</span><span class="st">`</span> ) ) )</span></code></pre></div>
 <pre><code>##    contrast 
 ## 0.007243218</code></pre>
+<p>Notice that the warning <code>Only diagonal elements of vcov() available</code> means that
+the covariance terms are null for the <code>vcov( ginis.lin.nocov )</code> result.</p>
 
 </div>
 <!-- </div> -->
