@@ -194,7 +194,7 @@ tf <- tempfile()
 this_url <-
   "https://www2.census.gov/programs-surveys/cps/datasets/2023/march/asecpub23sas.zip"
 
-GET(this_url , write_disk(tf))
+GET(this_url , write_disk(tf), progress())
 
 unzipped_files <- unzip(tf , exdir = tempdir())
 ```
@@ -616,6 +616,33 @@ stopifnot(round(
 ) == 0.0033) 
 ```
 
+Calculate matching Theil and Atkinson measures:
+```{r}
+cps_household_design <-
+  update(cps_household_design , htotval_ones = ifelse(htotval < 0 , NA , htotval))
+cps_household_design <-
+  update(cps_household_design ,
+         htotval_ones = ifelse(htotval_ones < 1 , 1 , htotval_ones))
+
+(cps_household_theil <-
+    svygei(~ htotval_ones , cps_household_design , na.rm = TRUE))
+(
+  cps_household_atkinson <-
+    svyatk(
+      ~ htotval_ones ,
+      cps_household_design ,
+      epsilon = 0.5 ,
+      na.rm = TRUE
+    )
+)
+
+# https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-income-households/h04.xlsx
+stopifnot(round(coef(cps_household_theil) , 3) == 0.440)
+stopifnot(round(coef(cps_household_atkinson), 3) == 0.207)
+```
+
+
+
 ### Family Income
 
 Limit the CPS-ASEC person-level design to the family reference person of primary families, then calculate the Gini coefficient with total family income:
@@ -630,6 +657,9 @@ cps_family_design <-
 # https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-income-families/f04.xlsx
 stopifnot(round(coef(cps_family_gini) , 3) == 0.458)
 ```
+
+
+
 
 ### Worker Earnings
 
