@@ -7,7 +7,7 @@ output:
 
 # Covariance Matrix
 
-The current `convey` software does not account for the covariance.  The example below describes this calculation and presents what is, in most cases, a limited impact on the final error terms.  We acknowledge that, under ideal circumstances, the covariance would be properly accounted for in the software.  Modifying our software to account for the covariance remains a future goal.
+The current `convey` software does not account for the covariance across `svyby` groups.  The example below describes this calculation and presents what is, in this case, a limited impact on the final error terms.  We acknowledge that, under ideal circumstances, the covariance would be properly accounted for in the software.  Modifying our software to account for the covariance remains a future goal.
 
 Influence functions and "resampling" replicates can be used to improve the inference 
 about differences and changes between estimates. Put simply, the variance of the difference between 
@@ -121,15 +121,16 @@ ginis.lin.nocov <- svyby( ~ py010n , ~rb090 , des_eusilc , svygini , na.rm = TRU
 gini.female <- svygini( ~ py010n , subset( des_eusilc , rb090 == "female" ), na.rm = TRUE , influence = TRUE )
 gini.male   <- svygini( ~ py010n , subset( des_eusilc , rb090 == "male" ), na.rm = TRUE , influence = TRUE )
 
-# variance of the gini difference: naive
+# estimate full variance-covariance matrix
 linmat <- rep( 0 , nrow( des_eusilc$variables ) )
 linmat[ attr( gini.female , "index" ) ] <- attr( gini.female , "influence" )
 linmat[ attr( gini.male , "index" ) ] <- attr( gini.male , "influence" )
 linmat <- linmat * des_eusilc$prob
 lintot <- svyby( linmat , ~rb090 , des_eusilc , svytotal , covmat = TRUE )
 
-# collect covariance matrix
-( m <- vcov( lintot ) )
+# compare the variance-covariance matrices
+vcov( ginis.lin.nocov ) # naive, with null covariance terms
+vcov( lintot ) # full, with non-null covariance terms
 
 # SE of the gini difference: naive
 SE( svycontrast( ginis.lin.nocov , quote( `male` - `female` ) ) )
@@ -137,3 +138,6 @@ SE( svycontrast( ginis.lin.nocov , quote( `male` - `female` ) ) )
 # SE of the gini difference: accounting for covariance
 SE( svycontrast( lintot , quote( `male` - `female` ) ) )
 ```
+
+Notice that the warning `Only diagonal elements of vcov() available` means that
+the covariance terms are null for the `vcov( ginis.lin.nocov )` result.
