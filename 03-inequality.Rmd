@@ -536,6 +536,36 @@ scf_MIcombine(with(scf_design , svyqsr( ~ networth)))
 scf_MIcombine(with(scf_design , svyby( ~ networth, ~ hhsex , svyqsr)))
 ```
 
+Note the highly skewed nature of a variable like net worth, wealth, and assets (as opposed to income and earnings) can make the quintile share ratio result appear to be quite different compared to the other real world examples shown in this section.
+
+First, this function generates a negative result because the sum of net worth of the bottom 20% of households is negative.  In other words, the poorest 20% of households have more debt than assets in aggregate:
+
+```{r}
+networth_p20 <-
+  scf_MIcombine(with(scf_design, svyquantile( ~ networth, 0.2)))
+scf_MIcombine(with(subset(scf_design , networth < coef(networth_p20)) , svytotal(~ networth)))
+```
+
+Second, the heavy skew of assets (compared to income or earnings) in the country leads to a quintile share ratio value much higher than the same calculation on an income variable.  Compared to the other `svyqsr` results in this section, the concentration of so much net worth among the richest 20% of the population produces the extreme `svyqsr` result:
+
+```{r}
+# top 20% cutoff
+networth_p80 <-
+  scf_MIcombine(with(scf_design, svyquantile( ~ networth, 0.8)))
+
+# sum total of net worth above the cutoff
+sum_above_p80 <-
+  scf_MIcombine(with(subset(scf_design , networth > coef(networth_p80)) , svytotal(~ networth)))
+
+# sum total of net worth for the entire population
+sum_total <-
+  scf_MIcombine(with(scf_design , svytotal(~ networth)))
+
+# share of total net worth held by richest 20%
+coef(sum_above_p80) / coef(sum_total)
+```
+
+
 #### SCF Family Income
 
 ```{r}
