@@ -541,19 +541,21 @@ Note the highly skewed nature of a variable like net worth, wealth, and assets (
 First, this function generates a negative result because the sum of net worth of the bottom 20% of households is negative.  We can use the Lorenz curve to get the cumulative shares of income held by the poorest $p$% of the population. In other words, the poorest 20% of households have more debt than assets in aggregate:
 
 ```{r}
-networth.shares <- 
-  scf_MIcombine(with(scf_design , svylorenz(~ networth, plot = FALSE , quantiles = seq(0,1,.2))))
-coef( networth.shares )[2] # share owned by the bottom 20%
+networth_shares <-
+  scf_MIcombine(with(scf_design , svylorenz(
+    ~ networth, plot = FALSE , quantiles = seq(0, 1, .2)
+  )))
+coef(networth_shares)[2] # share owned by the bottom 20%
 ```
 
 Second, the heavy skew of assets (compared to income or earnings) in the country leads to a quintile share ratio value much higher than the same calculation on an income variable.  Compared to the other `svyqsr` results in this section, the concentration of so much net worth among the richest 20% of the population produces the extreme `svyqsr` result:
 
 ```{r}
 # share owned by the richest 20%:
-1 - coef( networth.shares )[5] # 1 minus the share owned by the bottom 80%
+1 - coef(networth_shares)[5] # 1 minus the share owned by the bottom 80%
 
 # approximate qsr
-( 1 - coef( networth.shares )[[5]] ) / coef( networth.shares )[[2]]
+(1 - coef(networth_shares)[[5]]) / coef(networth_shares)[[2]]
 ```
 
 
