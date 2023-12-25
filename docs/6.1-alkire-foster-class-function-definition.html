@@ -13,7 +13,7 @@
 
 <meta name="author" content="By Guilherme Jacob, Anthony Damico, and Djalma Pessoa. The authors received no external funding for the convey software and this accompanying textbook." />
 
-<meta name="date" content="2023-12-20" />
+<meta name="date" content="2023-12-25" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -284,216 +284,216 @@ div.csl-indent {
 <div class="col-sm-12">
 <div id="alkire-foster-class-function-definition" class="section level2" number="6.1">
 <h2><span class="header-section-number">6.1</span> Alkire-Foster Class Function Definition</h2>
-<div class="sourceCode" id="cb1081"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1081-1"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-1" tabindex="-1"></a>svyafc <span class="ot">&lt;-</span></span>
-<span id="cb1081-2"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-2" tabindex="-1"></a>  <span class="cf">function</span>(formula,</span>
-<span id="cb1081-3"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-3" tabindex="-1"></a>           design,</span>
-<span id="cb1081-4"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-4" tabindex="-1"></a>           k ,</span>
-<span id="cb1081-5"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-5" tabindex="-1"></a>           g ,</span>
-<span id="cb1081-6"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-6" tabindex="-1"></a>           cutoffs ,</span>
-<span id="cb1081-7"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-7" tabindex="-1"></a>           <span class="at">dimw =</span> <span class="cn">NULL</span>,</span>
-<span id="cb1081-8"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-8" tabindex="-1"></a>           <span class="at">na.rm =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb1081-9"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-9" tabindex="-1"></a>           ...) {</span>
-<span id="cb1081-10"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-10" tabindex="-1"></a>    <span class="cf">if</span> (k <span class="sc">&lt;=</span> <span class="dv">0</span> <span class="sc">|</span></span>
-<span id="cb1081-11"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-11" tabindex="-1"></a>        k <span class="sc">&gt;</span> <span class="dv">1</span>)</span>
-<span id="cb1081-12"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-12" tabindex="-1"></a>      <span class="fu">stop</span>(<span class="st">&quot;This functions is only defined for k in (0,1].&quot;</span>)</span>
-<span id="cb1081-13"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-13" tabindex="-1"></a>    <span class="cf">if</span> (g <span class="sc">&lt;</span> <span class="dv">0</span>)</span>
-<span id="cb1081-14"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-14" tabindex="-1"></a>      <span class="fu">stop</span>(<span class="st">&quot;This function is undefined for g &lt; 0.&quot;</span>)</span>
-<span id="cb1081-15"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-15" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.list</span>(cutoffs))</span>
-<span id="cb1081-16"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-16" tabindex="-1"></a>      <span class="fu">stop</span>(<span class="st">&quot;The parameter &#39;cutoffs&#39; has to be a list.&quot;</span>)</span>
-<span id="cb1081-17"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-17" tabindex="-1"></a>    </span>
-<span id="cb1081-18"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-18" tabindex="-1"></a>    ach.matrix <span class="ot">&lt;-</span></span>
-<span id="cb1081-19"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-19" tabindex="-1"></a>      <span class="fu">model.frame</span>(formula, design<span class="sc">$</span>variables, <span class="at">na.action =</span> na.pass)[, ]</span>
-<span id="cb1081-20"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-20" tabindex="-1"></a>    </span>
-<span id="cb1081-21"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-21" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(dimw)) {</span>
-<span id="cb1081-22"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-22" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">is.na</span>(dimw))) {</span>
-<span id="cb1081-23"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-23" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">&quot;Invalid value in dimension weights vector.&quot;</span>)</span>
-<span id="cb1081-24"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-24" tabindex="-1"></a>      }</span>
-<span id="cb1081-25"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-25" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">sum</span>(dimw) <span class="sc">&gt;</span> <span class="dv">1</span>) {</span>
-<span id="cb1081-26"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-26" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">&quot;The sum of dimension weigths have to be equal to one.&quot;</span>)</span>
-<span id="cb1081-27"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-27" tabindex="-1"></a>      }</span>
-<span id="cb1081-28"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-28" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">any</span>(dimw <span class="sc">&gt;</span> <span class="dv">1</span> <span class="sc">|</span></span>
-<span id="cb1081-29"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-29" tabindex="-1"></a>              dimw <span class="sc">&lt;</span> <span class="dv">0</span>)) {</span>
-<span id="cb1081-30"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-30" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">&quot;Dim. weights have to be within interval [0,1].&quot;</span>)</span>
-<span id="cb1081-31"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-31" tabindex="-1"></a>      }</span>
-<span id="cb1081-32"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-32" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">length</span>(dimw) <span class="sc">!=</span> <span class="fu">ncol</span>(ach.matrix)) {</span>
-<span id="cb1081-33"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-33" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">&quot;Dimension weights&#39; length differs from number of dimensions in formula&quot;</span>)</span>
-<span id="cb1081-34"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-34" tabindex="-1"></a>      }</span>
-<span id="cb1081-35"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-35" tabindex="-1"></a>    }</span>
-<span id="cb1081-36"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-36" tabindex="-1"></a>    </span>
-<span id="cb1081-37"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-37" tabindex="-1"></a>    var.class <span class="ot">&lt;-</span> <span class="fu">lapply</span>(ach.matrix, <span class="cf">function</span>(x)</span>
-<span id="cb1081-38"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-38" tabindex="-1"></a>      <span class="fu">class</span>(x)[<span class="dv">1</span>])</span>
-<span id="cb1081-39"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-39" tabindex="-1"></a>    var.class <span class="ot">&lt;-</span> <span class="fu">matrix</span>(</span>
-<span id="cb1081-40"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-40" tabindex="-1"></a>      var.class,</span>
-<span id="cb1081-41"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-41" tabindex="-1"></a>      <span class="at">nrow =</span> <span class="dv">1</span>,</span>
-<span id="cb1081-42"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-42" tabindex="-1"></a>      <span class="at">ncol =</span> <span class="fu">ncol</span>(ach.matrix),</span>
-<span id="cb1081-43"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-43" tabindex="-1"></a>      <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;var.class&quot;</span>), <span class="fu">colnames</span>(ach.matrix))</span>
-<span id="cb1081-44"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-44" tabindex="-1"></a>    )</span>
-<span id="cb1081-45"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-45" tabindex="-1"></a>    </span>
-<span id="cb1081-46"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-46" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">any</span>(<span class="sc">!</span>(var.class <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;numeric&quot;</span>, <span class="st">&quot;integer&quot;</span>, <span class="st">&quot;ordered&quot;</span>)))) {</span>
-<span id="cb1081-47"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-47" tabindex="-1"></a>      <span class="fu">stop</span>(</span>
-<span id="cb1081-48"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-48" tabindex="-1"></a>        <span class="st">&quot;This function is only applicable to variables of types &#39;numeric&#39; or &#39;ordered factor&#39;.&quot;</span></span>
-<span id="cb1081-49"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-49" tabindex="-1"></a>      )</span>
-<span id="cb1081-50"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-50" tabindex="-1"></a>    }</span>
-<span id="cb1081-51"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-51" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">any</span>((var.class <span class="sc">==</span> <span class="st">&quot;integer&quot;</span>))) {</span>
-<span id="cb1081-52"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-52" tabindex="-1"></a>      <span class="fu">stop</span>(</span>
-<span id="cb1081-53"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-53" tabindex="-1"></a>        <span class="st">&quot;At least one of the variables is an integer.</span><span class="sc">\n</span><span class="st">Coerce your column to numeric with as.numeric if you are sure it&#39;s what you want.&quot;</span></span>
-<span id="cb1081-54"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-54" tabindex="-1"></a>      )</span>
-<span id="cb1081-55"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-55" tabindex="-1"></a>    }</span>
-<span id="cb1081-56"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-56" tabindex="-1"></a>    </span>
-<span id="cb1081-57"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-57" tabindex="-1"></a>    w <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> design<span class="sc">$</span>prob</span>
-<span id="cb1081-58"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-58" tabindex="-1"></a>    </span>
-<span id="cb1081-59"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-59" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">any</span>(ach.matrix[w <span class="sc">!=</span> <span class="dv">0</span>, var.class <span class="sc">==</span> <span class="st">&quot;numeric&quot;</span>] <span class="sc">&lt;</span> <span class="dv">0</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb1081-60"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-60" tabindex="-1"></a>      <span class="fu">stop</span>(</span>
-<span id="cb1081-61"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-61" tabindex="-1"></a>        <span class="st">&quot;The Alkire-Foster multidimensional poverty class is defined for non-negative numeric variables only.&quot;</span></span>
-<span id="cb1081-62"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-62" tabindex="-1"></a>      )</span>
-<span id="cb1081-63"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-63" tabindex="-1"></a>    </span>
-<span id="cb1081-64"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-64" tabindex="-1"></a>    <span class="cf">if</span> (na.rm) {</span>
-<span id="cb1081-65"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-65" tabindex="-1"></a>      nas <span class="ot">&lt;-</span> <span class="fu">apply</span>(ach.matrix, <span class="dv">1</span>, <span class="cf">function</span>(x)</span>
-<span id="cb1081-66"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-66" tabindex="-1"></a>        <span class="fu">any</span>(<span class="fu">is.na</span>(x)))</span>
-<span id="cb1081-67"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-67" tabindex="-1"></a>      design <span class="ot">&lt;-</span> design[nas <span class="sc">==</span> <span class="dv">0</span>,]</span>
-<span id="cb1081-68"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-68" tabindex="-1"></a>      w <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> design<span class="sc">$</span>prob</span>
-<span id="cb1081-69"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-69" tabindex="-1"></a>    }</span>
-<span id="cb1081-70"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-70" tabindex="-1"></a>    </span>
-<span id="cb1081-71"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-71" tabindex="-1"></a>    ach.matrix <span class="ot">&lt;-</span></span>
-<span id="cb1081-72"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-72" tabindex="-1"></a>      <span class="fu">model.frame</span>(formula, design<span class="sc">$</span>variables, <span class="at">na.action =</span> na.pass)[, ]</span>
-<span id="cb1081-73"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-73" tabindex="-1"></a>    ach.matrix <span class="ot">&lt;-</span> ach.matrix [w <span class="sc">&gt;</span> <span class="dv">0</span>,]</span>
-<span id="cb1081-74"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-74" tabindex="-1"></a>    w <span class="ot">&lt;-</span> w [w <span class="sc">&gt;</span> <span class="dv">0</span>]</span>
-<span id="cb1081-75"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-75" tabindex="-1"></a>    </span>
-<span id="cb1081-76"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-76" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">is.na</span>(ach.matrix))) {</span>
-<span id="cb1081-77"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-77" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">is.null</span>(dimw)) {</span>
-<span id="cb1081-78"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-78" tabindex="-1"></a>        dimw <span class="ot">=</span> <span class="fu">rep</span>(<span class="dv">1</span> <span class="sc">/</span> <span class="fu">ncol</span>(var.class), <span class="fu">length</span>(var.class))</span>
-<span id="cb1081-79"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-79" tabindex="-1"></a>      }</span>
-<span id="cb1081-80"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-80" tabindex="-1"></a>      </span>
-<span id="cb1081-81"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-81" tabindex="-1"></a>      rval <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="cn">NA</span>)</span>
-<span id="cb1081-82"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-82" tabindex="-1"></a>      variance <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="cn">NA</span>)</span>
-<span id="cb1081-83"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-83" tabindex="-1"></a>      <span class="fu">class</span>(rval) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;cvystat&quot;</span> , <span class="st">&quot;svystat&quot;</span>)</span>
-<span id="cb1081-84"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-84" tabindex="-1"></a>      <span class="fu">attr</span>(rval, <span class="st">&quot;var&quot;</span>) <span class="ot">&lt;-</span> variance</span>
-<span id="cb1081-85"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-85" tabindex="-1"></a>      <span class="fu">names</span>(rval)[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">attr</span>(rval, <span class="st">&quot;statistic&quot;</span>) <span class="ot">&lt;-</span> <span class="st">&quot;alkire-foster&quot;</span></span>
-<span id="cb1081-86"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-86" tabindex="-1"></a>      dimtable <span class="ot">&lt;-</span></span>
-<span id="cb1081-87"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-87" tabindex="-1"></a>        <span class="fu">as.data.frame</span>(<span class="fu">matrix</span>(</span>
-<span id="cb1081-88"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-88" tabindex="-1"></a>          <span class="fu">c</span>(<span class="fu">strsplit</span>(<span class="fu">as.character</span>(formula)[[<span class="dv">2</span>]] , <span class="st">&#39; </span><span class="sc">\\</span><span class="st">+ &#39;</span>)[[<span class="dv">1</span>]], dimw),</span>
-<span id="cb1081-89"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-89" tabindex="-1"></a>          <span class="at">nrow =</span> <span class="fu">ncol</span>(var.class),</span>
-<span id="cb1081-90"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-90" tabindex="-1"></a>          <span class="at">ncol =</span> <span class="dv">2</span>,</span>
-<span id="cb1081-91"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-91" tabindex="-1"></a>          <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">paste</span>(<span class="st">&quot;dimension&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(var.class)), <span class="fu">c</span>(<span class="st">&quot;variables&quot;</span>, <span class="st">&quot;weight&quot;</span>))</span>
-<span id="cb1081-92"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-92" tabindex="-1"></a>        ),</span>
-<span id="cb1081-93"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-93" tabindex="-1"></a>        <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb1081-94"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-94" tabindex="-1"></a>      dimtable[, <span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(dimtable[, <span class="dv">2</span>])</span>
-<span id="cb1081-95"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-95" tabindex="-1"></a>      <span class="fu">attr</span>(rval, <span class="st">&quot;dimensions&quot;</span>) <span class="ot">&lt;-</span> dimtable</span>
-<span id="cb1081-96"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-96" tabindex="-1"></a>      <span class="fu">attr</span>(rval, <span class="st">&quot;parameters&quot;</span>) <span class="ot">&lt;-</span></span>
-<span id="cb1081-97"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-97" tabindex="-1"></a>        <span class="fu">matrix</span>(</span>
-<span id="cb1081-98"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-98" tabindex="-1"></a>          <span class="fu">c</span>(g, k),</span>
-<span id="cb1081-99"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-99" tabindex="-1"></a>          <span class="at">nrow =</span> <span class="dv">1</span>,</span>
-<span id="cb1081-100"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-100" tabindex="-1"></a>          <span class="at">ncol =</span> <span class="dv">2</span>,</span>
-<span id="cb1081-101"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-101" tabindex="-1"></a>          <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="st">&quot;parameters&quot;</span>, <span class="fu">c</span>(<span class="st">&quot;g=&quot;</span>, <span class="st">&quot;k=&quot;</span>))</span>
-<span id="cb1081-102"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-102" tabindex="-1"></a>        )</span>
-<span id="cb1081-103"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-103" tabindex="-1"></a>      </span>
-<span id="cb1081-104"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-104" tabindex="-1"></a>      <span class="fu">return</span>(rval)</span>
-<span id="cb1081-105"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-105" tabindex="-1"></a>      </span>
-<span id="cb1081-106"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-106" tabindex="-1"></a>    }</span>
-<span id="cb1081-107"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-107" tabindex="-1"></a>    </span>
-<span id="cb1081-108"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-108" tabindex="-1"></a>    <span class="co"># Deprivation Matrix</span></span>
-<span id="cb1081-109"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-109" tabindex="-1"></a>    dep.matrix <span class="ot">&lt;-</span></span>
-<span id="cb1081-110"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-110" tabindex="-1"></a>      <span class="fu">sapply</span>(</span>
-<span id="cb1081-111"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-111" tabindex="-1"></a>        <span class="fu">seq_along</span>(var.class),</span>
-<span id="cb1081-112"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-112" tabindex="-1"></a>        <span class="at">FUN =</span> <span class="cf">function</span>(i) {</span>
-<span id="cb1081-113"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-113" tabindex="-1"></a>          <span class="dv">1</span> <span class="sc">*</span> (cutoffs[[i]] <span class="sc">&gt;</span> ach.matrix[, i])</span>
-<span id="cb1081-114"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-114" tabindex="-1"></a>        }</span>
-<span id="cb1081-115"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-115" tabindex="-1"></a>      )</span>
-<span id="cb1081-116"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-116" tabindex="-1"></a>    <span class="fu">colnames</span>(dep.matrix) <span class="ot">&lt;-</span> <span class="fu">colnames</span>(var.class)</span>
-<span id="cb1081-117"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-117" tabindex="-1"></a>    </span>
-<span id="cb1081-118"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-118" tabindex="-1"></a>    <span class="co"># Unweighted count of deprivations:</span></span>
-<span id="cb1081-119"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-119" tabindex="-1"></a>    <span class="co"># depr.count &lt;- rowSums( dep.matrix )</span></span>
-<span id="cb1081-120"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-120" tabindex="-1"></a>    </span>
-<span id="cb1081-121"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-121" tabindex="-1"></a>    <span class="co"># deprivation k cut</span></span>
-<span id="cb1081-122"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-122" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.null</span>(dimw)) {</span>
-<span id="cb1081-123"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-123" tabindex="-1"></a>      dimw <span class="ot">=</span> <span class="fu">rep</span>(<span class="dv">1</span> <span class="sc">/</span> <span class="fu">ncol</span>(dep.matrix), <span class="fu">ncol</span>(dep.matrix))</span>
-<span id="cb1081-124"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-124" tabindex="-1"></a>    }</span>
-<span id="cb1081-125"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-125" tabindex="-1"></a>    </span>
-<span id="cb1081-126"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-126" tabindex="-1"></a>    <span class="co"># Weighted sum of deprivations:</span></span>
-<span id="cb1081-127"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-127" tabindex="-1"></a>    depr.sums <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(<span class="fu">sweep</span>(dep.matrix, <span class="at">MARGIN =</span> <span class="dv">2</span> , dimw, <span class="st">`</span><span class="at">*</span><span class="st">`</span>))</span>
-<span id="cb1081-128"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-128" tabindex="-1"></a>    </span>
-<span id="cb1081-129"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-129" tabindex="-1"></a>    <span class="co"># k multidimensional cutoff:</span></span>
-<span id="cb1081-130"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-130" tabindex="-1"></a>    multi.cut <span class="ot">&lt;-</span> depr.sums <span class="sc">*</span> (depr.sums <span class="sc">&gt;=</span> k)</span>
-<span id="cb1081-131"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-131" tabindex="-1"></a>    <span class="fu">rm</span>(dep.matrix)</span>
-<span id="cb1081-132"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-132" tabindex="-1"></a>    </span>
-<span id="cb1081-133"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-133" tabindex="-1"></a>    <span class="co"># Censored Deprivation Matrix</span></span>
-<span id="cb1081-134"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-134" tabindex="-1"></a>    cen.dep.matrix <span class="ot">&lt;-</span></span>
-<span id="cb1081-135"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-135" tabindex="-1"></a>      <span class="fu">sapply</span>(</span>
-<span id="cb1081-136"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-136" tabindex="-1"></a>        <span class="fu">seq_along</span>(cutoffs) ,</span>
-<span id="cb1081-137"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-137" tabindex="-1"></a>        <span class="at">FUN =</span> <span class="cf">function</span>(x) {</span>
-<span id="cb1081-138"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-138" tabindex="-1"></a>          <span class="cf">if</span> (var.class[x] <span class="sc">==</span> <span class="st">&quot;numeric&quot;</span>) {</span>
-<span id="cb1081-139"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-139" tabindex="-1"></a>            <span class="dv">1</span> <span class="sc">*</span> (cutoffs[[x]] <span class="sc">&gt;</span> ach.matrix[, x]) <span class="sc">*</span> ((cutoffs[[x]] <span class="sc">-</span> ach.matrix[, x]) <span class="sc">/</span> cutoffs[[x]]) <span class="sc">^</span></span>
-<span id="cb1081-140"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-140" tabindex="-1"></a>              g</span>
-<span id="cb1081-141"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-141" tabindex="-1"></a>          } <span class="cf">else</span> {</span>
-<span id="cb1081-142"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-142" tabindex="-1"></a>            <span class="dv">1</span> <span class="sc">*</span> (cutoffs[[x]] <span class="sc">&gt;</span> ach.matrix[, x])</span>
-<span id="cb1081-143"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-143" tabindex="-1"></a>          }</span>
-<span id="cb1081-144"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-144" tabindex="-1"></a>        }</span>
-<span id="cb1081-145"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-145" tabindex="-1"></a>      )</span>
-<span id="cb1081-146"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-146" tabindex="-1"></a>    <span class="fu">colnames</span>(cen.dep.matrix) <span class="ot">&lt;-</span> <span class="fu">colnames</span>(var.class)</span>
-<span id="cb1081-147"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-147" tabindex="-1"></a>    cen.dep.matrix[multi.cut <span class="sc">==</span> <span class="dv">0</span>,] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb1081-148"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-148" tabindex="-1"></a>    </span>
-<span id="cb1081-149"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-149" tabindex="-1"></a>    <span class="co"># Sum of censored deprivations:</span></span>
-<span id="cb1081-150"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-150" tabindex="-1"></a>    cen.depr.sums <span class="ot">&lt;-</span></span>
-<span id="cb1081-151"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-151" tabindex="-1"></a>      <span class="fu">rowSums</span>(<span class="fu">sweep</span>(cen.dep.matrix, <span class="at">MARGIN =</span> <span class="dv">2</span> , dimw, <span class="st">`</span><span class="at">*</span><span class="st">`</span>))</span>
-<span id="cb1081-152"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-152" tabindex="-1"></a>    <span class="fu">rm</span>(cen.dep.matrix, ach.matrix)</span>
-<span id="cb1081-153"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-153" tabindex="-1"></a>    </span>
-<span id="cb1081-154"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-154" tabindex="-1"></a>    </span>
-<span id="cb1081-155"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-155" tabindex="-1"></a>    w <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> design<span class="sc">$</span>prob</span>
-<span id="cb1081-156"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-156" tabindex="-1"></a>    w[w <span class="sc">&gt;</span> <span class="dv">0</span>] <span class="ot">&lt;-</span> cen.depr.sums</span>
-<span id="cb1081-157"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-157" tabindex="-1"></a>    cen.depr.sums <span class="ot">&lt;-</span> w</span>
-<span id="cb1081-158"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-158" tabindex="-1"></a>    <span class="fu">rm</span>(w)</span>
-<span id="cb1081-159"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-159" tabindex="-1"></a>    </span>
-<span id="cb1081-160"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-160" tabindex="-1"></a>    <span class="cf">if</span> (g <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb1081-161"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-161" tabindex="-1"></a>      w <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> design<span class="sc">$</span>prob</span>
-<span id="cb1081-162"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-162" tabindex="-1"></a>      w[w <span class="sc">&gt;</span> <span class="dv">0</span>] <span class="ot">&lt;-</span> (depr.sums <span class="sc">&gt;=</span> k)</span>
-<span id="cb1081-163"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-163" tabindex="-1"></a>      h_i <span class="ot">&lt;-</span> w</span>
-<span id="cb1081-164"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-164" tabindex="-1"></a>      <span class="fu">rm</span>(w)</span>
-<span id="cb1081-165"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-165" tabindex="-1"></a>      </span>
-<span id="cb1081-166"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-166" tabindex="-1"></a>      h_est <span class="ot">&lt;-</span> survey<span class="sc">::</span><span class="fu">svymean</span>(h_i, design)</span>
-<span id="cb1081-167"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-167" tabindex="-1"></a>      </span>
-<span id="cb1081-168"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-168" tabindex="-1"></a>      w <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> design<span class="sc">$</span>prob</span>
-<span id="cb1081-169"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-169" tabindex="-1"></a>      w[w <span class="sc">&gt;</span> <span class="dv">0</span>] <span class="ot">&lt;-</span> multi.cut</span>
-<span id="cb1081-170"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-170" tabindex="-1"></a>      multi.cut <span class="ot">&lt;-</span> w</span>
-<span id="cb1081-171"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-171" tabindex="-1"></a>      <span class="fu">rm</span>(w)</span>
-<span id="cb1081-172"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-172" tabindex="-1"></a>      </span>
-<span id="cb1081-173"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-173" tabindex="-1"></a>      a_est <span class="ot">&lt;-</span> survey<span class="sc">::</span><span class="fu">svyratio</span>(multi.cut, h_i, design)</span>
-<span id="cb1081-174"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-174" tabindex="-1"></a>      </span>
-<span id="cb1081-175"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-175" tabindex="-1"></a>      </span>
-<span id="cb1081-176"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-176" tabindex="-1"></a>    }</span>
-<span id="cb1081-177"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-177" tabindex="-1"></a>    </span>
-<span id="cb1081-178"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-178" tabindex="-1"></a>    rval <span class="ot">&lt;-</span> survey<span class="sc">::</span><span class="fu">svymean</span>(cen.depr.sums , design)</span>
-<span id="cb1081-179"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-179" tabindex="-1"></a>    <span class="fu">names</span>(rval)[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">attr</span>(rval, <span class="st">&quot;statistic&quot;</span>) <span class="ot">&lt;-</span> <span class="st">&quot;alkire-foster&quot;</span></span>
-<span id="cb1081-180"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-180" tabindex="-1"></a>    dimtable <span class="ot">&lt;-</span></span>
-<span id="cb1081-181"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-181" tabindex="-1"></a>      <span class="fu">as.data.frame</span>(<span class="fu">matrix</span>(</span>
-<span id="cb1081-182"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-182" tabindex="-1"></a>        <span class="fu">c</span>(<span class="fu">strsplit</span>(<span class="fu">as.character</span>(formula)[[<span class="dv">2</span>]] , <span class="st">&#39; </span><span class="sc">\\</span><span class="st">+ &#39;</span>)[[<span class="dv">1</span>]], dimw),</span>
-<span id="cb1081-183"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-183" tabindex="-1"></a>        <span class="at">nrow =</span> <span class="fu">ncol</span>(var.class),</span>
-<span id="cb1081-184"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-184" tabindex="-1"></a>        <span class="at">ncol =</span> <span class="dv">2</span>,</span>
-<span id="cb1081-185"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-185" tabindex="-1"></a>        <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">paste</span>(<span class="st">&quot;dimension&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(var.class)), <span class="fu">c</span>(<span class="st">&quot;variables&quot;</span>, <span class="st">&quot;weight&quot;</span>))</span>
-<span id="cb1081-186"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-186" tabindex="-1"></a>      ),</span>
-<span id="cb1081-187"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-187" tabindex="-1"></a>      <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb1081-188"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-188" tabindex="-1"></a>    dimtable[, <span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(dimtable[, <span class="dv">2</span>])</span>
-<span id="cb1081-189"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-189" tabindex="-1"></a>    <span class="fu">attr</span>(rval, <span class="st">&quot;dimensions&quot;</span>) <span class="ot">&lt;-</span> dimtable</span>
-<span id="cb1081-190"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-190" tabindex="-1"></a>    <span class="fu">attr</span>(rval, <span class="st">&quot;parameters&quot;</span>) <span class="ot">&lt;-</span></span>
-<span id="cb1081-191"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-191" tabindex="-1"></a>      <span class="fu">matrix</span>(</span>
-<span id="cb1081-192"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-192" tabindex="-1"></a>        <span class="fu">c</span>(g, k),</span>
-<span id="cb1081-193"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-193" tabindex="-1"></a>        <span class="at">nrow =</span> <span class="dv">1</span>,</span>
-<span id="cb1081-194"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-194" tabindex="-1"></a>        <span class="at">ncol =</span> <span class="dv">2</span>,</span>
-<span id="cb1081-195"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-195" tabindex="-1"></a>        <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="st">&quot;parameters&quot;</span>, <span class="fu">c</span>(<span class="st">&quot;g=&quot;</span>, <span class="st">&quot;k=&quot;</span>))</span>
-<span id="cb1081-196"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-196" tabindex="-1"></a>      )</span>
-<span id="cb1081-197"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-197" tabindex="-1"></a>    <span class="cf">if</span> (g <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb1081-198"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-198" tabindex="-1"></a>      <span class="fu">attr</span>(rval, <span class="st">&quot;extra&quot;</span>) <span class="ot">&lt;-</span></span>
-<span id="cb1081-199"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-199" tabindex="-1"></a>        <span class="fu">matrix</span>(</span>
-<span id="cb1081-200"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-200" tabindex="-1"></a>          <span class="fu">c</span>(h_est[<span class="dv">1</span>], a_est[[<span class="dv">1</span>]], <span class="fu">attr</span>(h_est, <span class="st">&quot;var&quot;</span>)[<span class="dv">1</span>] <span class="sc">^</span> .<span class="dv">5</span>, a_est[[<span class="dv">2</span>]] <span class="sc">^</span> .<span class="dv">5</span>),</span>
-<span id="cb1081-201"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-201" tabindex="-1"></a>          <span class="at">nrow =</span> <span class="dv">2</span>,</span>
-<span id="cb1081-202"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-202" tabindex="-1"></a>          <span class="at">ncol =</span> <span class="dv">2</span>,</span>
-<span id="cb1081-203"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-203" tabindex="-1"></a>          <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;H&quot;</span>, <span class="st">&quot;A&quot;</span>), <span class="fu">c</span>(<span class="st">&quot;coef&quot;</span>, <span class="st">&quot;SE&quot;</span>))</span>
-<span id="cb1081-204"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-204" tabindex="-1"></a>        )</span>
-<span id="cb1081-205"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-205" tabindex="-1"></a>    }</span>
-<span id="cb1081-206"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-206" tabindex="-1"></a>    <span class="fu">class</span>(rval) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;cvystat&quot;</span> , <span class="st">&quot;svystat&quot;</span>)</span>
-<span id="cb1081-207"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-207" tabindex="-1"></a>    </span>
-<span id="cb1081-208"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-208" tabindex="-1"></a>    <span class="fu">return</span>(rval)</span>
-<span id="cb1081-209"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-209" tabindex="-1"></a>    </span>
-<span id="cb1081-210"><a href="6.1-alkire-foster-class-function-definition.html#cb1081-210" tabindex="-1"></a>  }</span></code></pre></div>
+<div class="sourceCode" id="cb1092"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1092-1"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-1" tabindex="-1"></a>svyafc <span class="ot">&lt;-</span></span>
+<span id="cb1092-2"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-2" tabindex="-1"></a>  <span class="cf">function</span>(formula,</span>
+<span id="cb1092-3"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-3" tabindex="-1"></a>           design,</span>
+<span id="cb1092-4"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-4" tabindex="-1"></a>           k ,</span>
+<span id="cb1092-5"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-5" tabindex="-1"></a>           g ,</span>
+<span id="cb1092-6"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-6" tabindex="-1"></a>           cutoffs ,</span>
+<span id="cb1092-7"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-7" tabindex="-1"></a>           <span class="at">dimw =</span> <span class="cn">NULL</span>,</span>
+<span id="cb1092-8"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-8" tabindex="-1"></a>           <span class="at">na.rm =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb1092-9"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-9" tabindex="-1"></a>           ...) {</span>
+<span id="cb1092-10"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-10" tabindex="-1"></a>    <span class="cf">if</span> (k <span class="sc">&lt;=</span> <span class="dv">0</span> <span class="sc">|</span></span>
+<span id="cb1092-11"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-11" tabindex="-1"></a>        k <span class="sc">&gt;</span> <span class="dv">1</span>)</span>
+<span id="cb1092-12"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-12" tabindex="-1"></a>      <span class="fu">stop</span>(<span class="st">&quot;This functions is only defined for k in (0,1].&quot;</span>)</span>
+<span id="cb1092-13"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-13" tabindex="-1"></a>    <span class="cf">if</span> (g <span class="sc">&lt;</span> <span class="dv">0</span>)</span>
+<span id="cb1092-14"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-14" tabindex="-1"></a>      <span class="fu">stop</span>(<span class="st">&quot;This function is undefined for g &lt; 0.&quot;</span>)</span>
+<span id="cb1092-15"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-15" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.list</span>(cutoffs))</span>
+<span id="cb1092-16"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-16" tabindex="-1"></a>      <span class="fu">stop</span>(<span class="st">&quot;The parameter &#39;cutoffs&#39; has to be a list.&quot;</span>)</span>
+<span id="cb1092-17"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-17" tabindex="-1"></a>    </span>
+<span id="cb1092-18"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-18" tabindex="-1"></a>    ach.matrix <span class="ot">&lt;-</span></span>
+<span id="cb1092-19"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-19" tabindex="-1"></a>      <span class="fu">model.frame</span>(formula, design<span class="sc">$</span>variables, <span class="at">na.action =</span> na.pass)[, ]</span>
+<span id="cb1092-20"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-20" tabindex="-1"></a>    </span>
+<span id="cb1092-21"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-21" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(dimw)) {</span>
+<span id="cb1092-22"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-22" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">is.na</span>(dimw))) {</span>
+<span id="cb1092-23"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-23" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">&quot;Invalid value in dimension weights vector.&quot;</span>)</span>
+<span id="cb1092-24"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-24" tabindex="-1"></a>      }</span>
+<span id="cb1092-25"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-25" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">sum</span>(dimw) <span class="sc">&gt;</span> <span class="dv">1</span>) {</span>
+<span id="cb1092-26"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-26" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">&quot;The sum of dimension weigths have to be equal to one.&quot;</span>)</span>
+<span id="cb1092-27"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-27" tabindex="-1"></a>      }</span>
+<span id="cb1092-28"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-28" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">any</span>(dimw <span class="sc">&gt;</span> <span class="dv">1</span> <span class="sc">|</span></span>
+<span id="cb1092-29"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-29" tabindex="-1"></a>              dimw <span class="sc">&lt;</span> <span class="dv">0</span>)) {</span>
+<span id="cb1092-30"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-30" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">&quot;Dim. weights have to be within interval [0,1].&quot;</span>)</span>
+<span id="cb1092-31"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-31" tabindex="-1"></a>      }</span>
+<span id="cb1092-32"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-32" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">length</span>(dimw) <span class="sc">!=</span> <span class="fu">ncol</span>(ach.matrix)) {</span>
+<span id="cb1092-33"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-33" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">&quot;Dimension weights&#39; length differs from number of dimensions in formula&quot;</span>)</span>
+<span id="cb1092-34"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-34" tabindex="-1"></a>      }</span>
+<span id="cb1092-35"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-35" tabindex="-1"></a>    }</span>
+<span id="cb1092-36"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-36" tabindex="-1"></a>    </span>
+<span id="cb1092-37"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-37" tabindex="-1"></a>    var.class <span class="ot">&lt;-</span> <span class="fu">lapply</span>(ach.matrix, <span class="cf">function</span>(x)</span>
+<span id="cb1092-38"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-38" tabindex="-1"></a>      <span class="fu">class</span>(x)[<span class="dv">1</span>])</span>
+<span id="cb1092-39"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-39" tabindex="-1"></a>    var.class <span class="ot">&lt;-</span> <span class="fu">matrix</span>(</span>
+<span id="cb1092-40"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-40" tabindex="-1"></a>      var.class,</span>
+<span id="cb1092-41"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-41" tabindex="-1"></a>      <span class="at">nrow =</span> <span class="dv">1</span>,</span>
+<span id="cb1092-42"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-42" tabindex="-1"></a>      <span class="at">ncol =</span> <span class="fu">ncol</span>(ach.matrix),</span>
+<span id="cb1092-43"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-43" tabindex="-1"></a>      <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;var.class&quot;</span>), <span class="fu">colnames</span>(ach.matrix))</span>
+<span id="cb1092-44"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-44" tabindex="-1"></a>    )</span>
+<span id="cb1092-45"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-45" tabindex="-1"></a>    </span>
+<span id="cb1092-46"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-46" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">any</span>(<span class="sc">!</span>(var.class <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;numeric&quot;</span>, <span class="st">&quot;integer&quot;</span>, <span class="st">&quot;ordered&quot;</span>)))) {</span>
+<span id="cb1092-47"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-47" tabindex="-1"></a>      <span class="fu">stop</span>(</span>
+<span id="cb1092-48"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-48" tabindex="-1"></a>        <span class="st">&quot;This function is only applicable to variables of types &#39;numeric&#39; or &#39;ordered factor&#39;.&quot;</span></span>
+<span id="cb1092-49"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-49" tabindex="-1"></a>      )</span>
+<span id="cb1092-50"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-50" tabindex="-1"></a>    }</span>
+<span id="cb1092-51"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-51" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">any</span>((var.class <span class="sc">==</span> <span class="st">&quot;integer&quot;</span>))) {</span>
+<span id="cb1092-52"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-52" tabindex="-1"></a>      <span class="fu">stop</span>(</span>
+<span id="cb1092-53"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-53" tabindex="-1"></a>        <span class="st">&quot;At least one of the variables is an integer.</span><span class="sc">\n</span><span class="st">Coerce your column to numeric with as.numeric if you are sure it&#39;s what you want.&quot;</span></span>
+<span id="cb1092-54"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-54" tabindex="-1"></a>      )</span>
+<span id="cb1092-55"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-55" tabindex="-1"></a>    }</span>
+<span id="cb1092-56"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-56" tabindex="-1"></a>    </span>
+<span id="cb1092-57"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-57" tabindex="-1"></a>    w <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> design<span class="sc">$</span>prob</span>
+<span id="cb1092-58"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-58" tabindex="-1"></a>    </span>
+<span id="cb1092-59"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-59" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">any</span>(ach.matrix[w <span class="sc">!=</span> <span class="dv">0</span>, var.class <span class="sc">==</span> <span class="st">&quot;numeric&quot;</span>] <span class="sc">&lt;</span> <span class="dv">0</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb1092-60"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-60" tabindex="-1"></a>      <span class="fu">stop</span>(</span>
+<span id="cb1092-61"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-61" tabindex="-1"></a>        <span class="st">&quot;The Alkire-Foster multidimensional poverty class is defined for non-negative numeric variables only.&quot;</span></span>
+<span id="cb1092-62"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-62" tabindex="-1"></a>      )</span>
+<span id="cb1092-63"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-63" tabindex="-1"></a>    </span>
+<span id="cb1092-64"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-64" tabindex="-1"></a>    <span class="cf">if</span> (na.rm) {</span>
+<span id="cb1092-65"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-65" tabindex="-1"></a>      nas <span class="ot">&lt;-</span> <span class="fu">apply</span>(ach.matrix, <span class="dv">1</span>, <span class="cf">function</span>(x)</span>
+<span id="cb1092-66"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-66" tabindex="-1"></a>        <span class="fu">any</span>(<span class="fu">is.na</span>(x)))</span>
+<span id="cb1092-67"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-67" tabindex="-1"></a>      design <span class="ot">&lt;-</span> design[nas <span class="sc">==</span> <span class="dv">0</span>,]</span>
+<span id="cb1092-68"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-68" tabindex="-1"></a>      w <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> design<span class="sc">$</span>prob</span>
+<span id="cb1092-69"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-69" tabindex="-1"></a>    }</span>
+<span id="cb1092-70"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-70" tabindex="-1"></a>    </span>
+<span id="cb1092-71"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-71" tabindex="-1"></a>    ach.matrix <span class="ot">&lt;-</span></span>
+<span id="cb1092-72"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-72" tabindex="-1"></a>      <span class="fu">model.frame</span>(formula, design<span class="sc">$</span>variables, <span class="at">na.action =</span> na.pass)[, ]</span>
+<span id="cb1092-73"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-73" tabindex="-1"></a>    ach.matrix <span class="ot">&lt;-</span> ach.matrix [w <span class="sc">&gt;</span> <span class="dv">0</span>,]</span>
+<span id="cb1092-74"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-74" tabindex="-1"></a>    w <span class="ot">&lt;-</span> w [w <span class="sc">&gt;</span> <span class="dv">0</span>]</span>
+<span id="cb1092-75"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-75" tabindex="-1"></a>    </span>
+<span id="cb1092-76"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-76" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">is.na</span>(ach.matrix))) {</span>
+<span id="cb1092-77"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-77" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">is.null</span>(dimw)) {</span>
+<span id="cb1092-78"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-78" tabindex="-1"></a>        dimw <span class="ot">=</span> <span class="fu">rep</span>(<span class="dv">1</span> <span class="sc">/</span> <span class="fu">ncol</span>(var.class), <span class="fu">length</span>(var.class))</span>
+<span id="cb1092-79"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-79" tabindex="-1"></a>      }</span>
+<span id="cb1092-80"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-80" tabindex="-1"></a>      </span>
+<span id="cb1092-81"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-81" tabindex="-1"></a>      rval <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="cn">NA</span>)</span>
+<span id="cb1092-82"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-82" tabindex="-1"></a>      variance <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="cn">NA</span>)</span>
+<span id="cb1092-83"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-83" tabindex="-1"></a>      <span class="fu">class</span>(rval) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;cvystat&quot;</span> , <span class="st">&quot;svystat&quot;</span>)</span>
+<span id="cb1092-84"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-84" tabindex="-1"></a>      <span class="fu">attr</span>(rval, <span class="st">&quot;var&quot;</span>) <span class="ot">&lt;-</span> variance</span>
+<span id="cb1092-85"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-85" tabindex="-1"></a>      <span class="fu">names</span>(rval)[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">attr</span>(rval, <span class="st">&quot;statistic&quot;</span>) <span class="ot">&lt;-</span> <span class="st">&quot;alkire-foster&quot;</span></span>
+<span id="cb1092-86"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-86" tabindex="-1"></a>      dimtable <span class="ot">&lt;-</span></span>
+<span id="cb1092-87"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-87" tabindex="-1"></a>        <span class="fu">as.data.frame</span>(<span class="fu">matrix</span>(</span>
+<span id="cb1092-88"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-88" tabindex="-1"></a>          <span class="fu">c</span>(<span class="fu">strsplit</span>(<span class="fu">as.character</span>(formula)[[<span class="dv">2</span>]] , <span class="st">&#39; </span><span class="sc">\\</span><span class="st">+ &#39;</span>)[[<span class="dv">1</span>]], dimw),</span>
+<span id="cb1092-89"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-89" tabindex="-1"></a>          <span class="at">nrow =</span> <span class="fu">ncol</span>(var.class),</span>
+<span id="cb1092-90"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-90" tabindex="-1"></a>          <span class="at">ncol =</span> <span class="dv">2</span>,</span>
+<span id="cb1092-91"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-91" tabindex="-1"></a>          <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">paste</span>(<span class="st">&quot;dimension&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(var.class)), <span class="fu">c</span>(<span class="st">&quot;variables&quot;</span>, <span class="st">&quot;weight&quot;</span>))</span>
+<span id="cb1092-92"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-92" tabindex="-1"></a>        ),</span>
+<span id="cb1092-93"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-93" tabindex="-1"></a>        <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1092-94"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-94" tabindex="-1"></a>      dimtable[, <span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(dimtable[, <span class="dv">2</span>])</span>
+<span id="cb1092-95"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-95" tabindex="-1"></a>      <span class="fu">attr</span>(rval, <span class="st">&quot;dimensions&quot;</span>) <span class="ot">&lt;-</span> dimtable</span>
+<span id="cb1092-96"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-96" tabindex="-1"></a>      <span class="fu">attr</span>(rval, <span class="st">&quot;parameters&quot;</span>) <span class="ot">&lt;-</span></span>
+<span id="cb1092-97"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-97" tabindex="-1"></a>        <span class="fu">matrix</span>(</span>
+<span id="cb1092-98"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-98" tabindex="-1"></a>          <span class="fu">c</span>(g, k),</span>
+<span id="cb1092-99"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-99" tabindex="-1"></a>          <span class="at">nrow =</span> <span class="dv">1</span>,</span>
+<span id="cb1092-100"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-100" tabindex="-1"></a>          <span class="at">ncol =</span> <span class="dv">2</span>,</span>
+<span id="cb1092-101"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-101" tabindex="-1"></a>          <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="st">&quot;parameters&quot;</span>, <span class="fu">c</span>(<span class="st">&quot;g=&quot;</span>, <span class="st">&quot;k=&quot;</span>))</span>
+<span id="cb1092-102"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-102" tabindex="-1"></a>        )</span>
+<span id="cb1092-103"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-103" tabindex="-1"></a>      </span>
+<span id="cb1092-104"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-104" tabindex="-1"></a>      <span class="fu">return</span>(rval)</span>
+<span id="cb1092-105"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-105" tabindex="-1"></a>      </span>
+<span id="cb1092-106"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-106" tabindex="-1"></a>    }</span>
+<span id="cb1092-107"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-107" tabindex="-1"></a>    </span>
+<span id="cb1092-108"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-108" tabindex="-1"></a>    <span class="co"># Deprivation Matrix</span></span>
+<span id="cb1092-109"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-109" tabindex="-1"></a>    dep.matrix <span class="ot">&lt;-</span></span>
+<span id="cb1092-110"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-110" tabindex="-1"></a>      <span class="fu">sapply</span>(</span>
+<span id="cb1092-111"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-111" tabindex="-1"></a>        <span class="fu">seq_along</span>(var.class),</span>
+<span id="cb1092-112"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-112" tabindex="-1"></a>        <span class="at">FUN =</span> <span class="cf">function</span>(i) {</span>
+<span id="cb1092-113"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-113" tabindex="-1"></a>          <span class="dv">1</span> <span class="sc">*</span> (cutoffs[[i]] <span class="sc">&gt;</span> ach.matrix[, i])</span>
+<span id="cb1092-114"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-114" tabindex="-1"></a>        }</span>
+<span id="cb1092-115"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-115" tabindex="-1"></a>      )</span>
+<span id="cb1092-116"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-116" tabindex="-1"></a>    <span class="fu">colnames</span>(dep.matrix) <span class="ot">&lt;-</span> <span class="fu">colnames</span>(var.class)</span>
+<span id="cb1092-117"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-117" tabindex="-1"></a>    </span>
+<span id="cb1092-118"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-118" tabindex="-1"></a>    <span class="co"># Unweighted count of deprivations:</span></span>
+<span id="cb1092-119"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-119" tabindex="-1"></a>    <span class="co"># depr.count &lt;- rowSums( dep.matrix )</span></span>
+<span id="cb1092-120"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-120" tabindex="-1"></a>    </span>
+<span id="cb1092-121"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-121" tabindex="-1"></a>    <span class="co"># deprivation k cut</span></span>
+<span id="cb1092-122"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-122" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.null</span>(dimw)) {</span>
+<span id="cb1092-123"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-123" tabindex="-1"></a>      dimw <span class="ot">=</span> <span class="fu">rep</span>(<span class="dv">1</span> <span class="sc">/</span> <span class="fu">ncol</span>(dep.matrix), <span class="fu">ncol</span>(dep.matrix))</span>
+<span id="cb1092-124"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-124" tabindex="-1"></a>    }</span>
+<span id="cb1092-125"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-125" tabindex="-1"></a>    </span>
+<span id="cb1092-126"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-126" tabindex="-1"></a>    <span class="co"># Weighted sum of deprivations:</span></span>
+<span id="cb1092-127"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-127" tabindex="-1"></a>    depr.sums <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(<span class="fu">sweep</span>(dep.matrix, <span class="at">MARGIN =</span> <span class="dv">2</span> , dimw, <span class="st">`</span><span class="at">*</span><span class="st">`</span>))</span>
+<span id="cb1092-128"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-128" tabindex="-1"></a>    </span>
+<span id="cb1092-129"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-129" tabindex="-1"></a>    <span class="co"># k multidimensional cutoff:</span></span>
+<span id="cb1092-130"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-130" tabindex="-1"></a>    multi.cut <span class="ot">&lt;-</span> depr.sums <span class="sc">*</span> (depr.sums <span class="sc">&gt;=</span> k)</span>
+<span id="cb1092-131"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-131" tabindex="-1"></a>    <span class="fu">rm</span>(dep.matrix)</span>
+<span id="cb1092-132"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-132" tabindex="-1"></a>    </span>
+<span id="cb1092-133"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-133" tabindex="-1"></a>    <span class="co"># Censored Deprivation Matrix</span></span>
+<span id="cb1092-134"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-134" tabindex="-1"></a>    cen.dep.matrix <span class="ot">&lt;-</span></span>
+<span id="cb1092-135"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-135" tabindex="-1"></a>      <span class="fu">sapply</span>(</span>
+<span id="cb1092-136"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-136" tabindex="-1"></a>        <span class="fu">seq_along</span>(cutoffs) ,</span>
+<span id="cb1092-137"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-137" tabindex="-1"></a>        <span class="at">FUN =</span> <span class="cf">function</span>(x) {</span>
+<span id="cb1092-138"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-138" tabindex="-1"></a>          <span class="cf">if</span> (var.class[x] <span class="sc">==</span> <span class="st">&quot;numeric&quot;</span>) {</span>
+<span id="cb1092-139"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-139" tabindex="-1"></a>            <span class="dv">1</span> <span class="sc">*</span> (cutoffs[[x]] <span class="sc">&gt;</span> ach.matrix[, x]) <span class="sc">*</span> ((cutoffs[[x]] <span class="sc">-</span> ach.matrix[, x]) <span class="sc">/</span> cutoffs[[x]]) <span class="sc">^</span></span>
+<span id="cb1092-140"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-140" tabindex="-1"></a>              g</span>
+<span id="cb1092-141"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-141" tabindex="-1"></a>          } <span class="cf">else</span> {</span>
+<span id="cb1092-142"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-142" tabindex="-1"></a>            <span class="dv">1</span> <span class="sc">*</span> (cutoffs[[x]] <span class="sc">&gt;</span> ach.matrix[, x])</span>
+<span id="cb1092-143"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-143" tabindex="-1"></a>          }</span>
+<span id="cb1092-144"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-144" tabindex="-1"></a>        }</span>
+<span id="cb1092-145"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-145" tabindex="-1"></a>      )</span>
+<span id="cb1092-146"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-146" tabindex="-1"></a>    <span class="fu">colnames</span>(cen.dep.matrix) <span class="ot">&lt;-</span> <span class="fu">colnames</span>(var.class)</span>
+<span id="cb1092-147"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-147" tabindex="-1"></a>    cen.dep.matrix[multi.cut <span class="sc">==</span> <span class="dv">0</span>,] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb1092-148"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-148" tabindex="-1"></a>    </span>
+<span id="cb1092-149"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-149" tabindex="-1"></a>    <span class="co"># Sum of censored deprivations:</span></span>
+<span id="cb1092-150"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-150" tabindex="-1"></a>    cen.depr.sums <span class="ot">&lt;-</span></span>
+<span id="cb1092-151"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-151" tabindex="-1"></a>      <span class="fu">rowSums</span>(<span class="fu">sweep</span>(cen.dep.matrix, <span class="at">MARGIN =</span> <span class="dv">2</span> , dimw, <span class="st">`</span><span class="at">*</span><span class="st">`</span>))</span>
+<span id="cb1092-152"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-152" tabindex="-1"></a>    <span class="fu">rm</span>(cen.dep.matrix, ach.matrix)</span>
+<span id="cb1092-153"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-153" tabindex="-1"></a>    </span>
+<span id="cb1092-154"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-154" tabindex="-1"></a>    </span>
+<span id="cb1092-155"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-155" tabindex="-1"></a>    w <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> design<span class="sc">$</span>prob</span>
+<span id="cb1092-156"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-156" tabindex="-1"></a>    w[w <span class="sc">&gt;</span> <span class="dv">0</span>] <span class="ot">&lt;-</span> cen.depr.sums</span>
+<span id="cb1092-157"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-157" tabindex="-1"></a>    cen.depr.sums <span class="ot">&lt;-</span> w</span>
+<span id="cb1092-158"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-158" tabindex="-1"></a>    <span class="fu">rm</span>(w)</span>
+<span id="cb1092-159"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-159" tabindex="-1"></a>    </span>
+<span id="cb1092-160"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-160" tabindex="-1"></a>    <span class="cf">if</span> (g <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb1092-161"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-161" tabindex="-1"></a>      w <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> design<span class="sc">$</span>prob</span>
+<span id="cb1092-162"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-162" tabindex="-1"></a>      w[w <span class="sc">&gt;</span> <span class="dv">0</span>] <span class="ot">&lt;-</span> (depr.sums <span class="sc">&gt;=</span> k)</span>
+<span id="cb1092-163"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-163" tabindex="-1"></a>      h_i <span class="ot">&lt;-</span> w</span>
+<span id="cb1092-164"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-164" tabindex="-1"></a>      <span class="fu">rm</span>(w)</span>
+<span id="cb1092-165"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-165" tabindex="-1"></a>      </span>
+<span id="cb1092-166"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-166" tabindex="-1"></a>      h_est <span class="ot">&lt;-</span> survey<span class="sc">::</span><span class="fu">svymean</span>(h_i, design)</span>
+<span id="cb1092-167"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-167" tabindex="-1"></a>      </span>
+<span id="cb1092-168"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-168" tabindex="-1"></a>      w <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> design<span class="sc">$</span>prob</span>
+<span id="cb1092-169"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-169" tabindex="-1"></a>      w[w <span class="sc">&gt;</span> <span class="dv">0</span>] <span class="ot">&lt;-</span> multi.cut</span>
+<span id="cb1092-170"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-170" tabindex="-1"></a>      multi.cut <span class="ot">&lt;-</span> w</span>
+<span id="cb1092-171"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-171" tabindex="-1"></a>      <span class="fu">rm</span>(w)</span>
+<span id="cb1092-172"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-172" tabindex="-1"></a>      </span>
+<span id="cb1092-173"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-173" tabindex="-1"></a>      a_est <span class="ot">&lt;-</span> survey<span class="sc">::</span><span class="fu">svyratio</span>(multi.cut, h_i, design)</span>
+<span id="cb1092-174"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-174" tabindex="-1"></a>      </span>
+<span id="cb1092-175"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-175" tabindex="-1"></a>      </span>
+<span id="cb1092-176"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-176" tabindex="-1"></a>    }</span>
+<span id="cb1092-177"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-177" tabindex="-1"></a>    </span>
+<span id="cb1092-178"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-178" tabindex="-1"></a>    rval <span class="ot">&lt;-</span> survey<span class="sc">::</span><span class="fu">svymean</span>(cen.depr.sums , design)</span>
+<span id="cb1092-179"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-179" tabindex="-1"></a>    <span class="fu">names</span>(rval)[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">attr</span>(rval, <span class="st">&quot;statistic&quot;</span>) <span class="ot">&lt;-</span> <span class="st">&quot;alkire-foster&quot;</span></span>
+<span id="cb1092-180"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-180" tabindex="-1"></a>    dimtable <span class="ot">&lt;-</span></span>
+<span id="cb1092-181"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-181" tabindex="-1"></a>      <span class="fu">as.data.frame</span>(<span class="fu">matrix</span>(</span>
+<span id="cb1092-182"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-182" tabindex="-1"></a>        <span class="fu">c</span>(<span class="fu">strsplit</span>(<span class="fu">as.character</span>(formula)[[<span class="dv">2</span>]] , <span class="st">&#39; </span><span class="sc">\\</span><span class="st">+ &#39;</span>)[[<span class="dv">1</span>]], dimw),</span>
+<span id="cb1092-183"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-183" tabindex="-1"></a>        <span class="at">nrow =</span> <span class="fu">ncol</span>(var.class),</span>
+<span id="cb1092-184"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-184" tabindex="-1"></a>        <span class="at">ncol =</span> <span class="dv">2</span>,</span>
+<span id="cb1092-185"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-185" tabindex="-1"></a>        <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">paste</span>(<span class="st">&quot;dimension&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(var.class)), <span class="fu">c</span>(<span class="st">&quot;variables&quot;</span>, <span class="st">&quot;weight&quot;</span>))</span>
+<span id="cb1092-186"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-186" tabindex="-1"></a>      ),</span>
+<span id="cb1092-187"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-187" tabindex="-1"></a>      <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1092-188"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-188" tabindex="-1"></a>    dimtable[, <span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(dimtable[, <span class="dv">2</span>])</span>
+<span id="cb1092-189"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-189" tabindex="-1"></a>    <span class="fu">attr</span>(rval, <span class="st">&quot;dimensions&quot;</span>) <span class="ot">&lt;-</span> dimtable</span>
+<span id="cb1092-190"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-190" tabindex="-1"></a>    <span class="fu">attr</span>(rval, <span class="st">&quot;parameters&quot;</span>) <span class="ot">&lt;-</span></span>
+<span id="cb1092-191"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-191" tabindex="-1"></a>      <span class="fu">matrix</span>(</span>
+<span id="cb1092-192"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-192" tabindex="-1"></a>        <span class="fu">c</span>(g, k),</span>
+<span id="cb1092-193"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-193" tabindex="-1"></a>        <span class="at">nrow =</span> <span class="dv">1</span>,</span>
+<span id="cb1092-194"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-194" tabindex="-1"></a>        <span class="at">ncol =</span> <span class="dv">2</span>,</span>
+<span id="cb1092-195"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-195" tabindex="-1"></a>        <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="st">&quot;parameters&quot;</span>, <span class="fu">c</span>(<span class="st">&quot;g=&quot;</span>, <span class="st">&quot;k=&quot;</span>))</span>
+<span id="cb1092-196"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-196" tabindex="-1"></a>      )</span>
+<span id="cb1092-197"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-197" tabindex="-1"></a>    <span class="cf">if</span> (g <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb1092-198"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-198" tabindex="-1"></a>      <span class="fu">attr</span>(rval, <span class="st">&quot;extra&quot;</span>) <span class="ot">&lt;-</span></span>
+<span id="cb1092-199"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-199" tabindex="-1"></a>        <span class="fu">matrix</span>(</span>
+<span id="cb1092-200"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-200" tabindex="-1"></a>          <span class="fu">c</span>(h_est[<span class="dv">1</span>], a_est[[<span class="dv">1</span>]], <span class="fu">attr</span>(h_est, <span class="st">&quot;var&quot;</span>)[<span class="dv">1</span>] <span class="sc">^</span> .<span class="dv">5</span>, a_est[[<span class="dv">2</span>]] <span class="sc">^</span> .<span class="dv">5</span>),</span>
+<span id="cb1092-201"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-201" tabindex="-1"></a>          <span class="at">nrow =</span> <span class="dv">2</span>,</span>
+<span id="cb1092-202"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-202" tabindex="-1"></a>          <span class="at">ncol =</span> <span class="dv">2</span>,</span>
+<span id="cb1092-203"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-203" tabindex="-1"></a>          <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;H&quot;</span>, <span class="st">&quot;A&quot;</span>), <span class="fu">c</span>(<span class="st">&quot;coef&quot;</span>, <span class="st">&quot;SE&quot;</span>))</span>
+<span id="cb1092-204"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-204" tabindex="-1"></a>        )</span>
+<span id="cb1092-205"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-205" tabindex="-1"></a>    }</span>
+<span id="cb1092-206"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-206" tabindex="-1"></a>    <span class="fu">class</span>(rval) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;cvystat&quot;</span> , <span class="st">&quot;svystat&quot;</span>)</span>
+<span id="cb1092-207"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-207" tabindex="-1"></a>    </span>
+<span id="cb1092-208"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-208" tabindex="-1"></a>    <span class="fu">return</span>(rval)</span>
+<span id="cb1092-209"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-209" tabindex="-1"></a>    </span>
+<span id="cb1092-210"><a href="6.1-alkire-foster-class-function-definition.html#cb1092-210" tabindex="-1"></a>  }</span></code></pre></div>
 </div>
 <p style="text-align: center;">
 <a href="6-multidimensional-poverty.html"><button class="btn btn-default">Previous</button></a>
