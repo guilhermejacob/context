@@ -5,7 +5,7 @@
 <meta charset="utf-8" />
 <meta name="generator" content="pandoc" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="Chapter 5 Richness | Poverty and Inequality with Complex Survey Data" />
+<meta property="og:title" content="Chapter 6 Covariance Matrix | Poverty and Inequality with Complex Survey Data" />
 <meta property="og:type" content="book" />
 
 <meta property="og:description" content="A book about the R convey package" />
@@ -24,7 +24,7 @@ MathJax.Hub.Config({
 
 <meta name="description" content="A book about the R convey package">
 
-<title>Chapter 5 Richness | Poverty and Inequality with Complex Survey Data</title>
+<title>Chapter 6 Covariance Matrix | Poverty and Inequality with Complex Survey Data</title>
 
 <link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte-background.css" rel="stylesheet" />
@@ -276,46 +276,65 @@ div.csl-indent {
 </div>
 <div class="row">
 <div class="col-sm-12">
-<div id="richness" class="section level1" number="5">
-<h1><span class="header-section-number">Chapter 5</span> Richness</h1>
-<p>Richness (or Affluence) measures provide another approach for understanding
-income concentration. Unlike inequality measures, that are sensitive to the
-changes over the entire income distribution, richness measures are restricted
-to the top incomes.</p>
-<p>In that sense, they work like “inverted” poverty measures: while the poverty
-focus axiom states that poverty measures should be insensitive to changes
-in the incomes of the non-poor, the richness focus
-axiom states that richness measures should remain unaltered by changes in the
-incomes of the non-rich.</p>
-<p>Also like poverty measures, richness measures also rely on a “richness threshold”:
-those above that threshold are regarded as rich, while those below are regarded
-as non-rich.<label for="tufte-sn-13" class="margin-toggle sidenote-number">13</label><input type="checkbox" id="tufte-sn-13" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">13</span> Not necessarily, but including the poor</span>
-Like for poverty measurement, these richness thresholds can be somewhat arbitrary;
-<span class="citation">Medeiros (<label for="tufte-mn-101" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-101" class="margin-toggle">2006<span class="marginnote">Medeiros, Marcelo. 2006. <span>“<span class="nocase">The Rich and the Poor: The Construction of an Affluence Line from the Poverty Line</span>.”</span> <em>Social Indicators Research</em> 78 (1): 1–18. <a href="https://doi.org/10.1007/s11205-005-7156-1">https://doi.org/10.1007/s11205-005-7156-1</a>.</span>)</span> provide a nice review of proposed richness thresholds and also propose
-one possible approach with practical and theoretical grounds.</p>
-<p><span class="citation">Peichl, Schaefer, and Scheicher (<label for="tufte-mn-102" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-102" class="margin-toggle">2010<span class="marginnote">Peichl, Andreas, Thilo Schaefer, and Christoph Scheicher. 2010. <span>“<span class="nocase">Measuring Richness and Poverty: A micro data application to Europe and Germany</span>.”</span> <em>Review of Income and Wealth</em> 56 (3): 597–619. https://doi.org/<a href="https://doi.org/10.1111/j.1475-4991.2010.00404.x">https://doi.org/10.1111/j.1475-4991.2010.00404.x</a>.</span>)</span> presented an axiomatic study of richness measures. They classify
-richness measures in two types depending on the effect of income transfers among
-the rich.
-A <em>concave</em> measure follows the concave transfer axiom (T1): the measure should
-increase when a progressive transfer occurs among two rich individuals.
-On the other hand, a <em>convex</em> measure follows the convex transfer axiom (T2):
-the measure should <em>decrease</em> when a progressive transfer occurs among two rich
-individuals.</p>
-<p>The reasoning behind the concave transfer axiom is that such progressive transfer
-would make the income distribution among the rich more internally homogeneous.
-By clustering the incomes and assets of the rich away from the rest of society,
-the distribution of income becomes more polarized. On the other hand, the convex
-transfer axiom means that a progressive transfer among rich individuals reduces
-inequality among them, so the convex inequality measure should register a reduction.
-In a sense, concave measures are related to the income polarization approach, meaning
-that increases in income polarization among the rich should increase the value of
-the richness measure, while convex measures are related to the income inequality
-approach, meaning that a reduction in inequality among the rich should also result
-in a reduction of a convex richness measure.</p>
+<div id="covariance-matrix" class="section level1" number="6">
+<h1><span class="header-section-number">Chapter 6</span> Covariance Matrix</h1>
+<p>The current <code>convey</code> software does not account for the covariance across <code>svyby</code> groups. The example below describes this calculation and presents what is, in this case, a limited impact on the final error terms. We acknowledge that, under ideal circumstances, the covariance would be properly accounted for in the software. Modifying our software to account for the covariance remains a future goal.</p>
+<p>Influence functions and “resampling” replicates can be used to improve the inference
+about differences and changes between estimates. Put simply, the variance of the difference between
+two estimates <span class="math inline">\(\widehat{T}_1\)</span> and <span class="math inline">\(\widehat{T}_2\)</span> is given by</p>
+<p><span class="math display">\[
+Var \big( \widehat{T}_1 - \widehat{T}_2 \big) =
+    Var \big( \widehat{T}_1 \big) + Var \big( \widehat{T}_2 \big) - 2 Cov \big( \widehat{T}_1 , \widehat{T}_2 \big)
+\]</span></p>
+<p>where: <span class="math inline">\(Var \big( \widehat{T}_1 \big)\)</span> and <span class="math inline">\(Var \big( \widehat{T}_2 \big)\)</span>
+are the variances of the estimators <span class="math inline">\(\widehat{T}_1\)</span> and <span class="math inline">\(\widehat{T}_2\)</span>;
+<span class="math inline">\(Cov \big( \widehat{T}_1 , \widehat{T}_2 \big)\)</span> is the covariance of these estimators.
+Usually, the covariance term is ignored. But, specially for changes, the covariance
+tends to be positive, which results in a conservative variance estimator for the difference.</p>
+<p>Then, how can we estimate the covariance? The <code>survey</code> package already provides an
+approach for that using the <code>svyby</code> function. Based on the <code>?survey::svyby</code> examples,
+we have:</p>
+<div class="sourceCode" id="cb1092"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1092-1"><a href="6-covariance-matrix.html#cb1092-1" tabindex="-1"></a><span class="co"># load the survey library</span></span>
+<span id="cb1092-2"><a href="6-covariance-matrix.html#cb1092-2" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb1092-3"><a href="6-covariance-matrix.html#cb1092-3" tabindex="-1"></a></span>
+<span id="cb1092-4"><a href="6-covariance-matrix.html#cb1092-4" tabindex="-1"></a><span class="co">#  load data set</span></span>
+<span id="cb1092-5"><a href="6-covariance-matrix.html#cb1092-5" tabindex="-1"></a><span class="fu">data</span>( api )</span>
+<span id="cb1092-6"><a href="6-covariance-matrix.html#cb1092-6" tabindex="-1"></a></span>
+<span id="cb1092-7"><a href="6-covariance-matrix.html#cb1092-7" tabindex="-1"></a><span class="co"># declare sampling design</span></span>
+<span id="cb1092-8"><a href="6-covariance-matrix.html#cb1092-8" tabindex="-1"></a>dclus1 <span class="ot">&lt;-</span> <span class="fu">svydesign</span>( <span class="at">id=</span><span class="sc">~</span>dnum, <span class="at">weights=</span><span class="sc">~</span>pw, <span class="at">data=</span>apiclus1, <span class="at">fpc=</span><span class="sc">~</span>fpc )</span>
+<span id="cb1092-9"><a href="6-covariance-matrix.html#cb1092-9" tabindex="-1"></a></span>
+<span id="cb1092-10"><a href="6-covariance-matrix.html#cb1092-10" tabindex="-1"></a><span class="co"># estimate means</span></span>
+<span id="cb1092-11"><a href="6-covariance-matrix.html#cb1092-11" tabindex="-1"></a>mns <span class="ot">&lt;-</span><span class="fu">svyby</span>(<span class="sc">~</span>api99, <span class="sc">~</span>stype, dclus1, svymean,<span class="at">covmat=</span><span class="cn">TRUE</span>)</span>
+<span id="cb1092-12"><a href="6-covariance-matrix.html#cb1092-12" tabindex="-1"></a></span>
+<span id="cb1092-13"><a href="6-covariance-matrix.html#cb1092-13" tabindex="-1"></a><span class="co"># collect variacnce-covariance matrix of estimates</span></span>
+<span id="cb1092-14"><a href="6-covariance-matrix.html#cb1092-14" tabindex="-1"></a>( m <span class="ot">&lt;-</span> <span class="fu">vcov</span>( mns ) )</span></code></pre></div>
+<pre><code>##          E         H         M
+## E 520.5973  573.0404  684.6562
+## H 573.0404 1744.2317  747.1989
+## M 684.6562  747.1989 1060.1954</code></pre>
+<div class="sourceCode" id="cb1094"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1094-1"><a href="6-covariance-matrix.html#cb1094-1" tabindex="-1"></a><span class="co"># compute variance terms</span></span>
+<span id="cb1094-2"><a href="6-covariance-matrix.html#cb1094-2" tabindex="-1"></a>var.naive <span class="ot">&lt;-</span> <span class="fu">sum</span>( <span class="fu">diag</span>( m[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>),<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>)] ) )</span>
+<span id="cb1094-3"><a href="6-covariance-matrix.html#cb1094-3" tabindex="-1"></a>cov.term <span class="ot">&lt;-</span> <span class="fu">sum</span>( <span class="fu">diag</span>( m[ <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>),<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">1</span>)] ) )</span>
+<span id="cb1094-4"><a href="6-covariance-matrix.html#cb1094-4" tabindex="-1"></a></span>
+<span id="cb1094-5"><a href="6-covariance-matrix.html#cb1094-5" tabindex="-1"></a><span class="co"># &quot;naive&quot; SE of the difference</span></span>
+<span id="cb1094-6"><a href="6-covariance-matrix.html#cb1094-6" tabindex="-1"></a><span class="fu">sqrt</span>( var.naive )</span></code></pre></div>
+<pre><code>## [1] 39.75918</code></pre>
+<div class="sourceCode" id="cb1096"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1096-1"><a href="6-covariance-matrix.html#cb1096-1" tabindex="-1"></a><span class="co"># SE of the difference</span></span>
+<span id="cb1096-2"><a href="6-covariance-matrix.html#cb1096-2" tabindex="-1"></a><span class="fu">sqrt</span>( var.naive <span class="sc">-</span> cov.term )</span></code></pre></div>
+<pre><code>## [1] 14.54236</code></pre>
+<div class="sourceCode" id="cb1098"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1098-1"><a href="6-covariance-matrix.html#cb1098-1" tabindex="-1"></a><span class="co">#... or using svycontrast</span></span>
+<span id="cb1098-2"><a href="6-covariance-matrix.html#cb1098-2" tabindex="-1"></a><span class="fu">svycontrast</span>( mns , <span class="fu">c</span>(<span class="at">E =</span> <span class="dv">1</span>, <span class="at">M =</span> <span class="sc">-</span><span class="dv">1</span>) )</span></code></pre></div>
+<pre><code>##          contrast     SE
+## contrast -0.80833 14.542</code></pre>
+<p>Notice that, because the covariance terms are positive, the (actual) variance of
+the difference is smaller than the “naive” variance.</p>
+<p>A similar idea can be implemented with other estimators, such as inequality and poverty measures.
+However, this has not yet been implemented for linearization/influence function methods.
+In the next section, we show an example with the Gini index.</p>
 </div>
 <p style="text-align: center;">
-<a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html"><button class="btn btn-default">Previous</button></a>
-<a href="5.1-richness-measures-svyrich.html"><button class="btn btn-default">Next</button></a>
+<a href="5.1-richness-measures-svyrich.html"><button class="btn btn-default">Previous</button></a>
+<a href="6.1-example-calculation.html"><button class="btn btn-default">Next</button></a>
 </p>
 </div>
 </div>
