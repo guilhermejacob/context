@@ -257,7 +257,7 @@ stopifnot(nrow(cps_df) == nrow(person_df))
 rm( household_df , family_df , person_df , hh_fm_df , hh_fm_pr_df , repwgts_df ) ; gc()
 
 # variables to keep
-cps_df <- cps_df[ c( 'a_age' , 'a_sex' , 'moop' , 'a_maritl' , 'a_famrel' , 'gestfips' , 'ptotval' , 'ftotval' , 'htotval' , 'pearnval' , 'a_exprrp' , 'a_famtyp' , 'wewkrs' , 'marsupwt' , paste0( 'pwwgt' , 1:160 ) ) ] ; gc()
+cps_df <- cps_df[ c( 'a_age' , 'a_sex' , 'moop' , 'a_maritl' , 'a_famrel' , 'gestfips' , 'ftotval' , 'htotval' , 'pearnval' , 'a_exprrp' , 'a_famtyp' , 'wewkrs' , 'marsupwt' , paste0( 'pwwgt' , 1:160 ) ) ] ; gc()
 ```
 
 
@@ -461,9 +461,9 @@ svyby( ~ one , ~ state_name , cps_design , svytotal )
 
 Calculate the mean (average) of a linear variable, overall and by groups:
 ```{r results='hide', message=FALSE, warning=FALSE}
-svymean( ~ ptotval , cps_design )
+svymean( ~ pearnval , cps_design )
 
-svyby( ~ ptotval , ~ state_name , cps_design , svymean )
+svyby( ~ pearnval , ~ state_name , cps_design , svymean )
 ```
 
 Calculate the distribution of a categorical variable, overall and by groups:
@@ -475,9 +475,9 @@ svyby( ~ a_maritl , ~ state_name , cps_design , svymean )
 
 Calculate the sum of a linear variable, overall and by groups:
 ```{r results='hide', message=FALSE, warning=FALSE}
-svytotal( ~ ptotval , cps_design )
+svytotal( ~ pearnval , cps_design )
 
-svyby( ~ ptotval , ~ state_name , cps_design , svytotal )
+svyby( ~ pearnval , ~ state_name , cps_design , svytotal )
 ```
 
 Calculate the weighted sum of a categorical variable, overall and by groups:
@@ -489,10 +489,10 @@ svyby( ~ a_maritl , ~ state_name , cps_design , svytotal )
 
 Calculate the median (50th percentile) of a linear variable, overall and by groups:
 ```{r results='hide', message=FALSE, warning=FALSE}
-svyquantile( ~ ptotval , cps_design , 0.5 )
+svyquantile( ~ pearnval , cps_design , 0.5 )
 
 svyby( 
-	~ ptotval , 
+	~ pearnval , 
 	~ state_name , 
 	cps_design , 
 	svyquantile , 
@@ -505,7 +505,7 @@ Estimate a ratio:
 ```{r results='hide', message=FALSE, warning=FALSE}
 svyratio( 
 	numerator = ~ moop , 
-	denominator = ~ ptotval , 
+	denominator = ~ pearnval , 
 	cps_design 
 )
 ```
@@ -517,13 +517,13 @@ sub_cps_design <- subset( cps_design , a_age %in% 18:64 )
 ```
 Calculate the mean (average) of this subset:
 ```{r results='hide', message=FALSE, warning=FALSE}
-svymean( ~ ptotval , sub_cps_design )
+svymean( ~ pearnval , sub_cps_design )
 ```
 
 
 Extract the coefficient, standard error, confidence interval, and coefficient of variation from any descriptive statistics function result, overall and by groups:
 ```{r results='hide', message=FALSE, warning=FALSE}
-this_result <- svymean( ~ ptotval , cps_design )
+this_result <- svymean( ~ pearnval , cps_design )
 
 coef( this_result )
 SE( this_result )
@@ -532,7 +532,7 @@ cv( this_result )
 
 grouped_result <-
 	svyby( 
-		~ ptotval , 
+		~ pearnval , 
 		~ state_name , 
 		cps_design , 
 		svymean 
@@ -551,16 +551,16 @@ degf( cps_design )
 
 Calculate the complex sample survey-adjusted variance of any statistic:
 ```{r results='hide', message=FALSE, warning=FALSE}
-svyvar( ~ ptotval , cps_design )
+svyvar( ~ pearnval , cps_design )
 ```
 
 Include the complex sample design effect in the result for a specific statistic:
 ```{r results='hide', message=FALSE, warning=FALSE}
 # SRS without replacement
-svymean( ~ ptotval , cps_design , deff = TRUE )
+svymean( ~ pearnval , cps_design , deff = TRUE )
 
 # SRS with replacement
-svymean( ~ ptotval , cps_design , deff = "replace" )
+svymean( ~ pearnval , cps_design , deff = "replace" )
 ```
 
 Compute confidence intervals for proportions using methods that may be more accurate near 0 and 1. See `?svyciprop` for alternatives:
@@ -571,7 +571,7 @@ svyciprop( ~ male , cps_design ,
 
 Perform a design-based t-test:
 ```{r results='hide', message=FALSE, warning=FALSE}
-svyttest( ptotval ~ male , cps_design )
+svyttest( pearnval ~ male , cps_design )
 ```
 
 Perform a chi-squared test of association for survey data:
@@ -586,7 +586,7 @@ Perform a survey-weighted generalized linear model:
 ```{r results='hide', message=FALSE, warning=FALSE}
 glm_result <- 
 	svyglm( 
-		ptotval ~ male + a_maritl , 
+		pearnval ~ male + a_maritl , 
 		cps_design 
 	)
 
@@ -680,10 +680,8 @@ Re-set the population of reference for poverty threshold estimation:
 cps_ftfy_worker_design <- convey_prep(cps_ftfy_worker_design)
 ```
 
-Calculate the Gini coefficient with both total personal income and then total earnings:
+Calculate the Gini coefficient with total earnings:
 ```{r}
-svygini( ~ ptotval , cps_ftfy_worker_design)
-
 svygini( ~ pearnval , cps_ftfy_worker_design)
 ```
 
