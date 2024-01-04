@@ -13,7 +13,7 @@
 
 <meta name="author" content="By Guilherme Jacob, Anthony Damico, and Djalma Pessoa. The authors received no external funding for the convey software and this accompanying textbook." />
 
-<meta name="date" content="2024-01-02" />
+<meta name="date" content="2024-01-04" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -289,84 +289,84 @@ div.csl-indent {
 <div id="example-calculation" class="section level2" number="6.1">
 <h2><span class="header-section-number">6.1</span> Example Calculation</h2>
 <p>We start by showing what has been implemented — the resampling based approach:</p>
-<div class="sourceCode" id="cb1172"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1172-1"><a href="6.1-example-calculation.html#cb1172-1" tabindex="-1"></a><span class="co"># load the convey package</span></span>
-<span id="cb1172-2"><a href="6.1-example-calculation.html#cb1172-2" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
-<span id="cb1172-3"><a href="6.1-example-calculation.html#cb1172-3" tabindex="-1"></a></span>
-<span id="cb1172-4"><a href="6.1-example-calculation.html#cb1172-4" tabindex="-1"></a><span class="co"># load the survey library</span></span>
-<span id="cb1172-5"><a href="6.1-example-calculation.html#cb1172-5" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
-<span id="cb1172-6"><a href="6.1-example-calculation.html#cb1172-6" tabindex="-1"></a></span>
-<span id="cb1172-7"><a href="6.1-example-calculation.html#cb1172-7" tabindex="-1"></a><span class="co"># load the laeken library</span></span>
-<span id="cb1172-8"><a href="6.1-example-calculation.html#cb1172-8" tabindex="-1"></a><span class="fu">library</span>(laeken)</span>
-<span id="cb1172-9"><a href="6.1-example-calculation.html#cb1172-9" tabindex="-1"></a></span>
-<span id="cb1172-10"><a href="6.1-example-calculation.html#cb1172-10" tabindex="-1"></a><span class="co"># load the synthetic EU statistics on income &amp; living conditions</span></span>
-<span id="cb1172-11"><a href="6.1-example-calculation.html#cb1172-11" tabindex="-1"></a><span class="fu">data</span>(eusilc)</span>
-<span id="cb1172-12"><a href="6.1-example-calculation.html#cb1172-12" tabindex="-1"></a></span>
-<span id="cb1172-13"><a href="6.1-example-calculation.html#cb1172-13" tabindex="-1"></a><span class="co"># make all column names lowercase</span></span>
-<span id="cb1172-14"><a href="6.1-example-calculation.html#cb1172-14" tabindex="-1"></a><span class="fu">names</span>(eusilc) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(eusilc))</span>
-<span id="cb1172-15"><a href="6.1-example-calculation.html#cb1172-15" tabindex="-1"></a></span>
-<span id="cb1172-16"><a href="6.1-example-calculation.html#cb1172-16" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
-<span id="cb1172-17"><a href="6.1-example-calculation.html#cb1172-17" tabindex="-1"></a><span class="co"># using our recommended setup</span></span>
-<span id="cb1172-18"><a href="6.1-example-calculation.html#cb1172-18" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span></span>
-<span id="cb1172-19"><a href="6.1-example-calculation.html#cb1172-19" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
-<span id="cb1172-20"><a href="6.1-example-calculation.html#cb1172-20" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
-<span id="cb1172-21"><a href="6.1-example-calculation.html#cb1172-21" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
-<span id="cb1172-22"><a href="6.1-example-calculation.html#cb1172-22" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
-<span id="cb1172-23"><a href="6.1-example-calculation.html#cb1172-23" tabindex="-1"></a>    <span class="at">data =</span> eusilc</span>
-<span id="cb1172-24"><a href="6.1-example-calculation.html#cb1172-24" tabindex="-1"></a>  )</span>
-<span id="cb1172-25"><a href="6.1-example-calculation.html#cb1172-25" tabindex="-1"></a></span>
-<span id="cb1172-26"><a href="6.1-example-calculation.html#cb1172-26" tabindex="-1"></a><span class="co"># create bootstrap-based design object</span></span>
-<span id="cb1172-27"><a href="6.1-example-calculation.html#cb1172-27" tabindex="-1"></a>des_eusilc_rep <span class="ot">&lt;-</span> <span class="fu">as.svrepdesign</span>( des_eusilc , <span class="at">type =</span> <span class="st">&quot;bootstrap&quot;</span> )</span>
-<span id="cb1172-28"><a href="6.1-example-calculation.html#cb1172-28" tabindex="-1"></a></span>
-<span id="cb1172-29"><a href="6.1-example-calculation.html#cb1172-29" tabindex="-1"></a><span class="co"># immediately run the convey_prep function on it</span></span>
-<span id="cb1172-30"><a href="6.1-example-calculation.html#cb1172-30" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>( des_eusilc )</span>
-<span id="cb1172-31"><a href="6.1-example-calculation.html#cb1172-31" tabindex="-1"></a>des_eusilc_rep <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(des_eusilc_rep)</span>
-<span id="cb1172-32"><a href="6.1-example-calculation.html#cb1172-32" tabindex="-1"></a></span>
-<span id="cb1172-33"><a href="6.1-example-calculation.html#cb1172-33" tabindex="-1"></a><span class="co"># estimate gini by gender, with and without covariance matrices</span></span>
-<span id="cb1172-34"><a href="6.1-example-calculation.html#cb1172-34" tabindex="-1"></a>ginis.rep <span class="ot">&lt;-</span> <span class="fu">svyby</span>( <span class="sc">~</span> py010n , <span class="sc">~</span>rb090 , des_eusilc_rep , svygini , <span class="at">na.rm =</span> <span class="cn">TRUE</span> , <span class="at">covmat =</span> <span class="cn">TRUE</span> )</span>
-<span id="cb1172-35"><a href="6.1-example-calculation.html#cb1172-35" tabindex="-1"></a>ginis.rep.nocov <span class="ot">&lt;-</span> <span class="fu">svyby</span>( <span class="sc">~</span> py010n , <span class="sc">~</span>rb090 , des_eusilc_rep , svygini , <span class="at">na.rm =</span> <span class="cn">TRUE</span> , <span class="at">covmat =</span> <span class="cn">FALSE</span> )</span>
-<span id="cb1172-36"><a href="6.1-example-calculation.html#cb1172-36" tabindex="-1"></a></span>
-<span id="cb1172-37"><a href="6.1-example-calculation.html#cb1172-37" tabindex="-1"></a><span class="co"># variance of the gini difference: naive</span></span>
-<span id="cb1172-38"><a href="6.1-example-calculation.html#cb1172-38" tabindex="-1"></a><span class="fu">svycontrast</span>( ginis.rep.nocov , <span class="fu">quote</span>( <span class="st">`</span><span class="at">male</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">female</span><span class="st">`</span> ) )</span></code></pre></div>
+<div class="sourceCode" id="cb1094"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1094-1"><a href="6.1-example-calculation.html#cb1094-1" tabindex="-1"></a><span class="co"># load the convey package</span></span>
+<span id="cb1094-2"><a href="6.1-example-calculation.html#cb1094-2" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
+<span id="cb1094-3"><a href="6.1-example-calculation.html#cb1094-3" tabindex="-1"></a></span>
+<span id="cb1094-4"><a href="6.1-example-calculation.html#cb1094-4" tabindex="-1"></a><span class="co"># load the survey library</span></span>
+<span id="cb1094-5"><a href="6.1-example-calculation.html#cb1094-5" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb1094-6"><a href="6.1-example-calculation.html#cb1094-6" tabindex="-1"></a></span>
+<span id="cb1094-7"><a href="6.1-example-calculation.html#cb1094-7" tabindex="-1"></a><span class="co"># load the laeken library</span></span>
+<span id="cb1094-8"><a href="6.1-example-calculation.html#cb1094-8" tabindex="-1"></a><span class="fu">library</span>(laeken)</span>
+<span id="cb1094-9"><a href="6.1-example-calculation.html#cb1094-9" tabindex="-1"></a></span>
+<span id="cb1094-10"><a href="6.1-example-calculation.html#cb1094-10" tabindex="-1"></a><span class="co"># load the synthetic EU statistics on income &amp; living conditions</span></span>
+<span id="cb1094-11"><a href="6.1-example-calculation.html#cb1094-11" tabindex="-1"></a><span class="fu">data</span>(eusilc)</span>
+<span id="cb1094-12"><a href="6.1-example-calculation.html#cb1094-12" tabindex="-1"></a></span>
+<span id="cb1094-13"><a href="6.1-example-calculation.html#cb1094-13" tabindex="-1"></a><span class="co"># make all column names lowercase</span></span>
+<span id="cb1094-14"><a href="6.1-example-calculation.html#cb1094-14" tabindex="-1"></a><span class="fu">names</span>(eusilc) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(eusilc))</span>
+<span id="cb1094-15"><a href="6.1-example-calculation.html#cb1094-15" tabindex="-1"></a></span>
+<span id="cb1094-16"><a href="6.1-example-calculation.html#cb1094-16" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
+<span id="cb1094-17"><a href="6.1-example-calculation.html#cb1094-17" tabindex="-1"></a><span class="co"># using our recommended setup</span></span>
+<span id="cb1094-18"><a href="6.1-example-calculation.html#cb1094-18" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span></span>
+<span id="cb1094-19"><a href="6.1-example-calculation.html#cb1094-19" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
+<span id="cb1094-20"><a href="6.1-example-calculation.html#cb1094-20" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
+<span id="cb1094-21"><a href="6.1-example-calculation.html#cb1094-21" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
+<span id="cb1094-22"><a href="6.1-example-calculation.html#cb1094-22" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
+<span id="cb1094-23"><a href="6.1-example-calculation.html#cb1094-23" tabindex="-1"></a>    <span class="at">data =</span> eusilc</span>
+<span id="cb1094-24"><a href="6.1-example-calculation.html#cb1094-24" tabindex="-1"></a>  )</span>
+<span id="cb1094-25"><a href="6.1-example-calculation.html#cb1094-25" tabindex="-1"></a></span>
+<span id="cb1094-26"><a href="6.1-example-calculation.html#cb1094-26" tabindex="-1"></a><span class="co"># create bootstrap-based design object</span></span>
+<span id="cb1094-27"><a href="6.1-example-calculation.html#cb1094-27" tabindex="-1"></a>des_eusilc_rep <span class="ot">&lt;-</span> <span class="fu">as.svrepdesign</span>( des_eusilc , <span class="at">type =</span> <span class="st">&quot;bootstrap&quot;</span> )</span>
+<span id="cb1094-28"><a href="6.1-example-calculation.html#cb1094-28" tabindex="-1"></a></span>
+<span id="cb1094-29"><a href="6.1-example-calculation.html#cb1094-29" tabindex="-1"></a><span class="co"># immediately run the convey_prep function on it</span></span>
+<span id="cb1094-30"><a href="6.1-example-calculation.html#cb1094-30" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>( des_eusilc )</span>
+<span id="cb1094-31"><a href="6.1-example-calculation.html#cb1094-31" tabindex="-1"></a>des_eusilc_rep <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(des_eusilc_rep)</span>
+<span id="cb1094-32"><a href="6.1-example-calculation.html#cb1094-32" tabindex="-1"></a></span>
+<span id="cb1094-33"><a href="6.1-example-calculation.html#cb1094-33" tabindex="-1"></a><span class="co"># estimate gini by gender, with and without covariance matrices</span></span>
+<span id="cb1094-34"><a href="6.1-example-calculation.html#cb1094-34" tabindex="-1"></a>ginis.rep <span class="ot">&lt;-</span> <span class="fu">svyby</span>( <span class="sc">~</span> py010n , <span class="sc">~</span>rb090 , des_eusilc_rep , svygini , <span class="at">na.rm =</span> <span class="cn">TRUE</span> , <span class="at">covmat =</span> <span class="cn">TRUE</span> )</span>
+<span id="cb1094-35"><a href="6.1-example-calculation.html#cb1094-35" tabindex="-1"></a>ginis.rep.nocov <span class="ot">&lt;-</span> <span class="fu">svyby</span>( <span class="sc">~</span> py010n , <span class="sc">~</span>rb090 , des_eusilc_rep , svygini , <span class="at">na.rm =</span> <span class="cn">TRUE</span> , <span class="at">covmat =</span> <span class="cn">FALSE</span> )</span>
+<span id="cb1094-36"><a href="6.1-example-calculation.html#cb1094-36" tabindex="-1"></a></span>
+<span id="cb1094-37"><a href="6.1-example-calculation.html#cb1094-37" tabindex="-1"></a><span class="co"># variance of the gini difference: naive</span></span>
+<span id="cb1094-38"><a href="6.1-example-calculation.html#cb1094-38" tabindex="-1"></a><span class="fu">svycontrast</span>( ginis.rep.nocov , <span class="fu">quote</span>( <span class="st">`</span><span class="at">male</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">female</span><span class="st">`</span> ) )</span></code></pre></div>
 <pre><code>## Warning in vcov.svyby(stat): Only diagonal elements of vcov() available</code></pre>
 <pre><code>##             nlcon     SE
 ## contrast -0.15006 0.0065</code></pre>
-<div class="sourceCode" id="cb1175"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1175-1"><a href="6.1-example-calculation.html#cb1175-1" tabindex="-1"></a><span class="co"># variance of the gini difference: accounting for covariance</span></span>
-<span id="cb1175-2"><a href="6.1-example-calculation.html#cb1175-2" tabindex="-1"></a><span class="fu">svycontrast</span>( ginis.rep , <span class="fu">quote</span>( <span class="st">`</span><span class="at">male</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">female</span><span class="st">`</span> ) )</span></code></pre></div>
+<div class="sourceCode" id="cb1097"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1097-1"><a href="6.1-example-calculation.html#cb1097-1" tabindex="-1"></a><span class="co"># variance of the gini difference: accounting for covariance</span></span>
+<span id="cb1097-2"><a href="6.1-example-calculation.html#cb1097-2" tabindex="-1"></a><span class="fu">svycontrast</span>( ginis.rep , <span class="fu">quote</span>( <span class="st">`</span><span class="at">male</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">female</span><span class="st">`</span> ) )</span></code></pre></div>
 <pre><code>##             nlcon     SE
 ## contrast -0.15006 0.0068</code></pre>
 <p>Notice that the warning <code>Only diagonal elements of vcov() available</code> means that
 the covariance terms are null for the <code>vcov( ginis.rep.nocov )</code> result.</p>
 <p>While not implemented yet, a linearization-based approach can be applied using:</p>
-<div class="sourceCode" id="cb1177"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1177-1"><a href="6.1-example-calculation.html#cb1177-1" tabindex="-1"></a><span class="co"># estimate gini by gender, with and without covariance matrices</span></span>
-<span id="cb1177-2"><a href="6.1-example-calculation.html#cb1177-2" tabindex="-1"></a>ginis.lin.nocov <span class="ot">&lt;-</span> <span class="fu">svyby</span>( <span class="sc">~</span> py010n , <span class="sc">~</span>rb090 , des_eusilc , svygini , <span class="at">na.rm =</span> <span class="cn">TRUE</span> , <span class="at">covmat =</span> <span class="cn">FALSE</span> )</span>
-<span id="cb1177-3"><a href="6.1-example-calculation.html#cb1177-3" tabindex="-1"></a>gini.female <span class="ot">&lt;-</span> <span class="fu">svygini</span>( <span class="sc">~</span> py010n , <span class="fu">subset</span>( des_eusilc , rb090 <span class="sc">==</span> <span class="st">&quot;female&quot;</span> ), <span class="at">na.rm =</span> <span class="cn">TRUE</span> , <span class="at">influence =</span> <span class="cn">TRUE</span> )</span>
-<span id="cb1177-4"><a href="6.1-example-calculation.html#cb1177-4" tabindex="-1"></a>gini.male   <span class="ot">&lt;-</span> <span class="fu">svygini</span>( <span class="sc">~</span> py010n , <span class="fu">subset</span>( des_eusilc , rb090 <span class="sc">==</span> <span class="st">&quot;male&quot;</span> ), <span class="at">na.rm =</span> <span class="cn">TRUE</span> , <span class="at">influence =</span> <span class="cn">TRUE</span> )</span>
-<span id="cb1177-5"><a href="6.1-example-calculation.html#cb1177-5" tabindex="-1"></a></span>
-<span id="cb1177-6"><a href="6.1-example-calculation.html#cb1177-6" tabindex="-1"></a><span class="co"># estimate full variance-covariance matrix</span></span>
-<span id="cb1177-7"><a href="6.1-example-calculation.html#cb1177-7" tabindex="-1"></a>linmat <span class="ot">&lt;-</span> <span class="fu">rep</span>( <span class="dv">0</span> , <span class="fu">nrow</span>( des_eusilc<span class="sc">$</span>variables ) )</span>
-<span id="cb1177-8"><a href="6.1-example-calculation.html#cb1177-8" tabindex="-1"></a>linmat[ <span class="fu">attr</span>( gini.female , <span class="st">&quot;index&quot;</span> ) ] <span class="ot">&lt;-</span> <span class="fu">attr</span>( gini.female , <span class="st">&quot;influence&quot;</span> )</span>
-<span id="cb1177-9"><a href="6.1-example-calculation.html#cb1177-9" tabindex="-1"></a>linmat[ <span class="fu">attr</span>( gini.male , <span class="st">&quot;index&quot;</span> ) ] <span class="ot">&lt;-</span> <span class="fu">attr</span>( gini.male , <span class="st">&quot;influence&quot;</span> )</span>
-<span id="cb1177-10"><a href="6.1-example-calculation.html#cb1177-10" tabindex="-1"></a>linmat <span class="ot">&lt;-</span> linmat <span class="sc">*</span> des_eusilc<span class="sc">$</span>prob</span>
-<span id="cb1177-11"><a href="6.1-example-calculation.html#cb1177-11" tabindex="-1"></a>lintot <span class="ot">&lt;-</span> <span class="fu">svyby</span>( linmat , <span class="sc">~</span>rb090 , des_eusilc , svytotal , <span class="at">covmat =</span> <span class="cn">TRUE</span> )</span>
-<span id="cb1177-12"><a href="6.1-example-calculation.html#cb1177-12" tabindex="-1"></a></span>
-<span id="cb1177-13"><a href="6.1-example-calculation.html#cb1177-13" tabindex="-1"></a><span class="co"># compare the variance-covariance matrices</span></span>
-<span id="cb1177-14"><a href="6.1-example-calculation.html#cb1177-14" tabindex="-1"></a><span class="fu">vcov</span>( ginis.lin.nocov ) <span class="co"># naive, with null covariance terms</span></span></code></pre></div>
+<div class="sourceCode" id="cb1099"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1099-1"><a href="6.1-example-calculation.html#cb1099-1" tabindex="-1"></a><span class="co"># estimate gini by gender, with and without covariance matrices</span></span>
+<span id="cb1099-2"><a href="6.1-example-calculation.html#cb1099-2" tabindex="-1"></a>ginis.lin.nocov <span class="ot">&lt;-</span> <span class="fu">svyby</span>( <span class="sc">~</span> py010n , <span class="sc">~</span>rb090 , des_eusilc , svygini , <span class="at">na.rm =</span> <span class="cn">TRUE</span> , <span class="at">covmat =</span> <span class="cn">FALSE</span> )</span>
+<span id="cb1099-3"><a href="6.1-example-calculation.html#cb1099-3" tabindex="-1"></a>gini.female <span class="ot">&lt;-</span> <span class="fu">svygini</span>( <span class="sc">~</span> py010n , <span class="fu">subset</span>( des_eusilc , rb090 <span class="sc">==</span> <span class="st">&quot;female&quot;</span> ), <span class="at">na.rm =</span> <span class="cn">TRUE</span> , <span class="at">influence =</span> <span class="cn">TRUE</span> )</span>
+<span id="cb1099-4"><a href="6.1-example-calculation.html#cb1099-4" tabindex="-1"></a>gini.male   <span class="ot">&lt;-</span> <span class="fu">svygini</span>( <span class="sc">~</span> py010n , <span class="fu">subset</span>( des_eusilc , rb090 <span class="sc">==</span> <span class="st">&quot;male&quot;</span> ), <span class="at">na.rm =</span> <span class="cn">TRUE</span> , <span class="at">influence =</span> <span class="cn">TRUE</span> )</span>
+<span id="cb1099-5"><a href="6.1-example-calculation.html#cb1099-5" tabindex="-1"></a></span>
+<span id="cb1099-6"><a href="6.1-example-calculation.html#cb1099-6" tabindex="-1"></a><span class="co"># estimate full variance-covariance matrix</span></span>
+<span id="cb1099-7"><a href="6.1-example-calculation.html#cb1099-7" tabindex="-1"></a>linmat <span class="ot">&lt;-</span> <span class="fu">rep</span>( <span class="dv">0</span> , <span class="fu">nrow</span>( des_eusilc<span class="sc">$</span>variables ) )</span>
+<span id="cb1099-8"><a href="6.1-example-calculation.html#cb1099-8" tabindex="-1"></a>linmat[ <span class="fu">attr</span>( gini.female , <span class="st">&quot;index&quot;</span> ) ] <span class="ot">&lt;-</span> <span class="fu">attr</span>( gini.female , <span class="st">&quot;influence&quot;</span> )</span>
+<span id="cb1099-9"><a href="6.1-example-calculation.html#cb1099-9" tabindex="-1"></a>linmat[ <span class="fu">attr</span>( gini.male , <span class="st">&quot;index&quot;</span> ) ] <span class="ot">&lt;-</span> <span class="fu">attr</span>( gini.male , <span class="st">&quot;influence&quot;</span> )</span>
+<span id="cb1099-10"><a href="6.1-example-calculation.html#cb1099-10" tabindex="-1"></a>linmat <span class="ot">&lt;-</span> linmat <span class="sc">*</span> des_eusilc<span class="sc">$</span>prob</span>
+<span id="cb1099-11"><a href="6.1-example-calculation.html#cb1099-11" tabindex="-1"></a>lintot <span class="ot">&lt;-</span> <span class="fu">svyby</span>( linmat , <span class="sc">~</span>rb090 , des_eusilc , svytotal , <span class="at">covmat =</span> <span class="cn">TRUE</span> )</span>
+<span id="cb1099-12"><a href="6.1-example-calculation.html#cb1099-12" tabindex="-1"></a></span>
+<span id="cb1099-13"><a href="6.1-example-calculation.html#cb1099-13" tabindex="-1"></a><span class="co"># compare the variance-covariance matrices</span></span>
+<span id="cb1099-14"><a href="6.1-example-calculation.html#cb1099-14" tabindex="-1"></a><span class="fu">vcov</span>( ginis.lin.nocov ) <span class="co"># naive, with null covariance terms</span></span></code></pre></div>
 <pre><code>## Warning in vcov.svyby(ginis.lin.nocov): Only diagonal elements of vcov()
 ## available</code></pre>
 <pre><code>##                male       female
 ## male   2.954413e-05 0.000000e+00
 ## female 0.000000e+00 2.292063e-05</code></pre>
-<div class="sourceCode" id="cb1180"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1180-1"><a href="6.1-example-calculation.html#cb1180-1" tabindex="-1"></a><span class="fu">vcov</span>( lintot ) <span class="co"># full, with non-null covariance terms</span></span></code></pre></div>
+<div class="sourceCode" id="cb1102"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1102-1"><a href="6.1-example-calculation.html#cb1102-1" tabindex="-1"></a><span class="fu">vcov</span>( lintot ) <span class="co"># full, with non-null covariance terms</span></span></code></pre></div>
 <pre><code>##                male       female
 ## male   2.954413e-05 2.764584e-10
 ## female 2.764584e-10 2.292063e-05</code></pre>
-<div class="sourceCode" id="cb1182"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1182-1"><a href="6.1-example-calculation.html#cb1182-1" tabindex="-1"></a><span class="co"># SE of the gini difference: naive</span></span>
-<span id="cb1182-2"><a href="6.1-example-calculation.html#cb1182-2" tabindex="-1"></a><span class="fu">SE</span>( <span class="fu">svycontrast</span>( ginis.lin.nocov , <span class="fu">quote</span>( <span class="st">`</span><span class="at">male</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">female</span><span class="st">`</span> ) ) )</span></code></pre></div>
+<div class="sourceCode" id="cb1104"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1104-1"><a href="6.1-example-calculation.html#cb1104-1" tabindex="-1"></a><span class="co"># SE of the gini difference: naive</span></span>
+<span id="cb1104-2"><a href="6.1-example-calculation.html#cb1104-2" tabindex="-1"></a><span class="fu">SE</span>( <span class="fu">svycontrast</span>( ginis.lin.nocov , <span class="fu">quote</span>( <span class="st">`</span><span class="at">male</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">female</span><span class="st">`</span> ) ) )</span></code></pre></div>
 <pre><code>## Warning in vcov.svyby(stat): Only diagonal elements of vcov() available</code></pre>
 <pre><code>##    contrast 
 ## 0.007243256</code></pre>
-<div class="sourceCode" id="cb1185"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1185-1"><a href="6.1-example-calculation.html#cb1185-1" tabindex="-1"></a><span class="co"># SE of the gini difference: accounting for covariance</span></span>
-<span id="cb1185-2"><a href="6.1-example-calculation.html#cb1185-2" tabindex="-1"></a><span class="fu">SE</span>( <span class="fu">svycontrast</span>( lintot , <span class="fu">quote</span>( <span class="st">`</span><span class="at">male</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">female</span><span class="st">`</span> ) ) )</span></code></pre></div>
+<div class="sourceCode" id="cb1107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1107-1"><a href="6.1-example-calculation.html#cb1107-1" tabindex="-1"></a><span class="co"># SE of the gini difference: accounting for covariance</span></span>
+<span id="cb1107-2"><a href="6.1-example-calculation.html#cb1107-2" tabindex="-1"></a><span class="fu">SE</span>( <span class="fu">svycontrast</span>( lintot , <span class="fu">quote</span>( <span class="st">`</span><span class="at">male</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">female</span><span class="st">`</span> ) ) )</span></code></pre></div>
 <pre><code>##    contrast 
 ## 0.007243218</code></pre>
 <p>Notice that the warning <code>Only diagonal elements of vcov() available</code> means that
