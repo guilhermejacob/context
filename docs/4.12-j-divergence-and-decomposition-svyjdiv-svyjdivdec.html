@@ -13,7 +13,7 @@
 
 <meta name="author" content="By Guilherme Jacob, Anthony Damico, and Djalma Pessoa. The authors received no external funding for the convey software and this accompanying textbook." />
 
-<meta name="date" content="2024-01-04" />
+<meta name="date" content="2024-01-05" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -288,12 +288,12 @@ div.csl-indent {
 <div class="col-sm-12">
 <div id="j-divergence-and-decomposition-svyjdiv-svyjdivdec" class="section level2" number="4.12">
 <h2><span class="header-section-number">4.12</span> J-Divergence and Decomposition (svyjdiv, svyjdivdec)</h2>
-<div class="sourceCode" id="cb974"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb974-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb974-1" tabindex="-1"></a>✔️ can be interpreted <span class="cf">in</span> terms of GEI indices</span>
-<span id="cb974-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb974-2" tabindex="-1"></a>✔️ can be group<span class="sc">-</span>decomposed into within<span class="sc">-</span>inequality and between<span class="sc">-</span>inequality</span>
-<span id="cb974-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb974-3" tabindex="-1"></a>✔️ does not need <span class="fu">to</span> (explicitly) choose inequality aversion parameters</span>
-<span id="cb974-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb974-4" tabindex="-1"></a>❌ does not handle zero or negative incomes</span>
-<span id="cb974-5"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb974-5" tabindex="-1"></a>❌ hard to interpret</span>
-<span id="cb974-6"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb974-6" tabindex="-1"></a>❌ the decomposition interpretation is not exactly the same as the GEI, but very similar</span></code></pre></div>
+<div class="sourceCode" id="cb977"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb977-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb977-1" tabindex="-1"></a>✔️ can be interpreted <span class="cf">in</span> terms of GEI indices</span>
+<span id="cb977-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb977-2" tabindex="-1"></a>✔️ can be group<span class="sc">-</span>decomposed into within<span class="sc">-</span>inequality and between<span class="sc">-</span>inequality</span>
+<span id="cb977-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb977-3" tabindex="-1"></a>✔️ does not need <span class="fu">to</span> (explicitly) choose inequality aversion parameters</span>
+<span id="cb977-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb977-4" tabindex="-1"></a>❌ does not handle zero or negative incomes</span>
+<span id="cb977-5"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb977-5" tabindex="-1"></a>❌ hard to interpret</span>
+<span id="cb977-6"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb977-6" tabindex="-1"></a>❌ the decomposition interpretation is not exactly the same as the GEI, but very similar</span></code></pre></div>
 <p>The J-divergence measure <span class="citation">(<label for="tufte-mn-100" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-100" class="margin-toggle">Rohde 2016<span class="marginnote">Rohde, Nicholas. 2016. <span>“J-Divergence Measurements of Economic Inequality.”</span> <em>Journal of the Royal Statistical Society: Series A (Statistics in Society)</em> 179 (3): 847–70. <a href="https://doi.org/10.1111/rssa.12153">https://doi.org/10.1111/rssa.12153</a>.</span>)</span> can be seen as the sum of <span class="math inline">\(GE_0\)</span> and <span class="math inline">\(GE_1\)</span>, satisfying axioms that, individually, those two indices do not. The J-divergence measure is defined as:</p>
 <p><span class="math display">\[
 J = \frac{1}{N} \sum_{i \in U} \bigg( \frac{ y_i }{ \mu } -1 \bigg) \ln \bigg( \frac{y_i}{\mu} \bigg)
@@ -310,136 +310,136 @@ J_W &amp;= \sum_{g \in G} \bigg[ \frac{Y_g}{Y} GE^{(1)}_g + \frac{N_g}{N} GE^{(0
 <div id="monte-carlo-simulation-2" class="section level3" number="4.12.1">
 <h3><span class="header-section-number">4.12.1</span> Monte Carlo Simulation</h3>
 <p>First, we should check that the finite-population values make sense. The J-divergence can be seen as the sum of <span class="math inline">\(GE^{(0)}\)</span> and <span class="math inline">\(GE^{(1)}\)</span>. So, taking the starting population from the <code>svyzenga</code> section of this text, we have:</p>
-<div class="sourceCode" id="cb975"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb975-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb975-1" tabindex="-1"></a><span class="co"># compute finite population J-divergence</span></span>
-<span id="cb975-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb975-2" tabindex="-1"></a>(jdivt.pop <span class="ot">&lt;-</span></span>
-<span id="cb975-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb975-3" tabindex="-1"></a>   (convey<span class="sc">:::</span><span class="fu">CalcJDiv</span>(pop.df<span class="sc">$</span>x , <span class="fu">ifelse</span>(pop.df<span class="sc">$</span>x <span class="sc">&gt;</span> <span class="dv">0</span> , <span class="dv">1</span> , <span class="dv">0</span>))))</span></code></pre></div>
+<div class="sourceCode" id="cb978"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb978-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb978-1" tabindex="-1"></a><span class="co"># compute finite population J-divergence</span></span>
+<span id="cb978-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb978-2" tabindex="-1"></a>(jdivt.pop <span class="ot">&lt;-</span></span>
+<span id="cb978-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb978-3" tabindex="-1"></a>   (convey<span class="sc">:::</span><span class="fu">CalcJDiv</span>(pop.df<span class="sc">$</span>x , <span class="fu">ifelse</span>(pop.df<span class="sc">$</span>x <span class="sc">&gt;</span> <span class="dv">0</span> , <span class="dv">1</span> , <span class="dv">0</span>))))</span></code></pre></div>
 <pre><code>## [1] 0.4332649</code></pre>
-<div class="sourceCode" id="cb977"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb977-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb977-1" tabindex="-1"></a><span class="co"># compute finite population GE indices</span></span>
-<span id="cb977-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb977-2" tabindex="-1"></a>(gei0.pop <span class="ot">&lt;-</span></span>
-<span id="cb977-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb977-3" tabindex="-1"></a>    convey<span class="sc">:::</span><span class="fu">CalcGEI</span>(pop.df<span class="sc">$</span>x , <span class="fu">ifelse</span>(pop.df<span class="sc">$</span>x <span class="sc">&gt;</span> <span class="dv">0</span> , <span class="dv">1</span> , <span class="dv">0</span>) , <span class="dv">0</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb980"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb980-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb980-1" tabindex="-1"></a><span class="co"># compute finite population GE indices</span></span>
+<span id="cb980-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb980-2" tabindex="-1"></a>(gei0.pop <span class="ot">&lt;-</span></span>
+<span id="cb980-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb980-3" tabindex="-1"></a>    convey<span class="sc">:::</span><span class="fu">CalcGEI</span>(pop.df<span class="sc">$</span>x , <span class="fu">ifelse</span>(pop.df<span class="sc">$</span>x <span class="sc">&gt;</span> <span class="dv">0</span> , <span class="dv">1</span> , <span class="dv">0</span>) , <span class="dv">0</span>))</span></code></pre></div>
 <pre><code>## [1] 0.2215037</code></pre>
-<div class="sourceCode" id="cb979"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb979-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb979-1" tabindex="-1"></a>(gei1.pop <span class="ot">&lt;-</span></span>
-<span id="cb979-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb979-2" tabindex="-1"></a>    convey<span class="sc">:::</span><span class="fu">CalcGEI</span>(pop.df<span class="sc">$</span>x , <span class="fu">ifelse</span>(pop.df<span class="sc">$</span>x <span class="sc">&gt;</span> <span class="dv">0</span> , <span class="dv">1</span> , <span class="dv">0</span>) , <span class="dv">1</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb982"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb982-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb982-1" tabindex="-1"></a>(gei1.pop <span class="ot">&lt;-</span></span>
+<span id="cb982-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb982-2" tabindex="-1"></a>    convey<span class="sc">:::</span><span class="fu">CalcGEI</span>(pop.df<span class="sc">$</span>x , <span class="fu">ifelse</span>(pop.df<span class="sc">$</span>x <span class="sc">&gt;</span> <span class="dv">0</span> , <span class="dv">1</span> , <span class="dv">0</span>) , <span class="dv">1</span>))</span></code></pre></div>
 <pre><code>## [1] 0.2117612</code></pre>
-<div class="sourceCode" id="cb981"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb981-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb981-1" tabindex="-1"></a><span class="co"># check equality; should be true</span></span>
-<span id="cb981-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb981-2" tabindex="-1"></a><span class="fu">all.equal</span>(jdivt.pop , gei0.pop <span class="sc">+</span> gei1.pop)</span></code></pre></div>
+<div class="sourceCode" id="cb984"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb984-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb984-1" tabindex="-1"></a><span class="co"># check equality; should be true</span></span>
+<span id="cb984-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb984-2" tabindex="-1"></a><span class="fu">all.equal</span>(jdivt.pop , gei0.pop <span class="sc">+</span> gei1.pop)</span></code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
 <p>As expected, the J-divergence matches the sum of GEs in the finite population. And as we’ve checked the GE measures before, the J-divergence computation function seems safe.</p>
 <p>In order to assess the estimators implemented in <code>svyjdiv</code> and <code>svyjdivdec</code>, we can run a Monte Carlo experiment. Using the same samples we used in the <code>svyzenga</code> replication example, we have:</p>
-<div class="sourceCode" id="cb983"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb983-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb983-1" tabindex="-1"></a><span class="co"># estimate J-divergence with each sample</span></span>
-<span id="cb983-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb983-2" tabindex="-1"></a>jdiv.estimate.list <span class="ot">&lt;-</span></span>
-<span id="cb983-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb983-3" tabindex="-1"></a>  <span class="fu">lapply</span>(survey.list ,</span>
-<span id="cb983-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb983-4" tabindex="-1"></a>         <span class="cf">function</span>(this.sample) {</span>
-<span id="cb983-5"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb983-5" tabindex="-1"></a>           <span class="fu">svyjdiv</span>( <span class="sc">~</span> x ,</span>
-<span id="cb983-6"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb983-6" tabindex="-1"></a>                    <span class="fu">subset</span>(this.sample , x <span class="sc">&gt;</span> <span class="dv">0</span>) ,</span>
-<span id="cb983-7"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb983-7" tabindex="-1"></a>                    <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb983-8"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb983-8" tabindex="-1"></a>         })</span>
-<span id="cb983-9"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb983-9" tabindex="-1"></a></span>
-<span id="cb983-10"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb983-10" tabindex="-1"></a><span class="co"># compute the (finite population overall) J-divergence</span></span>
-<span id="cb983-11"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb983-11" tabindex="-1"></a>(theta.pop <span class="ot">&lt;-</span></span>
-<span id="cb983-12"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb983-12" tabindex="-1"></a>    convey<span class="sc">:::</span><span class="fu">CalcJDiv</span>(pop.df<span class="sc">$</span>x , <span class="fu">ifelse</span>(pop.df<span class="sc">$</span>x <span class="sc">&gt;</span> <span class="dv">0</span> , <span class="dv">1</span> , <span class="dv">0</span>)))</span></code></pre></div>
+<div class="sourceCode" id="cb986"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb986-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb986-1" tabindex="-1"></a><span class="co"># estimate J-divergence with each sample</span></span>
+<span id="cb986-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb986-2" tabindex="-1"></a>jdiv.estimate.list <span class="ot">&lt;-</span></span>
+<span id="cb986-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb986-3" tabindex="-1"></a>  <span class="fu">lapply</span>(survey.list ,</span>
+<span id="cb986-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb986-4" tabindex="-1"></a>         <span class="cf">function</span>(this.sample) {</span>
+<span id="cb986-5"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb986-5" tabindex="-1"></a>           <span class="fu">svyjdiv</span>( <span class="sc">~</span> x ,</span>
+<span id="cb986-6"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb986-6" tabindex="-1"></a>                    <span class="fu">subset</span>(this.sample , x <span class="sc">&gt;</span> <span class="dv">0</span>) ,</span>
+<span id="cb986-7"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb986-7" tabindex="-1"></a>                    <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb986-8"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb986-8" tabindex="-1"></a>         })</span>
+<span id="cb986-9"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb986-9" tabindex="-1"></a></span>
+<span id="cb986-10"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb986-10" tabindex="-1"></a><span class="co"># compute the (finite population overall) J-divergence</span></span>
+<span id="cb986-11"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb986-11" tabindex="-1"></a>(theta.pop <span class="ot">&lt;-</span></span>
+<span id="cb986-12"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb986-12" tabindex="-1"></a>    convey<span class="sc">:::</span><span class="fu">CalcJDiv</span>(pop.df<span class="sc">$</span>x , <span class="fu">ifelse</span>(pop.df<span class="sc">$</span>x <span class="sc">&gt;</span> <span class="dv">0</span> , <span class="dv">1</span> , <span class="dv">0</span>)))</span></code></pre></div>
 <pre><code>## [1] 0.4332649</code></pre>
-<div class="sourceCode" id="cb985"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb985-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb985-1" tabindex="-1"></a><span class="co"># estimate the expected value of the J-divergence estimator</span></span>
-<span id="cb985-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb985-2" tabindex="-1"></a><span class="co"># using the average of the estimates</span></span>
-<span id="cb985-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb985-3" tabindex="-1"></a>(theta.exp <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">sapply</span>(jdiv.estimate.list , coef)))</span></code></pre></div>
+<div class="sourceCode" id="cb988"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb988-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb988-1" tabindex="-1"></a><span class="co"># estimate the expected value of the J-divergence estimator</span></span>
+<span id="cb988-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb988-2" tabindex="-1"></a><span class="co"># using the average of the estimates</span></span>
+<span id="cb988-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb988-3" tabindex="-1"></a>(theta.exp <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">sapply</span>(jdiv.estimate.list , coef)))</span></code></pre></div>
 <pre><code>## [1] 0.4327823</code></pre>
-<div class="sourceCode" id="cb987"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb987-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb987-1" tabindex="-1"></a><span class="co"># estimate the percentage relative bias</span></span>
-<span id="cb987-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb987-2" tabindex="-1"></a><span class="dv">100</span> <span class="sc">*</span> (theta.exp <span class="sc">/</span> theta.pop <span class="sc">-</span> <span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb990"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb990-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb990-1" tabindex="-1"></a><span class="co"># estimate the percentage relative bias</span></span>
+<span id="cb990-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb990-2" tabindex="-1"></a><span class="dv">100</span> <span class="sc">*</span> (theta.exp <span class="sc">/</span> theta.pop <span class="sc">-</span> <span class="dv">1</span>)</span></code></pre></div>
 <pre><code>## [1] -0.1113765</code></pre>
-<div class="sourceCode" id="cb989"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb989-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb989-1" tabindex="-1"></a><span class="co"># estimate the variance of the J-divergence estimator</span></span>
-<span id="cb989-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb989-2" tabindex="-1"></a><span class="co"># using the variance of the estimates</span></span>
-<span id="cb989-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb989-3" tabindex="-1"></a>(vartheta.popest <span class="ot">&lt;-</span> <span class="fu">var</span>(<span class="fu">sapply</span>(jdiv.estimate.list , coef)))</span></code></pre></div>
+<div class="sourceCode" id="cb992"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb992-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb992-1" tabindex="-1"></a><span class="co"># estimate the variance of the J-divergence estimator</span></span>
+<span id="cb992-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb992-2" tabindex="-1"></a><span class="co"># using the variance of the estimates</span></span>
+<span id="cb992-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb992-3" tabindex="-1"></a>(vartheta.popest <span class="ot">&lt;-</span> <span class="fu">var</span>(<span class="fu">sapply</span>(jdiv.estimate.list , coef)))</span></code></pre></div>
 <pre><code>## [1] 0.0005434848</code></pre>
-<div class="sourceCode" id="cb991"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb991-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb991-1" tabindex="-1"></a><span class="co"># estimate the expected value of the J-divergence index variance estimator</span></span>
-<span id="cb991-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb991-2" tabindex="-1"></a><span class="co"># using the expected of the variance estimates</span></span>
-<span id="cb991-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb991-3" tabindex="-1"></a>(vartheta.exp <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">sapply</span>(jdiv.estimate.list , vcov)))</span></code></pre></div>
+<div class="sourceCode" id="cb994"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb994-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb994-1" tabindex="-1"></a><span class="co"># estimate the expected value of the J-divergence index variance estimator</span></span>
+<span id="cb994-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb994-2" tabindex="-1"></a><span class="co"># using the expected of the variance estimates</span></span>
+<span id="cb994-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb994-3" tabindex="-1"></a>(vartheta.exp <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">sapply</span>(jdiv.estimate.list , vcov)))</span></code></pre></div>
 <pre><code>## [1] 0.0005342947</code></pre>
-<div class="sourceCode" id="cb993"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb993-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb993-1" tabindex="-1"></a><span class="co"># estimate the percentage relative bias of the variance estimator</span></span>
-<span id="cb993-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb993-2" tabindex="-1"></a><span class="dv">100</span> <span class="sc">*</span> (vartheta.exp <span class="sc">/</span> vartheta.popest <span class="sc">-</span> <span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb996"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb996-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb996-1" tabindex="-1"></a><span class="co"># estimate the percentage relative bias of the variance estimator</span></span>
+<span id="cb996-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb996-2" tabindex="-1"></a><span class="dv">100</span> <span class="sc">*</span> (vartheta.exp <span class="sc">/</span> vartheta.popest <span class="sc">-</span> <span class="dv">1</span>)</span></code></pre></div>
 <pre><code>## [1] -1.690964</code></pre>
 <p>For the decomposition, we repeat the same procedure:</p>
-<div class="sourceCode" id="cb995"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb995-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-1" tabindex="-1"></a><span class="co"># estimate J-divergence decomposition with each sample</span></span>
-<span id="cb995-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-2" tabindex="-1"></a>jdivdec.estimate.list <span class="ot">&lt;-</span></span>
-<span id="cb995-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-3" tabindex="-1"></a>  <span class="fu">lapply</span>(survey.list ,</span>
-<span id="cb995-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-4" tabindex="-1"></a>         <span class="cf">function</span>(this.sample) {</span>
-<span id="cb995-5"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-5" tabindex="-1"></a>           <span class="fu">svyjdivdec</span>( <span class="sc">~</span> x ,</span>
-<span id="cb995-6"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-6" tabindex="-1"></a>                       <span class="sc">~</span> SEX ,</span>
-<span id="cb995-7"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-7" tabindex="-1"></a>                       <span class="fu">subset</span>(this.sample , x <span class="sc">&gt;</span> <span class="dv">0</span>) ,</span>
-<span id="cb995-8"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-8" tabindex="-1"></a>                       <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb995-9"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-9" tabindex="-1"></a>         })</span>
-<span id="cb995-10"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-10" tabindex="-1"></a></span>
-<span id="cb995-11"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-11" tabindex="-1"></a><span class="co"># compute the (finite population) J-divergence decomposition per sex</span></span>
-<span id="cb995-12"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-12" tabindex="-1"></a>jdivt.pop <span class="ot">&lt;-</span></span>
-<span id="cb995-13"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-13" tabindex="-1"></a>  convey<span class="sc">:::</span><span class="fu">CalcJDiv</span>(pop.df<span class="sc">$</span>x , <span class="fu">ifelse</span>(pop.df<span class="sc">$</span>x <span class="sc">&gt;</span> <span class="dv">0</span> , <span class="dv">1</span> , <span class="dv">0</span>))</span>
-<span id="cb995-14"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-14" tabindex="-1"></a></span>
-<span id="cb995-15"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-15" tabindex="-1"></a>overall.mean <span class="ot">&lt;-</span> <span class="fu">mean</span>(pop.df<span class="sc">$</span>x[pop.df<span class="sc">$</span>x <span class="sc">&gt;</span> <span class="dv">0</span>])</span>
-<span id="cb995-16"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-16" tabindex="-1"></a></span>
-<span id="cb995-17"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-17" tabindex="-1"></a>group.mean <span class="ot">&lt;-</span></span>
-<span id="cb995-18"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-18" tabindex="-1"></a>  <span class="fu">c</span>(<span class="fu">by</span>(pop.df<span class="sc">$</span>x[pop.df<span class="sc">$</span>x <span class="sc">&gt;</span> <span class="dv">0</span>] , <span class="fu">list</span>(<span class="st">&quot;SEX&quot;</span> <span class="ot">=</span> <span class="fu">factor</span>(pop.df<span class="sc">$</span>SEX[pop.df<span class="sc">$</span>x <span class="sc">&gt;</span> <span class="dv">0</span>])) , <span class="at">FUN =</span> mean))</span>
-<span id="cb995-19"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-19" tabindex="-1"></a></span>
-<span id="cb995-20"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-20" tabindex="-1"></a>group.pshare <span class="ot">&lt;-</span></span>
-<span id="cb995-21"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-21" tabindex="-1"></a>  <span class="fu">c</span>(<span class="fu">prop.table</span>(<span class="fu">by</span>(<span class="fu">rep</span>(<span class="dv">1</span> , <span class="fu">sum</span>(</span>
-<span id="cb995-22"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-22" tabindex="-1"></a>    pop.df<span class="sc">$</span>x <span class="sc">&gt;</span> <span class="dv">0</span></span>
-<span id="cb995-23"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-23" tabindex="-1"></a>  )) , <span class="fu">list</span>(</span>
-<span id="cb995-24"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-24" tabindex="-1"></a>    <span class="st">&quot;SEX&quot;</span> <span class="ot">=</span> <span class="fu">factor</span>(pop.df<span class="sc">$</span>SEX[pop.df<span class="sc">$</span>x <span class="sc">&gt;</span> <span class="dv">0</span>])</span>
-<span id="cb995-25"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-25" tabindex="-1"></a>  ) , <span class="at">FUN =</span> sum)))</span>
-<span id="cb995-26"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-26" tabindex="-1"></a></span>
-<span id="cb995-27"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-27" tabindex="-1"></a>jdivb.pop <span class="ot">&lt;-</span></span>
-<span id="cb995-28"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-28" tabindex="-1"></a>  <span class="fu">sum</span>(group.pshare <span class="sc">*</span> (group.mean <span class="sc">/</span> overall.mean <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="fu">log</span>(group.mean <span class="sc">/</span> overall.mean))</span>
-<span id="cb995-29"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-29" tabindex="-1"></a></span>
-<span id="cb995-30"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-30" tabindex="-1"></a>jdivw.pop <span class="ot">&lt;-</span> jdivt.pop <span class="sc">-</span> jdivb.pop</span>
-<span id="cb995-31"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-31" tabindex="-1"></a></span>
-<span id="cb995-32"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb995-32" tabindex="-1"></a>(theta.pop <span class="ot">&lt;-</span> <span class="fu">c</span>(jdivt.pop , jdivw.pop , jdivb.pop))</span></code></pre></div>
+<div class="sourceCode" id="cb998"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb998-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-1" tabindex="-1"></a><span class="co"># estimate J-divergence decomposition with each sample</span></span>
+<span id="cb998-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-2" tabindex="-1"></a>jdivdec.estimate.list <span class="ot">&lt;-</span></span>
+<span id="cb998-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-3" tabindex="-1"></a>  <span class="fu">lapply</span>(survey.list ,</span>
+<span id="cb998-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-4" tabindex="-1"></a>         <span class="cf">function</span>(this.sample) {</span>
+<span id="cb998-5"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-5" tabindex="-1"></a>           <span class="fu">svyjdivdec</span>( <span class="sc">~</span> x ,</span>
+<span id="cb998-6"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-6" tabindex="-1"></a>                       <span class="sc">~</span> SEX ,</span>
+<span id="cb998-7"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-7" tabindex="-1"></a>                       <span class="fu">subset</span>(this.sample , x <span class="sc">&gt;</span> <span class="dv">0</span>) ,</span>
+<span id="cb998-8"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-8" tabindex="-1"></a>                       <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb998-9"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-9" tabindex="-1"></a>         })</span>
+<span id="cb998-10"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-10" tabindex="-1"></a></span>
+<span id="cb998-11"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-11" tabindex="-1"></a><span class="co"># compute the (finite population) J-divergence decomposition per sex</span></span>
+<span id="cb998-12"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-12" tabindex="-1"></a>jdivt.pop <span class="ot">&lt;-</span></span>
+<span id="cb998-13"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-13" tabindex="-1"></a>  convey<span class="sc">:::</span><span class="fu">CalcJDiv</span>(pop.df<span class="sc">$</span>x , <span class="fu">ifelse</span>(pop.df<span class="sc">$</span>x <span class="sc">&gt;</span> <span class="dv">0</span> , <span class="dv">1</span> , <span class="dv">0</span>))</span>
+<span id="cb998-14"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-14" tabindex="-1"></a></span>
+<span id="cb998-15"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-15" tabindex="-1"></a>overall.mean <span class="ot">&lt;-</span> <span class="fu">mean</span>(pop.df<span class="sc">$</span>x[pop.df<span class="sc">$</span>x <span class="sc">&gt;</span> <span class="dv">0</span>])</span>
+<span id="cb998-16"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-16" tabindex="-1"></a></span>
+<span id="cb998-17"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-17" tabindex="-1"></a>group.mean <span class="ot">&lt;-</span></span>
+<span id="cb998-18"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-18" tabindex="-1"></a>  <span class="fu">c</span>(<span class="fu">by</span>(pop.df<span class="sc">$</span>x[pop.df<span class="sc">$</span>x <span class="sc">&gt;</span> <span class="dv">0</span>] , <span class="fu">list</span>(<span class="st">&quot;SEX&quot;</span> <span class="ot">=</span> <span class="fu">factor</span>(pop.df<span class="sc">$</span>SEX[pop.df<span class="sc">$</span>x <span class="sc">&gt;</span> <span class="dv">0</span>])) , <span class="at">FUN =</span> mean))</span>
+<span id="cb998-19"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-19" tabindex="-1"></a></span>
+<span id="cb998-20"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-20" tabindex="-1"></a>group.pshare <span class="ot">&lt;-</span></span>
+<span id="cb998-21"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-21" tabindex="-1"></a>  <span class="fu">c</span>(<span class="fu">prop.table</span>(<span class="fu">by</span>(<span class="fu">rep</span>(<span class="dv">1</span> , <span class="fu">sum</span>(</span>
+<span id="cb998-22"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-22" tabindex="-1"></a>    pop.df<span class="sc">$</span>x <span class="sc">&gt;</span> <span class="dv">0</span></span>
+<span id="cb998-23"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-23" tabindex="-1"></a>  )) , <span class="fu">list</span>(</span>
+<span id="cb998-24"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-24" tabindex="-1"></a>    <span class="st">&quot;SEX&quot;</span> <span class="ot">=</span> <span class="fu">factor</span>(pop.df<span class="sc">$</span>SEX[pop.df<span class="sc">$</span>x <span class="sc">&gt;</span> <span class="dv">0</span>])</span>
+<span id="cb998-25"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-25" tabindex="-1"></a>  ) , <span class="at">FUN =</span> sum)))</span>
+<span id="cb998-26"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-26" tabindex="-1"></a></span>
+<span id="cb998-27"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-27" tabindex="-1"></a>jdivb.pop <span class="ot">&lt;-</span></span>
+<span id="cb998-28"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-28" tabindex="-1"></a>  <span class="fu">sum</span>(group.pshare <span class="sc">*</span> (group.mean <span class="sc">/</span> overall.mean <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="fu">log</span>(group.mean <span class="sc">/</span> overall.mean))</span>
+<span id="cb998-29"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-29" tabindex="-1"></a></span>
+<span id="cb998-30"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-30" tabindex="-1"></a>jdivw.pop <span class="ot">&lt;-</span> jdivt.pop <span class="sc">-</span> jdivb.pop</span>
+<span id="cb998-31"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-31" tabindex="-1"></a></span>
+<span id="cb998-32"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb998-32" tabindex="-1"></a>(theta.pop <span class="ot">&lt;-</span> <span class="fu">c</span>(jdivt.pop , jdivw.pop , jdivb.pop))</span></code></pre></div>
 <pre><code>## [1] 0.433264877 0.428398928 0.004865949</code></pre>
-<div class="sourceCode" id="cb997"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb997-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb997-1" tabindex="-1"></a><span class="co"># estimate the expected value of the J-divergence decomposition estimator</span></span>
-<span id="cb997-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb997-2" tabindex="-1"></a><span class="co"># using the average of the estimates</span></span>
-<span id="cb997-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb997-3" tabindex="-1"></a>(theta.exp <span class="ot">&lt;-</span> <span class="fu">rowMeans</span>(<span class="fu">sapply</span>(jdivdec.estimate.list , coef)))</span></code></pre></div>
+<div class="sourceCode" id="cb1000"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1000-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1000-1" tabindex="-1"></a><span class="co"># estimate the expected value of the J-divergence decomposition estimator</span></span>
+<span id="cb1000-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1000-2" tabindex="-1"></a><span class="co"># using the average of the estimates</span></span>
+<span id="cb1000-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1000-3" tabindex="-1"></a>(theta.exp <span class="ot">&lt;-</span> <span class="fu">rowMeans</span>(<span class="fu">sapply</span>(jdivdec.estimate.list , coef)))</span></code></pre></div>
 <pre><code>##       total      within     between 
 ## 0.432782322 0.427480257 0.005302065</code></pre>
-<div class="sourceCode" id="cb999"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb999-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb999-1" tabindex="-1"></a><span class="co"># estimate the percentage relative bias</span></span>
-<span id="cb999-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb999-2" tabindex="-1"></a><span class="dv">100</span> <span class="sc">*</span> (theta.exp <span class="sc">/</span> theta.pop <span class="sc">-</span> <span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb1002"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1002-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1002-1" tabindex="-1"></a><span class="co"># estimate the percentage relative bias</span></span>
+<span id="cb1002-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1002-2" tabindex="-1"></a><span class="dv">100</span> <span class="sc">*</span> (theta.exp <span class="sc">/</span> theta.pop <span class="sc">-</span> <span class="dv">1</span>)</span></code></pre></div>
 <pre><code>##      total     within    between 
 ## -0.1113765 -0.2144430  8.9626164</code></pre>
 <p>The estimated PRB for the total is the same as before, so we will focus on the within and between components. While the within component has a small relative bias (-0.21%), the between component PRB is significant, amounting to 8.96%.</p>
 <p>For the variance estimator, we do:</p>
-<div class="sourceCode" id="cb1001"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1001-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1001-1" tabindex="-1"></a><span class="co"># estimate the variance of the J-divergence estimator</span></span>
-<span id="cb1001-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1001-2" tabindex="-1"></a><span class="co"># using the variance of the estimates</span></span>
-<span id="cb1001-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1001-3" tabindex="-1"></a>(vartheta.popest <span class="ot">&lt;-</span></span>
-<span id="cb1001-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1001-4" tabindex="-1"></a>   <span class="fu">diag</span>(<span class="fu">var</span>(<span class="fu">t</span>(</span>
-<span id="cb1001-5"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1001-5" tabindex="-1"></a>     <span class="fu">sapply</span>(jdivdec.estimate.list , coef)</span>
-<span id="cb1001-6"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1001-6" tabindex="-1"></a>   ))))</span></code></pre></div>
+<div class="sourceCode" id="cb1004"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1004-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1004-1" tabindex="-1"></a><span class="co"># estimate the variance of the J-divergence estimator</span></span>
+<span id="cb1004-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1004-2" tabindex="-1"></a><span class="co"># using the variance of the estimates</span></span>
+<span id="cb1004-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1004-3" tabindex="-1"></a>(vartheta.popest <span class="ot">&lt;-</span></span>
+<span id="cb1004-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1004-4" tabindex="-1"></a>   <span class="fu">diag</span>(<span class="fu">var</span>(<span class="fu">t</span>(</span>
+<span id="cb1004-5"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1004-5" tabindex="-1"></a>     <span class="fu">sapply</span>(jdivdec.estimate.list , coef)</span>
+<span id="cb1004-6"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1004-6" tabindex="-1"></a>   ))))</span></code></pre></div>
 <pre><code>##        total       within      between 
 ## 5.434848e-04 5.391901e-04 8.750879e-06</code></pre>
-<div class="sourceCode" id="cb1003"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1003-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1003-1" tabindex="-1"></a><span class="co"># estimate the expected value of the J-divergence index variance estimator</span></span>
-<span id="cb1003-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1003-2" tabindex="-1"></a><span class="co"># using the expected of the variance estimates</span></span>
-<span id="cb1003-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1003-3" tabindex="-1"></a>(vartheta.exp <span class="ot">&lt;-</span></span>
-<span id="cb1003-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1003-4" tabindex="-1"></a>    <span class="fu">rowMeans</span>(<span class="fu">sapply</span>(jdivdec.estimate.list , <span class="cf">function</span>(z)</span>
-<span id="cb1003-5"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1003-5" tabindex="-1"></a>      <span class="fu">diag</span>(<span class="fu">vcov</span>(</span>
-<span id="cb1003-6"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1003-6" tabindex="-1"></a>        z</span>
-<span id="cb1003-7"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1003-7" tabindex="-1"></a>      )))))</span></code></pre></div>
+<div class="sourceCode" id="cb1006"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1006-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1006-1" tabindex="-1"></a><span class="co"># estimate the expected value of the J-divergence index variance estimator</span></span>
+<span id="cb1006-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1006-2" tabindex="-1"></a><span class="co"># using the expected of the variance estimates</span></span>
+<span id="cb1006-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1006-3" tabindex="-1"></a>(vartheta.exp <span class="ot">&lt;-</span></span>
+<span id="cb1006-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1006-4" tabindex="-1"></a>    <span class="fu">rowMeans</span>(<span class="fu">sapply</span>(jdivdec.estimate.list , <span class="cf">function</span>(z)</span>
+<span id="cb1006-5"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1006-5" tabindex="-1"></a>      <span class="fu">diag</span>(<span class="fu">vcov</span>(</span>
+<span id="cb1006-6"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1006-6" tabindex="-1"></a>        z</span>
+<span id="cb1006-7"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1006-7" tabindex="-1"></a>      )))))</span></code></pre></div>
 <pre><code>##        total       within      between 
 ## 5.342947e-04 5.286750e-04 8.891772e-06</code></pre>
-<div class="sourceCode" id="cb1005"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1005-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1005-1" tabindex="-1"></a><span class="co"># estimate the percentage relative bias of the variance estimator</span></span>
-<span id="cb1005-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1005-2" tabindex="-1"></a><span class="dv">100</span> <span class="sc">*</span> (vartheta.exp <span class="sc">/</span> vartheta.popest <span class="sc">-</span> <span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb1008"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1008-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1008-1" tabindex="-1"></a><span class="co"># estimate the percentage relative bias of the variance estimator</span></span>
+<span id="cb1008-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1008-2" tabindex="-1"></a><span class="dv">100</span> <span class="sc">*</span> (vartheta.exp <span class="sc">/</span> vartheta.popest <span class="sc">-</span> <span class="dv">1</span>)</span></code></pre></div>
 <pre><code>##     total    within   between 
 ## -1.690964 -1.950177  1.610034</code></pre>
 <p>The PRB of the variance estimators for both components are small: -1.95% for the within component and 1.61% for the between component.</p>
 <p>Now, how much should we care about the between component bias? Our simulations show that the Squared Bias of this estimator accounts for less than 2% of its Mean Squared Error:</p>
-<div class="sourceCode" id="cb1007"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1007-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1007-1" tabindex="-1"></a>theta.bias2 <span class="ot">&lt;-</span> (theta.exp <span class="sc">-</span> theta.pop) <span class="sc">^</span> <span class="dv">2</span></span>
-<span id="cb1007-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1007-2" tabindex="-1"></a>theta.mse <span class="ot">&lt;-</span> theta.bias2 <span class="sc">+</span> vartheta.popest</span>
-<span id="cb1007-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1007-3" tabindex="-1"></a><span class="dv">100</span> <span class="sc">*</span> (theta.bias2 <span class="sc">/</span> theta.mse)</span></code></pre></div>
+<div class="sourceCode" id="cb1010"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1010-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1010-1" tabindex="-1"></a>theta.bias2 <span class="ot">&lt;-</span> (theta.exp <span class="sc">-</span> theta.pop) <span class="sc">^</span> <span class="dv">2</span></span>
+<span id="cb1010-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1010-2" tabindex="-1"></a>theta.mse <span class="ot">&lt;-</span> theta.bias2 <span class="sc">+</span> vartheta.popest</span>
+<span id="cb1010-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1010-3" tabindex="-1"></a><span class="dv">100</span> <span class="sc">*</span> (theta.bias2 <span class="sc">/</span> theta.mse)</span></code></pre></div>
 <pre><code>##      total     within    between 
 ## 0.04282728 0.15627854 2.12723212</code></pre>
 <p>Next, we evaluate the Percentage Coverage Rate (PCR). In theory, under repeated sampling, the estimated 95% CIs should cover the population parameter 95% of the time. We can evaluate that using:</p>
-<div class="sourceCode" id="cb1009"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1009-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1009-1" tabindex="-1"></a><span class="co"># estimate confidence intervals of the Zenga index</span></span>
-<span id="cb1009-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1009-2" tabindex="-1"></a><span class="co"># for each of the samples</span></span>
-<span id="cb1009-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1009-3" tabindex="-1"></a>est.coverage <span class="ot">&lt;-</span></span>
-<span id="cb1009-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1009-4" tabindex="-1"></a>  <span class="fu">t</span>(<span class="fu">sapply</span>(jdivdec.estimate.list, <span class="cf">function</span>(this.stat)</span>
-<span id="cb1009-5"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1009-5" tabindex="-1"></a>    <span class="fu">confint</span>(this.stat)[, <span class="dv">1</span>] <span class="sc">&lt;=</span> theta.pop <span class="sc">&amp;</span></span>
-<span id="cb1009-6"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1009-6" tabindex="-1"></a>      <span class="fu">confint</span>(this.stat)[, <span class="dv">2</span>] <span class="sc">&gt;=</span> theta.pop))</span>
-<span id="cb1009-7"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1009-7" tabindex="-1"></a></span>
-<span id="cb1009-8"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1009-8" tabindex="-1"></a><span class="co"># evaluate</span></span>
-<span id="cb1009-9"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1009-9" tabindex="-1"></a><span class="fu">colMeans</span>(est.coverage)</span></code></pre></div>
+<div class="sourceCode" id="cb1012"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1012-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1012-1" tabindex="-1"></a><span class="co"># estimate confidence intervals of the Zenga index</span></span>
+<span id="cb1012-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1012-2" tabindex="-1"></a><span class="co"># for each of the samples</span></span>
+<span id="cb1012-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1012-3" tabindex="-1"></a>est.coverage <span class="ot">&lt;-</span></span>
+<span id="cb1012-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1012-4" tabindex="-1"></a>  <span class="fu">t</span>(<span class="fu">sapply</span>(jdivdec.estimate.list, <span class="cf">function</span>(this.stat)</span>
+<span id="cb1012-5"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1012-5" tabindex="-1"></a>    <span class="fu">confint</span>(this.stat)[, <span class="dv">1</span>] <span class="sc">&lt;=</span> theta.pop <span class="sc">&amp;</span></span>
+<span id="cb1012-6"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1012-6" tabindex="-1"></a>      <span class="fu">confint</span>(this.stat)[, <span class="dv">2</span>] <span class="sc">&gt;=</span> theta.pop))</span>
+<span id="cb1012-7"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1012-7" tabindex="-1"></a></span>
+<span id="cb1012-8"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1012-8" tabindex="-1"></a><span class="co"># evaluate</span></span>
+<span id="cb1012-9"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1012-9" tabindex="-1"></a><span class="fu">colMeans</span>(est.coverage)</span></code></pre></div>
 <pre><code>##   total  within between 
 ##  0.9390  0.9376  0.9108</code></pre>
 <p>Our coverages are not too far from the nominal coverage level of 95%, however the bias of the between component estimator can affect its coverage rate.</p>
@@ -451,101 +451,101 @@ J_W &amp;= \sum_{g \in G} \bigg[ \frac{Y_g}{Y} GE^{(1)}_g + \frac{N_g}{N} GE^{(0
 <p>To understand the construction of each survey design object and respective variables of interest, please refer to <a href="https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html">section 1.4</a> for CPS-ASEC, <a href="https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html">section 1.5</a> for PNAD-Contínua, and <a href="https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html">section 1.6</a> for SCF.</p>
 <div id="cps-asec-household-income-15" class="section level4" number="4.12.2.1">
 <h4><span class="header-section-number">4.12.2.1</span> CPS-ASEC Household Income</h4>
-<div class="sourceCode" id="cb1011"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1011-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1011-1" tabindex="-1"></a><span class="fu">svyjdiv</span>(</span>
-<span id="cb1011-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1011-2" tabindex="-1"></a>  <span class="sc">~</span> htotval ,</span>
-<span id="cb1011-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1011-3" tabindex="-1"></a>  <span class="fu">subset</span>(cps_household_design , htotval <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
-<span id="cb1011-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1011-4" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb1014"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1014-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1014-1" tabindex="-1"></a><span class="fu">svyjdiv</span>(</span>
+<span id="cb1014-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1014-2" tabindex="-1"></a>  <span class="sc">~</span> htotval ,</span>
+<span id="cb1014-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1014-3" tabindex="-1"></a>  <span class="fu">subset</span>(cps_household_design , htotval <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb1014-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1014-4" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>##         j-divergence     SE
 ## htotval      0.91009 0.0091</code></pre>
-<div class="sourceCode" id="cb1013"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1013-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1013-1" tabindex="-1"></a><span class="fu">svyby</span>(</span>
-<span id="cb1013-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1013-2" tabindex="-1"></a>  <span class="sc">~</span> htotval ,</span>
-<span id="cb1013-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1013-3" tabindex="-1"></a>  <span class="sc">~</span> sex ,</span>
-<span id="cb1013-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1013-4" tabindex="-1"></a>  <span class="fu">subset</span>(cps_household_design , htotval <span class="sc">&gt;</span> <span class="dv">0</span>) ,</span>
-<span id="cb1013-5"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1013-5" tabindex="-1"></a>  svyjdiv</span>
-<span id="cb1013-6"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1013-6" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb1016"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1016-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1016-1" tabindex="-1"></a><span class="fu">svyby</span>(</span>
+<span id="cb1016-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1016-2" tabindex="-1"></a>  <span class="sc">~</span> htotval ,</span>
+<span id="cb1016-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1016-3" tabindex="-1"></a>  <span class="sc">~</span> sex ,</span>
+<span id="cb1016-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1016-4" tabindex="-1"></a>  <span class="fu">subset</span>(cps_household_design , htotval <span class="sc">&gt;</span> <span class="dv">0</span>) ,</span>
+<span id="cb1016-5"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1016-5" tabindex="-1"></a>  svyjdiv</span>
+<span id="cb1016-6"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1016-6" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>##           sex   htotval se.htotval
 ## male     male 0.8468719 0.01304558
 ## female female 0.9601656 0.01229789</code></pre>
 </div>
 <div id="cps-asec-family-income-15" class="section level4" number="4.12.2.2">
 <h4><span class="header-section-number">4.12.2.2</span> CPS-ASEC Family Income</h4>
-<div class="sourceCode" id="cb1015"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1015-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1015-1" tabindex="-1"></a><span class="fu">svyjdiv</span>(</span>
-<span id="cb1015-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1015-2" tabindex="-1"></a>  <span class="sc">~</span> ftotval ,</span>
-<span id="cb1015-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1015-3" tabindex="-1"></a>  <span class="fu">subset</span>(cps_family_design , ftotval <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
-<span id="cb1015-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1015-4" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb1018"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1018-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1018-1" tabindex="-1"></a><span class="fu">svyjdiv</span>(</span>
+<span id="cb1018-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1018-2" tabindex="-1"></a>  <span class="sc">~</span> ftotval ,</span>
+<span id="cb1018-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1018-3" tabindex="-1"></a>  <span class="fu">subset</span>(cps_family_design , ftotval <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb1018-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1018-4" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>##         j-divergence     SE
 ## ftotval      0.78947 0.0097</code></pre>
-<div class="sourceCode" id="cb1017"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1017-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1017-1" tabindex="-1"></a><span class="fu">svyby</span>(</span>
-<span id="cb1017-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1017-2" tabindex="-1"></a>  <span class="sc">~</span> ftotval ,</span>
-<span id="cb1017-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1017-3" tabindex="-1"></a>  <span class="sc">~</span> sex ,</span>
-<span id="cb1017-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1017-4" tabindex="-1"></a>  <span class="fu">subset</span>(cps_family_design , ftotval <span class="sc">&gt;</span> <span class="dv">0</span>) ,</span>
-<span id="cb1017-5"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1017-5" tabindex="-1"></a>  svyjdiv</span>
-<span id="cb1017-6"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1017-6" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb1020"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1020-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1020-1" tabindex="-1"></a><span class="fu">svyby</span>(</span>
+<span id="cb1020-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1020-2" tabindex="-1"></a>  <span class="sc">~</span> ftotval ,</span>
+<span id="cb1020-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1020-3" tabindex="-1"></a>  <span class="sc">~</span> sex ,</span>
+<span id="cb1020-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1020-4" tabindex="-1"></a>  <span class="fu">subset</span>(cps_family_design , ftotval <span class="sc">&gt;</span> <span class="dv">0</span>) ,</span>
+<span id="cb1020-5"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1020-5" tabindex="-1"></a>  svyjdiv</span>
+<span id="cb1020-6"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1020-6" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>##           sex   ftotval se.ftotval
 ## male     male 0.7255059  0.0150296
 ## female female 0.8478025  0.0123227</code></pre>
 </div>
 <div id="cps-asec-worker-earnings-15" class="section level4" number="4.12.2.3">
 <h4><span class="header-section-number">4.12.2.3</span> CPS-ASEC Worker Earnings</h4>
-<div class="sourceCode" id="cb1019"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1019-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1019-1" tabindex="-1"></a><span class="fu">svyjdiv</span>(</span>
-<span id="cb1019-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1019-2" tabindex="-1"></a>  <span class="sc">~</span> pearnval ,</span>
-<span id="cb1019-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1019-3" tabindex="-1"></a>  <span class="fu">subset</span>(cps_ftfy_worker_design , pearnval <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
-<span id="cb1019-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1019-4" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb1022"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1022-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1022-1" tabindex="-1"></a><span class="fu">svyjdiv</span>(</span>
+<span id="cb1022-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1022-2" tabindex="-1"></a>  <span class="sc">~</span> pearnval ,</span>
+<span id="cb1022-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1022-3" tabindex="-1"></a>  <span class="fu">subset</span>(cps_ftfy_worker_design , pearnval <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb1022-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1022-4" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>##          j-divergence   SE
 ## pearnval      0.63767 0.01</code></pre>
-<div class="sourceCode" id="cb1021"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1021-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1021-1" tabindex="-1"></a><span class="fu">svyby</span>(</span>
-<span id="cb1021-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1021-2" tabindex="-1"></a>  <span class="sc">~</span> pearnval ,</span>
-<span id="cb1021-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1021-3" tabindex="-1"></a>  <span class="sc">~</span> sex ,</span>
-<span id="cb1021-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1021-4" tabindex="-1"></a>  <span class="fu">subset</span>(cps_ftfy_worker_design , pearnval <span class="sc">&gt;</span> <span class="dv">0</span>) ,</span>
-<span id="cb1021-5"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1021-5" tabindex="-1"></a>  svyjdiv</span>
-<span id="cb1021-6"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1021-6" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb1024"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1024-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1024-1" tabindex="-1"></a><span class="fu">svyby</span>(</span>
+<span id="cb1024-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1024-2" tabindex="-1"></a>  <span class="sc">~</span> pearnval ,</span>
+<span id="cb1024-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1024-3" tabindex="-1"></a>  <span class="sc">~</span> sex ,</span>
+<span id="cb1024-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1024-4" tabindex="-1"></a>  <span class="fu">subset</span>(cps_ftfy_worker_design , pearnval <span class="sc">&gt;</span> <span class="dv">0</span>) ,</span>
+<span id="cb1024-5"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1024-5" tabindex="-1"></a>  svyjdiv</span>
+<span id="cb1024-6"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1024-6" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>##           sex  pearnval se.pearnval
 ## male     male 0.6493827  0.01177377
 ## female female 0.5888245  0.01833507</code></pre>
 </div>
 <div id="pnad-contínua-per-capita-income-15" class="section level4" number="4.12.2.4">
 <h4><span class="header-section-number">4.12.2.4</span> PNAD-Contínua Per Capita Income</h4>
-<div class="sourceCode" id="cb1023"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1023-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1023-1" tabindex="-1"></a><span class="fu">svyjdiv</span>(</span>
-<span id="cb1023-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1023-2" tabindex="-1"></a>  <span class="sc">~</span> deflated_per_capita_income ,</span>
-<span id="cb1023-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1023-3" tabindex="-1"></a>  <span class="fu">subset</span>(pnadc_design , deflated_per_capita_income <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
-<span id="cb1023-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1023-4" tabindex="-1"></a>  <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
-<span id="cb1023-5"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1023-5" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb1026"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1026-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1026-1" tabindex="-1"></a><span class="fu">svyjdiv</span>(</span>
+<span id="cb1026-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1026-2" tabindex="-1"></a>  <span class="sc">~</span> deflated_per_capita_income ,</span>
+<span id="cb1026-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1026-3" tabindex="-1"></a>  <span class="fu">subset</span>(pnadc_design , deflated_per_capita_income <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb1026-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1026-4" tabindex="-1"></a>  <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
+<span id="cb1026-5"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1026-5" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>##                            j-divergence     SE
 ## deflated_per_capita_income      0.99732 0.0162</code></pre>
-<div class="sourceCode" id="cb1025"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1025-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1025-1" tabindex="-1"></a><span class="fu">svyby</span>(</span>
-<span id="cb1025-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1025-2" tabindex="-1"></a>  <span class="sc">~</span> deflated_per_capita_income ,</span>
-<span id="cb1025-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1025-3" tabindex="-1"></a>  <span class="sc">~</span> sex ,</span>
-<span id="cb1025-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1025-4" tabindex="-1"></a>  <span class="fu">subset</span>(pnadc_design , deflated_per_capita_income <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
-<span id="cb1025-5"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1025-5" tabindex="-1"></a>  svyjdiv ,</span>
-<span id="cb1025-6"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1025-6" tabindex="-1"></a>  <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
-<span id="cb1025-7"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1025-7" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb1028"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1028-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1028-1" tabindex="-1"></a><span class="fu">svyby</span>(</span>
+<span id="cb1028-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1028-2" tabindex="-1"></a>  <span class="sc">~</span> deflated_per_capita_income ,</span>
+<span id="cb1028-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1028-3" tabindex="-1"></a>  <span class="sc">~</span> sex ,</span>
+<span id="cb1028-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1028-4" tabindex="-1"></a>  <span class="fu">subset</span>(pnadc_design , deflated_per_capita_income <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb1028-5"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1028-5" tabindex="-1"></a>  svyjdiv ,</span>
+<span id="cb1028-6"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1028-6" tabindex="-1"></a>  <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
+<span id="cb1028-7"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1028-7" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>##           sex deflated_per_capita_income se.deflated_per_capita_income
 ## male     male                  1.0074672                    0.01724635
 ## female female                  0.9864209                    0.01639167</code></pre>
 </div>
 <div id="pnad-contínua-worker-earnings-15" class="section level4" number="4.12.2.5">
 <h4><span class="header-section-number">4.12.2.5</span> PNAD-Contínua Worker Earnings</h4>
-<div class="sourceCode" id="cb1027"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1027-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1027-1" tabindex="-1"></a><span class="fu">svyjdiv</span>(</span>
-<span id="cb1027-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1027-2" tabindex="-1"></a>  <span class="sc">~</span> deflated_labor_income ,</span>
-<span id="cb1027-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1027-3" tabindex="-1"></a>  <span class="fu">subset</span>(pnadc_design , deflated_labor_income <span class="sc">&gt;</span> <span class="dv">0</span>) ,</span>
-<span id="cb1027-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1027-4" tabindex="-1"></a>  <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
-<span id="cb1027-5"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1027-5" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb1030"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1030-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1030-1" tabindex="-1"></a><span class="fu">svyjdiv</span>(</span>
+<span id="cb1030-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1030-2" tabindex="-1"></a>  <span class="sc">~</span> deflated_labor_income ,</span>
+<span id="cb1030-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1030-3" tabindex="-1"></a>  <span class="fu">subset</span>(pnadc_design , deflated_labor_income <span class="sc">&gt;</span> <span class="dv">0</span>) ,</span>
+<span id="cb1030-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1030-4" tabindex="-1"></a>  <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
+<span id="cb1030-5"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1030-5" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>##                       j-divergence     SE
 ## deflated_labor_income      0.92486 0.0178</code></pre>
-<div class="sourceCode" id="cb1029"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1029-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1029-1" tabindex="-1"></a><span class="fu">svyby</span>(</span>
-<span id="cb1029-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1029-2" tabindex="-1"></a>  <span class="sc">~</span> deflated_labor_income ,</span>
-<span id="cb1029-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1029-3" tabindex="-1"></a>  <span class="sc">~</span> sex ,</span>
-<span id="cb1029-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1029-4" tabindex="-1"></a>  <span class="fu">subset</span>(pnadc_design , deflated_labor_income <span class="sc">&gt;</span> <span class="dv">0</span>) ,</span>
-<span id="cb1029-5"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1029-5" tabindex="-1"></a>  svyjdiv ,</span>
-<span id="cb1029-6"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1029-6" tabindex="-1"></a>  <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
-<span id="cb1029-7"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1029-7" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb1032"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1032-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1032-1" tabindex="-1"></a><span class="fu">svyby</span>(</span>
+<span id="cb1032-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1032-2" tabindex="-1"></a>  <span class="sc">~</span> deflated_labor_income ,</span>
+<span id="cb1032-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1032-3" tabindex="-1"></a>  <span class="sc">~</span> sex ,</span>
+<span id="cb1032-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1032-4" tabindex="-1"></a>  <span class="fu">subset</span>(pnadc_design , deflated_labor_income <span class="sc">&gt;</span> <span class="dv">0</span>) ,</span>
+<span id="cb1032-5"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1032-5" tabindex="-1"></a>  svyjdiv ,</span>
+<span id="cb1032-6"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1032-6" tabindex="-1"></a>  <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
+<span id="cb1032-7"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1032-7" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>##           sex deflated_labor_income se.deflated_labor_income
 ## male     male             0.9412711               0.02098598
 ## female female             0.8628107               0.01653023</code></pre>
 </div>
 <div id="scf-family-net-worth-15" class="section level4" number="4.12.2.6">
 <h4><span class="header-section-number">4.12.2.6</span> SCF Family Net Worth</h4>
-<div class="sourceCode" id="cb1031"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1031-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1031-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(<span class="fu">subset</span>(scf_design , networth <span class="sc">&gt;</span> <span class="dv">0</span>) , <span class="fu">svyjdiv</span>(<span class="sc">~</span> networth)))</span></code></pre></div>
+<div class="sourceCode" id="cb1034"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1034-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1034-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(<span class="fu">subset</span>(scf_design , networth <span class="sc">&gt;</span> <span class="dv">0</span>) , <span class="fu">svyjdiv</span>(<span class="sc">~</span> networth)))</span></code></pre></div>
 <pre><code>## Warning in subset.svyimputationList(scf_design, networth &gt; 0): subset differed
 ## between imputations</code></pre>
 <pre><code>## Multiple imputation results:
@@ -553,10 +553,10 @@ J_W &amp;= \sum_{g \in G} \bigg[ \frac{Y_g}{Y} GE^{(1)}_g + \frac{N_g}{N} GE^{(0
 ##       scf_MIcombine(with(subset(scf_design, networth &gt; 0), svyjdiv(~networth)))
 ##           results         se
 ## networth 3.755309 0.06760927</code></pre>
-<div class="sourceCode" id="cb1034"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1034-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1034-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(</span>
-<span id="cb1034-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1034-2" tabindex="-1"></a>  <span class="fu">subset</span>(scf_design , networth <span class="sc">&gt;</span> <span class="dv">0</span>) ,</span>
-<span id="cb1034-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1034-3" tabindex="-1"></a>  <span class="fu">svyby</span>(<span class="sc">~</span> networth, <span class="sc">~</span> hhsex , svyjdiv)</span>
-<span id="cb1034-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1034-4" tabindex="-1"></a>))</span></code></pre></div>
+<div class="sourceCode" id="cb1037"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1037-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1037-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(</span>
+<span id="cb1037-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1037-2" tabindex="-1"></a>  <span class="fu">subset</span>(scf_design , networth <span class="sc">&gt;</span> <span class="dv">0</span>) ,</span>
+<span id="cb1037-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1037-3" tabindex="-1"></a>  <span class="fu">svyby</span>(<span class="sc">~</span> networth, <span class="sc">~</span> hhsex , svyjdiv)</span>
+<span id="cb1037-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1037-4" tabindex="-1"></a>))</span></code></pre></div>
 <pre><code>## Warning in subset.svyimputationList(scf_design, networth &gt; 0): subset differed
 ## between imputations</code></pre>
 <pre><code>## Multiple imputation results:
@@ -569,7 +569,7 @@ J_W &amp;= \sum_{g \in G} \bigg[ \frac{Y_g}{Y} GE^{(1)}_g + \frac{N_g}{N} GE^{(0
 </div>
 <div id="scf-family-income-15" class="section level4" number="4.12.2.7">
 <h4><span class="header-section-number">4.12.2.7</span> SCF Family Income</h4>
-<div class="sourceCode" id="cb1037"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1037-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1037-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(<span class="fu">subset</span>(scf_design , income <span class="sc">&gt;</span> <span class="dv">0</span>) , <span class="fu">svyjdiv</span>(<span class="sc">~</span> income)))</span></code></pre></div>
+<div class="sourceCode" id="cb1040"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1040-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1040-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(<span class="fu">subset</span>(scf_design , income <span class="sc">&gt;</span> <span class="dv">0</span>) , <span class="fu">svyjdiv</span>(<span class="sc">~</span> income)))</span></code></pre></div>
 <pre><code>## Warning in subset.svyimputationList(scf_design, income &gt; 0): subset differed
 ## between imputations</code></pre>
 <pre><code>## Multiple imputation results:
@@ -577,10 +577,10 @@ J_W &amp;= \sum_{g \in G} \bigg[ \frac{Y_g}{Y} GE^{(1)}_g + \frac{N_g}{N} GE^{(0
 ##       scf_MIcombine(with(subset(scf_design, income &gt; 0), svyjdiv(~income)))
 ##        results        se
 ## income 1.67673 0.1004542</code></pre>
-<div class="sourceCode" id="cb1040"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1040-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1040-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(</span>
-<span id="cb1040-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1040-2" tabindex="-1"></a>  <span class="fu">subset</span>(scf_design , income <span class="sc">&gt;</span> <span class="dv">0</span>) ,</span>
-<span id="cb1040-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1040-3" tabindex="-1"></a>  <span class="fu">svyby</span>(<span class="sc">~</span> income, <span class="sc">~</span> hhsex , svyjdiv)</span>
-<span id="cb1040-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1040-4" tabindex="-1"></a>))</span></code></pre></div>
+<div class="sourceCode" id="cb1043"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1043-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1043-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(</span>
+<span id="cb1043-2"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1043-2" tabindex="-1"></a>  <span class="fu">subset</span>(scf_design , income <span class="sc">&gt;</span> <span class="dv">0</span>) ,</span>
+<span id="cb1043-3"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1043-3" tabindex="-1"></a>  <span class="fu">svyby</span>(<span class="sc">~</span> income, <span class="sc">~</span> hhsex , svyjdiv)</span>
+<span id="cb1043-4"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1043-4" tabindex="-1"></a>))</span></code></pre></div>
 <pre><code>## Warning in subset.svyimputationList(scf_design, income &gt; 0): subset differed
 ## between imputations</code></pre>
 <pre><code>## Multiple imputation results:

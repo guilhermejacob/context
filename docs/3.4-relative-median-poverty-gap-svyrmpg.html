@@ -13,7 +13,7 @@
 
 <meta name="author" content="By Guilherme Jacob, Anthony Damico, and Djalma Pessoa. The authors received no external funding for the convey software and this accompanying textbook." />
 
-<meta name="date" content="2024-01-04" />
+<meta name="date" content="2024-01-05" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -288,11 +288,11 @@ div.csl-indent {
 <div class="col-sm-12">
 <div id="relative-median-poverty-gap-svyrmpg" class="section level2" number="3.4">
 <h2><span class="header-section-number">3.4</span> Relative Median Poverty Gap (svyrmpg)</h2>
-<div class="sourceCode" id="cb365"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb365-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb365-1" tabindex="-1"></a>✔️ how poor are those below the ARPT?</span>
-<span id="cb365-2"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb365-2" tabindex="-1"></a>✔️ median poverty gap expressed as a percentage of the threshold</span>
-<span id="cb365-3"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb365-3" tabindex="-1"></a>✔️ useful <span class="cf">for</span> understanding the depth of poverty</span>
-<span id="cb365-4"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb365-4" tabindex="-1"></a>❌ not common outside of the EU</span>
-<span id="cb365-5"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb365-5" tabindex="-1"></a>❌ not immediately interpretable <span class="cf">in</span> terms of income</span></code></pre></div>
+<div class="sourceCode" id="cb368"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb368-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb368-1" tabindex="-1"></a>✔️ how poor are those below the ARPT?</span>
+<span id="cb368-2"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb368-2" tabindex="-1"></a>✔️ median poverty gap expressed as a percentage of the threshold</span>
+<span id="cb368-3"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb368-3" tabindex="-1"></a>✔️ useful <span class="cf">for</span> understanding the depth of poverty</span>
+<span id="cb368-4"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb368-4" tabindex="-1"></a>❌ not common outside of the EU</span>
+<span id="cb368-5"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb368-5" tabindex="-1"></a>❌ not immediately interpretable <span class="cf">in</span> terms of income</span></code></pre></div>
 <p>The relative median poverty gap (RMPG) is the relative difference between the median income of people having income below the ARPT and the ARPT itself:</p>
 <p><span class="math display">\[
 rmpg = \frac{median\{y_i, y_i&lt;arpt\}-arpt}{arpt}
@@ -303,144 +303,144 @@ The details of the linearization of the RMPG are discussed by <span class="citat
 <h3><span class="header-section-number">3.4.1</span> Replication Example</h3>
 <p>The R <code>vardpoor</code> package <span class="citation">(<label for="tufte-mn-38" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-38" class="margin-toggle">Breidaks, Liberts, and Ivanova 2016<span class="marginnote">Breidaks, Juris, Martins Liberts, and Santa Ivanova. 2016. <span>“Vardpoor: Estimation of Indicators on Social Exclusion and Poverty and Its Linearization, Variance Estimation.”</span> Riga, Latvia: CSB.</span>)</span>, created by researchers at the Central Statistical Bureau of Latvia, includes a RMPG coefficient calculation using the ultimate cluster method. The example below reproduces those statistics.</p>
 <p>Load and prepare the same data set:</p>
-<div class="sourceCode" id="cb366"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb366-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-1" tabindex="-1"></a><span class="co"># load the convey package</span></span>
-<span id="cb366-2"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-2" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
-<span id="cb366-3"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-3" tabindex="-1"></a></span>
-<span id="cb366-4"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-4" tabindex="-1"></a><span class="co"># load the survey library</span></span>
-<span id="cb366-5"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-5" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
-<span id="cb366-6"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-6" tabindex="-1"></a></span>
-<span id="cb366-7"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-7" tabindex="-1"></a><span class="co"># load the vardpoor library</span></span>
-<span id="cb366-8"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-8" tabindex="-1"></a><span class="fu">library</span>(vardpoor)</span>
-<span id="cb366-9"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-9" tabindex="-1"></a></span>
-<span id="cb366-10"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-10" tabindex="-1"></a><span class="co"># load the vardpoor library</span></span>
-<span id="cb366-11"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-11" tabindex="-1"></a><span class="fu">library</span>(laeken)</span>
-<span id="cb366-12"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-12" tabindex="-1"></a></span>
-<span id="cb366-13"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-13" tabindex="-1"></a><span class="co"># load the synthetic EU statistics on income &amp; living conditions</span></span>
-<span id="cb366-14"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-14" tabindex="-1"></a><span class="fu">data</span>(eusilc)</span>
-<span id="cb366-15"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-15" tabindex="-1"></a></span>
-<span id="cb366-16"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-16" tabindex="-1"></a><span class="co"># make all column names lowercase</span></span>
-<span id="cb366-17"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-17" tabindex="-1"></a><span class="fu">names</span>(eusilc) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(eusilc))</span>
-<span id="cb366-18"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-18" tabindex="-1"></a></span>
-<span id="cb366-19"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-19" tabindex="-1"></a><span class="co"># add a column with the row number</span></span>
-<span id="cb366-20"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-20" tabindex="-1"></a>dati <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">data.table</span>(<span class="at">IDd =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(eusilc), eusilc)</span>
-<span id="cb366-21"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-21" tabindex="-1"></a></span>
-<span id="cb366-22"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-22" tabindex="-1"></a><span class="co"># calculate the rmpg coefficient</span></span>
-<span id="cb366-23"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-23" tabindex="-1"></a><span class="co"># using the R vardpoor library</span></span>
-<span id="cb366-24"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-24" tabindex="-1"></a>varpoord_rmpg_calculation <span class="ot">&lt;-</span></span>
-<span id="cb366-25"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-25" tabindex="-1"></a>  <span class="fu">varpoord</span>(</span>
-<span id="cb366-26"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-26" tabindex="-1"></a>    <span class="co"># analysis variable</span></span>
-<span id="cb366-27"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-27" tabindex="-1"></a>    <span class="at">Y =</span> <span class="st">&quot;eqincome&quot;</span>,</span>
-<span id="cb366-28"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-28" tabindex="-1"></a>    </span>
-<span id="cb366-29"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-29" tabindex="-1"></a>    <span class="co"># weights variable</span></span>
-<span id="cb366-30"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-30" tabindex="-1"></a>    <span class="at">w_final =</span> <span class="st">&quot;rb050&quot;</span>,</span>
-<span id="cb366-31"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-31" tabindex="-1"></a>    </span>
-<span id="cb366-32"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-32" tabindex="-1"></a>    <span class="co"># row number variable</span></span>
-<span id="cb366-33"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-33" tabindex="-1"></a>    <span class="at">ID_level1 =</span> <span class="st">&quot;IDd&quot;</span>,</span>
-<span id="cb366-34"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-34" tabindex="-1"></a>    </span>
-<span id="cb366-35"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-35" tabindex="-1"></a>    <span class="co"># row number variable</span></span>
-<span id="cb366-36"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-36" tabindex="-1"></a>    <span class="at">ID_level2 =</span> <span class="st">&quot;IDd&quot;</span>,</span>
-<span id="cb366-37"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-37" tabindex="-1"></a>    </span>
-<span id="cb366-38"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-38" tabindex="-1"></a>    <span class="co"># strata variable</span></span>
-<span id="cb366-39"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-39" tabindex="-1"></a>    <span class="at">H =</span> <span class="st">&quot;db040&quot;</span>,</span>
-<span id="cb366-40"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-40" tabindex="-1"></a>    </span>
-<span id="cb366-41"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-41" tabindex="-1"></a>    <span class="at">N_h =</span> <span class="cn">NULL</span> ,</span>
-<span id="cb366-42"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-42" tabindex="-1"></a>    </span>
-<span id="cb366-43"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-43" tabindex="-1"></a>    <span class="co"># clustering variable</span></span>
-<span id="cb366-44"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-44" tabindex="-1"></a>    <span class="at">PSU =</span> <span class="st">&quot;rb030&quot;</span>,</span>
-<span id="cb366-45"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-45" tabindex="-1"></a>    </span>
-<span id="cb366-46"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-46" tabindex="-1"></a>    <span class="co"># data.table</span></span>
-<span id="cb366-47"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-47" tabindex="-1"></a>    <span class="at">dataset =</span> dati,</span>
-<span id="cb366-48"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-48" tabindex="-1"></a>    </span>
-<span id="cb366-49"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-49" tabindex="-1"></a>    <span class="co"># rmpg coefficient function</span></span>
-<span id="cb366-50"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-50" tabindex="-1"></a>    <span class="at">type =</span> <span class="st">&quot;linrmpg&quot;</span>,</span>
-<span id="cb366-51"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-51" tabindex="-1"></a>    </span>
-<span id="cb366-52"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-52" tabindex="-1"></a>    <span class="co"># get linearized variable</span></span>
-<span id="cb366-53"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-53" tabindex="-1"></a>    <span class="at">outp_lin =</span> <span class="cn">TRUE</span></span>
-<span id="cb366-54"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-54" tabindex="-1"></a>    </span>
-<span id="cb366-55"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-55" tabindex="-1"></a>  )</span>
-<span id="cb366-56"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-56" tabindex="-1"></a></span>
-<span id="cb366-57"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-57" tabindex="-1"></a></span>
-<span id="cb366-58"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-58" tabindex="-1"></a></span>
-<span id="cb366-59"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-59" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
-<span id="cb366-60"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-60" tabindex="-1"></a><span class="co"># using our recommended setup</span></span>
-<span id="cb366-61"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-61" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span></span>
-<span id="cb366-62"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-62" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
-<span id="cb366-63"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-63" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
-<span id="cb366-64"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-64" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
-<span id="cb366-65"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-65" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
-<span id="cb366-66"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-66" tabindex="-1"></a>    <span class="at">data =</span> eusilc</span>
-<span id="cb366-67"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-67" tabindex="-1"></a>  )</span>
-<span id="cb366-68"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-68" tabindex="-1"></a></span>
-<span id="cb366-69"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-69" tabindex="-1"></a><span class="co"># immediately run the convey_prep function on it</span></span>
-<span id="cb366-70"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-70" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(des_eusilc)</span>
-<span id="cb366-71"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-71" tabindex="-1"></a></span>
-<span id="cb366-72"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-72" tabindex="-1"></a><span class="co"># coefficients do match</span></span>
-<span id="cb366-73"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb366-73" tabindex="-1"></a>varpoord_rmpg_calculation<span class="sc">$</span>all_result<span class="sc">$</span>value</span></code></pre></div>
+<div class="sourceCode" id="cb369"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb369-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-1" tabindex="-1"></a><span class="co"># load the convey package</span></span>
+<span id="cb369-2"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-2" tabindex="-1"></a><span class="fu">library</span>(convey)</span>
+<span id="cb369-3"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-3" tabindex="-1"></a></span>
+<span id="cb369-4"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-4" tabindex="-1"></a><span class="co"># load the survey library</span></span>
+<span id="cb369-5"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-5" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb369-6"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-6" tabindex="-1"></a></span>
+<span id="cb369-7"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-7" tabindex="-1"></a><span class="co"># load the vardpoor library</span></span>
+<span id="cb369-8"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-8" tabindex="-1"></a><span class="fu">library</span>(vardpoor)</span>
+<span id="cb369-9"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-9" tabindex="-1"></a></span>
+<span id="cb369-10"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-10" tabindex="-1"></a><span class="co"># load the vardpoor library</span></span>
+<span id="cb369-11"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-11" tabindex="-1"></a><span class="fu">library</span>(laeken)</span>
+<span id="cb369-12"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-12" tabindex="-1"></a></span>
+<span id="cb369-13"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-13" tabindex="-1"></a><span class="co"># load the synthetic EU statistics on income &amp; living conditions</span></span>
+<span id="cb369-14"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-14" tabindex="-1"></a><span class="fu">data</span>(eusilc)</span>
+<span id="cb369-15"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-15" tabindex="-1"></a></span>
+<span id="cb369-16"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-16" tabindex="-1"></a><span class="co"># make all column names lowercase</span></span>
+<span id="cb369-17"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-17" tabindex="-1"></a><span class="fu">names</span>(eusilc) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(eusilc))</span>
+<span id="cb369-18"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-18" tabindex="-1"></a></span>
+<span id="cb369-19"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-19" tabindex="-1"></a><span class="co"># add a column with the row number</span></span>
+<span id="cb369-20"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-20" tabindex="-1"></a>dati <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">data.table</span>(<span class="at">IDd =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(eusilc), eusilc)</span>
+<span id="cb369-21"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-21" tabindex="-1"></a></span>
+<span id="cb369-22"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-22" tabindex="-1"></a><span class="co"># calculate the rmpg coefficient</span></span>
+<span id="cb369-23"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-23" tabindex="-1"></a><span class="co"># using the R vardpoor library</span></span>
+<span id="cb369-24"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-24" tabindex="-1"></a>varpoord_rmpg_calculation <span class="ot">&lt;-</span></span>
+<span id="cb369-25"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-25" tabindex="-1"></a>  <span class="fu">varpoord</span>(</span>
+<span id="cb369-26"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-26" tabindex="-1"></a>    <span class="co"># analysis variable</span></span>
+<span id="cb369-27"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-27" tabindex="-1"></a>    <span class="at">Y =</span> <span class="st">&quot;eqincome&quot;</span>,</span>
+<span id="cb369-28"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-28" tabindex="-1"></a>    </span>
+<span id="cb369-29"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-29" tabindex="-1"></a>    <span class="co"># weights variable</span></span>
+<span id="cb369-30"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-30" tabindex="-1"></a>    <span class="at">w_final =</span> <span class="st">&quot;rb050&quot;</span>,</span>
+<span id="cb369-31"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-31" tabindex="-1"></a>    </span>
+<span id="cb369-32"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-32" tabindex="-1"></a>    <span class="co"># row number variable</span></span>
+<span id="cb369-33"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-33" tabindex="-1"></a>    <span class="at">ID_level1 =</span> <span class="st">&quot;IDd&quot;</span>,</span>
+<span id="cb369-34"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-34" tabindex="-1"></a>    </span>
+<span id="cb369-35"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-35" tabindex="-1"></a>    <span class="co"># row number variable</span></span>
+<span id="cb369-36"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-36" tabindex="-1"></a>    <span class="at">ID_level2 =</span> <span class="st">&quot;IDd&quot;</span>,</span>
+<span id="cb369-37"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-37" tabindex="-1"></a>    </span>
+<span id="cb369-38"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-38" tabindex="-1"></a>    <span class="co"># strata variable</span></span>
+<span id="cb369-39"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-39" tabindex="-1"></a>    <span class="at">H =</span> <span class="st">&quot;db040&quot;</span>,</span>
+<span id="cb369-40"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-40" tabindex="-1"></a>    </span>
+<span id="cb369-41"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-41" tabindex="-1"></a>    <span class="at">N_h =</span> <span class="cn">NULL</span> ,</span>
+<span id="cb369-42"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-42" tabindex="-1"></a>    </span>
+<span id="cb369-43"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-43" tabindex="-1"></a>    <span class="co"># clustering variable</span></span>
+<span id="cb369-44"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-44" tabindex="-1"></a>    <span class="at">PSU =</span> <span class="st">&quot;rb030&quot;</span>,</span>
+<span id="cb369-45"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-45" tabindex="-1"></a>    </span>
+<span id="cb369-46"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-46" tabindex="-1"></a>    <span class="co"># data.table</span></span>
+<span id="cb369-47"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-47" tabindex="-1"></a>    <span class="at">dataset =</span> dati,</span>
+<span id="cb369-48"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-48" tabindex="-1"></a>    </span>
+<span id="cb369-49"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-49" tabindex="-1"></a>    <span class="co"># rmpg coefficient function</span></span>
+<span id="cb369-50"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-50" tabindex="-1"></a>    <span class="at">type =</span> <span class="st">&quot;linrmpg&quot;</span>,</span>
+<span id="cb369-51"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-51" tabindex="-1"></a>    </span>
+<span id="cb369-52"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-52" tabindex="-1"></a>    <span class="co"># get linearized variable</span></span>
+<span id="cb369-53"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-53" tabindex="-1"></a>    <span class="at">outp_lin =</span> <span class="cn">TRUE</span></span>
+<span id="cb369-54"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-54" tabindex="-1"></a>    </span>
+<span id="cb369-55"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-55" tabindex="-1"></a>  )</span>
+<span id="cb369-56"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-56" tabindex="-1"></a></span>
+<span id="cb369-57"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-57" tabindex="-1"></a></span>
+<span id="cb369-58"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-58" tabindex="-1"></a></span>
+<span id="cb369-59"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-59" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
+<span id="cb369-60"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-60" tabindex="-1"></a><span class="co"># using our recommended setup</span></span>
+<span id="cb369-61"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-61" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span></span>
+<span id="cb369-62"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-62" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
+<span id="cb369-63"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-63" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
+<span id="cb369-64"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-64" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
+<span id="cb369-65"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-65" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
+<span id="cb369-66"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-66" tabindex="-1"></a>    <span class="at">data =</span> eusilc</span>
+<span id="cb369-67"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-67" tabindex="-1"></a>  )</span>
+<span id="cb369-68"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-68" tabindex="-1"></a></span>
+<span id="cb369-69"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-69" tabindex="-1"></a><span class="co"># immediately run the convey_prep function on it</span></span>
+<span id="cb369-70"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-70" tabindex="-1"></a>des_eusilc <span class="ot">&lt;-</span> <span class="fu">convey_prep</span>(des_eusilc)</span>
+<span id="cb369-71"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-71" tabindex="-1"></a></span>
+<span id="cb369-72"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-72" tabindex="-1"></a><span class="co"># coefficients do match</span></span>
+<span id="cb369-73"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb369-73" tabindex="-1"></a>varpoord_rmpg_calculation<span class="sc">$</span>all_result<span class="sc">$</span>value</span></code></pre></div>
 <pre><code>## [1] 18.9286</code></pre>
-<div class="sourceCode" id="cb368"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb368-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb368-1" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">svyrmpg</span>( <span class="sc">~</span> eqincome , des_eusilc)) <span class="sc">*</span> <span class="dv">100</span></span></code></pre></div>
+<div class="sourceCode" id="cb371"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb371-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb371-1" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">svyrmpg</span>( <span class="sc">~</span> eqincome , des_eusilc)) <span class="sc">*</span> <span class="dv">100</span></span></code></pre></div>
 <pre><code>## eqincome 
 ##  18.9286</code></pre>
-<div class="sourceCode" id="cb370"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb370-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb370-1" tabindex="-1"></a><span class="co"># linearized variables do match</span></span>
-<span id="cb370-2"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb370-2" tabindex="-1"></a><span class="co"># vardpoor</span></span>
-<span id="cb370-3"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb370-3" tabindex="-1"></a>lin_rmpg_varpoord <span class="ot">&lt;-</span> varpoord_rmpg_calculation<span class="sc">$</span>lin_out<span class="sc">$</span>lin_rmpg</span>
-<span id="cb370-4"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb370-4" tabindex="-1"></a><span class="co"># convey</span></span>
-<span id="cb370-5"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb370-5" tabindex="-1"></a>lin_rmpg_convey <span class="ot">&lt;-</span> <span class="fu">attr</span>(<span class="fu">svyrmpg</span>( <span class="sc">~</span> eqincome , des_eusilc), <span class="st">&quot;lin&quot;</span>)</span>
-<span id="cb370-6"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb370-6" tabindex="-1"></a></span>
-<span id="cb370-7"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb370-7" tabindex="-1"></a><span class="co"># check equality</span></span>
-<span id="cb370-8"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb370-8" tabindex="-1"></a><span class="fu">all.equal</span>(lin_rmpg_varpoord, <span class="dv">100</span> <span class="sc">*</span> lin_rmpg_convey[, <span class="dv">1</span>])</span></code></pre></div>
+<div class="sourceCode" id="cb373"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb373-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb373-1" tabindex="-1"></a><span class="co"># linearized variables do match</span></span>
+<span id="cb373-2"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb373-2" tabindex="-1"></a><span class="co"># vardpoor</span></span>
+<span id="cb373-3"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb373-3" tabindex="-1"></a>lin_rmpg_varpoord <span class="ot">&lt;-</span> varpoord_rmpg_calculation<span class="sc">$</span>lin_out<span class="sc">$</span>lin_rmpg</span>
+<span id="cb373-4"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb373-4" tabindex="-1"></a><span class="co"># convey</span></span>
+<span id="cb373-5"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb373-5" tabindex="-1"></a>lin_rmpg_convey <span class="ot">&lt;-</span> <span class="fu">attr</span>(<span class="fu">svyrmpg</span>( <span class="sc">~</span> eqincome , des_eusilc), <span class="st">&quot;lin&quot;</span>)</span>
+<span id="cb373-6"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb373-6" tabindex="-1"></a></span>
+<span id="cb373-7"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb373-7" tabindex="-1"></a><span class="co"># check equality</span></span>
+<span id="cb373-8"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb373-8" tabindex="-1"></a><span class="fu">all.equal</span>(lin_rmpg_varpoord, <span class="dv">100</span> <span class="sc">*</span> lin_rmpg_convey[, <span class="dv">1</span>])</span></code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
-<div class="sourceCode" id="cb372"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb372-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb372-1" tabindex="-1"></a><span class="co"># variances do not match exactly</span></span>
-<span id="cb372-2"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb372-2" tabindex="-1"></a><span class="fu">attr</span>(<span class="fu">svyrmpg</span>( <span class="sc">~</span> eqincome , des_eusilc) , <span class="st">&#39;var&#39;</span>) <span class="sc">*</span> <span class="dv">10000</span></span></code></pre></div>
+<div class="sourceCode" id="cb375"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb375-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb375-1" tabindex="-1"></a><span class="co"># variances do not match exactly</span></span>
+<span id="cb375-2"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb375-2" tabindex="-1"></a><span class="fu">attr</span>(<span class="fu">svyrmpg</span>( <span class="sc">~</span> eqincome , des_eusilc) , <span class="st">&#39;var&#39;</span>) <span class="sc">*</span> <span class="dv">10000</span></span></code></pre></div>
 <pre><code>##          eqincome
 ## eqincome 0.332234</code></pre>
-<div class="sourceCode" id="cb374"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb374-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb374-1" tabindex="-1"></a>varpoord_rmpg_calculation<span class="sc">$</span>all_result<span class="sc">$</span>var</span></code></pre></div>
+<div class="sourceCode" id="cb377"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb377-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb377-1" tabindex="-1"></a>varpoord_rmpg_calculation<span class="sc">$</span>all_result<span class="sc">$</span>var</span></code></pre></div>
 <pre><code>## [1] 0.3316454</code></pre>
-<div class="sourceCode" id="cb376"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb376-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb376-1" tabindex="-1"></a><span class="co"># standard errors do not match exactly</span></span>
-<span id="cb376-2"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb376-2" tabindex="-1"></a>varpoord_rmpg_calculation<span class="sc">$</span>all_result<span class="sc">$</span>se</span></code></pre></div>
+<div class="sourceCode" id="cb379"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb379-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb379-1" tabindex="-1"></a><span class="co"># standard errors do not match exactly</span></span>
+<span id="cb379-2"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb379-2" tabindex="-1"></a>varpoord_rmpg_calculation<span class="sc">$</span>all_result<span class="sc">$</span>se</span></code></pre></div>
 <pre><code>## [1] 0.5758866</code></pre>
-<div class="sourceCode" id="cb378"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb378-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb378-1" tabindex="-1"></a><span class="fu">SE</span>(<span class="fu">svyrmpg</span>( <span class="sc">~</span> eqincome , des_eusilc)) <span class="sc">*</span> <span class="dv">100</span></span></code></pre></div>
+<div class="sourceCode" id="cb381"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb381-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb381-1" tabindex="-1"></a><span class="fu">SE</span>(<span class="fu">svyrmpg</span>( <span class="sc">~</span> eqincome , des_eusilc)) <span class="sc">*</span> <span class="dv">100</span></span></code></pre></div>
 <pre><code>##           eqincome
 ## eqincome 0.5763974</code></pre>
 <p>The variance estimate and the linearized variable <span class="math inline">\(z\)</span> are both defined in <a href="2.1-linearization-based-variance-estimation.html#linearization-based-variance-estimation">Linearization-Based Variance Estimation</a>. The functions <code>convey::svyrmpg</code> and <code>vardpoor::linrmpg</code> produce the same linearized variable <span class="math inline">\(z\)</span>.</p>
 <p>However, the measures of uncertainty do not line up, because <code>library(vardpoor)</code> defaults to an ultimate cluster method that can be replicated with an alternative setup of the <code>survey.design</code> object.</p>
-<div class="sourceCode" id="cb380"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb380-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-1" tabindex="-1"></a><span class="co"># within each strata, sum up the weights</span></span>
-<span id="cb380-2"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-2" tabindex="-1"></a>cluster_sums <span class="ot">&lt;-</span></span>
-<span id="cb380-3"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-3" tabindex="-1"></a>  <span class="fu">aggregate</span>(eusilc<span class="sc">$</span>rb050 , <span class="fu">list</span>(eusilc<span class="sc">$</span>db040) , sum)</span>
-<span id="cb380-4"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-4" tabindex="-1"></a></span>
-<span id="cb380-5"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-5" tabindex="-1"></a><span class="co"># name the within-strata sums of weights the `cluster_sum`</span></span>
-<span id="cb380-6"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-6" tabindex="-1"></a><span class="fu">names</span>(cluster_sums) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;db040&quot;</span> , <span class="st">&quot;cluster_sum&quot;</span>)</span>
-<span id="cb380-7"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-7" tabindex="-1"></a></span>
-<span id="cb380-8"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-8" tabindex="-1"></a><span class="co"># merge this column back onto the data.frame</span></span>
-<span id="cb380-9"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-9" tabindex="-1"></a>eusilc <span class="ot">&lt;-</span> <span class="fu">merge</span>(eusilc , cluster_sums)</span>
-<span id="cb380-10"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-10" tabindex="-1"></a></span>
-<span id="cb380-11"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-11" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
-<span id="cb380-12"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-12" tabindex="-1"></a><span class="co"># with the fpc using the cluster sum</span></span>
-<span id="cb380-13"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-13" tabindex="-1"></a>des_eusilc_ultimate_cluster <span class="ot">&lt;-</span></span>
-<span id="cb380-14"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-14" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
-<span id="cb380-15"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-15" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
-<span id="cb380-16"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-16" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
-<span id="cb380-17"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-17" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
-<span id="cb380-18"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-18" tabindex="-1"></a>    <span class="at">data =</span> eusilc ,</span>
-<span id="cb380-19"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-19" tabindex="-1"></a>    <span class="at">fpc =</span> <span class="sc">~</span> cluster_sum</span>
-<span id="cb380-20"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-20" tabindex="-1"></a>  )</span>
-<span id="cb380-21"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-21" tabindex="-1"></a></span>
-<span id="cb380-22"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-22" tabindex="-1"></a><span class="co"># again, immediately run the convey_prep function on the `survey.design`</span></span>
-<span id="cb380-23"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-23" tabindex="-1"></a>des_eusilc_ultimate_cluster <span class="ot">&lt;-</span></span>
-<span id="cb380-24"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-24" tabindex="-1"></a>  <span class="fu">convey_prep</span>(des_eusilc_ultimate_cluster)</span>
-<span id="cb380-25"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-25" tabindex="-1"></a></span>
-<span id="cb380-26"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-26" tabindex="-1"></a></span>
-<span id="cb380-27"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-27" tabindex="-1"></a></span>
-<span id="cb380-28"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-28" tabindex="-1"></a><span class="co"># matches</span></span>
-<span id="cb380-29"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-29" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all.equal</span>(</span>
-<span id="cb380-30"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-30" tabindex="-1"></a>  <span class="fu">attr</span>(<span class="fu">svyrmpg</span>( <span class="sc">~</span> eqincome , des_eusilc_ultimate_cluster) , <span class="st">&#39;var&#39;</span>)[<span class="dv">1</span>] <span class="sc">*</span> <span class="dv">10000</span> ,</span>
-<span id="cb380-31"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-31" tabindex="-1"></a>  varpoord_rmpg_calculation<span class="sc">$</span>all_result<span class="sc">$</span>var</span>
-<span id="cb380-32"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-32" tabindex="-1"></a>))</span>
-<span id="cb380-33"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-33" tabindex="-1"></a></span>
-<span id="cb380-34"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-34" tabindex="-1"></a><span class="co"># matches</span></span>
-<span id="cb380-35"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-35" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all.equal</span>(<span class="fu">SE</span>(</span>
-<span id="cb380-36"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-36" tabindex="-1"></a>  <span class="fu">svyrmpg</span>(<span class="sc">~</span> eqincome , des_eusilc_ultimate_cluster)</span>
-<span id="cb380-37"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-37" tabindex="-1"></a>)[<span class="dv">1</span>] <span class="sc">*</span> <span class="dv">100</span> ,</span>
-<span id="cb380-38"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb380-38" tabindex="-1"></a>varpoord_rmpg_calculation<span class="sc">$</span>all_result<span class="sc">$</span>se))</span></code></pre></div>
+<div class="sourceCode" id="cb383"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb383-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-1" tabindex="-1"></a><span class="co"># within each strata, sum up the weights</span></span>
+<span id="cb383-2"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-2" tabindex="-1"></a>cluster_sums <span class="ot">&lt;-</span></span>
+<span id="cb383-3"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-3" tabindex="-1"></a>  <span class="fu">aggregate</span>(eusilc<span class="sc">$</span>rb050 , <span class="fu">list</span>(eusilc<span class="sc">$</span>db040) , sum)</span>
+<span id="cb383-4"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-4" tabindex="-1"></a></span>
+<span id="cb383-5"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-5" tabindex="-1"></a><span class="co"># name the within-strata sums of weights the `cluster_sum`</span></span>
+<span id="cb383-6"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-6" tabindex="-1"></a><span class="fu">names</span>(cluster_sums) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;db040&quot;</span> , <span class="st">&quot;cluster_sum&quot;</span>)</span>
+<span id="cb383-7"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-7" tabindex="-1"></a></span>
+<span id="cb383-8"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-8" tabindex="-1"></a><span class="co"># merge this column back onto the data.frame</span></span>
+<span id="cb383-9"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-9" tabindex="-1"></a>eusilc <span class="ot">&lt;-</span> <span class="fu">merge</span>(eusilc , cluster_sums)</span>
+<span id="cb383-10"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-10" tabindex="-1"></a></span>
+<span id="cb383-11"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-11" tabindex="-1"></a><span class="co"># construct a survey.design</span></span>
+<span id="cb383-12"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-12" tabindex="-1"></a><span class="co"># with the fpc using the cluster sum</span></span>
+<span id="cb383-13"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-13" tabindex="-1"></a>des_eusilc_ultimate_cluster <span class="ot">&lt;-</span></span>
+<span id="cb383-14"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-14" tabindex="-1"></a>  <span class="fu">svydesign</span>(</span>
+<span id="cb383-15"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-15" tabindex="-1"></a>    <span class="at">ids =</span> <span class="sc">~</span> rb030 ,</span>
+<span id="cb383-16"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-16" tabindex="-1"></a>    <span class="at">strata =</span> <span class="sc">~</span> db040 ,</span>
+<span id="cb383-17"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-17" tabindex="-1"></a>    <span class="at">weights =</span> <span class="sc">~</span> rb050 ,</span>
+<span id="cb383-18"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-18" tabindex="-1"></a>    <span class="at">data =</span> eusilc ,</span>
+<span id="cb383-19"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-19" tabindex="-1"></a>    <span class="at">fpc =</span> <span class="sc">~</span> cluster_sum</span>
+<span id="cb383-20"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-20" tabindex="-1"></a>  )</span>
+<span id="cb383-21"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-21" tabindex="-1"></a></span>
+<span id="cb383-22"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-22" tabindex="-1"></a><span class="co"># again, immediately run the convey_prep function on the `survey.design`</span></span>
+<span id="cb383-23"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-23" tabindex="-1"></a>des_eusilc_ultimate_cluster <span class="ot">&lt;-</span></span>
+<span id="cb383-24"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-24" tabindex="-1"></a>  <span class="fu">convey_prep</span>(des_eusilc_ultimate_cluster)</span>
+<span id="cb383-25"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-25" tabindex="-1"></a></span>
+<span id="cb383-26"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-26" tabindex="-1"></a></span>
+<span id="cb383-27"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-27" tabindex="-1"></a></span>
+<span id="cb383-28"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-28" tabindex="-1"></a><span class="co"># matches</span></span>
+<span id="cb383-29"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-29" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all.equal</span>(</span>
+<span id="cb383-30"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-30" tabindex="-1"></a>  <span class="fu">attr</span>(<span class="fu">svyrmpg</span>( <span class="sc">~</span> eqincome , des_eusilc_ultimate_cluster) , <span class="st">&#39;var&#39;</span>)[<span class="dv">1</span>] <span class="sc">*</span> <span class="dv">10000</span> ,</span>
+<span id="cb383-31"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-31" tabindex="-1"></a>  varpoord_rmpg_calculation<span class="sc">$</span>all_result<span class="sc">$</span>var</span>
+<span id="cb383-32"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-32" tabindex="-1"></a>))</span>
+<span id="cb383-33"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-33" tabindex="-1"></a></span>
+<span id="cb383-34"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-34" tabindex="-1"></a><span class="co"># matches</span></span>
+<span id="cb383-35"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-35" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all.equal</span>(<span class="fu">SE</span>(</span>
+<span id="cb383-36"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-36" tabindex="-1"></a>  <span class="fu">svyrmpg</span>(<span class="sc">~</span> eqincome , des_eusilc_ultimate_cluster)</span>
+<span id="cb383-37"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-37" tabindex="-1"></a>)[<span class="dv">1</span>] <span class="sc">*</span> <span class="dv">100</span> ,</span>
+<span id="cb383-38"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-38" tabindex="-1"></a>varpoord_rmpg_calculation<span class="sc">$</span>all_result<span class="sc">$</span>se))</span></code></pre></div>
 <p>For additional usage examples of <code>svyrmpg</code>, type <code>?convey::svyrmpg</code> in the R console.</p>
 </div>
 <div id="real-world-examples-4" class="section level3" number="3.4.2">
@@ -449,67 +449,67 @@ The details of the linearization of the RMPG are discussed by <span class="citat
 <p>To understand the construction of each survey design object and respective variables of interest, please refer to <a href="https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html">section 1.4</a> for CPS-ASEC, <a href="https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html">section 1.5</a> for PNAD-Contínua, and <a href="https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html">section 1.6</a> for SCF.</p>
 <div id="cps-asec-household-income-4" class="section level4" number="3.4.2.1">
 <h4><span class="header-section-number">3.4.2.1</span> CPS-ASEC Household Income</h4>
-<div class="sourceCode" id="cb381"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb381-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb381-1" tabindex="-1"></a><span class="fu">svyrmpg</span>( <span class="sc">~</span> htotval , cps_household_design)</span></code></pre></div>
+<div class="sourceCode" id="cb384"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb384-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb384-1" tabindex="-1"></a><span class="fu">svyrmpg</span>( <span class="sc">~</span> htotval , cps_household_design)</span></code></pre></div>
 <pre><code>##            rmpg     SE
 ## htotval 0.46091 0.0042</code></pre>
-<div class="sourceCode" id="cb383"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb383-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb383-1" tabindex="-1"></a><span class="fu">svyby</span>( <span class="sc">~</span> htotval , <span class="sc">~</span> sex , cps_household_design , svyrmpg)</span></code></pre></div>
+<div class="sourceCode" id="cb386"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb386-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb386-1" tabindex="-1"></a><span class="fu">svyby</span>( <span class="sc">~</span> htotval , <span class="sc">~</span> sex , cps_household_design , svyrmpg)</span></code></pre></div>
 <pre><code>##           sex   htotval  se.htotval
 ## male     male 0.4382452 0.004842012
 ## female female 0.4824937 0.007104020</code></pre>
 </div>
 <div id="cps-asec-family-income-4" class="section level4" number="3.4.2.2">
 <h4><span class="header-section-number">3.4.2.2</span> CPS-ASEC Family Income</h4>
-<div class="sourceCode" id="cb385"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb385-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb385-1" tabindex="-1"></a><span class="fu">svyrmpg</span>( <span class="sc">~</span> ftotval , cps_family_design)</span></code></pre></div>
+<div class="sourceCode" id="cb388"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb388-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb388-1" tabindex="-1"></a><span class="fu">svyrmpg</span>( <span class="sc">~</span> ftotval , cps_family_design)</span></code></pre></div>
 <pre><code>##            rmpg     SE
 ## ftotval 0.39583 0.0044</code></pre>
-<div class="sourceCode" id="cb387"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb387-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb387-1" tabindex="-1"></a><span class="fu">svyby</span>( <span class="sc">~</span> ftotval , <span class="sc">~</span> sex , cps_family_design , svyrmpg)</span></code></pre></div>
+<div class="sourceCode" id="cb390"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb390-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb390-1" tabindex="-1"></a><span class="fu">svyby</span>( <span class="sc">~</span> ftotval , <span class="sc">~</span> sex , cps_family_design , svyrmpg)</span></code></pre></div>
 <pre><code>##           sex   ftotval  se.ftotval
 ## male     male 0.3740833 0.005989913
 ## female female 0.4336667 0.010176008</code></pre>
 </div>
 <div id="cps-asec-worker-earnings-4" class="section level4" number="3.4.2.3">
 <h4><span class="header-section-number">3.4.2.3</span> CPS-ASEC Worker Earnings</h4>
-<div class="sourceCode" id="cb389"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb389-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb389-1" tabindex="-1"></a><span class="fu">svyrmpg</span>( <span class="sc">~</span> pearnval , cps_ftfy_worker_design)</span></code></pre></div>
+<div class="sourceCode" id="cb392"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb392-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb392-1" tabindex="-1"></a><span class="fu">svyrmpg</span>( <span class="sc">~</span> pearnval , cps_ftfy_worker_design)</span></code></pre></div>
 <pre><code>##             rmpg     SE
 ## pearnval 0.22222 0.0126</code></pre>
-<div class="sourceCode" id="cb391"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb391-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb391-1" tabindex="-1"></a><span class="fu">svyby</span>( <span class="sc">~</span> pearnval , <span class="sc">~</span> sex , cps_ftfy_worker_design , svyrmpg)</span></code></pre></div>
+<div class="sourceCode" id="cb394"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb394-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb394-1" tabindex="-1"></a><span class="fu">svyby</span>( <span class="sc">~</span> pearnval , <span class="sc">~</span> sex , cps_ftfy_worker_design , svyrmpg)</span></code></pre></div>
 <pre><code>##           sex  pearnval se.pearnval
 ## male     male 0.2222222 0.008776067
 ## female female 0.2222222 0.019026712</code></pre>
 </div>
 <div id="pnad-contínua-per-capita-income-4" class="section level4" number="3.4.2.4">
 <h4><span class="header-section-number">3.4.2.4</span> PNAD-Contínua Per Capita Income</h4>
-<div class="sourceCode" id="cb393"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb393-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb393-1" tabindex="-1"></a><span class="fu">svyrmpg</span>( <span class="sc">~</span> deflated_per_capita_income , pnadc_design , <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb396"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb396-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb396-1" tabindex="-1"></a><span class="fu">svyrmpg</span>( <span class="sc">~</span> deflated_per_capita_income , pnadc_design , <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <pre><code>##                               rmpg    SE
 ## deflated_per_capita_income 0.38774 0.006</code></pre>
-<div class="sourceCode" id="cb395"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb395-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb395-1" tabindex="-1"></a><span class="fu">svyby</span>( <span class="sc">~</span> deflated_per_capita_income ,</span>
-<span id="cb395-2"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb395-2" tabindex="-1"></a>       <span class="sc">~</span> sex ,</span>
-<span id="cb395-3"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb395-3" tabindex="-1"></a>       pnadc_design ,</span>
-<span id="cb395-4"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb395-4" tabindex="-1"></a>       svyrmpg ,</span>
-<span id="cb395-5"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb395-5" tabindex="-1"></a>       <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb398"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb398-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb398-1" tabindex="-1"></a><span class="fu">svyby</span>( <span class="sc">~</span> deflated_per_capita_income ,</span>
+<span id="cb398-2"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb398-2" tabindex="-1"></a>       <span class="sc">~</span> sex ,</span>
+<span id="cb398-3"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb398-3" tabindex="-1"></a>       pnadc_design ,</span>
+<span id="cb398-4"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb398-4" tabindex="-1"></a>       svyrmpg ,</span>
+<span id="cb398-5"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb398-5" tabindex="-1"></a>       <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <pre><code>##           sex deflated_per_capita_income se.deflated_per_capita_income
 ## male     male                  0.3826508                   0.006056376
 ## female female                  0.3908435                   0.006118998</code></pre>
 </div>
 <div id="pnad-contínua-worker-earnings-4" class="section level4" number="3.4.2.5">
 <h4><span class="header-section-number">3.4.2.5</span> PNAD-Contínua Worker Earnings</h4>
-<div class="sourceCode" id="cb397"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb397-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb397-1" tabindex="-1"></a><span class="fu">svyrmpg</span>( <span class="sc">~</span> deflated_labor_income , pnadc_design , <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb400"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb400-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb400-1" tabindex="-1"></a><span class="fu">svyrmpg</span>( <span class="sc">~</span> deflated_labor_income , pnadc_design , <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <pre><code>##                          rmpg     SE
 ## deflated_labor_income 0.47379 0.0047</code></pre>
-<div class="sourceCode" id="cb399"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb399-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb399-1" tabindex="-1"></a><span class="fu">svyby</span>( <span class="sc">~</span> deflated_labor_income , <span class="sc">~</span> sex , pnadc_design , svyrmpg , <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb402"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb402-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb402-1" tabindex="-1"></a><span class="fu">svyby</span>( <span class="sc">~</span> deflated_labor_income , <span class="sc">~</span> sex , pnadc_design , svyrmpg , <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <pre><code>##           sex deflated_labor_income se.deflated_labor_income
 ## male     male             0.4636005              0.005379404
 ## female female             0.4782603              0.001340361</code></pre>
 </div>
 <div id="scf-family-net-worth-4" class="section level4" number="3.4.2.6">
 <h4><span class="header-section-number">3.4.2.6</span> SCF Family Net Worth</h4>
-<div class="sourceCode" id="cb401"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb401-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb401-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(scf_design , <span class="fu">svyrmpg</span>( <span class="sc">~</span> networth)))</span></code></pre></div>
+<div class="sourceCode" id="cb404"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb404-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb404-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(scf_design , <span class="fu">svyrmpg</span>( <span class="sc">~</span> networth)))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
 ##       m &lt;- length(results)
 ##       scf_MIcombine(with(scf_design, svyrmpg(~networth)))
 ##            results          se
 ## networth 0.8764535 0.006946956</code></pre>
-<div class="sourceCode" id="cb403"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb403-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb403-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(scf_design , <span class="fu">svyby</span>( <span class="sc">~</span> networth, <span class="sc">~</span> hhsex , svyrmpg)))</span></code></pre></div>
+<div class="sourceCode" id="cb406"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb406-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb406-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(scf_design , <span class="fu">svyby</span>( <span class="sc">~</span> networth, <span class="sc">~</span> hhsex , svyrmpg)))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
 ##       m &lt;- length(results)
 ##       scf_MIcombine(with(scf_design, svyby(~networth, ~hhsex, svyrmpg)))
@@ -519,13 +519,13 @@ The details of the linearization of the RMPG are discussed by <span class="citat
 </div>
 <div id="scf-family-income-4" class="section level4" number="3.4.2.7">
 <h4><span class="header-section-number">3.4.2.7</span> SCF Family Income</h4>
-<div class="sourceCode" id="cb405"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb405-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb405-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(scf_design , <span class="fu">svyrmpg</span>( <span class="sc">~</span> income)))</span></code></pre></div>
+<div class="sourceCode" id="cb408"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb408-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb408-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(scf_design , <span class="fu">svyrmpg</span>( <span class="sc">~</span> income)))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
 ##       m &lt;- length(results)
 ##       scf_MIcombine(with(scf_design, svyrmpg(~income)))
 ##          results         se
 ## income 0.4069153 0.01961822</code></pre>
-<div class="sourceCode" id="cb407"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb407-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb407-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(scf_design , <span class="fu">svyby</span>( <span class="sc">~</span> income, <span class="sc">~</span> hhsex , svyrmpg)))</span></code></pre></div>
+<div class="sourceCode" id="cb410"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb410-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb410-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(scf_design , <span class="fu">svyby</span>( <span class="sc">~</span> income, <span class="sc">~</span> hhsex , svyrmpg)))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
 ##       m &lt;- length(results)
 ##       scf_MIcombine(with(scf_design, svyby(~income, ~hhsex, svyrmpg)))
