@@ -13,7 +13,7 @@
 
 <meta name="author" content="By Guilherme Jacob, Anthony Damico, and Djalma Pessoa. The authors received no external funding for the convey software and this accompanying textbook." />
 
-<meta name="date" content="2024-01-05" />
+<meta name="date" content="2024-04-10" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -276,9 +276,15 @@ div.csl-indent {
 <li><a href="5.1-richness-measures-svyrich.html#real-world-examples-16" id="toc-real-world-examples-16"><span class="toc-section-number">5.1.2</span> Real World Examples</a></li>
 </ul></li>
 </ul></li>
-<li class="has-sub"><a href="6-covariance-matrix.html#covariance-matrix" id="toc-covariance-matrix"><span class="toc-section-number">6</span> Covariance Matrix</a>
+<li class="has-sub"><a href="6-multidimensional-poverty.html#multidimensional-poverty" id="toc-multidimensional-poverty"><span class="toc-section-number">6</span> Multidimensional Poverty</a>
 <ul>
-<li><a href="6.1-example-calculation.html#example-calculation" id="toc-example-calculation"><span class="toc-section-number">6.1</span> Example Calculation</a></li>
+<li><a href="6.1-alkire-foster-class-function-definition.html#alkire-foster-class-function-definition" id="toc-alkire-foster-class-function-definition"><span class="toc-section-number">6.1</span> Alkire-Foster Class Function Definition</a></li>
+<li><a href="6.2-alkire-foster-class-decomposition-function-definition.html#alkire-foster-class-decomposition-function-definition" id="toc-alkire-foster-class-decomposition-function-definition"><span class="toc-section-number">6.2</span> Alkire-Foster Class Decomposition Function Definition</a></li>
+<li><a href="6.3-replication-example-13.html#replication-example-13" id="toc-replication-example-13"><span class="toc-section-number">6.3</span> Replication Example</a></li>
+</ul></li>
+<li class="has-sub"><a href="7-covariance-matrix.html#covariance-matrix" id="toc-covariance-matrix"><span class="toc-section-number">7</span> Covariance Matrix</a>
+<ul>
+<li><a href="7.1-example-calculation.html#example-calculation" id="toc-example-calculation"><span class="toc-section-number">7.1</span> Example Calculation</a></li>
 </ul></li>
 </ul>
 </div>
@@ -512,13 +518,13 @@ div.csl-indent {
 ##       m &lt;- length(results)
 ##       scf_MIcombine(with(scf_design, svyqsr(~networth)))
 ##            results       se
-## networth -379.1195 61.77653</code></pre>
+## networth -379.1143 61.77597</code></pre>
 <div class="sourceCode" id="cb701"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb701-1"><a href="4.3-quintile-share-ratio-svyqsr.html#cb701-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(scf_design , <span class="fu">svyby</span>( <span class="sc">~</span> networth, <span class="sc">~</span> hhsex , svyqsr)))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
 ##       m &lt;- length(results)
 ##       scf_MIcombine(with(scf_design, svyby(~networth, ~hhsex, svyqsr)))
 ##            results           se
-## male   -2904.40589 4.598800e+05
+## male   -2904.36529 4.598640e+05
 ## female   -51.58258 8.249331e+00</code></pre>
 <p>Note the highly skewed nature of a variable like net worth, wealth, and assets (as opposed to income and earnings) can make the quintile share ratio result appear to be quite different compared to the other real world examples shown in this section.</p>
 <p>First, this function generates a negative result because the sum of net worth of the bottom 20% of households is negative. We can use the Lorenz curve to get the cumulative shares of income held by the poorest <span class="math inline">\(p\)</span>% of the population. In other words, the poorest 20% of households have more debt than assets in aggregate:</p>
@@ -528,15 +534,15 @@ div.csl-indent {
 <span id="cb703-4"><a href="4.3-quintile-share-ratio-svyqsr.html#cb703-4" tabindex="-1"></a>  )))</span>
 <span id="cb703-5"><a href="4.3-quintile-share-ratio-svyqsr.html#cb703-5" tabindex="-1"></a><span class="fu">coef</span>(networth_shares)[<span class="dv">2</span>] <span class="co"># share owned by the bottom 20%</span></span></code></pre></div>
 <pre><code>##       L(0.2) 
-## -0.002255346</code></pre>
+## -0.002255374</code></pre>
 <p>Second, the heavy skew of assets (compared to income or earnings) in the country leads to a quintile share ratio value much higher than the same calculation on an income variable. Compared to the other <code>svyqsr</code> results in this section, the concentration of so much net worth among the richest 20% of the population produces the extreme <code>svyqsr</code> result:</p>
 <div class="sourceCode" id="cb705"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb705-1"><a href="4.3-quintile-share-ratio-svyqsr.html#cb705-1" tabindex="-1"></a><span class="co"># share owned by the richest 20%:</span></span>
 <span id="cb705-2"><a href="4.3-quintile-share-ratio-svyqsr.html#cb705-2" tabindex="-1"></a><span class="dv">1</span> <span class="sc">-</span> <span class="fu">coef</span>(networth_shares)[<span class="dv">5</span>] <span class="co"># 1 minus the share owned by the bottom 80%</span></span></code></pre></div>
-<pre><code>##   L(0.8) 
-## 0.853529</code></pre>
+<pre><code>##    L(0.8) 
+## 0.8535274</code></pre>
 <div class="sourceCode" id="cb707"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb707-1"><a href="4.3-quintile-share-ratio-svyqsr.html#cb707-1" tabindex="-1"></a><span class="co"># approximate qsr</span></span>
 <span id="cb707-2"><a href="4.3-quintile-share-ratio-svyqsr.html#cb707-2" tabindex="-1"></a>(<span class="dv">1</span> <span class="sc">-</span> <span class="fu">coef</span>(networth_shares)[[<span class="dv">5</span>]]) <span class="sc">/</span> <span class="fu">coef</span>(networth_shares)[[<span class="dv">2</span>]]</span></code></pre></div>
-<pre><code>## [1] -378.4471</code></pre>
+<pre><code>## [1] -378.4417</code></pre>
 </div>
 <div id="scf-family-income-9" class="section level4" number="4.3.2.7">
 <h4><span class="header-section-number">4.3.2.7</span> SCF Family Income</h4>
