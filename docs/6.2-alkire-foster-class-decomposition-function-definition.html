@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="6.2 Alkire-Foster Class Decomposition Function Definition | Poverty and Inequality with Complex Survey Data" />
+<meta property="og:type" content="book" />
+
+<meta property="og:description" content="A book about the R convey package" />
+<meta name="github-repo" content="guilhermejacob/context" />
+
+<meta name="author" content="By Guilherme Jacob, Anthony Damico, and Djalma Pessoa. The authors received no external funding for the convey software and this accompanying textbook." />
+
+<meta name="date" content="2024-04-10" />
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+</script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<meta name="description" content="A book about the R convey package">
+
+<title>6.2 Alkire-Foster Class Decomposition Function Definition | Poverty and Inequality with Complex Survey Data</title>
+
+<link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
+<link href="libs/tufte-css-2015.12.29/tufte-background.css" rel="stylesheet" />
+<link href="libs/tufte-css-2015.12.29/tufte-italics.css" rel="stylesheet" />
+<link href="libs/tufte-css-2015.12.29/tufte.css" rel="stylesheet" />
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="toc.css" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+<div class="row">
+<div class="col-sm-12">
+<div id="TOC">
+<ul>
+<li class="has-sub"><a href="index.html#intro" id="toc-intro"><span class="toc-section-number">1</span> Intro</a>
+<ul>
+<li><a href="1.1-install.html#install" id="toc-install"><span class="toc-section-number">1.1</span> Installation</a></li>
+<li><a href="1.2-survey.html#survey" id="toc-survey"><span class="toc-section-number">1.2</span> Complex surveys and statistical inference</a></li>
+<li><a href="1.3-usage-examples.html#usage-examples" id="toc-usage-examples"><span class="toc-section-number">1.3</span> Usage Examples</a></li>
+<li class="has-sub"><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#current-population-survey---annual-social-and-economic-supplement-cps-asec" id="toc-current-population-survey---annual-social-and-economic-supplement-cps-asec"><span class="toc-section-number">1.4</span> Current Population Survey - Annual Social and Economic Supplement (CPS-ASEC)</a>
+<ul>
+<li><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#analysis-examples-with-the-survey-library" id="toc-analysis-examples-with-the-survey-library">Analysis Examples with the <code>survey</code> library  </a></li>
+<li><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#household-income" id="toc-household-income"><span class="toc-section-number">1.4.1</span> Household Income</a></li>
+<li><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#family-income" id="toc-family-income"><span class="toc-section-number">1.4.2</span> Family Income</a></li>
+<li><a href="1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html#worker-earnings" id="toc-worker-earnings"><span class="toc-section-number">1.4.3</span> Worker Earnings</a></li>
+</ul></li>
+<li class="has-sub"><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua" id="toc-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua"><span class="toc-section-number">1.5</span> Pesquisa Nacional por Amostra de Domicílios Contínua (PNAD-Contínua)</a>
+<ul>
+<li><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#analysis-examples-with-the-survey-library-1" id="toc-analysis-examples-with-the-survey-library-1">Analysis Examples with the <code>survey</code> library  </a></li>
+<li><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#per-capita-income" id="toc-per-capita-income"><span class="toc-section-number">1.5.1</span> Per Capita Income</a></li>
+<li><a href="1.5-pesquisa-nacional-por-amostra-de-domicílios-contínua-pnad-contínua.html#worker-earnings-1" id="toc-worker-earnings-1"><span class="toc-section-number">1.5.2</span> Worker Earnings</a></li>
+</ul></li>
+<li class="has-sub"><a href="1.6-survey-of-consumer-finances-scf.html#survey-of-consumer-finances-scf" id="toc-survey-of-consumer-finances-scf"><span class="toc-section-number">1.6</span> Survey of Consumer Finances (SCF)</a>
+<ul>
+<li><a href="1.6-survey-of-consumer-finances-scf.html#analysis-examples-with-the-survey-library-2" id="toc-analysis-examples-with-the-survey-library-2"><span class="toc-section-number">1.6.1</span> Analysis Examples with the <code>survey</code> library</a></li>
+<li><a href="1.6-survey-of-consumer-finances-scf.html#family-net-worth" id="toc-family-net-worth"><span class="toc-section-number">1.6.2</span> Family Net Worth</a></li>
+<li><a href="1.6-survey-of-consumer-finances-scf.html#family-income-1" id="toc-family-income-1"><span class="toc-section-number">1.6.3</span> Family Income</a></li>
+</ul></li>
+<li class="has-sub"><a href="1.7-real-world-examples.html#real-world-examples" id="toc-real-world-examples"><span class="toc-section-number">1.7</span> Real World Examples</a>
+<ul>
+<li><a href="1.7-real-world-examples.html#cps-asec-household-income" id="toc-cps-asec-household-income"><span class="toc-section-number">1.7.1</span> CPS-ASEC Household Income</a></li>
+<li><a href="1.7-real-world-examples.html#cps-asec-family-income" id="toc-cps-asec-family-income"><span class="toc-section-number">1.7.2</span> CPS-ASEC Family Income</a></li>
+<li><a href="1.7-real-world-examples.html#cps-asec-worker-earnings" id="toc-cps-asec-worker-earnings"><span class="toc-section-number">1.7.3</span> CPS-ASEC Worker Earnings</a></li>
+<li><a href="1.7-real-world-examples.html#pnad-contínua-per-capita-income" id="toc-pnad-contínua-per-capita-income"><span class="toc-section-number">1.7.4</span> PNAD-Contínua Per Capita Income</a></li>
+<li><a href="1.7-real-world-examples.html#pnad-contínua-worker-earnings" id="toc-pnad-contínua-worker-earnings"><span class="toc-section-number">1.7.5</span> PNAD-Contínua Worker Earnings</a></li>
+<li><a href="1.7-real-world-examples.html#scf-family-net-worth" id="toc-scf-family-net-worth"><span class="toc-section-number">1.7.6</span> SCF Family Net Worth</a></li>
+<li><a href="1.7-real-world-examples.html#scf-family-income" id="toc-scf-family-income"><span class="toc-section-number">1.7.7</span> SCF Family Income</a></li>
+</ul></li>
+</ul></li>
+<li class="has-sub"><a href="2-variance-estimation.html#variance-estimation" id="toc-variance-estimation"><span class="toc-section-number">2</span> Variance Estimation</a>
+<ul>
+<li class="has-sub"><a href="2.1-linearization-based-variance-estimation.html#linearization-based-variance-estimation" id="toc-linearization-based-variance-estimation"><span class="toc-section-number">2.1</span> Linearization-Based Variance Estimation</a>
+<ul>
+<li><a href="2.1-linearization-based-variance-estimation.html#influence-functions" id="toc-influence-functions"><span class="toc-section-number">2.1.1</span> Influence Functions</a></li>
+</ul></li>
+<li class="has-sub"><a href="2.2-replication-based-variance-estimation.html#replication-based-variance-estimation" id="toc-replication-based-variance-estimation"><span class="toc-section-number">2.2</span> Replication-Based Variance Estimation</a>
+<ul>
+<li><a href="2.2-replication-based-variance-estimation.html#replication-design-example" id="toc-replication-design-example"><span class="toc-section-number">2.2.1</span> Replication Design Example</a></li>
+</ul></li>
+<li><a href="2.3-variance-estimation-for-decompositions.html#variance-estimation-for-decompositions" id="toc-variance-estimation-for-decompositions"><span class="toc-section-number">2.3</span> Variance Estimation for Decompositions</a></li>
+</ul></li>
+<li class="has-sub"><a href="3-poverty.html#poverty" id="toc-poverty"><span class="toc-section-number">3</span> Poverty Indices</a>
+<ul>
+<li class="has-sub"><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#at-risk-of-poverty-threshold-svyarpt" id="toc-at-risk-of-poverty-threshold-svyarpt"><span class="toc-section-number">3.1</span> At Risk of Poverty Threshold (svyarpt)</a>
+<ul>
+<li><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#replication-example" id="toc-replication-example"><span class="toc-section-number">3.1.1</span> Replication Example</a></li>
+<li><a href="3.1-at-risk-of-poverty-threshold-svyarpt.html#real-world-examples-1" id="toc-real-world-examples-1"><span class="toc-section-number">3.1.2</span> Real World Examples</a></li>
+</ul></li>
+<li class="has-sub"><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#at-risk-of-poverty-ratio-svyarpr" id="toc-at-risk-of-poverty-ratio-svyarpr"><span class="toc-section-number">3.2</span> At Risk of Poverty Ratio (svyarpr)</a>
+<ul>
+<li><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#replication-example-1" id="toc-replication-example-1"><span class="toc-section-number">3.2.1</span> Replication Example</a></li>
+<li><a href="3.2-at-risk-of-poverty-ratio-svyarpr.html#real-world-examples-2" id="toc-real-world-examples-2"><span class="toc-section-number">3.2.2</span> Real World Examples</a></li>
+</ul></li>
+<li class="has-sub"><a href="3.3-relative-median-income-ratio-svyrmir.html#relative-median-income-ratio-svyrmir" id="toc-relative-median-income-ratio-svyrmir"><span class="toc-section-number">3.3</span> Relative Median Income Ratio (svyrmir)</a>
+<ul>
+<li><a href="3.3-relative-median-income-ratio-svyrmir.html#replication-example-2" id="toc-replication-example-2"><span class="toc-section-number">3.3.1</span> Replication Example</a></li>
+<li><a href="3.3-relative-median-income-ratio-svyrmir.html#real-world-examples-3" id="toc-real-world-examples-3"><span class="toc-section-number">3.3.2</span> Real World Examples</a></li>
+</ul></li>
+<li class="has-sub"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#relative-median-poverty-gap-svyrmpg" id="toc-relative-median-poverty-gap-svyrmpg"><span class="toc-section-number">3.4</span> Relative Median Poverty Gap (svyrmpg)</a>
+<ul>
+<li><a href="3.4-relative-median-poverty-gap-svyrmpg.html#replication-example-3" id="toc-replication-example-3"><span class="toc-section-number">3.4.1</span> Replication Example</a></li>
+<li><a href="3.4-relative-median-poverty-gap-svyrmpg.html#real-world-examples-4" id="toc-real-world-examples-4"><span class="toc-section-number">3.4.2</span> Real World Examples</a></li>
+</ul></li>
+<li class="has-sub"><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#median-income-below-the-at-risk-of-poverty-threshold-svypoormed" id="toc-median-income-below-the-at-risk-of-poverty-threshold-svypoormed"><span class="toc-section-number">3.5</span> Median Income Below the At Risk of Poverty Threshold (svypoormed)</a>
+<ul>
+<li><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#replication-example-4" id="toc-replication-example-4"><span class="toc-section-number">3.5.1</span> Replication Example</a></li>
+<li><a href="3.5-median-income-below-the-at-risk-of-poverty-threshold-svypoormed.html#real-world-examples-5" id="toc-real-world-examples-5"><span class="toc-section-number">3.5.2</span> Real World Examples</a></li>
+</ul></li>
+<li class="has-sub"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#foster-greer-thorbecke-class-svyfgt-svyfgtdec" id="toc-foster-greer-thorbecke-class-svyfgt-svyfgtdec"><span class="toc-section-number">3.6</span> Foster-Greer-Thorbecke class (svyfgt, svyfgtdec)</a>
+<ul>
+<li><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#replication-example-5" id="toc-replication-example-5"><span class="toc-section-number">3.6.1</span> Replication Example</a></li>
+<li><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#monte-carlo-simulation" id="toc-monte-carlo-simulation"><span class="toc-section-number">3.6.2</span> Monte Carlo Simulation</a></li>
+<li><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#real-world-examples-6" id="toc-real-world-examples-6"><span class="toc-section-number">3.6.3</span> Real World Examples</a></li>
+</ul></li>
+<li class="has-sub"><a href="3.7-watts-poverty-measure-svywatts-svywattsdec.html#watts-poverty-measure-svywatts-svywattsdec" id="toc-watts-poverty-measure-svywatts-svywattsdec"><span class="toc-section-number">3.7</span> Watts poverty measure (svywatts, svywattsdec)</a>
+<ul>
+<li><a href="3.7-watts-poverty-measure-svywatts-svywattsdec.html#monte-carlo-simulation-1" id="toc-monte-carlo-simulation-1"><span class="toc-section-number">3.7.1</span> Monte Carlo Simulation</a></li>
+<li><a href="3.7-watts-poverty-measure-svywatts-svywattsdec.html#real-world-examples-7" id="toc-real-world-examples-7"><span class="toc-section-number">3.7.2</span> Real World Examples</a></li>
+</ul></li>
+</ul></li>
+<li class="has-sub"><a href="4-inequality.html#inequality" id="toc-inequality"><span class="toc-section-number">4</span> Inequality Measurement</a>
+<ul>
+<li><a href="4.1-which-inequality-measure-should-be-used.html#which-inequality-measure-should-be-used" id="toc-which-inequality-measure-should-be-used"><span class="toc-section-number">4.1</span> Which inequality measure should be used?</a></li>
+<li class="has-sub"><a href="4.2-the-gender-pay-gap-svygpg.html#the-gender-pay-gap-svygpg" id="toc-the-gender-pay-gap-svygpg"><span class="toc-section-number">4.2</span> The Gender Pay Gap (svygpg)</a>
+<ul>
+<li><a href="4.2-the-gender-pay-gap-svygpg.html#replication-example-6" id="toc-replication-example-6"><span class="toc-section-number">4.2.1</span> Replication Example</a></li>
+<li><a href="4.2-the-gender-pay-gap-svygpg.html#real-world-examples-8" id="toc-real-world-examples-8"><span class="toc-section-number">4.2.2</span> Real World Examples</a></li>
+</ul></li>
+<li class="has-sub"><a href="4.3-quintile-share-ratio-svyqsr.html#quintile-share-ratio-svyqsr" id="toc-quintile-share-ratio-svyqsr"><span class="toc-section-number">4.3</span> Quintile Share Ratio (svyqsr)</a>
+<ul>
+<li><a href="4.3-quintile-share-ratio-svyqsr.html#replication-example-7" id="toc-replication-example-7"><span class="toc-section-number">4.3.1</span> Replication Example</a></li>
+<li><a href="4.3-quintile-share-ratio-svyqsr.html#real-world-examples-9" id="toc-real-world-examples-9"><span class="toc-section-number">4.3.2</span> Real World Examples</a></li>
+</ul></li>
+<li><a href="4.4-lorenz-curve-based-measures.html#lorenz-curve-based-measures" id="toc-lorenz-curve-based-measures"><span class="toc-section-number">4.4</span> Lorenz Curve-based Measures</a></li>
+<li class="has-sub"><a href="4.5-lorenz-curve-svylorenz.html#lorenz-curve-svylorenz" id="toc-lorenz-curve-svylorenz"><span class="toc-section-number">4.5</span> Lorenz Curve (svylorenz)</a>
+<ul>
+<li><a href="4.5-lorenz-curve-svylorenz.html#replication-example-8" id="toc-replication-example-8"><span class="toc-section-number">4.5.1</span> Replication Example</a></li>
+<li><a href="4.5-lorenz-curve-svylorenz.html#real-world-examples-10" id="toc-real-world-examples-10"><span class="toc-section-number">4.5.2</span> Real World Examples</a></li>
+</ul></li>
+<li class="has-sub"><a href="4.6-gini-index-svygini.html#gini-index-svygini" id="toc-gini-index-svygini"><span class="toc-section-number">4.6</span> Gini index (svygini)</a>
+<ul>
+<li><a href="4.6-gini-index-svygini.html#replication-example-9" id="toc-replication-example-9"><span class="toc-section-number">4.6.1</span> Replication Example</a></li>
+<li><a href="4.6-gini-index-svygini.html#real-world-examples-11" id="toc-real-world-examples-11"><span class="toc-section-number">4.6.2</span> Real World Examples</a></li>
+</ul></li>
+<li class="has-sub"><a href="4.7-zenga-index-svyzenga.html#zenga-index-svyzenga" id="toc-zenga-index-svyzenga"><span class="toc-section-number">4.7</span> Zenga index (svyzenga)</a>
+<ul>
+<li><a href="4.7-zenga-index-svyzenga.html#replication-example-10" id="toc-replication-example-10"><span class="toc-section-number">4.7.1</span> Replication Example</a></li>
+<li><a href="4.7-zenga-index-svyzenga.html#real-world-examples-12" id="toc-real-world-examples-12"><span class="toc-section-number">4.7.2</span> Real World Examples</a></li>
+</ul></li>
+<li><a href="4.8-social-welfare-function-based-measures.html#social-welfare-function-based-measures" id="toc-social-welfare-function-based-measures"><span class="toc-section-number">4.8</span> Social Welfare Function-based Measures</a></li>
+<li class="has-sub"><a href="4.9-atkinson-index-svyatk.html#atkinson-index-svyatk" id="toc-atkinson-index-svyatk"><span class="toc-section-number">4.9</span> Atkinson index (svyatk)</a>
+<ul>
+<li><a href="4.9-atkinson-index-svyatk.html#replication-example-11" id="toc-replication-example-11"><span class="toc-section-number">4.9.1</span> Replication Example</a></li>
+<li><a href="4.9-atkinson-index-svyatk.html#real-world-examples-13" id="toc-real-world-examples-13"><span class="toc-section-number">4.9.2</span> Real World Examples</a></li>
+</ul></li>
+<li><a href="4.10-entropy-based-measures.html#entropy-based-measures" id="toc-entropy-based-measures"><span class="toc-section-number">4.10</span> Entropy-based Measures</a></li>
+<li class="has-sub"><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#generalized-entropy-and-decomposition-svygei-svygeidec" id="toc-generalized-entropy-and-decomposition-svygei-svygeidec"><span class="toc-section-number">4.11</span> Generalized Entropy and Decomposition (svygei, svygeidec)</a>
+<ul>
+<li><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#replication-example-12" id="toc-replication-example-12"><span class="toc-section-number">4.11.1</span> Replication Example</a></li>
+<li><a href="4.11-generalized-entropy-and-decomposition-svygei-svygeidec.html#real-world-examples-14" id="toc-real-world-examples-14"><span class="toc-section-number">4.11.2</span> Real World Examples</a></li>
+</ul></li>
+<li class="has-sub"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#j-divergence-and-decomposition-svyjdiv-svyjdivdec" id="toc-j-divergence-and-decomposition-svyjdiv-svyjdivdec"><span class="toc-section-number">4.12</span> J-Divergence and Decomposition (svyjdiv, svyjdivdec)</a>
+<ul>
+<li><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#monte-carlo-simulation-2" id="toc-monte-carlo-simulation-2"><span class="toc-section-number">4.12.1</span> Monte Carlo Simulation</a></li>
+<li><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#real-world-examples-15" id="toc-real-world-examples-15"><span class="toc-section-number">4.12.2</span> Real World Examples</a></li>
+</ul></li>
+</ul></li>
+<li class="has-sub"><a href="5-richness.html#richness" id="toc-richness"><span class="toc-section-number">5</span> Richness</a>
+<ul>
+<li class="has-sub"><a href="5.1-richness-measures-svyrich.html#richness-measures-svyrich" id="toc-richness-measures-svyrich"><span class="toc-section-number">5.1</span> Richness Measures (svyrich)</a>
+<ul>
+<li><a href="5.1-richness-measures-svyrich.html#monte-carlo-simulation-3" id="toc-monte-carlo-simulation-3"><span class="toc-section-number">5.1.1</span> Monte Carlo Simulation</a></li>
+<li><a href="5.1-richness-measures-svyrich.html#real-world-examples-16" id="toc-real-world-examples-16"><span class="toc-section-number">5.1.2</span> Real World Examples</a></li>
+</ul></li>
+</ul></li>
+<li class="has-sub"><a href="6-multidimensional-poverty.html#multidimensional-poverty" id="toc-multidimensional-poverty"><span class="toc-section-number">6</span> Multidimensional Poverty</a>
+<ul>
+<li><a href="6.1-alkire-foster-class-function-definition.html#alkire-foster-class-function-definition" id="toc-alkire-foster-class-function-definition"><span class="toc-section-number">6.1</span> Alkire-Foster Class Function Definition</a></li>
+<li><a href="6.2-alkire-foster-class-decomposition-function-definition.html#alkire-foster-class-decomposition-function-definition" id="toc-alkire-foster-class-decomposition-function-definition"><span class="toc-section-number">6.2</span> Alkire-Foster Class Decomposition Function Definition</a></li>
+<li><a href="6.3-replication-example-13.html#replication-example-13" id="toc-replication-example-13"><span class="toc-section-number">6.3</span> Replication Example</a></li>
+</ul></li>
+<li class="has-sub"><a href="7-covariance-matrix.html#covariance-matrix" id="toc-covariance-matrix"><span class="toc-section-number">7</span> Covariance Matrix</a>
+<ul>
+<li><a href="7.1-example-calculation.html#example-calculation" id="toc-example-calculation"><span class="toc-section-number">7.1</span> Example Calculation</a></li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-sm-12">
+<div id="alkire-foster-class-decomposition-function-definition" class="section level2" number="6.2">
+<h2><span class="header-section-number">6.2</span> Alkire-Foster Class Decomposition Function Definition</h2>
+<div class="sourceCode" id="cb1090"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1090-1"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-1" tabindex="-1"></a>svyafcdec <span class="ot">&lt;-</span></span>
+<span id="cb1090-2"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-2" tabindex="-1"></a>  <span class="cf">function</span>(formula,</span>
+<span id="cb1090-3"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-3" tabindex="-1"></a>           <span class="at">subgroup =</span> <span class="sc">~</span> <span class="dv">1</span> ,</span>
+<span id="cb1090-4"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-4" tabindex="-1"></a>           design,</span>
+<span id="cb1090-5"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-5" tabindex="-1"></a>           g ,</span>
+<span id="cb1090-6"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-6" tabindex="-1"></a>           cutoffs ,</span>
+<span id="cb1090-7"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-7" tabindex="-1"></a>           k ,</span>
+<span id="cb1090-8"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-8" tabindex="-1"></a>           <span class="at">dimw =</span> <span class="cn">NULL</span>,</span>
+<span id="cb1090-9"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-9" tabindex="-1"></a>           <span class="at">na.rm =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb1090-10"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-10" tabindex="-1"></a>           ...) {</span>
+<span id="cb1090-11"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-11" tabindex="-1"></a>    <span class="cf">if</span> (k <span class="sc">&lt;=</span> <span class="dv">0</span> <span class="sc">|</span></span>
+<span id="cb1090-12"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-12" tabindex="-1"></a>        k <span class="sc">&gt;</span> <span class="dv">1</span>)</span>
+<span id="cb1090-13"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-13" tabindex="-1"></a>      <span class="fu">stop</span>(<span class="st">&quot;This functions is only defined for k in (0,1].&quot;</span>)</span>
+<span id="cb1090-14"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-14" tabindex="-1"></a>    <span class="cf">if</span> (g <span class="sc">&lt;</span> <span class="dv">0</span>)</span>
+<span id="cb1090-15"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-15" tabindex="-1"></a>      <span class="fu">stop</span>(<span class="st">&quot;This function is undefined for g &lt; 0.&quot;</span>)</span>
+<span id="cb1090-16"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-16" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.list</span>(cutoffs))</span>
+<span id="cb1090-17"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-17" tabindex="-1"></a>      <span class="fu">stop</span>(<span class="st">&quot;The parameter &#39;cutoffs&#39; has to be a list.&quot;</span>)</span>
+<span id="cb1090-18"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-18" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(cutoffs) <span class="sc">!=</span> <span class="fu">length</span>(<span class="fu">all.vars</span>(formula)))</span>
+<span id="cb1090-19"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-19" tabindex="-1"></a>      <span class="fu">stop</span>(<span class="st">&quot;number of variables in formula must exactly match cutoffs&quot;</span>)</span>
+<span id="cb1090-20"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-20" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(dimw)) {</span>
+<span id="cb1090-21"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-21" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">is.na</span>(dimw))) {</span>
+<span id="cb1090-22"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-22" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">&quot;Invalid value in dimension weights vector.&quot;</span>)</span>
+<span id="cb1090-23"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-23" tabindex="-1"></a>      }</span>
+<span id="cb1090-24"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-24" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">sum</span>(dimw) <span class="sc">&gt;</span> <span class="dv">1</span>) {</span>
+<span id="cb1090-25"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-25" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">&quot;The sum of dimension weigths have to be equal to one.&quot;</span>)</span>
+<span id="cb1090-26"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-26" tabindex="-1"></a>      }</span>
+<span id="cb1090-27"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-27" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">any</span>(dimw <span class="sc">&gt;</span> <span class="dv">1</span> <span class="sc">|</span></span>
+<span id="cb1090-28"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-28" tabindex="-1"></a>              dimw <span class="sc">&lt;</span> <span class="dv">0</span>)) {</span>
+<span id="cb1090-29"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-29" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">&quot;Dim. weights have to be within interval [0,1].&quot;</span>)</span>
+<span id="cb1090-30"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-30" tabindex="-1"></a>      }</span>
+<span id="cb1090-31"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-31" tabindex="-1"></a>    }</span>
+<span id="cb1090-32"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-32" tabindex="-1"></a>    </span>
+<span id="cb1090-33"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-33" tabindex="-1"></a>    ach.matrix <span class="ot">&lt;-</span></span>
+<span id="cb1090-34"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-34" tabindex="-1"></a>      <span class="fu">model.frame</span>(formula, design<span class="sc">$</span>variables, <span class="at">na.action =</span> na.pass)[, ]</span>
+<span id="cb1090-35"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-35" tabindex="-1"></a>    </span>
+<span id="cb1090-36"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-36" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(dimw)) {</span>
+<span id="cb1090-37"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-37" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">is.na</span>(dimw))) {</span>
+<span id="cb1090-38"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-38" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">&quot;Invalid value in dimension weights vector.&quot;</span>)</span>
+<span id="cb1090-39"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-39" tabindex="-1"></a>      }</span>
+<span id="cb1090-40"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-40" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">sum</span>(dimw) <span class="sc">&gt;</span> <span class="dv">1</span>) {</span>
+<span id="cb1090-41"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-41" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">&quot;The sum of dimension weigths have to be equal to one.&quot;</span>)</span>
+<span id="cb1090-42"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-42" tabindex="-1"></a>      }</span>
+<span id="cb1090-43"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-43" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">any</span>(dimw <span class="sc">&gt;</span> <span class="dv">1</span> <span class="sc">|</span></span>
+<span id="cb1090-44"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-44" tabindex="-1"></a>              dimw <span class="sc">&lt;</span> <span class="dv">0</span>)) {</span>
+<span id="cb1090-45"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-45" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">&quot;Dim. weights have to be within interval [0,1].&quot;</span>)</span>
+<span id="cb1090-46"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-46" tabindex="-1"></a>      }</span>
+<span id="cb1090-47"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-47" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">length</span>(dimw) <span class="sc">!=</span> <span class="fu">ncol</span>(ach.matrix)) {</span>
+<span id="cb1090-48"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-48" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">&quot;Dimension weights&#39; length differs from number of dimensions in formula&quot;</span>)</span>
+<span id="cb1090-49"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-49" tabindex="-1"></a>      }</span>
+<span id="cb1090-50"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-50" tabindex="-1"></a>    }</span>
+<span id="cb1090-51"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-51" tabindex="-1"></a>    </span>
+<span id="cb1090-52"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-52" tabindex="-1"></a>    grpvar <span class="ot">&lt;-</span></span>
+<span id="cb1090-53"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-53" tabindex="-1"></a>      <span class="fu">model.frame</span>(subgroup, design<span class="sc">$</span>variables, <span class="at">na.action =</span> na.pass)[, ]</span>
+<span id="cb1090-54"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-54" tabindex="-1"></a>    </span>
+<span id="cb1090-55"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-55" tabindex="-1"></a>    var.class <span class="ot">&lt;-</span> <span class="fu">lapply</span>(ach.matrix, <span class="cf">function</span>(x)</span>
+<span id="cb1090-56"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-56" tabindex="-1"></a>      <span class="fu">class</span>(x)[<span class="dv">1</span>])</span>
+<span id="cb1090-57"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-57" tabindex="-1"></a>    var.class <span class="ot">&lt;-</span></span>
+<span id="cb1090-58"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-58" tabindex="-1"></a>      <span class="fu">matrix</span>(</span>
+<span id="cb1090-59"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-59" tabindex="-1"></a>        var.class,</span>
+<span id="cb1090-60"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-60" tabindex="-1"></a>        <span class="at">nrow =</span> <span class="dv">1</span>,</span>
+<span id="cb1090-61"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-61" tabindex="-1"></a>        <span class="at">ncol =</span> <span class="fu">ncol</span>(ach.matrix),</span>
+<span id="cb1090-62"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-62" tabindex="-1"></a>        <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;var.class&quot;</span>), <span class="fu">colnames</span>(ach.matrix))</span>
+<span id="cb1090-63"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-63" tabindex="-1"></a>      )</span>
+<span id="cb1090-64"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-64" tabindex="-1"></a>    </span>
+<span id="cb1090-65"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-65" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">any</span>(<span class="sc">!</span>(var.class <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;numeric&quot;</span>, <span class="st">&quot;ordered&quot;</span>)))) {</span>
+<span id="cb1090-66"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-66" tabindex="-1"></a>      <span class="fu">stop</span>(</span>
+<span id="cb1090-67"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-67" tabindex="-1"></a>        <span class="st">&quot;This function is only applicable to variables of types &#39;numeric&#39; or &#39;ordered factor&#39;.&quot;</span></span>
+<span id="cb1090-68"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-68" tabindex="-1"></a>      )</span>
+<span id="cb1090-69"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-69" tabindex="-1"></a>    }</span>
+<span id="cb1090-70"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-70" tabindex="-1"></a>    </span>
+<span id="cb1090-71"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-71" tabindex="-1"></a>    w <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> design<span class="sc">$</span>prob</span>
+<span id="cb1090-72"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-72" tabindex="-1"></a>    </span>
+<span id="cb1090-73"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-73" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">any</span>(ach.matrix[w <span class="sc">!=</span> <span class="dv">0</span>, var.class <span class="sc">==</span> <span class="st">&quot;numeric&quot;</span>] <span class="sc">&lt;</span> <span class="dv">0</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb1090-74"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-74" tabindex="-1"></a>      <span class="fu">stop</span>(</span>
+<span id="cb1090-75"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-75" tabindex="-1"></a>        <span class="st">&quot;The Alkire-Foster multidimensional poverty decompostition is defined for non-negative numeric variables only.&quot;</span></span>
+<span id="cb1090-76"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-76" tabindex="-1"></a>      )</span>
+<span id="cb1090-77"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-77" tabindex="-1"></a>    </span>
+<span id="cb1090-78"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-78" tabindex="-1"></a>    ach.matrix <span class="ot">&lt;-</span></span>
+<span id="cb1090-79"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-79" tabindex="-1"></a>      <span class="fu">model.frame</span>(formula, design<span class="sc">$</span>variables, <span class="at">na.action =</span> na.pass)[, ]</span>
+<span id="cb1090-80"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-80" tabindex="-1"></a>    grpvar <span class="ot">&lt;-</span></span>
+<span id="cb1090-81"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-81" tabindex="-1"></a>      <span class="fu">model.frame</span>(subgroup, design<span class="sc">$</span>variables, <span class="at">na.action =</span> na.pass)[, ]</span>
+<span id="cb1090-82"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-82" tabindex="-1"></a>    </span>
+<span id="cb1090-83"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-83" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">class</span>(grpvar) <span class="sc">==</span> <span class="st">&quot;labelled&quot;</span>) {</span>
+<span id="cb1090-84"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-84" tabindex="-1"></a>      <span class="fu">stop</span>(<span class="st">&quot;This function does not support &#39;labelled&#39; variables. Try factor().&quot;</span>)</span>
+<span id="cb1090-85"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-85" tabindex="-1"></a>    }</span>
+<span id="cb1090-86"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-86" tabindex="-1"></a>    </span>
+<span id="cb1090-87"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-87" tabindex="-1"></a>    <span class="cf">if</span> (na.rm) {</span>
+<span id="cb1090-88"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-88" tabindex="-1"></a>      nas <span class="ot">&lt;-</span></span>
+<span id="cb1090-89"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-89" tabindex="-1"></a>        <span class="fu">apply</span>(<span class="fu">cbind</span>(ach.matrix, grpvar), <span class="dv">1</span>, <span class="cf">function</span>(x)</span>
+<span id="cb1090-90"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-90" tabindex="-1"></a>          <span class="fu">any</span>(<span class="fu">is.na</span>(x)))</span>
+<span id="cb1090-91"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-91" tabindex="-1"></a>      design <span class="ot">&lt;-</span> design[nas <span class="sc">==</span> <span class="dv">0</span>,]</span>
+<span id="cb1090-92"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-92" tabindex="-1"></a>    }</span>
+<span id="cb1090-93"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-93" tabindex="-1"></a>    </span>
+<span id="cb1090-94"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-94" tabindex="-1"></a>    w <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> design<span class="sc">$</span>prob</span>
+<span id="cb1090-95"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-95" tabindex="-1"></a>    ach.matrix <span class="ot">&lt;-</span></span>
+<span id="cb1090-96"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-96" tabindex="-1"></a>      <span class="fu">model.frame</span>(formula, design<span class="sc">$</span>variables, <span class="at">na.action =</span> na.pass)[, ]</span>
+<span id="cb1090-97"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-97" tabindex="-1"></a>    grpvar <span class="ot">&lt;-</span></span>
+<span id="cb1090-98"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-98" tabindex="-1"></a>      <span class="fu">model.frame</span>(subgroup, design<span class="sc">$</span>variables, <span class="at">na.action =</span> na.pass)[, ]</span>
+<span id="cb1090-99"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-99" tabindex="-1"></a>    </span>
+<span id="cb1090-100"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-100" tabindex="-1"></a>    <span class="co"># Deprivation Matrix</span></span>
+<span id="cb1090-101"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-101" tabindex="-1"></a>    dep.matrix <span class="ot">&lt;-</span></span>
+<span id="cb1090-102"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-102" tabindex="-1"></a>      <span class="fu">sapply</span>(</span>
+<span id="cb1090-103"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-103" tabindex="-1"></a>        <span class="fu">seq_along</span>(var.class),</span>
+<span id="cb1090-104"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-104" tabindex="-1"></a>        <span class="at">FUN =</span> <span class="cf">function</span>(i) {</span>
+<span id="cb1090-105"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-105" tabindex="-1"></a>          <span class="dv">1</span> <span class="sc">*</span> (cutoffs[[i]] <span class="sc">&gt;</span> ach.matrix[, i])</span>
+<span id="cb1090-106"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-106" tabindex="-1"></a>        }</span>
+<span id="cb1090-107"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-107" tabindex="-1"></a>      )</span>
+<span id="cb1090-108"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-108" tabindex="-1"></a>    <span class="fu">colnames</span>(dep.matrix) <span class="ot">&lt;-</span> <span class="fu">colnames</span>(var.class)</span>
+<span id="cb1090-109"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-109" tabindex="-1"></a>    </span>
+<span id="cb1090-110"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-110" tabindex="-1"></a>    <span class="co"># Unweighted count of deprivations:</span></span>
+<span id="cb1090-111"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-111" tabindex="-1"></a>    <span class="co"># depr.count &lt;- rowSums( dep.matrix )</span></span>
+<span id="cb1090-112"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-112" tabindex="-1"></a>    </span>
+<span id="cb1090-113"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-113" tabindex="-1"></a>    <span class="co"># deprivation k cut</span></span>
+<span id="cb1090-114"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-114" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.null</span>(dimw)) {</span>
+<span id="cb1090-115"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-115" tabindex="-1"></a>      dimw <span class="ot">=</span> <span class="fu">rep</span>(<span class="dv">1</span> <span class="sc">/</span> <span class="fu">ncol</span>(dep.matrix), <span class="fu">ncol</span>(dep.matrix))</span>
+<span id="cb1090-116"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-116" tabindex="-1"></a>    }</span>
+<span id="cb1090-117"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-117" tabindex="-1"></a>    </span>
+<span id="cb1090-118"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-118" tabindex="-1"></a>    <span class="co"># Weighted sum of deprivations:</span></span>
+<span id="cb1090-119"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-119" tabindex="-1"></a>    depr.sums <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(<span class="fu">sweep</span>(dep.matrix, <span class="at">MARGIN =</span> <span class="dv">2</span> , dimw, <span class="st">`</span><span class="at">*</span><span class="st">`</span>))</span>
+<span id="cb1090-120"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-120" tabindex="-1"></a>    </span>
+<span id="cb1090-121"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-121" tabindex="-1"></a>    <span class="co"># k multidimensional cutoff:</span></span>
+<span id="cb1090-122"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-122" tabindex="-1"></a>    multi.cut <span class="ot">&lt;-</span> depr.sums <span class="sc">*</span> (depr.sums <span class="sc">&gt;=</span> k)</span>
+<span id="cb1090-123"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-123" tabindex="-1"></a>    <span class="co">#rm(dep.matrix)</span></span>
+<span id="cb1090-124"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-124" tabindex="-1"></a>    </span>
+<span id="cb1090-125"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-125" tabindex="-1"></a>    <span class="co"># Censored Deprivation Matrix</span></span>
+<span id="cb1090-126"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-126" tabindex="-1"></a>    cen.dep.matrix <span class="ot">&lt;-</span></span>
+<span id="cb1090-127"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-127" tabindex="-1"></a>      <span class="fu">sapply</span>(</span>
+<span id="cb1090-128"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-128" tabindex="-1"></a>        <span class="fu">seq_along</span>(cutoffs) ,</span>
+<span id="cb1090-129"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-129" tabindex="-1"></a>        <span class="at">FUN =</span> <span class="cf">function</span>(x) {</span>
+<span id="cb1090-130"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-130" tabindex="-1"></a>          <span class="cf">if</span> (var.class[x] <span class="sc">==</span> <span class="st">&quot;numeric&quot;</span>) {</span>
+<span id="cb1090-131"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-131" tabindex="-1"></a>            <span class="dv">1</span> <span class="sc">*</span> (cutoffs[[x]] <span class="sc">&gt;</span> ach.matrix[, x]) <span class="sc">*</span> ((cutoffs[[x]] <span class="sc">-</span> ach.matrix[, x]) <span class="sc">/</span> cutoffs[[x]]) <span class="sc">^</span></span>
+<span id="cb1090-132"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-132" tabindex="-1"></a>              g</span>
+<span id="cb1090-133"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-133" tabindex="-1"></a>          } <span class="cf">else</span> {</span>
+<span id="cb1090-134"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-134" tabindex="-1"></a>            <span class="dv">1</span> <span class="sc">*</span> (cutoffs[[x]] <span class="sc">&gt;</span> ach.matrix[, x])</span>
+<span id="cb1090-135"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-135" tabindex="-1"></a>          }</span>
+<span id="cb1090-136"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-136" tabindex="-1"></a>        }</span>
+<span id="cb1090-137"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-137" tabindex="-1"></a>      )</span>
+<span id="cb1090-138"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-138" tabindex="-1"></a>    <span class="fu">colnames</span>(cen.dep.matrix) <span class="ot">&lt;-</span> <span class="fu">colnames</span>(var.class)</span>
+<span id="cb1090-139"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-139" tabindex="-1"></a>    </span>
+<span id="cb1090-140"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-140" tabindex="-1"></a>    cen.dep.matrix[multi.cut <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(multi.cut),] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb1090-141"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-141" tabindex="-1"></a>    </span>
+<span id="cb1090-142"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-142" tabindex="-1"></a>    <span class="co"># Sum of censored deprivations:</span></span>
+<span id="cb1090-143"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-143" tabindex="-1"></a>    cen.depr.sums <span class="ot">&lt;-</span></span>
+<span id="cb1090-144"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-144" tabindex="-1"></a>      <span class="fu">rowSums</span>(<span class="fu">sweep</span>(cen.dep.matrix, <span class="at">MARGIN =</span> <span class="dv">2</span> , dimw, <span class="st">`</span><span class="at">*</span><span class="st">`</span>))</span>
+<span id="cb1090-145"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-145" tabindex="-1"></a>    </span>
+<span id="cb1090-146"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-146" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">is.na</span>(cen.depr.sums)[w <span class="sc">&gt;</span> <span class="dv">0</span>])) {</span>
+<span id="cb1090-147"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-147" tabindex="-1"></a>      <span class="co"># overall result:</span></span>
+<span id="cb1090-148"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-148" tabindex="-1"></a>      overall.result <span class="ot">&lt;-</span></span>
+<span id="cb1090-149"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-149" tabindex="-1"></a>        <span class="fu">matrix</span>(</span>
+<span id="cb1090-150"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-150" tabindex="-1"></a>          <span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">NA</span>),</span>
+<span id="cb1090-151"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-151" tabindex="-1"></a>          <span class="at">nrow =</span> <span class="dv">1</span>,</span>
+<span id="cb1090-152"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-152" tabindex="-1"></a>          <span class="at">ncol =</span> <span class="dv">2</span>,</span>
+<span id="cb1090-153"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-153" tabindex="-1"></a>          <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="st">&quot;overall&quot;</span>, <span class="fu">c</span>(<span class="st">&quot;alkire-foster&quot;</span>, <span class="st">&quot;SE&quot;</span>))</span>
+<span id="cb1090-154"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-154" tabindex="-1"></a>        )</span>
+<span id="cb1090-155"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-155" tabindex="-1"></a>      </span>
+<span id="cb1090-156"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-156" tabindex="-1"></a>      <span class="co"># group breakdown:</span></span>
+<span id="cb1090-157"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-157" tabindex="-1"></a>      <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(<span class="fu">levels</span>(grpvar))) {</span>
+<span id="cb1090-158"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-158" tabindex="-1"></a>        grp.estim <span class="ot">&lt;-</span></span>
+<span id="cb1090-159"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-159" tabindex="-1"></a>          <span class="fu">matrix</span>(</span>
+<span id="cb1090-160"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-160" tabindex="-1"></a>            <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="dv">2</span> <span class="sc">*</span> <span class="fu">length</span>(<span class="fu">levels</span>(grpvar))),</span>
+<span id="cb1090-161"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-161" tabindex="-1"></a>            <span class="at">nrow =</span> <span class="fu">length</span>(<span class="fu">levels</span>(grpvar)),</span>
+<span id="cb1090-162"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-162" tabindex="-1"></a>            <span class="at">ncol =</span> <span class="dv">2</span>,</span>
+<span id="cb1090-163"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-163" tabindex="-1"></a>            <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">levels</span>(grpvar), <span class="fu">c</span>(<span class="st">&quot;alkire-foster&quot;</span>, <span class="st">&quot;SE&quot;</span>))</span>
+<span id="cb1090-164"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-164" tabindex="-1"></a>          )</span>
+<span id="cb1090-165"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-165" tabindex="-1"></a>        grp.contr <span class="ot">&lt;-</span></span>
+<span id="cb1090-166"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-166" tabindex="-1"></a>          <span class="fu">matrix</span>(</span>
+<span id="cb1090-167"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-167" tabindex="-1"></a>            <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="dv">2</span> <span class="sc">*</span> <span class="fu">length</span>(<span class="fu">levels</span>(grpvar))),</span>
+<span id="cb1090-168"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-168" tabindex="-1"></a>            <span class="at">nrow =</span> <span class="fu">length</span>(<span class="fu">levels</span>(grpvar)),</span>
+<span id="cb1090-169"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-169" tabindex="-1"></a>            <span class="at">ncol =</span> <span class="dv">2</span>,</span>
+<span id="cb1090-170"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-170" tabindex="-1"></a>            <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">levels</span>(grpvar), <span class="fu">c</span>(<span class="st">&quot;contribution&quot;</span>, <span class="st">&quot;SE&quot;</span>))</span>
+<span id="cb1090-171"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-171" tabindex="-1"></a>          )</span>
+<span id="cb1090-172"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-172" tabindex="-1"></a>        </span>
+<span id="cb1090-173"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-173" tabindex="-1"></a>      }</span>
+<span id="cb1090-174"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-174" tabindex="-1"></a>      </span>
+<span id="cb1090-175"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-175" tabindex="-1"></a>      <span class="co"># dimensional breakdown:</span></span>
+<span id="cb1090-176"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-176" tabindex="-1"></a>      dim.raw.hc <span class="ot">&lt;-</span></span>
+<span id="cb1090-177"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-177" tabindex="-1"></a>        <span class="fu">matrix</span>(</span>
+<span id="cb1090-178"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-178" tabindex="-1"></a>          <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="dv">2</span> <span class="sc">*</span> <span class="fu">ncol</span>(cen.dep.matrix)),</span>
+<span id="cb1090-179"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-179" tabindex="-1"></a>          <span class="at">nrow =</span> <span class="fu">ncol</span>(cen.dep.matrix),</span>
+<span id="cb1090-180"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-180" tabindex="-1"></a>          <span class="at">ncol =</span> <span class="dv">2</span>,</span>
+<span id="cb1090-181"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-181" tabindex="-1"></a>          <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">colnames</span>(cen.dep.matrix), <span class="fu">c</span>(<span class="st">&quot;raw headcount&quot;</span>, <span class="st">&quot;SE&quot;</span>))</span>
+<span id="cb1090-182"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-182" tabindex="-1"></a>        )</span>
+<span id="cb1090-183"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-183" tabindex="-1"></a>      dim.cen.hc <span class="ot">&lt;-</span></span>
+<span id="cb1090-184"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-184" tabindex="-1"></a>        <span class="fu">matrix</span>(</span>
+<span id="cb1090-185"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-185" tabindex="-1"></a>          <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="dv">2</span> <span class="sc">*</span> <span class="fu">ncol</span>(cen.dep.matrix)),</span>
+<span id="cb1090-186"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-186" tabindex="-1"></a>          <span class="at">nrow =</span> <span class="fu">ncol</span>(cen.dep.matrix),</span>
+<span id="cb1090-187"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-187" tabindex="-1"></a>          <span class="at">ncol =</span> <span class="dv">2</span>,</span>
+<span id="cb1090-188"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-188" tabindex="-1"></a>          <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">colnames</span>(cen.dep.matrix), <span class="fu">c</span>(<span class="st">&quot;cens. headcount&quot;</span>, <span class="st">&quot;SE&quot;</span>))</span>
+<span id="cb1090-189"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-189" tabindex="-1"></a>        )</span>
+<span id="cb1090-190"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-190" tabindex="-1"></a>      dim.contri <span class="ot">&lt;-</span></span>
+<span id="cb1090-191"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-191" tabindex="-1"></a>        <span class="fu">matrix</span>(</span>
+<span id="cb1090-192"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-192" tabindex="-1"></a>          <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="dv">2</span> <span class="sc">*</span> <span class="fu">ncol</span>(cen.dep.matrix)),</span>
+<span id="cb1090-193"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-193" tabindex="-1"></a>          <span class="at">nrow =</span> <span class="fu">ncol</span>(cen.dep.matrix),</span>
+<span id="cb1090-194"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-194" tabindex="-1"></a>          <span class="at">ncol =</span> <span class="dv">2</span>,</span>
+<span id="cb1090-195"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-195" tabindex="-1"></a>          <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">colnames</span>(cen.dep.matrix), <span class="fu">c</span>(<span class="st">&quot;contribution&quot;</span>, <span class="st">&quot;SE&quot;</span>))</span>
+<span id="cb1090-196"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-196" tabindex="-1"></a>        )</span>
+<span id="cb1090-197"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-197" tabindex="-1"></a>      </span>
+<span id="cb1090-198"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-198" tabindex="-1"></a>      <span class="co"># set up result object:</span></span>
+<span id="cb1090-199"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-199" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">is.null</span>(<span class="fu">levels</span>(grpvar))) {</span>
+<span id="cb1090-200"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-200" tabindex="-1"></a>        rval <span class="ot">&lt;-</span> <span class="fu">list</span>(overall.result, dim.raw.hc, dim.cen.hc, dim.contri)</span>
+<span id="cb1090-201"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-201" tabindex="-1"></a>      } <span class="cf">else</span> {</span>
+<span id="cb1090-202"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-202" tabindex="-1"></a>        rval <span class="ot">&lt;-</span></span>
+<span id="cb1090-203"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-203" tabindex="-1"></a>          <span class="fu">list</span>(overall.result,</span>
+<span id="cb1090-204"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-204" tabindex="-1"></a>               dim.raw.hc,</span>
+<span id="cb1090-205"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-205" tabindex="-1"></a>               dim.cen.hc,</span>
+<span id="cb1090-206"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-206" tabindex="-1"></a>               dim.contri,</span>
+<span id="cb1090-207"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-207" tabindex="-1"></a>               grp.estim,</span>
+<span id="cb1090-208"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-208" tabindex="-1"></a>               grp.contr)</span>
+<span id="cb1090-209"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-209" tabindex="-1"></a>      }</span>
+<span id="cb1090-210"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-210" tabindex="-1"></a>      </span>
+<span id="cb1090-211"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-211" tabindex="-1"></a>      <span class="fu">return</span>(rval)</span>
+<span id="cb1090-212"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-212" tabindex="-1"></a>      </span>
+<span id="cb1090-213"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-213" tabindex="-1"></a>    }</span>
+<span id="cb1090-214"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-214" tabindex="-1"></a>    </span>
+<span id="cb1090-215"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-215" tabindex="-1"></a>    raw.hc.ratio <span class="ot">&lt;-</span></span>
+<span id="cb1090-216"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-216" tabindex="-1"></a>      survey<span class="sc">::</span><span class="fu">svymean</span>(dep.matrix[, ] , design, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1090-217"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-217" tabindex="-1"></a>    <span class="fu">attr</span>(raw.hc.ratio, <span class="st">&quot;statistic&quot;</span>) <span class="ot">&lt;-</span> <span class="st">&quot;raw headcount&quot;</span></span>
+<span id="cb1090-218"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-218" tabindex="-1"></a>    cen.hc.ratio <span class="ot">&lt;-</span></span>
+<span id="cb1090-219"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-219" tabindex="-1"></a>      survey<span class="sc">::</span><span class="fu">svymean</span>(cen.dep.matrix[, ] , design, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1090-220"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-220" tabindex="-1"></a>    <span class="fu">attr</span>(cen.hc.ratio, <span class="st">&quot;statistic&quot;</span>) <span class="ot">&lt;-</span> <span class="st">&quot;cens. headcount&quot;</span></span>
+<span id="cb1090-221"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-221" tabindex="-1"></a>    </span>
+<span id="cb1090-222"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-222" tabindex="-1"></a>    U_0 <span class="ot">&lt;-</span></span>
+<span id="cb1090-223"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-223" tabindex="-1"></a>      <span class="fu">list</span>(<span class="at">value =</span> <span class="fu">sum</span>(w[w <span class="sc">&gt;</span> <span class="dv">0</span>]), <span class="at">lin =</span> <span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">length</span>(w)))</span>
+<span id="cb1090-224"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-224" tabindex="-1"></a>    U_1 <span class="ot">&lt;-</span></span>
+<span id="cb1090-225"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-225" tabindex="-1"></a>      <span class="fu">list</span>(<span class="at">value =</span> <span class="fu">sum</span>(w[w <span class="sc">&gt;</span> <span class="dv">0</span>] <span class="sc">*</span> cen.depr.sums[w <span class="sc">&gt;</span> <span class="dv">0</span>]), <span class="at">lin =</span> cen.depr.sums)</span>
+<span id="cb1090-226"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-226" tabindex="-1"></a>    </span>
+<span id="cb1090-227"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-227" tabindex="-1"></a>    <span class="co"># overall alkire-foster index:</span></span>
+<span id="cb1090-228"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-228" tabindex="-1"></a>    overall <span class="ot">&lt;-</span> survey<span class="sc">::</span><span class="fu">svymean</span>(cen.depr.sums, design, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1090-229"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-229" tabindex="-1"></a>    <span class="fu">names</span>(overall)[<span class="dv">1</span>] <span class="ot">&lt;-</span></span>
+<span id="cb1090-230"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-230" tabindex="-1"></a>      <span class="fu">attr</span>(overall, <span class="st">&quot;statistic&quot;</span>) <span class="ot">&lt;-</span> <span class="st">&quot;alkire-foster&quot;</span></span>
+<span id="cb1090-231"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-231" tabindex="-1"></a>    </span>
+<span id="cb1090-232"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-232" tabindex="-1"></a>    <span class="co"># group decomposition</span></span>
+<span id="cb1090-233"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-233" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(<span class="fu">levels</span>(grpvar))) {</span>
+<span id="cb1090-234"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-234" tabindex="-1"></a>      grp.pctg.estm <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb1090-235"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-235" tabindex="-1"></a>      grp.pctg.estm_var <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb1090-236"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-236" tabindex="-1"></a>      grp.pctg.cont <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb1090-237"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-237" tabindex="-1"></a>      grp.pctg.cont_lin <span class="ot">&lt;-</span></span>
+<span id="cb1090-238"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-238" tabindex="-1"></a>        <span class="fu">matrix</span>(<span class="at">data =</span> <span class="fu">rep</span>(w, <span class="fu">length</span>(<span class="fu">levels</span>(grpvar))), <span class="at">nrow =</span> <span class="fu">length</span>(w))</span>
+<span id="cb1090-239"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-239" tabindex="-1"></a>      <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(<span class="fu">levels</span>(grpvar))) {</span>
+<span id="cb1090-240"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-240" tabindex="-1"></a>        w_i <span class="ot">&lt;-</span> w <span class="sc">*</span> (grpvar <span class="sc">==</span> <span class="fu">levels</span>(grpvar)[i])</span>
+<span id="cb1090-241"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-241" tabindex="-1"></a>        U_1_i <span class="ot">&lt;-</span></span>
+<span id="cb1090-242"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-242" tabindex="-1"></a>          <span class="fu">list</span>(<span class="at">value =</span> <span class="fu">sum</span>(cen.depr.sums[w_i <span class="sc">&gt;</span> <span class="dv">0</span>] <span class="sc">*</span> w_i[w_i <span class="sc">&gt;</span> <span class="dv">0</span>]),</span>
+<span id="cb1090-243"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-243" tabindex="-1"></a>               <span class="at">lin =</span> cen.depr.sums <span class="sc">*</span> (grpvar <span class="sc">==</span> <span class="fu">levels</span>(grpvar)[i]))</span>
+<span id="cb1090-244"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-244" tabindex="-1"></a>        U_0_i <span class="ot">&lt;-</span></span>
+<span id="cb1090-245"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-245" tabindex="-1"></a>          <span class="fu">list</span>(<span class="at">value =</span> <span class="fu">sum</span>(w_i[w_i <span class="sc">&gt;</span> <span class="dv">0</span>]),</span>
+<span id="cb1090-246"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-246" tabindex="-1"></a>               <span class="at">lin =</span> <span class="dv">1</span> <span class="sc">*</span> (grpvar <span class="sc">==</span> <span class="fu">levels</span>(grpvar)[i]))</span>
+<span id="cb1090-247"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-247" tabindex="-1"></a>        </span>
+<span id="cb1090-248"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-248" tabindex="-1"></a>        list_all <span class="ot">&lt;-</span></span>
+<span id="cb1090-249"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-249" tabindex="-1"></a>          <span class="fu">list</span>(</span>
+<span id="cb1090-250"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-250" tabindex="-1"></a>            <span class="at">U_0 =</span> U_0,</span>
+<span id="cb1090-251"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-251" tabindex="-1"></a>            <span class="at">U_1 =</span> U_1,</span>
+<span id="cb1090-252"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-252" tabindex="-1"></a>            <span class="at">U_0_i =</span> U_0_i,</span>
+<span id="cb1090-253"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-253" tabindex="-1"></a>            <span class="at">U_1_i =</span> U_1_i</span>
+<span id="cb1090-254"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-254" tabindex="-1"></a>          )</span>
+<span id="cb1090-255"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-255" tabindex="-1"></a>        </span>
+<span id="cb1090-256"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-256" tabindex="-1"></a>        estimate <span class="ot">&lt;-</span></span>
+<span id="cb1090-257"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-257" tabindex="-1"></a>          <span class="fu">contrastinf</span>(<span class="fu">quote</span>((U_1_i <span class="sc">/</span> U_0_i)), list_all)</span>
+<span id="cb1090-258"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-258" tabindex="-1"></a>        grp.pctg.estm[i] <span class="ot">&lt;-</span> estimate<span class="sc">$</span>value</span>
+<span id="cb1090-259"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-259" tabindex="-1"></a>        estimate<span class="sc">$</span>lin[<span class="fu">is.na</span>(estimate<span class="sc">$</span>lin)] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb1090-260"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-260" tabindex="-1"></a>        grp.pctg.estm_var[i] <span class="ot">&lt;-</span></span>
+<span id="cb1090-261"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-261" tabindex="-1"></a>          survey<span class="sc">::</span><span class="fu">svyrecvar</span>(</span>
+<span id="cb1090-262"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-262" tabindex="-1"></a>            estimate<span class="sc">$</span>lin <span class="sc">*</span> w_i,</span>
+<span id="cb1090-263"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-263" tabindex="-1"></a>            design<span class="sc">$</span>cluster,</span>
+<span id="cb1090-264"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-264" tabindex="-1"></a>            design<span class="sc">$</span>strata,</span>
+<span id="cb1090-265"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-265" tabindex="-1"></a>            design<span class="sc">$</span>fpc,</span>
+<span id="cb1090-266"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-266" tabindex="-1"></a>            <span class="at">postStrata =</span> design<span class="sc">$</span>postStrata</span>
+<span id="cb1090-267"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-267" tabindex="-1"></a>          )</span>
+<span id="cb1090-268"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-268" tabindex="-1"></a>        </span>
+<span id="cb1090-269"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-269" tabindex="-1"></a>        estimate <span class="ot">&lt;-</span></span>
+<span id="cb1090-270"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-270" tabindex="-1"></a>          <span class="fu">contrastinf</span>(<span class="fu">quote</span>((U_0_i <span class="sc">/</span> U_0) <span class="sc">*</span> (U_1_i <span class="sc">/</span> U_0_i) <span class="sc">/</span> (U_1 <span class="sc">/</span> U_0)), list_all)</span>
+<span id="cb1090-271"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-271" tabindex="-1"></a>        grp.pctg.cont[i] <span class="ot">&lt;-</span> estimate<span class="sc">$</span>value</span>
+<span id="cb1090-272"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-272" tabindex="-1"></a>        estimate<span class="sc">$</span>lin[<span class="fu">is.na</span>(estimate<span class="sc">$</span>lin)] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb1090-273"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-273" tabindex="-1"></a>        grp.pctg.cont_lin[, i] <span class="ot">&lt;-</span> estimate<span class="sc">$</span>lin</span>
+<span id="cb1090-274"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-274" tabindex="-1"></a>        </span>
+<span id="cb1090-275"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-275" tabindex="-1"></a>      }</span>
+<span id="cb1090-276"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-276" tabindex="-1"></a>      </span>
+<span id="cb1090-277"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-277" tabindex="-1"></a>      grp.pctg.cont_var <span class="ot">&lt;-</span></span>
+<span id="cb1090-278"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-278" tabindex="-1"></a>        survey<span class="sc">::</span><span class="fu">svyrecvar</span>(</span>
+<span id="cb1090-279"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-279" tabindex="-1"></a>          grp.pctg.cont_lin <span class="sc">*</span> w,</span>
+<span id="cb1090-280"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-280" tabindex="-1"></a>          design<span class="sc">$</span>cluster,</span>
+<span id="cb1090-281"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-281" tabindex="-1"></a>          design<span class="sc">$</span>strata,</span>
+<span id="cb1090-282"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-282" tabindex="-1"></a>          design<span class="sc">$</span>fpc,</span>
+<span id="cb1090-283"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-283" tabindex="-1"></a>          <span class="at">postStrata =</span> design<span class="sc">$</span>postStrata</span>
+<span id="cb1090-284"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-284" tabindex="-1"></a>        )</span>
+<span id="cb1090-285"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-285" tabindex="-1"></a>      </span>
+<span id="cb1090-286"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-286" tabindex="-1"></a>      grp.contr.estimate <span class="ot">&lt;-</span></span>
+<span id="cb1090-287"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-287" tabindex="-1"></a>        <span class="fu">matrix</span>(grp.pctg.estm,</span>
+<span id="cb1090-288"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-288" tabindex="-1"></a>               <span class="at">ncol =</span> <span class="dv">1</span>,</span>
+<span id="cb1090-289"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-289" tabindex="-1"></a>               <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">levels</span>(grpvar), <span class="st">&quot;alkire-foster&quot;</span>))</span>
+<span id="cb1090-290"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-290" tabindex="-1"></a>      <span class="fu">attr</span>(grp.contr.estimate, <span class="st">&quot;names&quot;</span>) <span class="ot">&lt;-</span> <span class="fu">levels</span>(grpvar)</span>
+<span id="cb1090-291"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-291" tabindex="-1"></a>      <span class="fu">attr</span>(grp.contr.estimate, <span class="st">&quot;var&quot;</span>) <span class="ot">&lt;-</span> grp.pctg.estm_var</span>
+<span id="cb1090-292"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-292" tabindex="-1"></a>      <span class="fu">attr</span>(grp.contr.estimate, <span class="st">&quot;statistic&quot;</span>) <span class="ot">&lt;-</span> <span class="st">&quot;alkire-foster&quot;</span></span>
+<span id="cb1090-293"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-293" tabindex="-1"></a>      <span class="fu">class</span>(grp.contr.estimate) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;svystat&quot;</span>)</span>
+<span id="cb1090-294"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-294" tabindex="-1"></a>      </span>
+<span id="cb1090-295"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-295" tabindex="-1"></a>      grp.contr.pct <span class="ot">&lt;-</span></span>
+<span id="cb1090-296"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-296" tabindex="-1"></a>        <span class="fu">matrix</span>(</span>
+<span id="cb1090-297"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-297" tabindex="-1"></a>          grp.pctg.cont,</span>
+<span id="cb1090-298"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-298" tabindex="-1"></a>          <span class="at">ncol =</span> <span class="dv">1</span>,</span>
+<span id="cb1090-299"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-299" tabindex="-1"></a>          <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">levels</span>(grpvar), <span class="st">&quot;grp. % contribution&quot;</span>)</span>
+<span id="cb1090-300"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-300" tabindex="-1"></a>        )</span>
+<span id="cb1090-301"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-301" tabindex="-1"></a>      <span class="fu">attr</span>(grp.contr.pct, <span class="st">&quot;names&quot;</span>) <span class="ot">&lt;-</span> <span class="fu">levels</span>(grpvar)</span>
+<span id="cb1090-302"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-302" tabindex="-1"></a>      <span class="fu">attr</span>(grp.contr.pct, <span class="st">&quot;var&quot;</span>) <span class="ot">&lt;-</span> grp.pctg.cont_var</span>
+<span id="cb1090-303"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-303" tabindex="-1"></a>      <span class="fu">attr</span>(grp.contr.pct, <span class="st">&quot;statistic&quot;</span>) <span class="ot">&lt;-</span> <span class="st">&quot;grp. % contribution&quot;</span></span>
+<span id="cb1090-304"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-304" tabindex="-1"></a>      <span class="fu">class</span>(grp.contr.pct) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;svystat&quot;</span>)</span>
+<span id="cb1090-305"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-305" tabindex="-1"></a>      </span>
+<span id="cb1090-306"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-306" tabindex="-1"></a>      <span class="fu">rm</span>(</span>
+<span id="cb1090-307"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-307" tabindex="-1"></a>        grp.pctg.estm,</span>
+<span id="cb1090-308"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-308" tabindex="-1"></a>        grp.pctg.estm_var,</span>
+<span id="cb1090-309"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-309" tabindex="-1"></a>        grp.pctg.cont,</span>
+<span id="cb1090-310"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-310" tabindex="-1"></a>        grp.pctg.cont_lin,</span>
+<span id="cb1090-311"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-311" tabindex="-1"></a>        grp.pctg.cont_var</span>
+<span id="cb1090-312"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-312" tabindex="-1"></a>      )</span>
+<span id="cb1090-313"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-313" tabindex="-1"></a>      </span>
+<span id="cb1090-314"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-314" tabindex="-1"></a>    }</span>
+<span id="cb1090-315"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-315" tabindex="-1"></a>    </span>
+<span id="cb1090-316"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-316" tabindex="-1"></a>    <span class="co"># dimensional decomposition:</span></span>
+<span id="cb1090-317"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-317" tabindex="-1"></a>    dim.contr <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb1090-318"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-318" tabindex="-1"></a>    dim.contr_lin <span class="ot">&lt;-</span></span>
+<span id="cb1090-319"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-319" tabindex="-1"></a>      <span class="fu">matrix</span>(<span class="at">data =</span> <span class="fu">rep</span>(w, <span class="fu">ncol</span>(cen.dep.matrix)), <span class="at">nrow =</span> <span class="fu">length</span>(w))</span>
+<span id="cb1090-320"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-320" tabindex="-1"></a>    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(cen.dep.matrix)) {</span>
+<span id="cb1090-321"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-321" tabindex="-1"></a>      wj <span class="ot">&lt;-</span></span>
+<span id="cb1090-322"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-322" tabindex="-1"></a>        <span class="fu">list</span>(<span class="at">value =</span> dimw[i], <span class="at">lin =</span> <span class="fu">rep</span>(<span class="dv">0</span>, <span class="fu">length</span>(cen.depr.sums)))</span>
+<span id="cb1090-323"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-323" tabindex="-1"></a>      </span>
+<span id="cb1090-324"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-324" tabindex="-1"></a>      H_0 <span class="ot">&lt;-</span></span>
+<span id="cb1090-325"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-325" tabindex="-1"></a>        <span class="fu">list</span>(<span class="at">value =</span> <span class="fu">sum</span>(cen.dep.matrix[w <span class="sc">&gt;</span> <span class="dv">0</span> , i] <span class="sc">*</span> w[w <span class="sc">&gt;</span> <span class="dv">0</span>]),</span>
+<span id="cb1090-326"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-326" tabindex="-1"></a>             <span class="at">lin =</span> cen.dep.matrix[, i] <span class="sc">*</span> (w <span class="sc">&gt;</span> <span class="dv">0</span>))</span>
+<span id="cb1090-327"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-327" tabindex="-1"></a>      list_all <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb1090-328"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-328" tabindex="-1"></a>        <span class="at">U_0 =</span> U_0,</span>
+<span id="cb1090-329"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-329" tabindex="-1"></a>        <span class="at">U_1 =</span> U_1,</span>
+<span id="cb1090-330"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-330" tabindex="-1"></a>        <span class="at">H_0 =</span> H_0,</span>
+<span id="cb1090-331"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-331" tabindex="-1"></a>        <span class="at">wj =</span> wj</span>
+<span id="cb1090-332"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-332" tabindex="-1"></a>      )</span>
+<span id="cb1090-333"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-333" tabindex="-1"></a>      estimate <span class="ot">&lt;-</span></span>
+<span id="cb1090-334"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-334" tabindex="-1"></a>        <span class="fu">contrastinf</span>(<span class="fu">quote</span>(wj <span class="sc">*</span> (H_0 <span class="sc">/</span> U_0) <span class="sc">/</span> (U_1 <span class="sc">/</span> U_0)), list_all)</span>
+<span id="cb1090-335"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-335" tabindex="-1"></a>      </span>
+<span id="cb1090-336"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-336" tabindex="-1"></a>      dim.contr[i] <span class="ot">&lt;-</span> estimate<span class="sc">$</span>value</span>
+<span id="cb1090-337"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-337" tabindex="-1"></a>      estimate<span class="sc">$</span>lin[<span class="fu">is.na</span>(estimate<span class="sc">$</span>lin)] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb1090-338"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-338" tabindex="-1"></a>      dim.contr_lin[, i] <span class="ot">&lt;-</span> estimate<span class="sc">$</span>lin</span>
+<span id="cb1090-339"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-339" tabindex="-1"></a>      </span>
+<span id="cb1090-340"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-340" tabindex="-1"></a>    }</span>
+<span id="cb1090-341"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-341" tabindex="-1"></a>    </span>
+<span id="cb1090-342"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-342" tabindex="-1"></a>    dim.contr_var <span class="ot">&lt;-</span></span>
+<span id="cb1090-343"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-343" tabindex="-1"></a>      survey<span class="sc">::</span><span class="fu">svyrecvar</span>(</span>
+<span id="cb1090-344"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-344" tabindex="-1"></a>        dim.contr_lin <span class="sc">*</span> w,</span>
+<span id="cb1090-345"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-345" tabindex="-1"></a>        design<span class="sc">$</span>cluster,</span>
+<span id="cb1090-346"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-346" tabindex="-1"></a>        design<span class="sc">$</span>strata,</span>
+<span id="cb1090-347"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-347" tabindex="-1"></a>        design<span class="sc">$</span>fpc,</span>
+<span id="cb1090-348"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-348" tabindex="-1"></a>        <span class="at">postStrata =</span> design<span class="sc">$</span>postStrata</span>
+<span id="cb1090-349"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-349" tabindex="-1"></a>      )</span>
+<span id="cb1090-350"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-350" tabindex="-1"></a>    </span>
+<span id="cb1090-351"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-351" tabindex="-1"></a>    dim.result <span class="ot">&lt;-</span> dim.contr</span>
+<span id="cb1090-352"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-352" tabindex="-1"></a>    <span class="fu">attr</span>(dim.result, <span class="st">&quot;names&quot;</span>) <span class="ot">&lt;-</span> <span class="fu">colnames</span>(ach.matrix)</span>
+<span id="cb1090-353"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-353" tabindex="-1"></a>    <span class="fu">attr</span>(dim.result, <span class="st">&quot;var&quot;</span>) <span class="ot">&lt;-</span> dim.contr_var</span>
+<span id="cb1090-354"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-354" tabindex="-1"></a>    <span class="fu">attr</span>(dim.result, <span class="st">&quot;statistic&quot;</span>) <span class="ot">&lt;-</span> <span class="st">&quot;dim. % contribution&quot;</span></span>
+<span id="cb1090-355"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-355" tabindex="-1"></a>    <span class="fu">class</span>(dim.result) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;svystat&quot;</span>)</span>
+<span id="cb1090-356"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-356" tabindex="-1"></a>    </span>
+<span id="cb1090-357"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-357" tabindex="-1"></a>    <span class="fu">rm</span>(dim.contr, dim.contr_lin, dim.contr_var)</span>
+<span id="cb1090-358"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-358" tabindex="-1"></a>    </span>
+<span id="cb1090-359"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-359" tabindex="-1"></a>    <span class="co"># set up result object:</span></span>
+<span id="cb1090-360"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-360" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.null</span>(<span class="fu">levels</span>(grpvar))) {</span>
+<span id="cb1090-361"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-361" tabindex="-1"></a>      rval <span class="ot">&lt;-</span> <span class="fu">list</span>(overall, raw.hc.ratio, cen.hc.ratio, dim.result)</span>
+<span id="cb1090-362"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-362" tabindex="-1"></a>      <span class="fu">names</span>(rval) <span class="ot">&lt;-</span></span>
+<span id="cb1090-363"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-363" tabindex="-1"></a>        <span class="fu">list</span>(</span>
+<span id="cb1090-364"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-364" tabindex="-1"></a>          <span class="st">&quot;overall&quot;</span>,</span>
+<span id="cb1090-365"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-365" tabindex="-1"></a>          <span class="st">&quot;raw headcount ratio&quot;</span>,</span>
+<span id="cb1090-366"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-366" tabindex="-1"></a>          <span class="st">&quot;censored headcount ratio&quot;</span>,</span>
+<span id="cb1090-367"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-367" tabindex="-1"></a>          <span class="st">&quot;percentual contribution per dimension&quot;</span></span>
+<span id="cb1090-368"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-368" tabindex="-1"></a>        )</span>
+<span id="cb1090-369"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-369" tabindex="-1"></a>      </span>
+<span id="cb1090-370"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-370" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb1090-371"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-371" tabindex="-1"></a>      rval <span class="ot">&lt;-</span></span>
+<span id="cb1090-372"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-372" tabindex="-1"></a>        <span class="fu">list</span>(</span>
+<span id="cb1090-373"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-373" tabindex="-1"></a>          overall,</span>
+<span id="cb1090-374"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-374" tabindex="-1"></a>          raw.hc.ratio,</span>
+<span id="cb1090-375"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-375" tabindex="-1"></a>          cen.hc.ratio,</span>
+<span id="cb1090-376"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-376" tabindex="-1"></a>          dim.result,</span>
+<span id="cb1090-377"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-377" tabindex="-1"></a>          grp.contr.estimate,</span>
+<span id="cb1090-378"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-378" tabindex="-1"></a>          grp.contr.pct</span>
+<span id="cb1090-379"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-379" tabindex="-1"></a>        )</span>
+<span id="cb1090-380"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-380" tabindex="-1"></a>      <span class="fu">names</span>(rval) <span class="ot">&lt;-</span></span>
+<span id="cb1090-381"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-381" tabindex="-1"></a>        <span class="fu">list</span>(</span>
+<span id="cb1090-382"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-382" tabindex="-1"></a>          <span class="st">&quot;overall&quot;</span>,</span>
+<span id="cb1090-383"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-383" tabindex="-1"></a>          <span class="st">&quot;raw headcount ratio&quot;</span>,</span>
+<span id="cb1090-384"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-384" tabindex="-1"></a>          <span class="st">&quot;censored headcount ratio&quot;</span>,</span>
+<span id="cb1090-385"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-385" tabindex="-1"></a>          <span class="st">&quot;percentual contribution per dimension&quot;</span>,</span>
+<span id="cb1090-386"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-386" tabindex="-1"></a>          <span class="st">&quot;subgroup alkire-foster estimates&quot;</span>,</span>
+<span id="cb1090-387"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-387" tabindex="-1"></a>          <span class="st">&quot;percentual contribution per subgroup&quot;</span></span>
+<span id="cb1090-388"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-388" tabindex="-1"></a>        )</span>
+<span id="cb1090-389"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-389" tabindex="-1"></a>      </span>
+<span id="cb1090-390"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-390" tabindex="-1"></a>    }</span>
+<span id="cb1090-391"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-391" tabindex="-1"></a>    </span>
+<span id="cb1090-392"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-392" tabindex="-1"></a>    <span class="fu">return</span>(rval)</span>
+<span id="cb1090-393"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-393" tabindex="-1"></a>    </span>
+<span id="cb1090-394"><a href="6.2-alkire-foster-class-decomposition-function-definition.html#cb1090-394" tabindex="-1"></a>  }</span></code></pre></div>
+</div>
+<p style="text-align: center;">
+<a href="6.1-alkire-foster-class-function-definition.html"><button class="btn btn-default">Previous</button></a>
+<a href="6.3-replication-example-13.html"><button class="btn btn-default">Next</button></a>
+</p>
+</div>
+</div>
+
+
+
+</body>
+</html>
