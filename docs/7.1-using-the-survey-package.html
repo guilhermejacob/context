@@ -5,7 +5,7 @@
 <meta charset="utf-8" />
 <meta name="generator" content="pandoc" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="4.4 Lorenz Curve-based Measures | Poverty and Inequality with Complex Survey Data" />
+<meta property="og:title" content="7.1 Using the survey package | Poverty and Inequality with Complex Survey Data" />
 <meta property="og:type" content="book" />
 
 <meta property="og:description" content="A book about the R convey package" />
@@ -24,7 +24,7 @@ MathJax.Hub.Config({
 
 <meta name="description" content="A book about the R convey package">
 
-<title>4.4 Lorenz Curve-based Measures | Poverty and Inequality with Complex Survey Data</title>
+<title>7.1 Using the survey package | Poverty and Inequality with Complex Survey Data</title>
 
 <link href="libs/tufte-css-2015.12.29/tufte-fonts.css" rel="stylesheet" />
 <link href="libs/tufte-css-2015.12.29/tufte-background.css" rel="stylesheet" />
@@ -293,15 +293,54 @@ div.csl-indent {
 </div>
 <div class="row">
 <div class="col-sm-12">
-<div id="lorenz-curve-based-measures" class="section level2" number="4.4">
-<h2><span class="header-section-number">4.4</span> Lorenz Curve-based Measures</h2>
-<p>In the following, we discuss the Lorenz curve, a graphical tool for describing inequality
-in the income distribution, and two inequality measures directly related to it:
-the Gini index and the Zenga index.</p>
+<div id="using-the-survey-package" class="section level2" number="7.1">
+<h2><span class="header-section-number">7.1</span> Using the <code>survey</code> package</h2>
+<p>Influence functions and “resampling” replicates can be used to improve the inference
+about differences and changes between estimates.</p>
+<p>The <code>survey</code> package already provides an
+approach for estimating the variance-covariance matrix using the <code>svyby</code> function.
+Based on the <code>?survey::svyby</code> examples, we have:</p>
+<div class="sourceCode" id="cb1113"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1113-1"><a href="7.1-using-the-survey-package.html#cb1113-1" tabindex="-1"></a><span class="co"># load the survey library</span></span>
+<span id="cb1113-2"><a href="7.1-using-the-survey-package.html#cb1113-2" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb1113-3"><a href="7.1-using-the-survey-package.html#cb1113-3" tabindex="-1"></a></span>
+<span id="cb1113-4"><a href="7.1-using-the-survey-package.html#cb1113-4" tabindex="-1"></a><span class="co">#  load data set</span></span>
+<span id="cb1113-5"><a href="7.1-using-the-survey-package.html#cb1113-5" tabindex="-1"></a><span class="fu">data</span>( api )</span>
+<span id="cb1113-6"><a href="7.1-using-the-survey-package.html#cb1113-6" tabindex="-1"></a></span>
+<span id="cb1113-7"><a href="7.1-using-the-survey-package.html#cb1113-7" tabindex="-1"></a><span class="co"># declare sampling design</span></span>
+<span id="cb1113-8"><a href="7.1-using-the-survey-package.html#cb1113-8" tabindex="-1"></a>dclus1 <span class="ot">&lt;-</span> <span class="fu">svydesign</span>( <span class="at">id=</span><span class="sc">~</span>dnum, <span class="at">weights=</span><span class="sc">~</span>pw, <span class="at">data=</span>apiclus1, <span class="at">fpc=</span><span class="sc">~</span>fpc )</span>
+<span id="cb1113-9"><a href="7.1-using-the-survey-package.html#cb1113-9" tabindex="-1"></a></span>
+<span id="cb1113-10"><a href="7.1-using-the-survey-package.html#cb1113-10" tabindex="-1"></a><span class="co"># estimate means</span></span>
+<span id="cb1113-11"><a href="7.1-using-the-survey-package.html#cb1113-11" tabindex="-1"></a>mns <span class="ot">&lt;-</span><span class="fu">svyby</span>(<span class="sc">~</span>api99, <span class="sc">~</span>stype, dclus1, svymean,<span class="at">covmat=</span><span class="cn">TRUE</span>)</span>
+<span id="cb1113-12"><a href="7.1-using-the-survey-package.html#cb1113-12" tabindex="-1"></a></span>
+<span id="cb1113-13"><a href="7.1-using-the-survey-package.html#cb1113-13" tabindex="-1"></a><span class="co"># collect variance-covariance matrix of estimates</span></span>
+<span id="cb1113-14"><a href="7.1-using-the-survey-package.html#cb1113-14" tabindex="-1"></a>( m <span class="ot">&lt;-</span> <span class="fu">vcov</span>( mns ) )</span></code></pre></div>
+<pre><code>##          E         H         M
+## E 520.5973  573.0404  684.6562
+## H 573.0404 1744.2317  747.1989
+## M 684.6562  747.1989 1060.1954</code></pre>
+<div class="sourceCode" id="cb1115"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1115-1"><a href="7.1-using-the-survey-package.html#cb1115-1" tabindex="-1"></a><span class="co"># compute variance terms</span></span>
+<span id="cb1115-2"><a href="7.1-using-the-survey-package.html#cb1115-2" tabindex="-1"></a>var.naive <span class="ot">&lt;-</span> <span class="fu">sum</span>( <span class="fu">diag</span>( m[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>),<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>)] ) )</span>
+<span id="cb1115-3"><a href="7.1-using-the-survey-package.html#cb1115-3" tabindex="-1"></a>cov.term <span class="ot">&lt;-</span> <span class="fu">sum</span>( <span class="fu">diag</span>( m[ <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>),<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">1</span>)] ) )</span>
+<span id="cb1115-4"><a href="7.1-using-the-survey-package.html#cb1115-4" tabindex="-1"></a></span>
+<span id="cb1115-5"><a href="7.1-using-the-survey-package.html#cb1115-5" tabindex="-1"></a><span class="co"># &quot;naive&quot; SE of the difference</span></span>
+<span id="cb1115-6"><a href="7.1-using-the-survey-package.html#cb1115-6" tabindex="-1"></a><span class="fu">sqrt</span>( var.naive )</span></code></pre></div>
+<pre><code>## [1] 39.75918</code></pre>
+<div class="sourceCode" id="cb1117"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1117-1"><a href="7.1-using-the-survey-package.html#cb1117-1" tabindex="-1"></a><span class="co"># SE of the difference</span></span>
+<span id="cb1117-2"><a href="7.1-using-the-survey-package.html#cb1117-2" tabindex="-1"></a><span class="fu">sqrt</span>( var.naive <span class="sc">-</span> cov.term )</span></code></pre></div>
+<pre><code>## [1] 14.54236</code></pre>
+<div class="sourceCode" id="cb1119"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1119-1"><a href="7.1-using-the-survey-package.html#cb1119-1" tabindex="-1"></a><span class="co">#... or using svycontrast</span></span>
+<span id="cb1119-2"><a href="7.1-using-the-survey-package.html#cb1119-2" tabindex="-1"></a><span class="fu">svycontrast</span>( mns , <span class="fu">c</span>(<span class="at">E =</span> <span class="dv">1</span>, <span class="at">M =</span> <span class="sc">-</span><span class="dv">1</span>) )</span></code></pre></div>
+<pre><code>##          contrast     SE
+## contrast -0.80833 14.542</code></pre>
+<p>Notice that, because the covariance terms are positive, the (actual) variance of
+the difference is smaller than the “naive” variance.</p>
+<p>A similar idea can be implemented with other estimators, such as inequality and poverty measures.
+However, this has not yet been implemented for linearization/influence function methods.
+In the next section, we show an example with the Gini index.</p>
 </div>
 <p style="text-align: center;">
-<a href="4.3-quintile-share-ratio-svyqsr.html"><button class="btn btn-default">Previous</button></a>
-<a href="4.5-lorenz-curve-svylorenz.html"><button class="btn btn-default">Next</button></a>
+<a href="7-covariance-matrix.html"><button class="btn btn-default">Previous</button></a>
+<a href="7.2-example-calculation.html"><button class="btn btn-default">Next</button></a>
 </p>
 </div>
 </div>

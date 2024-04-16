@@ -13,7 +13,7 @@
 
 <meta name="author" content="By Guilherme Jacob, Anthony Damico, and Djalma Pessoa. The authors received no external funding for the convey software and this accompanying textbook." />
 
-<meta name="date" content="2024-04-10" />
+<meta name="date" content="2024-04-16" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -284,7 +284,8 @@ div.csl-indent {
 </ul></li>
 <li class="has-sub"><a href="7-covariance-matrix.html#covariance-matrix" id="toc-covariance-matrix"><span class="toc-section-number">7</span> Covariance Matrix</a>
 <ul>
-<li><a href="7.1-example-calculation.html#example-calculation" id="toc-example-calculation"><span class="toc-section-number">7.1</span> Example Calculation</a></li>
+<li><a href="7.1-using-the-survey-package.html#using-the-survey-package" id="toc-using-the-survey-package"><span class="toc-section-number">7.1</span> Using the <code>survey</code> package</a></li>
+<li><a href="7.2-example-calculation.html#example-calculation" id="toc-example-calculation"><span class="toc-section-number">7.2</span> Example Calculation</a></li>
 </ul></li>
 </ul>
 </div>
@@ -294,10 +295,17 @@ div.csl-indent {
 <div class="col-sm-12">
 <div id="covariance-matrix" class="section level1" number="7">
 <h1><span class="header-section-number">Chapter 7</span> Covariance Matrix</h1>
-<p>The current <code>convey</code> software does not account for the covariance across <code>svyby</code> groups. The example below describes this calculation and presents what is, in this case, a limited impact on the final error terms. We acknowledge that, under ideal circumstances, the covariance would be properly accounted for in the software. Modifying our software to account for the covariance remains a future goal.</p>
-<p>Influence functions and “resampling” replicates can be used to improve the inference
-about differences and changes between estimates. Put simply, the variance of the difference between
-two estimates <span class="math inline">\(\widehat{T}_1\)</span> and <span class="math inline">\(\widehat{T}_2\)</span> is given by</p>
+<p>The current <code>convey</code> software does not account for the covariance across groups for linearized variance estimators (as the objects created using <code>svydesign</code>). We acknowledge that, under ideal circumstances, the covariance would be properly accounted for in the software. Modifying our software to account for the covariance using linearization remains a future goal, but users can readily use resampling-based variance estimation methods for such purpose. Transforming a <code>svydesign</code> object to a <code>svrepdesign</code> with <code>survey::as.svrepdesign</code> might be a useful approach around this limitation.</p>
+<p>Accounting for the covariance between estimates is particularly important for inference regarding net changes, for instance.
+Many countries use rotating panel schemes with overlapping samples for their labour surveys,
+meaning that that part of the sample is interviewed again in the next round.
+For instance, the PNADC and the Basic Monthly CPS both use a rotating panel scheme, where a household is interviewed a number of times before dropping from the sample.
+For net changes, the overlapping samples tend to produce positive covariances over time, so that accounting for
+the covariance between the estimates can produce improved inferences through less conservative confidence intervals.</p>
+<p>The practical implications can be made clear by studying the variance of the difference.
+Consider the two estimates <span class="math inline">\(\widehat{T}_1\)</span> and <span class="math inline">\(\widehat{T}_2\)</span>, where we are interested in making inferences about <span class="math inline">\(T_1 - T_2\)</span>.
+We can estimate this difference using <span class="math inline">\(\widehat{T}_1 - \widehat{T}_2\)</span>.
+Put simply, the variance of this difference is given by</p>
 <p><span class="math display">\[
 Var \big( \widehat{T}_1 - \widehat{T}_2 \big) =
     Var \big( \widehat{T}_1 \big) + Var \big( \widehat{T}_2 \big) - 2 Cov \big( \widehat{T}_1 , \widehat{T}_2 \big)
@@ -305,52 +313,12 @@ Var \big( \widehat{T}_1 - \widehat{T}_2 \big) =
 <p>where: <span class="math inline">\(Var \big( \widehat{T}_1 \big)\)</span> and <span class="math inline">\(Var \big( \widehat{T}_2 \big)\)</span>
 are the variances of the estimators <span class="math inline">\(\widehat{T}_1\)</span> and <span class="math inline">\(\widehat{T}_2\)</span>;
 <span class="math inline">\(Cov \big( \widehat{T}_1 , \widehat{T}_2 \big)\)</span> is the covariance of these estimators.
-Usually, the covariance term is ignored. But, specially for changes, the covariance
-tends to be positive, which results in a conservative variance estimator for the difference.</p>
-<p>Then, how can we estimate the covariance? The <code>survey</code> package already provides an
-approach for that using the <code>svyby</code> function. Based on the <code>?survey::svyby</code> examples,
-we have:</p>
-<div class="sourceCode" id="cb1113"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1113-1"><a href="7-covariance-matrix.html#cb1113-1" tabindex="-1"></a><span class="co"># load the survey library</span></span>
-<span id="cb1113-2"><a href="7-covariance-matrix.html#cb1113-2" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
-<span id="cb1113-3"><a href="7-covariance-matrix.html#cb1113-3" tabindex="-1"></a></span>
-<span id="cb1113-4"><a href="7-covariance-matrix.html#cb1113-4" tabindex="-1"></a><span class="co">#  load data set</span></span>
-<span id="cb1113-5"><a href="7-covariance-matrix.html#cb1113-5" tabindex="-1"></a><span class="fu">data</span>( api )</span>
-<span id="cb1113-6"><a href="7-covariance-matrix.html#cb1113-6" tabindex="-1"></a></span>
-<span id="cb1113-7"><a href="7-covariance-matrix.html#cb1113-7" tabindex="-1"></a><span class="co"># declare sampling design</span></span>
-<span id="cb1113-8"><a href="7-covariance-matrix.html#cb1113-8" tabindex="-1"></a>dclus1 <span class="ot">&lt;-</span> <span class="fu">svydesign</span>( <span class="at">id=</span><span class="sc">~</span>dnum, <span class="at">weights=</span><span class="sc">~</span>pw, <span class="at">data=</span>apiclus1, <span class="at">fpc=</span><span class="sc">~</span>fpc )</span>
-<span id="cb1113-9"><a href="7-covariance-matrix.html#cb1113-9" tabindex="-1"></a></span>
-<span id="cb1113-10"><a href="7-covariance-matrix.html#cb1113-10" tabindex="-1"></a><span class="co"># estimate means</span></span>
-<span id="cb1113-11"><a href="7-covariance-matrix.html#cb1113-11" tabindex="-1"></a>mns <span class="ot">&lt;-</span><span class="fu">svyby</span>(<span class="sc">~</span>api99, <span class="sc">~</span>stype, dclus1, svymean,<span class="at">covmat=</span><span class="cn">TRUE</span>)</span>
-<span id="cb1113-12"><a href="7-covariance-matrix.html#cb1113-12" tabindex="-1"></a></span>
-<span id="cb1113-13"><a href="7-covariance-matrix.html#cb1113-13" tabindex="-1"></a><span class="co"># collect variacnce-covariance matrix of estimates</span></span>
-<span id="cb1113-14"><a href="7-covariance-matrix.html#cb1113-14" tabindex="-1"></a>( m <span class="ot">&lt;-</span> <span class="fu">vcov</span>( mns ) )</span></code></pre></div>
-<pre><code>##          E         H         M
-## E 520.5973  573.0404  684.6562
-## H 573.0404 1744.2317  747.1989
-## M 684.6562  747.1989 1060.1954</code></pre>
-<div class="sourceCode" id="cb1115"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1115-1"><a href="7-covariance-matrix.html#cb1115-1" tabindex="-1"></a><span class="co"># compute variance terms</span></span>
-<span id="cb1115-2"><a href="7-covariance-matrix.html#cb1115-2" tabindex="-1"></a>var.naive <span class="ot">&lt;-</span> <span class="fu">sum</span>( <span class="fu">diag</span>( m[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>),<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>)] ) )</span>
-<span id="cb1115-3"><a href="7-covariance-matrix.html#cb1115-3" tabindex="-1"></a>cov.term <span class="ot">&lt;-</span> <span class="fu">sum</span>( <span class="fu">diag</span>( m[ <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>),<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">1</span>)] ) )</span>
-<span id="cb1115-4"><a href="7-covariance-matrix.html#cb1115-4" tabindex="-1"></a></span>
-<span id="cb1115-5"><a href="7-covariance-matrix.html#cb1115-5" tabindex="-1"></a><span class="co"># &quot;naive&quot; SE of the difference</span></span>
-<span id="cb1115-6"><a href="7-covariance-matrix.html#cb1115-6" tabindex="-1"></a><span class="fu">sqrt</span>( var.naive )</span></code></pre></div>
-<pre><code>## [1] 39.75918</code></pre>
-<div class="sourceCode" id="cb1117"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1117-1"><a href="7-covariance-matrix.html#cb1117-1" tabindex="-1"></a><span class="co"># SE of the difference</span></span>
-<span id="cb1117-2"><a href="7-covariance-matrix.html#cb1117-2" tabindex="-1"></a><span class="fu">sqrt</span>( var.naive <span class="sc">-</span> cov.term )</span></code></pre></div>
-<pre><code>## [1] 14.54236</code></pre>
-<div class="sourceCode" id="cb1119"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1119-1"><a href="7-covariance-matrix.html#cb1119-1" tabindex="-1"></a><span class="co">#... or using svycontrast</span></span>
-<span id="cb1119-2"><a href="7-covariance-matrix.html#cb1119-2" tabindex="-1"></a><span class="fu">svycontrast</span>( mns , <span class="fu">c</span>(<span class="at">E =</span> <span class="dv">1</span>, <span class="at">M =</span> <span class="sc">-</span><span class="dv">1</span>) )</span></code></pre></div>
-<pre><code>##          contrast     SE
-## contrast -0.80833 14.542</code></pre>
-<p>Notice that, because the covariance terms are positive, the (actual) variance of
-the difference is smaller than the “naive” variance.</p>
-<p>A similar idea can be implemented with other estimators, such as inequality and poverty measures.
-However, this has not yet been implemented for linearization/influence function methods.
-In the next section, we show an example with the Gini index.</p>
+Usually, the estimators are assumed to be independent and the covariance term can be ignored. But, when the covariance
+is strongly positive, this results in a overly conservative variance estimator for the difference.<label for="tufte-sn-14" class="margin-toggle sidenote-number">14</label><input type="checkbox" id="tufte-sn-14" class="margin-toggle"><span class="sidenote"><span class="sidenote-number">14</span> The covariance can also be negative; then, the variance of the difference would be larger than the sum of the variances. While theoretically possible, we have not observed it in practice yet.</span></p>
 </div>
 <p style="text-align: center;">
 <a href="6.3-replication-example-13.html"><button class="btn btn-default">Previous</button></a>
-<a href="7.1-example-calculation.html"><button class="btn btn-default">Next</button></a>
+<a href="7.1-using-the-survey-package.html"><button class="btn btn-default">Next</button></a>
 </p>
 </div>
 </div>
