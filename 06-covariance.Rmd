@@ -7,11 +7,20 @@ output:
 
 # Covariance Matrix
 
-The current `convey` software does not account for the covariance across `svyby` groups.  The example below describes this calculation and presents what is, in this case, a limited impact on the final error terms.  We acknowledge that, under ideal circumstances, the covariance would be properly accounted for in the software.  Modifying our software to account for the covariance remains a future goal.
+The current `convey` software does not account for the covariance across groups for linearized variance estimators (as the objects created using `svydesign`).  We acknowledge that, under ideal circumstances, the covariance would be properly accounted for in the software.  Modifying our software to account for the covariance using linearization remains a future goal, but users can readily use resampling-based variance estimation methods for such purpose.  Transforming a `svydesign` object to a `svrepdesign` with `survey::as.svrepdesign` might be a useful approach around this limitation.
 
-Influence functions and "resampling" replicates can be used to improve the inference 
-about differences and changes between estimates. Put simply, the variance of the difference between 
-two estimates $\widehat{T}_1$ and $\widehat{T}_2$ is given by
+
+Accounting for the covariance between estimates is particularly important for inference regarding net changes, for instance.
+Many countries use rotating panel schemes with overlapping samples for their labour surveys, 
+meaning that that part of the sample is interviewed again in the next round.
+For instance, the PNADC and the Basic Monthly CPS both use a rotating panel scheme, where a household is interviewed a number of times before dropping from the sample.
+For net changes, the overlapping samples tend to produce positive covariances over time, so that accounting for 
+the covariance between the estimates can produce improved inferences through less conservative confidence intervals.
+
+The practical implications can be made clear by studying the variance of the difference.
+Consider the two estimates $\widehat{T}_1$ and $\widehat{T}_2$, where we are interested in making inferences about $T_1 - T_2$.
+We can estimate this difference using $\widehat{T}_1 - \widehat{T}_2$.
+Put simply, the variance of this difference is given by
 
 $$
 Var \big( \widehat{T}_1 - \widehat{T}_2 \big) = 
@@ -21,12 +30,17 @@ $$
 \noindent where: $Var \big( \widehat{T}_1 \big)$ and $Var \big( \widehat{T}_2 \big)$ 
 are the variances of the estimators $\widehat{T}_1$ and $\widehat{T}_2$; 
 $Cov \big( \widehat{T}_1 , \widehat{T}_2 \big)$ is the covariance of these estimators.
-Usually, the covariance term is ignored. But, specially for changes, the covariance
-tends to be positive, which results in a conservative variance estimator for the difference.
+Usually, the estimators are assumed to be independent and the covariance term can be ignored. But, when the covariance
+is strongly positive, this results in a overly conservative variance estimator for the difference.^[The covariance can also be negative; then, the variance of the difference would be larger than the sum of the variances. While theoretically possible, we have not observed it in practice yet.]
 
-Then, how can we estimate the covariance? The `survey` package already provides an 
-approach for that using the `svyby` function. Based on the `?survey::svyby` examples, 
-we have: 
+## Using the `survey` package
+
+Influence functions and "resampling" replicates can be used to improve the inference 
+about differences and changes between estimates. 
+
+The `survey` package already provides an 
+approach for estimating the variance-covariance matrix using the `svyby` function. 
+Based on the `?survey::svyby` examples, we have: 
 
 ```{r}
 # load the survey library
@@ -41,7 +55,7 @@ dclus1 <- svydesign( id=~dnum, weights=~pw, data=apiclus1, fpc=~fpc )
 # estimate means
 mns <-svyby(~api99, ~stype, dclus1, svymean,covmat=TRUE)
 
-# collect variacnce-covariance matrix of estimates
+# collect variance-covariance matrix of estimates
 ( m <- vcov( mns ) )
 
 # compute variance terms
@@ -66,6 +80,8 @@ However, this has not yet been implemented for linearization/influence function 
 In the next section, we show an example with the Gini index.
 
 ## Example Calculation
+
+The current `convey` software does not account for the covariance across `svyby` groups for linearization-based estimation.  The example below describes this calculation and presents what is, in this case, a limited impact on the final error terms.  
 
 We start by showing what has been implemented --- the resampling based approach:
 
@@ -115,6 +131,10 @@ svycontrast( ginis.rep , quote( `male` - `female` ) )
 
 Notice that the warning `Only diagonal elements of vcov() available` means that
 the covariance terms are null for the `vcov( ginis.rep.nocov )` result.
+
+We highlight that, for net changes under rotating panels, the resampling procedures
+should be modified to account for the covariance induced by the overlapping samples. 
+An `R` based solution is presented by @cillia2021.
 
 While not implemented yet, a linearization-based approach can be applied using:
 
