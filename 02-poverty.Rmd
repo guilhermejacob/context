@@ -7,7 +7,7 @@ output:
 
 Poverty has been a topic of conversation throughout human history. As @ravallion2016 points out, Aristotle and Confucius discussed ideas about poverty. In fact, Aristotle's ideas influenced Thomas Aquinas, one of the pillars of Western philosophy. Since then, societies changed, modifying the theories of justice underlying the idea of poverty.
 
-As the concept and the ethics towards poverty change, so does its measurement. From basic measures like the headcount rate to more complex metrics, such as the Foster-Greer-Thorbecke (FGT) index, poverty measurement has evolved. Nowadays, poverty estimates are calculated using household surveys and censuses [@deaton1997]. However, only recently have the aspects of statistical inference combining such measures and complex sample survey designs been explored (for more discussion on this topic, see @deville1999, @berger2003, @bhat2007, and @osier2009).  These advances became even more important given the recent efforts in poverty mapping, an analytical method that combines poverty analysis and small area estimation, like @elbers2003, @bedi2007 and @molina2010.
+As the concept and the ethics towards poverty change, so does its measurement. From basic measures like the headcount rate to more complex metrics, such as the Foster-Greer-Thorbecke (FGT) index, poverty measurement has evolved. Nowadays, poverty estimates are calculated using household surveys and censuses [@deaton1997]. However, only (relatively) recently have the aspects of statistical inference combining such measures and complex sample survey designs been explored (for more discussion on this topic, see @deville1999, @berger2003, @bhat2007, @osier2009 and references therein).  These advances became even more important given the recent efforts in poverty mapping, an analytical method that combines poverty analysis and small area estimation, like @elbers2003, @bedi2007 and @molina2010.
 
 This chapter shows how poverty estimates and their sampling errors can be estimated using simple commands from the `convey` package.
 
@@ -132,7 +132,7 @@ varpoord_arpt_calculation$all_result$se
 SE(svyarpt( ~ eqincome , des_eusilc))
 ```
 
-The variance estimate and the linearized variable $z$ are both defined in [Linearization-Based Variance Estimation]. The functions `convey::svyarpt` and `vardpoor::linarpt` produce the same linearized variable $z$.
+The variance estimator and the linearized variable $z$ are both defined in [Linearization-Based Variance Estimation]. The functions `convey::svyarpt` and `vardpoor::linarpt` produce the same linearized variable $z$.
 
 However, the measures of uncertainty do not line up, because `library(vardpoor)` defaults to an ultimate cluster method that can be replicated with an alternative setup of the `survey.design` object.
 
@@ -193,7 +193,7 @@ For additional usage examples of `svyarpt`, type `?convey::svyarpt` in the R con
 
 This section displays example results using nationally-representative surveys from both the United States and Brazil.  We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the `svyarpt` function.
 
-To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD-Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
+To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
 
 #### CPS-ASEC Household Income
 
@@ -220,7 +220,7 @@ svyby(~ pearnval , ~ sex , cps_ftfy_worker_design , svyarpt)
 ```
 
 
-#### PNAD-Contínua Per Capita Income
+#### PNAD Contínua Per Capita Income
 
 ```{r}
 svyarpt( ~ deflated_per_capita_income , pnadc_design , na.rm = TRUE)
@@ -232,7 +232,7 @@ svyby(~ deflated_per_capita_income ,
       na.rm = TRUE)
 ```
 
-#### PNAD-Contínua Worker Earnings
+#### PNAD Contínua Worker Earnings
 
 ```{r}
 svyarpt( ~ deflated_labor_income , pnadc_design , na.rm = TRUE)
@@ -277,7 +277,7 @@ scf_MIcombine(with(scf_design , svyby( ~ income, ~ hhsex , svyarpt)))
 
 The at-risk-of-poverty rate (ARPR) is the share of persons with an income below the at-risk-of-poverty threshold (ARPT). The logic behind this measure is that although most people below the ARPT cannot be considered "poor", they are the ones most vulnerable to becoming poor in the event of a negative economic phenomenon like a recession.
 
-The ARPR is a composite estimate, taking into account both the sampling error in the proportion itself and that in the ARPT estimate. The details of the linearization of the ARPR are discussed by @deville1999 and @osier2009.
+The ARPR estimator is a composite estimator, taking into account both the sampling error in the proportion itself and that in the ARPT estimate. The details of the linearization of the ARPR are discussed by @deville1999 and @osier2009.
 
 ---
 
@@ -386,7 +386,7 @@ varpoord_arpr_calculation$all_result$var
 varpoord_arpr_calculation$all_result$se
 SE(svyarpr( ~ eqincome , des_eusilc)) * 100
 ```
-The variance estimate and the linearized variable $z$ are both defined in [Linearization-Based Variance Estimation]. The functions `convey::svyarpr` and `vardpoor::linarpr` produce the same linearized variable $z$.
+The variance estimator and the linearized variable $z$ are both defined in [Linearization-Based Variance Estimation]. The functions `convey::svyarpr` and `vardpoor::linarpr` produce the same linearized variable $z$.
 
 However, the measures of uncertainty do not line up. One of the reasons is that `library(vardpoor)` defaults to an ultimate cluster method that can be replicated with an alternative setup of the `survey.design` object.
 
@@ -586,7 +586,7 @@ For additional usage examples of `svyarpr`, type `?convey::svyarpr` in the R con
 
 This section displays example results using nationally-representative surveys from both the United States and Brazil.  We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the `svyarpr` function.
 
-To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD-Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
+To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
 
 #### CPS-ASEC Household Income
 
@@ -613,7 +613,7 @@ svyby(~ pearnval , ~ sex , cps_ftfy_worker_design , svyarpr)
 ```
 
 
-#### PNAD-Contínua Per Capita Income
+#### PNAD Contínua Per Capita Income
 
 ```{r}
 svyarpr( ~ deflated_per_capita_income , pnadc_design , na.rm = TRUE)
@@ -625,7 +625,7 @@ svyby(~ deflated_per_capita_income ,
       na.rm = TRUE)
 ```
 
-#### PNAD-Contínua Worker Earnings
+#### PNAD Contínua Worker Earnings
 
 ```{r}
 svyarpr( ~ deflated_labor_income , pnadc_design , na.rm = TRUE)
@@ -788,7 +788,7 @@ varpoord_rmir_calculation$all_result$se
 SE(svyrmir( ~ eqincome , des_eusilc , age = ~ age)) 
 ```
 
-The variance estimate and the linearized variable $z$ are both defined in [Linearization-Based Variance Estimation]. The functions `convey::svyrmir` and `vardpoor::linrmir` produce the same linearized variable $z$.
+The variance estimator and the linearized variable $z$ are both defined in [Linearization-Based Variance Estimation]. The functions `convey::svyrmir` and `vardpoor::linrmir` produce the same linearized variable $z$.
 
 However, the measures of uncertainty do not line up, because `library(vardpoor)` defaults to an ultimate cluster method that can be replicated with an alternative setup of the `survey.design` object.
 
@@ -843,7 +843,7 @@ For additional usage examples of `svyrmir`, type `?convey::svyrmir` in the R con
 
 This section displays example results using nationally-representative surveys from both the United States and Brazil.  We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the `svyrmir` function.
 
-To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD-Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
+To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
 
 #### CPS-ASEC Household Income
 
@@ -870,7 +870,7 @@ svyby( ~ pearnval , ~ sex , cps_ftfy_worker_design , svyrmir , age = ~ a_age)
 ```
 
 
-#### PNAD-Contínua Per Capita Income
+#### PNAD Contínua Per Capita Income
 
 ```{r}
 svyrmir(~ deflated_per_capita_income ,
@@ -888,7 +888,7 @@ svyby(
 )
 ```
 
-#### PNAD-Contínua Worker Earnings
+#### PNAD Contínua Worker Earnings
 
 ```{r}
 svyrmir(~ deflated_labor_income ,
@@ -1048,7 +1048,7 @@ varpoord_rmpg_calculation$all_result$se
 SE(svyrmpg( ~ eqincome , des_eusilc)) * 100
 ```
 
-The variance estimate and the linearized variable $z$ are both defined in [Linearization-Based Variance Estimation]. The functions `convey::svyrmpg` and `vardpoor::linrmpg` produce the same linearized variable $z$.
+The variance estimator and the linearized variable $z$ are both defined in [Linearization-Based Variance Estimation]. The functions `convey::svyrmpg` and `vardpoor::linrmpg` produce the same linearized variable $z$.
 
 However, the measures of uncertainty do not line up, because `library(vardpoor)` defaults to an ultimate cluster method that can be replicated with an alternative setup of the `survey.design` object.
 
@@ -1103,7 +1103,7 @@ For additional usage examples of `svyrmpg`, type `?convey::svyrmpg` in the R con
 
 This section displays example results using nationally-representative surveys from both the United States and Brazil.  We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the `svyrmpg` function.
 
-To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD-Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
+To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
 
 #### CPS-ASEC Household Income
 
@@ -1130,7 +1130,7 @@ svyby( ~ pearnval , ~ sex , cps_ftfy_worker_design , svyrmpg)
 ```
 
 
-#### PNAD-Contínua Per Capita Income
+#### PNAD Contínua Per Capita Income
 
 ```{r}
 svyrmpg( ~ deflated_per_capita_income , pnadc_design , na.rm = TRUE)
@@ -1142,7 +1142,7 @@ svyby( ~ deflated_per_capita_income ,
        na.rm = TRUE)
 ```
 
-#### PNAD-Contínua Worker Earnings
+#### PNAD Contínua Worker Earnings
 
 ```{r}
 svyrmpg( ~ deflated_labor_income , pnadc_design , na.rm = TRUE)
@@ -1295,7 +1295,7 @@ varpoord_poormed_calculation$all_result$se
 SE(svypoormed( ~ eqincome , des_eusilc))
 ```
 
-The variance estimate and the linearized variable $z$ are both defined in [Linearization-Based Variance Estimation]. The functions `convey::svypoormed` and `vardpoor::linpoormed` produce the same linearized variable $z$.
+The variance estimator and the linearized variable $z$ are both defined in [Linearization-Based Variance Estimation]. The functions `convey::svypoormed` and `vardpoor::linpoormed` produce the same linearized variable $z$.
 
 However, the measures of uncertainty do not line up, because `library(vardpoor)` defaults to an ultimate cluster method that can be replicated with an alternative setup of the `survey.design` object.
 
@@ -1348,7 +1348,7 @@ For additional usage examples of `svypoormed`, type `?convey::svypoormed` in the
 
 This section displays example results using nationally-representative surveys from both the United States and Brazil.  We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the `svypoormed` function.
 
-To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD-Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
+To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
 
 #### CPS-ASEC Household Income
 
@@ -1375,7 +1375,7 @@ svyby( ~ pearnval , ~ sex , cps_ftfy_worker_design , svypoormed)
 ```
 
 
-#### PNAD-Contínua Per Capita Income
+#### PNAD Contínua Per Capita Income
 
 ```{r}
 svypoormed( ~ deflated_per_capita_income , pnadc_design , na.rm = TRUE)
@@ -1387,7 +1387,7 @@ svyby( ~ deflated_per_capita_income ,
        na.rm = TRUE)
 ```
 
-#### PNAD-Contínua Worker Earnings
+#### PNAD Contínua Worker Earnings
 
 ```{r}
 svypoormed( ~ deflated_labor_income , pnadc_design , na.rm = TRUE)
@@ -1895,7 +1895,7 @@ For additional usage examples of `svyfgt` and `svyfgtdec`, type `?convey::svyfgt
 
 This section displays example results using nationally-representative surveys from both the United States and Brazil.  We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the `svyfgt` function.
 
-To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD-Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
+To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
 
 #### CPS-ASEC Household Income
 
@@ -1941,7 +1941,7 @@ svyby(~ pearnval , ~ sex , cps_ftfy_worker_design , svyfgt , g = 1 , type_thresh
 ```
 
 
-#### PNAD-Contínua Per Capita Income
+#### PNAD Contínua Per Capita Income
 
 ```{r}
 # poverty gap ratio, with poverty threshold fixed at 0.6 x median
@@ -1954,7 +1954,7 @@ svyby(~ deflated_per_capita_income ,
       na.rm = TRUE , g = 1 , type_thresh = "relq")
 ```
 
-#### PNAD-Contínua Worker Earnings
+#### PNAD Contínua Worker Earnings
 
 ```{r}
 # poverty gap ratio, with poverty threshold fixed at 0.6 x median
@@ -2386,7 +2386,7 @@ For additional usage examples of `svywatts` and `svywattsdec`, type `?convey::sv
 
 This section displays example results using nationally-representative surveys from both the United States and Brazil.  We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the `svywatts` function.
 
-To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD-Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
+To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
 
 #### CPS-ASEC Household Income
 
@@ -2452,7 +2452,7 @@ svyby(
 ```
 
 
-#### PNAD-Contínua Per Capita Income
+#### PNAD Contínua Per Capita Income
 
 ```{r}
 # poverty threshold equal to arpt
@@ -2475,7 +2475,7 @@ svyby(
 )
 ```
 
-#### PNAD-Contínua Worker Earnings
+#### PNAD Contínua Worker Earnings
 
 ```{r}
 # poverty threshold equal to arpt
