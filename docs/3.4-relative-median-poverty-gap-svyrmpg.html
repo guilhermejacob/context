@@ -13,7 +13,7 @@
 
 <meta name="author" content="By Guilherme Jacob, Anthony Damico, and Djalma Pessoa. The authors received no external funding for the convey software and this accompanying textbook." />
 
-<meta name="date" content="2024-05-23" />
+<meta name="date" content="2024-10-15" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -46,7 +46,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -454,7 +454,7 @@ The details of the linearization of the RMPG are discussed by <span class="citat
 <div id="real-world-examples-4" class="section level3" number="3.4.2">
 <h3><span class="header-section-number">3.4.2</span> Real World Examples</h3>
 <p>This section displays example results using nationally-representative surveys from both the United States and Brazil. We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the <code>svyrmpg</code> function.</p>
-<p>To understand the construction of each survey design object and respective variables of interest, please refer to <a href="https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html">section 1.4</a> for CPS-ASEC, <a href="https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html">section 1.5</a> for PNAD Contínua, and <a href="https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html">section 1.6</a> for SCF.</p>
+<p>To understand the construction of each survey design object and respective variables of interest, please refer to <a href="https://www.convey-r.org/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html">section 1.4</a> for CPS-ASEC, <a href="https://www.convey-r.org/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html">section 1.5</a> for PNAD Contínua, and <a href="https://www.convey-r.org/1.6-survey-of-consumer-finances-scf.html">section 1.6</a> for SCF.</p>
 <div id="cps-asec-household-income-4" class="section level4" number="3.4.2.1">
 <h4><span class="header-section-number">3.4.2.1</span> CPS-ASEC Household Income</h4>
 <div class="sourceCode" id="cb384"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb384-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb384-1" tabindex="-1"></a><span class="fu">svyrmpg</span>( <span class="sc">~</span> htotval , cps_household_design)</span></code></pre></div>
@@ -513,13 +513,13 @@ The details of the linearization of the RMPG are discussed by <span class="citat
 <h4><span class="header-section-number">3.4.2.6</span> SCF Family Net Worth</h4>
 <div class="sourceCode" id="cb404"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb404-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb404-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(scf_design , <span class="fu">svyrmpg</span>( <span class="sc">~</span> networth)))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
-##       m &lt;- length(results)
+##       with(scf_design, svyrmpg(~networth))
 ##       scf_MIcombine(with(scf_design, svyrmpg(~networth)))
 ##            results          se
 ## networth 0.8764535 0.006946956</code></pre>
 <div class="sourceCode" id="cb406"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb406-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb406-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(scf_design , <span class="fu">svyby</span>( <span class="sc">~</span> networth, <span class="sc">~</span> hhsex , svyrmpg)))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
-##       m &lt;- length(results)
+##       with(scf_design, svyby(~networth, ~hhsex, svyrmpg))
 ##       scf_MIcombine(with(scf_design, svyby(~networth, ~hhsex, svyrmpg)))
 ##          results         se
 ## male   0.8344603 0.01418904
@@ -529,13 +529,13 @@ The details of the linearization of the RMPG are discussed by <span class="citat
 <h4><span class="header-section-number">3.4.2.7</span> SCF Family Income</h4>
 <div class="sourceCode" id="cb408"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb408-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb408-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(scf_design , <span class="fu">svyrmpg</span>( <span class="sc">~</span> income)))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
-##       m &lt;- length(results)
+##       with(scf_design, svyrmpg(~income))
 ##       scf_MIcombine(with(scf_design, svyrmpg(~income)))
 ##          results         se
 ## income 0.4069153 0.01961822</code></pre>
 <div class="sourceCode" id="cb410"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb410-1"><a href="3.4-relative-median-poverty-gap-svyrmpg.html#cb410-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(scf_design , <span class="fu">svyby</span>( <span class="sc">~</span> income, <span class="sc">~</span> hhsex , svyrmpg)))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
-##       m &lt;- length(results)
+##       with(scf_design, svyby(~income, ~hhsex, svyrmpg))
 ##       scf_MIcombine(with(scf_design, svyby(~income, ~hhsex, svyrmpg)))
 ##          results         se
 ## male   0.3609169 0.01459789

@@ -13,7 +13,7 @@
 
 <meta name="author" content="By Guilherme Jacob, Anthony Damico, and Djalma Pessoa. The authors received no external funding for the convey software and this accompanying textbook." />
 
-<meta name="date" content="2024-05-23" />
+<meta name="date" content="2024-10-15" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -46,7 +46,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -464,7 +464,7 @@ G &amp;= 2 \bigg( \int_{0}^{1} pdp - \int_{0}^{1} L(p)dp \bigg) \\
 <div id="real-world-examples-11" class="section level3" number="4.6.2">
 <h3><span class="header-section-number">4.6.2</span> Real World Examples</h3>
 <p>This section displays example results using nationally-representative surveys from both the United States and Brazil. We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the <code>svygini</code> function.</p>
-<p>To understand the construction of each survey design object and respective variables of interest, please refer to <a href="https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html">section 1.4</a> for CPS-ASEC, <a href="https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html">section 1.5</a> for PNAD Contínua, and <a href="https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html">section 1.6</a> for SCF.</p>
+<p>To understand the construction of each survey design object and respective variables of interest, please refer to <a href="https://www.convey-r.org/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html">section 1.4</a> for CPS-ASEC, <a href="https://www.convey-r.org/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html">section 1.5</a> for PNAD Contínua, and <a href="https://www.convey-r.org/1.6-survey-of-consumer-finances-scf.html">section 1.6</a> for SCF.</p>
 <div id="cps-asec-household-income-11" class="section level4" number="4.6.2.1">
 <h4><span class="header-section-number">4.6.2.1</span> CPS-ASEC Household Income</h4>
 <div class="sourceCode" id="cb769"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb769-1"><a href="4.6-gini-index-svygini.html#cb769-1" tabindex="-1"></a><span class="fu">svygini</span>(<span class="sc">~</span> htotval , cps_household_design)</span></code></pre></div>
@@ -523,13 +523,13 @@ G &amp;= 2 \bigg( \int_{0}^{1} pdp - \int_{0}^{1} L(p)dp \bigg) \\
 <h4><span class="header-section-number">4.6.2.6</span> SCF Family Net Worth</h4>
 <div class="sourceCode" id="cb789"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb789-1"><a href="4.6-gini-index-svygini.html#cb789-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(scf_design , <span class="fu">svygini</span>( <span class="sc">~</span> networth)))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
-##       m &lt;- length(results)
+##       with(scf_design, svygini(~networth))
 ##       scf_MIcombine(with(scf_design, svygini(~networth)))
 ##            results          se
 ## networth 0.8299712 0.003921153</code></pre>
 <div class="sourceCode" id="cb791"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb791-1"><a href="4.6-gini-index-svygini.html#cb791-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(scf_design , <span class="fu">svyby</span>( <span class="sc">~</span> networth, <span class="sc">~</span> hhsex , svygini)))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
-##       m &lt;- length(results)
+##       with(scf_design, svyby(~networth, ~hhsex, svygini))
 ##       scf_MIcombine(with(scf_design, svyby(~networth, ~hhsex, svygini)))
 ##          results          se
 ## male   0.8160695 0.005037685
@@ -539,13 +539,13 @@ G &amp;= 2 \bigg( \int_{0}^{1} pdp - \int_{0}^{1} L(p)dp \bigg) \\
 <h4><span class="header-section-number">4.6.2.7</span> SCF Family Income</h4>
 <div class="sourceCode" id="cb793"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb793-1"><a href="4.6-gini-index-svygini.html#cb793-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(scf_design , <span class="fu">svygini</span>( <span class="sc">~</span> income)))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
-##       m &lt;- length(results)
+##       with(scf_design, svygini(~income))
 ##       scf_MIcombine(with(scf_design, svygini(~income)))
 ##          results         se
 ## income 0.6070385 0.01059348</code></pre>
 <div class="sourceCode" id="cb795"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb795-1"><a href="4.6-gini-index-svygini.html#cb795-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(scf_design , <span class="fu">svyby</span>( <span class="sc">~</span> income, <span class="sc">~</span> hhsex , svygini)))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
-##       m &lt;- length(results)
+##       with(scf_design, svyby(~income, ~hhsex, svygini))
 ##       scf_MIcombine(with(scf_design, svyby(~income, ~hhsex, svygini)))
 ##          results         se
 ## male   0.5987009 0.01197205

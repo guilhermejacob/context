@@ -709,7 +709,8 @@ pnadc_df <-
   get_pnadc(2022 ,
             interview = 5 ,
             design = FALSE ,
-            labels = FALSE)
+            labels = FALSE ,
+			defyear = 2022)
 
 names(pnadc_df) <- tolower(names(pnadc_df))
 ```
@@ -1078,7 +1079,7 @@ summary( glm_result )
 Calculate the Gini coefficient with per capita income:
 
 ```{r}
-# https://sidra.ibge.gov.br/tabela/7435#/n1/all/v/all/p/last%201/d/v10681%203,v10682%201/l/v,p,t/resultado
+# https://sidra.ibge.gov.br/tabela/7435#/n1/all/v/all/p/last%202/d/v10681%203,v10682%201/l/v,p,t/resultado
 
 (
   pnadc_per_capita_gini <-
@@ -1097,7 +1098,7 @@ stopifnot(round(cv(pnadc_per_capita_gini), 3) == 0.006)
 Estimate the Gini coefficient with total earnings:
 
 ```{r}
-# https://sidra.ibge.gov.br/tabela/7453#/n1/all/v/all/p/last%201/d/v10806%203,v10807%201/l/v,p,t/resultado
+# https://sidra.ibge.gov.br/tabela/7453#/n1/all/v/all/p/last%202/d/v10806%203,v10807%201/l/v,p,t/resultado
 
 (pnadc_earnings_gini <-
    svygini( ~ deflated_labor_income , pnadc_design , na.rm = TRUE))
@@ -1556,7 +1557,7 @@ scf_MIcombine(with(scf_design , svygini(~ income)))
 
 In 2006, [the Financial Times reported](https://www.ft.com/content/41470ec0-845b-11db-87e0-0000779e2340) on a team of researchers finding that "Personal wealth is distributed so unevenly across the world that the richest two per cent of adults own more than 50 per cent of the world's assets while the poorest half hold only 1 per cent of wealth."  Although the original publication presented a global estimate, we haven chosen to reproduce this calculation using nationally-representative surveys from both the United States and Brazil.  We reproduce this inequality statistic with a variety of surveys and levels of analysis to highlight how this software can be used not only to estimate a number but also to understand the _uncertainty_ around that number.
 
-To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD-Contínua, and [section 1.6](https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html) for SCF.
+To understand the construction of each survey design object and respective variables of interest, please refer to [section 1.4](https://www.convey-r.org/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html) for CPS-ASEC, [section 1.5](https://www.convey-r.org/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html) for PNAD-Contínua, and [section 1.6](https://www.convey-r.org/1.6-survey-of-consumer-finances-scf.html) for SCF.
 
 ### CPS-ASEC Household Income
 

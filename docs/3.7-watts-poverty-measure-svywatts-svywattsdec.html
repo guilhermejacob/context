@@ -13,7 +13,7 @@
 
 <meta name="author" content="By Guilherme Jacob, Anthony Damico, and Djalma Pessoa. The authors received no external funding for the convey software and this accompanying textbook." />
 
-<meta name="date" content="2024-05-23" />
+<meta name="date" content="2024-10-15" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -46,7 +46,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -622,7 +622,7 @@ This means that, with a good estimate of the variance, we should be able to have
 <div id="real-world-examples-7" class="section level3" number="3.7.2">
 <h3><span class="header-section-number">3.7.2</span> Real World Examples</h3>
 <p>This section displays example results using nationally-representative surveys from both the United States and Brazil. We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the <code>svywatts</code> function.</p>
-<p>To understand the construction of each survey design object and respective variables of interest, please refer to <a href="https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html">section 1.4</a> for CPS-ASEC, <a href="https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html">section 1.5</a> for PNAD Contínua, and <a href="https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html">section 1.6</a> for SCF.</p>
+<p>To understand the construction of each survey design object and respective variables of interest, please refer to <a href="https://www.convey-r.org/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html">section 1.4</a> for CPS-ASEC, <a href="https://www.convey-r.org/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html">section 1.5</a> for PNAD Contínua, and <a href="https://www.convey-r.org/1.6-survey-of-consumer-finances-scf.html">section 1.6</a> for SCF.</p>
 <div id="cps-asec-household-income-7" class="section level4" number="3.7.2.1">
 <h4><span class="header-section-number">3.7.2.1</span> CPS-ASEC Household Income</h4>
 <div class="sourceCode" id="cb573"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb573-1"><a href="3.7-watts-poverty-measure-svywatts-svywattsdec.html#cb573-1" tabindex="-1"></a><span class="co"># poverty threshold equal to arpt</span></span>
@@ -754,7 +754,8 @@ This means that, with a good estimate of the variance, we should be able to have
 <pre><code>## Warning in subset.svyimputationList(scf_design, networth &gt; 0): subset differed
 ## between imputations</code></pre>
 <pre><code>## Multiple imputation results:
-##       m &lt;- length(results)
+##       with(subset(scf_design, networth &gt; 0), svywatts(~networth, type_thresh = &quot;relq&quot;, 
+##     thresh = TRUE))
 ##       scf_MIcombine(with(subset(scf_design, networth &gt; 0), svywatts(~networth, 
 ##     type_thresh = &quot;relq&quot;, thresh = TRUE)))
 ##            results         se
@@ -772,7 +773,8 @@ This means that, with a good estimate of the variance, we should be able to have
 <pre><code>## Warning in subset.svyimputationList(scf_design, networth &gt; 0): subset differed
 ## between imputations</code></pre>
 <pre><code>## Multiple imputation results:
-##       m &lt;- length(results)
+##       with(subset(scf_design, networth &gt; 0), svyby(~networth, ~hhsex, 
+##     svywatts, type_thresh = &quot;relq&quot;, thresh = TRUE))
 ##       scf_MIcombine(with(subset(scf_design, networth &gt; 0), svyby(~networth, 
 ##     ~hhsex, svywatts, type_thresh = &quot;relq&quot;, thresh = TRUE)))
 ##          results         se
@@ -791,7 +793,8 @@ This means that, with a good estimate of the variance, we should be able to have
 <pre><code>## Warning in subset.svyimputationList(scf_design, income &gt; 0): subset differed
 ## between imputations</code></pre>
 <pre><code>## Multiple imputation results:
-##       m &lt;- length(results)
+##       with(subset(scf_design, income &gt; 0), svywatts(~income, type_thresh = &quot;relq&quot;, 
+##     thresh = TRUE))
 ##       scf_MIcombine(with(subset(scf_design, income &gt; 0), svywatts(~income, 
 ##     type_thresh = &quot;relq&quot;, thresh = TRUE)))
 ##         results          se
@@ -809,7 +812,8 @@ This means that, with a good estimate of the variance, we should be able to have
 <pre><code>## Warning in subset.svyimputationList(scf_design, income &gt; 0): subset differed
 ## between imputations</code></pre>
 <pre><code>## Multiple imputation results:
-##       m &lt;- length(results)
+##       with(subset(scf_design, income &gt; 0), svyby(~income, ~hhsex, svywatts, 
+##     type_thresh = &quot;relq&quot;, thresh = TRUE))
 ##       scf_MIcombine(with(subset(scf_design, income &gt; 0), svyby(~income, 
 ##     ~hhsex, svywatts, type_thresh = &quot;relq&quot;, thresh = TRUE)))
 ##          results          se

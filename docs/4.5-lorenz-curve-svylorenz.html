@@ -13,7 +13,7 @@
 
 <meta name="author" content="By Guilherme Jacob, Anthony Damico, and Djalma Pessoa. The authors received no external funding for the convey software and this accompanying textbook." />
 
-<meta name="date" content="2024-05-23" />
+<meta name="date" content="2024-10-15" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -46,7 +46,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -555,7 +555,7 @@ L(p) = \frac{ \sum_{i \in S} w_i \cdot y_i \cdot \delta \{ y_i \le \widehat{Q}_p
 <div id="real-world-examples-10" class="section level3" number="4.5.2">
 <h3><span class="header-section-number">4.5.2</span> Real World Examples</h3>
 <p>This section displays example results using nationally-representative surveys from both the United States and Brazil. We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the <code>svylorenz</code> function.</p>
-<p>To understand the construction of each survey design object and respective variables of interest, please refer to <a href="https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html">section 1.4</a> for CPS-ASEC, <a href="https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html">section 1.5</a> for PNAD Contínua, and <a href="https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html">section 1.6</a> for SCF.</p>
+<p>To understand the construction of each survey design object and respective variables of interest, please refer to <a href="https://www.convey-r.org/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html">section 1.4</a> for CPS-ASEC, <a href="https://www.convey-r.org/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html">section 1.5</a> for PNAD Contínua, and <a href="https://www.convey-r.org/1.6-survey-of-consumer-finances-scf.html">section 1.6</a> for SCF.</p>
 <div id="cps-asec-household-income-10" class="section level4" number="4.5.2.1">
 <h4><span class="header-section-number">4.5.2.1</span> CPS-ASEC Household Income</h4>
 <div class="sourceCode" id="cb718"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb718-1"><a href="4.5-lorenz-curve-svylorenz.html#cb718-1" tabindex="-1"></a><span class="fu">svylorenz</span>(<span class="sc">~</span> htotval , cps_household_design)</span></code></pre></div>
@@ -724,7 +724,7 @@ L(p) = \frac{ \sum_{i \in S} w_i \cdot y_i \cdot \delta \{ y_i \le \widehat{Q}_p
 <h4><span class="header-section-number">4.5.2.6</span> SCF Family Net Worth</h4>
 <div class="sourceCode" id="cb738"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb738-1"><a href="4.5-lorenz-curve-svylorenz.html#cb738-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(scf_design , <span class="fu">svylorenz</span>(<span class="sc">~</span> networth, <span class="at">plot =</span> <span class="cn">FALSE</span>)))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
-##       m &lt;- length(results)
+##       with(scf_design, svylorenz(~networth, plot = FALSE))
 ##       scf_MIcombine(with(scf_design, svylorenz(~networth, plot = FALSE)))
 ##              results           se
 ## L(0)    0.0000000000 0.000000e+00
@@ -740,7 +740,7 @@ L(p) = \frac{ \sum_{i \in S} w_i \cdot y_i \cdot \delta \{ y_i \le \widehat{Q}_p
 ## L(1)    1.0000000000 5.419068e-14</code></pre>
 <div class="sourceCode" id="cb740"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb740-1"><a href="4.5-lorenz-curve-svylorenz.html#cb740-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(scf_design , <span class="fu">svyby</span>(<span class="sc">~</span> networth, <span class="sc">~</span> hhsex , svylorenz, <span class="at">plot =</span> <span class="cn">FALSE</span>)))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
-##       m &lt;- length(results)
+##       with(scf_design, svyby(~networth, ~hhsex, svylorenz, plot = FALSE))
 ##       scf_MIcombine(with(scf_design, svyby(~networth, ~hhsex, svylorenz, 
 ##     plot = FALSE)))
 ##                     results           se
@@ -771,7 +771,7 @@ L(p) = \frac{ \sum_{i \in S} w_i \cdot y_i \cdot \delta \{ y_i \le \widehat{Q}_p
 <h4><span class="header-section-number">4.5.2.7</span> SCF Family Income</h4>
 <div class="sourceCode" id="cb742"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb742-1"><a href="4.5-lorenz-curve-svylorenz.html#cb742-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(scf_design , <span class="fu">svylorenz</span>(<span class="sc">~</span> income, <span class="at">plot =</span> <span class="cn">FALSE</span>)))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
-##       m &lt;- length(results)
+##       with(scf_design, svylorenz(~income, plot = FALSE))
 ##       scf_MIcombine(with(scf_design, svylorenz(~income, plot = FALSE)))
 ##            results           se
 ## L(0)   0.000000000 0.000000e+00
@@ -787,7 +787,7 @@ L(p) = \frac{ \sum_{i \in S} w_i \cdot y_i \cdot \delta \{ y_i \le \widehat{Q}_p
 ## L(1)   1.000000000 1.156969e-13</code></pre>
 <div class="sourceCode" id="cb744"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb744-1"><a href="4.5-lorenz-curve-svylorenz.html#cb744-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(scf_design , <span class="fu">svyby</span>(<span class="sc">~</span> income, <span class="sc">~</span> hhsex , svylorenz, <span class="at">plot =</span> <span class="cn">FALSE</span>)))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
-##       m &lt;- length(results)
+##       with(scf_design, svyby(~income, ~hhsex, svylorenz, plot = FALSE))
 ##       scf_MIcombine(with(scf_design, svyby(~income, ~hhsex, svylorenz, 
 ##     plot = FALSE)))
 ##                  results           se

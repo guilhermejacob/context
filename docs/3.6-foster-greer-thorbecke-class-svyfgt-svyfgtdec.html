@@ -13,7 +13,7 @@
 
 <meta name="author" content="By Guilherme Jacob, Anthony Damico, and Djalma Pessoa. The authors received no external funding for the convey software and this accompanying textbook." />
 
-<meta name="date" content="2024-05-23" />
+<meta name="date" content="2024-10-15" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -46,7 +46,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -721,7 +721,7 @@ This means that, with a good estimate of the variance, we should be able to have
 <div id="real-world-examples-6" class="section level3" number="3.6.3">
 <h3><span class="header-section-number">3.6.3</span> Real World Examples</h3>
 <p>This section displays example results using nationally-representative surveys from both the United States and Brazil. We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the <code>svyfgt</code> function.</p>
-<p>To understand the construction of each survey design object and respective variables of interest, please refer to <a href="https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html">section 1.4</a> for CPS-ASEC, <a href="https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html">section 1.5</a> for PNAD Contínua, and <a href="https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html">section 1.6</a> for SCF.</p>
+<p>To understand the construction of each survey design object and respective variables of interest, please refer to <a href="https://www.convey-r.org/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html">section 1.4</a> for CPS-ASEC, <a href="https://www.convey-r.org/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html">section 1.5</a> for PNAD Contínua, and <a href="https://www.convey-r.org/1.6-survey-of-consumer-finances-scf.html">section 1.6</a> for SCF.</p>
 <div id="cps-asec-household-income-6" class="section level4" number="3.6.3.1">
 <h4><span class="header-section-number">3.6.3.1</span> CPS-ASEC Household Income</h4>
 <div class="sourceCode" id="cb497"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb497-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb497-1" tabindex="-1"></a><span class="co"># poverty gap ratio, with poverty threshold fixed at 0.6 x median</span></span>
@@ -818,7 +818,7 @@ This means that, with a good estimate of the variance, we should be able to have
 <span id="cb517-3"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb517-3" tabindex="-1"></a>  <span class="sc">~</span> networth , <span class="at">g =</span> <span class="dv">1</span> , <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span></span>
 <span id="cb517-4"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb517-4" tabindex="-1"></a>)))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
-##       m &lt;- length(results)
+##       with(scf_design, svyfgt(~networth, g = 1, type_thresh = &quot;relq&quot;))
 ##       scf_MIcombine(with(scf_design, svyfgt(~networth, g = 1, type_thresh = &quot;relq&quot;)))
 ##            results          se
 ## networth 0.3272587 0.005178114</code></pre>
@@ -833,7 +833,7 @@ This means that, with a good estimate of the variance, we should be able to have
 <span id="cb519-9"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb519-9" tabindex="-1"></a>  )</span>
 <span id="cb519-10"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb519-10" tabindex="-1"></a>))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
-##       m &lt;- length(results)
+##       with(scf_design, svyby(~networth, ~hhsex, svyfgt, g = 1, type_thresh = &quot;relq&quot;))
 ##       scf_MIcombine(with(scf_design, svyby(~networth, ~hhsex, svyfgt, 
 ##     g = 1, type_thresh = &quot;relq&quot;)))
 ##          results          se
@@ -845,13 +845,13 @@ This means that, with a good estimate of the variance, we should be able to have
 <div class="sourceCode" id="cb521"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb521-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb521-1" tabindex="-1"></a><span class="co"># poverty gap ratio, with poverty threshold fixed at 0.6 x median</span></span>
 <span id="cb521-2"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb521-2" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(scf_design , <span class="fu">svyfgt</span>( <span class="sc">~</span> income , <span class="at">g =</span> <span class="dv">1</span> , <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span>)))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
-##       m &lt;- length(results)
+##       with(scf_design, svyfgt(~income, g = 1, type_thresh = &quot;relq&quot;))
 ##       scf_MIcombine(with(scf_design, svyfgt(~income, g = 1, type_thresh = &quot;relq&quot;)))
 ##          results          se
 ## income 0.1220061 0.003308005</code></pre>
 <div class="sourceCode" id="cb523"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb523-1"><a href="3.6-foster-greer-thorbecke-class-svyfgt-svyfgtdec.html#cb523-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(scf_design , <span class="fu">svyby</span>( <span class="sc">~</span> income, <span class="sc">~</span> hhsex , svyfgt , <span class="at">g =</span> <span class="dv">1</span> , <span class="at">type_thresh =</span> <span class="st">&quot;relq&quot;</span>)))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
-##       m &lt;- length(results)
+##       with(scf_design, svyby(~income, ~hhsex, svyfgt, g = 1, type_thresh = &quot;relq&quot;))
 ##       scf_MIcombine(with(scf_design, svyby(~income, ~hhsex, svyfgt, 
 ##     g = 1, type_thresh = &quot;relq&quot;)))
 ##           results          se

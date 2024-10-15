@@ -13,7 +13,7 @@
 
 <meta name="author" content="By Guilherme Jacob, Anthony Damico, and Djalma Pessoa. The authors received no external funding for the convey software and this accompanying textbook." />
 
-<meta name="date" content="2024-05-23" />
+<meta name="date" content="2024-10-15" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -46,7 +46,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -463,7 +463,7 @@ rmir = \frac{median\{y_i; age_i &gt;65 \}}{median\{y_i; age_i \leq 65 \}}.
 <div id="real-world-examples-3" class="section level3" number="3.3.2">
 <h3><span class="header-section-number">3.3.2</span> Real World Examples</h3>
 <p>This section displays example results using nationally-representative surveys from both the United States and Brazil. We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the <code>svyrmir</code> function.</p>
-<p>To understand the construction of each survey design object and respective variables of interest, please refer to <a href="https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html">section 1.4</a> for CPS-ASEC, <a href="https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html">section 1.5</a> for PNAD Contínua, and <a href="https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html">section 1.6</a> for SCF.</p>
+<p>To understand the construction of each survey design object and respective variables of interest, please refer to <a href="https://www.convey-r.org/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html">section 1.4</a> for CPS-ASEC, <a href="https://www.convey-r.org/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html">section 1.5</a> for PNAD Contínua, and <a href="https://www.convey-r.org/1.6-survey-of-consumer-finances-scf.html">section 1.6</a> for SCF.</p>
 <div id="cps-asec-household-income-3" class="section level4" number="3.3.2.1">
 <h4><span class="header-section-number">3.3.2.1</span> CPS-ASEC Household Income</h4>
 <div class="sourceCode" id="cb340"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb340-1"><a href="3.3-relative-median-income-ratio-svyrmir.html#cb340-1" tabindex="-1"></a><span class="fu">svyrmir</span>(<span class="sc">~</span> htotval , cps_household_design , <span class="at">age =</span> <span class="sc">~</span> a_age)</span></code></pre></div>
@@ -538,13 +538,13 @@ rmir = \frac{median\{y_i; age_i &gt;65 \}}{median\{y_i; age_i \leq 65 \}}.
 <h4><span class="header-section-number">3.3.2.6</span> SCF Family Net Worth</h4>
 <div class="sourceCode" id="cb360"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb360-1"><a href="3.3-relative-median-income-ratio-svyrmir.html#cb360-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(scf_design , <span class="fu">svyrmir</span>( <span class="sc">~</span> networth , <span class="at">age =</span> <span class="sc">~</span> x8022)))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
-##       m &lt;- length(results)
+##       with(scf_design, svyrmir(~networth, age = ~x8022))
 ##       scf_MIcombine(with(scf_design, svyrmir(~networth, age = ~x8022)))
 ##           results        se
 ## networth 2.689949 0.1708213</code></pre>
 <div class="sourceCode" id="cb362"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb362-1"><a href="3.3-relative-median-income-ratio-svyrmir.html#cb362-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(scf_design , <span class="fu">svyby</span>( <span class="sc">~</span> networth, <span class="sc">~</span> hhsex , svyrmir , <span class="at">age =</span> <span class="sc">~</span> x8022)))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
-##       m &lt;- length(results)
+##       with(scf_design, svyby(~networth, ~hhsex, svyrmir, age = ~x8022))
 ##       scf_MIcombine(with(scf_design, svyby(~networth, ~hhsex, svyrmir, 
 ##     age = ~x8022)))
 ##         results        se
@@ -555,13 +555,13 @@ rmir = \frac{median\{y_i; age_i &gt;65 \}}{median\{y_i; age_i \leq 65 \}}.
 <h4><span class="header-section-number">3.3.2.7</span> SCF Family Income</h4>
 <div class="sourceCode" id="cb364"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb364-1"><a href="3.3-relative-median-income-ratio-svyrmir.html#cb364-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(scf_design , <span class="fu">svyrmir</span>( <span class="sc">~</span> income , <span class="at">age =</span> <span class="sc">~</span> x8022)))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
-##       m &lt;- length(results)
+##       with(scf_design, svyrmir(~income, age = ~x8022))
 ##       scf_MIcombine(with(scf_design, svyrmir(~income, age = ~x8022)))
 ##          results         se
 ## income 0.7061228 0.02895166</code></pre>
 <div class="sourceCode" id="cb366"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb366-1"><a href="3.3-relative-median-income-ratio-svyrmir.html#cb366-1" tabindex="-1"></a><span class="fu">scf_MIcombine</span>(<span class="fu">with</span>(scf_design , <span class="fu">svyby</span>( <span class="sc">~</span> income, <span class="sc">~</span> hhsex , svyrmir , <span class="at">age =</span> <span class="sc">~</span> x8022)))</span></code></pre></div>
 <pre><code>## Multiple imputation results:
-##       m &lt;- length(results)
+##       with(scf_design, svyby(~income, ~hhsex, svyrmir, age = ~x8022))
 ##       scf_MIcombine(with(scf_design, svyby(~income, ~hhsex, svyrmir, 
 ##     age = ~x8022)))
 ##          results         se

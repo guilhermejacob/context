@@ -13,7 +13,7 @@
 
 <meta name="author" content="By Guilherme Jacob, Anthony Damico, and Djalma Pessoa. The authors received no external funding for the convey software and this accompanying textbook." />
 
-<meta name="date" content="2024-05-23" />
+<meta name="date" content="2024-10-15" />
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -46,7 +46,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -456,7 +456,7 @@ J_W &amp;= \sum_{g \in G} \bigg[ \frac{Y_g}{Y} GE^{(1)}_g + \frac{N_g}{N} GE^{(0
 <div id="real-world-examples-15" class="section level3" number="4.12.2">
 <h3><span class="header-section-number">4.12.2</span> Real World Examples</h3>
 <p>This section displays example results using nationally-representative surveys from both the United States and Brazil. We present a variety of surveys, levels of analysis, and subpopulation breakouts to provide users with points of reference for the range of plausible values of the <code>svyjdiv</code> function.</p>
-<p>To understand the construction of each survey design object and respective variables of interest, please refer to <a href="https://guilhermejacob.github.io/context/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html">section 1.4</a> for CPS-ASEC, <a href="https://guilhermejacob.github.io/context/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html">section 1.5</a> for PNAD Contínua, and <a href="https://guilhermejacob.github.io/context/1.6-survey-of-consumer-finances-scf.html">section 1.6</a> for SCF.</p>
+<p>To understand the construction of each survey design object and respective variables of interest, please refer to <a href="https://www.convey-r.org/1.4-current-population-survey---annual-social-and-economic-supplement-cps-asec.html">section 1.4</a> for CPS-ASEC, <a href="https://www.convey-r.org/1.5-pesquisa-nacional-por-amostra-de-domic%C3%ADlios-cont%C3%ADnua-pnad-cont%C3%ADnua.html">section 1.5</a> for PNAD Contínua, and <a href="https://www.convey-r.org/1.6-survey-of-consumer-finances-scf.html">section 1.6</a> for SCF.</p>
 <div id="cps-asec-household-income-15" class="section level4" number="4.12.2.1">
 <h4><span class="header-section-number">4.12.2.1</span> CPS-ASEC Household Income</h4>
 <div class="sourceCode" id="cb1014"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1014-1"><a href="4.12-j-divergence-and-decomposition-svyjdiv-svyjdivdec.html#cb1014-1" tabindex="-1"></a><span class="fu">svyjdiv</span>(</span>
@@ -557,7 +557,7 @@ J_W &amp;= \sum_{g \in G} \bigg[ \frac{Y_g}{Y} GE^{(1)}_g + \frac{N_g}{N} GE^{(0
 <pre><code>## Warning in subset.svyimputationList(scf_design, networth &gt; 0): subset differed
 ## between imputations</code></pre>
 <pre><code>## Multiple imputation results:
-##       m &lt;- length(results)
+##       with(subset(scf_design, networth &gt; 0), svyjdiv(~networth))
 ##       scf_MIcombine(with(subset(scf_design, networth &gt; 0), svyjdiv(~networth)))
 ##           results         se
 ## networth 3.755306 0.06761237</code></pre>
@@ -568,7 +568,8 @@ J_W &amp;= \sum_{g \in G} \bigg[ \frac{Y_g}{Y} GE^{(1)}_g + \frac{N_g}{N} GE^{(0
 <pre><code>## Warning in subset.svyimputationList(scf_design, networth &gt; 0): subset differed
 ## between imputations</code></pre>
 <pre><code>## Multiple imputation results:
-##       m &lt;- length(results)
+##       with(subset(scf_design, networth &gt; 0), svyby(~networth, ~hhsex, 
+##     svyjdiv))
 ##       scf_MIcombine(with(subset(scf_design, networth &gt; 0), svyby(~networth, 
 ##     ~hhsex, svyjdiv)))
 ##         results         se
@@ -581,7 +582,7 @@ J_W &amp;= \sum_{g \in G} \bigg[ \frac{Y_g}{Y} GE^{(1)}_g + \frac{N_g}{N} GE^{(0
 <pre><code>## Warning in subset.svyimputationList(scf_design, income &gt; 0): subset differed
 ## between imputations</code></pre>
 <pre><code>## Multiple imputation results:
-##       m &lt;- length(results)
+##       with(subset(scf_design, income &gt; 0), svyjdiv(~income))
 ##       scf_MIcombine(with(subset(scf_design, income &gt; 0), svyjdiv(~income)))
 ##        results        se
 ## income 1.67673 0.1004542</code></pre>
@@ -592,7 +593,7 @@ J_W &amp;= \sum_{g \in G} \bigg[ \frac{Y_g}{Y} GE^{(1)}_g + \frac{N_g}{N} GE^{(0
 <pre><code>## Warning in subset.svyimputationList(scf_design, income &gt; 0): subset differed
 ## between imputations</code></pre>
 <pre><code>## Multiple imputation results:
-##       m &lt;- length(results)
+##       with(subset(scf_design, income &gt; 0), svyby(~income, ~hhsex, svyjdiv))
 ##       scf_MIcombine(with(subset(scf_design, income &gt; 0), svyby(~income, 
 ##     ~hhsex, svyjdiv)))
 ##          results         se
